@@ -281,26 +281,21 @@ layout.par=NULL,
        label<-c(label,paste("e",1:(n-network.size(x)),sep=""))
    }else if(is.bipartite(x)){
      n<-network.size(x)
-     temp<-as.matrix.network(x,matrix.type="adjacency",attrname=attrname)
-     d<-matrix(0,n,n)
-     d[1:NROW(temp),(NROW(temp)+1):NCOL(d)]<-temp
-     d[(NROW(temp)+1):NCOL(d),1:NROW(temp)]<-t(temp)
-     colnames(d)<-c(rownames(temp),colnames(temp))
-     rownames(d)<-c(rownames(temp),colnames(temp))
+     edgelist<-as.matrix.network(x,matrix.type="edgelist")
+     nedge <- nrow(edgelist)
      usearrows<-FALSE
    }else{
      n<-network.size(x)
-     d<-as.matrix.network(x,matrix.type="adjacency",attrname=attrname)
+     edgelist<-as.matrix.network(x,matrix.type="edgelist")
+     nedge <- nrow(edgelist)
      if(!is.directed(x))
        usearrows<-FALSE
    }
    diag<-has.loops(x)         #Check for existence of loops
-   #Replace NAs with 0s
-   d[is.na(d)]<-0
-   #Save a copy of d, in case values are needed
-   d.raw<-d
    #Dichotomize d
-   d<-matrix(as.numeric(d>thresh),n,n)
+   if(!is.null(attrname)){
+    d<-matrix(as.numeric(d>thresh),n,n)
+   }
    #Determine coordinate placement
    if(!is.null(coord)){      #If the user has specified coords, override all other considerations
       cx<-coord[,1]
@@ -309,7 +304,7 @@ layout.par=NULL,
      layout.fun<-try(match.fun(paste("network.layout.",mode,sep="")), silent=TRUE)
      if(class(layout.fun)=="try-error")
        stop("Error in plot.network.default: no layout function for mode ",mode)
-     temp<-layout.fun(d,layout.par)
+     temp<-layout.fun(x,layout.par)
      cx<-temp[,1]
      cy<-temp[,2]
    }
@@ -319,7 +314,7 @@ layout.par=NULL,
       cy<-jitter(cy)
    }
    #Which nodes should we use?
-   use<-displayisolates|(((apply(d,1,sum)+apply(d,2,sum))>0))   
+   use<-displayisolates|!is.isolated(x)
    #Deal with axis labels
    if(is.null(xlab))
      xlab=""
@@ -428,49 +423,56 @@ layout.par=NULL,
    }
    #Coerce edge properties to appropriate forms
    if(!is.array(edge.col))   #Coerce edge.col/lty/lwd/curve to array form
-     edge.col<-array(edge.col,dim=dim(d))
+     edge.col<-rep(edge.col,length.out=nedge)
    if(!is.array(edge.lty))
-     edge.lty<-array(edge.lty,dim=dim(d))
+     edge.lty<-rep(edge.lty,length.out=nedge)
    if(!is.array(edge.lwd)){
-     if(edge.lwd>0)
-       edge.lwd<-array(edge.lwd*d.raw,dim=dim(d))
-     else
-       edge.lwd<-array(1,dim=dim(d))
+    if(edge.lwd>0)
+     edge.lwd<-rep(edge.lwd,length.out=nedge)
+    else
+     edge.lwd<-rep(1,length.out=nedge)
    }
    if(!is.array(edge.curve)){
-     if(!is.null(edge.curve))  #If it's a scalar, multiply by edge str
-       edge.curve<-array(edge.curve*d.raw,dim=dim(d))
-     else
-       edge.curve<-array(0,dim=dim(d))
+    if(!is.null(edge.curve)) #If it's a scalar, multiply by edge str
+      edge.curve<-rep(edge.curve,length.out=nedge)
+    else
+      edge.curve<-rep(0,length.out=nedge)
    }
-   dist<-as.matrix(dist(cbind(cx,cy))) #Get the inter-point distances for curves
-   tl<-d.raw*dist   #Get rescaled edge lengths
-   tl.max<-max(tl)  #Get maximum edge length   
-   for(i in (1:n)[use])    #Plot edges for displayed vertices
-     for(j in (1:n)[use])
-       if(d[i,j]){       #Perform for actually existing edges
+   cloc<-cbind(cx,cy) #Get the inter-point distances for curves
+#  dist<-as.matrix(dist(cbind(cx,cy))) #Get the inter-point distances for curves
+#  tl<-d.raw*dist   #Get rescaled edge lengths
+#  tl.max<-max(tl)  #Get maximum edge length   
+   distij <- array(cloc[as.vector(edgelist),],dim=c(n,2,2))
+   distij <- sqrt(apply((distij[,1,]-distij[,2,])^2,1,sum))
+   tl.max<-max(distij)  #Get maximum edge length   
+   for(k in 1:nrow(edgelist)){    #Plot edges for displayed vertices
+     i <- edgelist[k,1]
+     j <- edgelist[k,2]
+     if(use[i] && use[j]){ #Perform for actually existing edges
          px0<-c(px0,as.real(cx[i]))  #Store endpoint coordinates
          py0<-c(py0,as.real(cy[i]))
          px1<-c(px1,as.real(cx[j]))
          py1<-c(py1,as.real(cy[j]))
          e.toff<-c(e.toff,vertex.radius[i]) #Store endpoint offsets
          e.hoff<-c(e.hoff,vertex.radius[j])
-         e.col<-c(e.col,edge.col[i,j])    #Store other edge attributes
-         e.type<-c(e.type,edge.lty[i,j])
-         e.lwd<-c(e.lwd,edge.lwd[i,j])
+         e.col<-c(e.col,edge.col[k])    #Store other edge attributes
+         e.type<-c(e.type,edge.lty[k])
+         e.lwd<-c(e.lwd,edge.lwd[k])
          e.diag<-c(e.diag,i==j)  #Is this a loop?
          e.rad<-c(e.rad,vertex.radius[i]*loop.cex[i])
          if(uselen){   #Should we base curvature on interpoint distances?
-           if(tl[i,j]>0){ 
-             e.len<-dist[i,j]*tl.max/tl[i,j]
-             e.curv<-c(e.curv,edge.len*sqrt((e.len/2)^2-(dist[i,j]/2)^2))
+           if(distij[k]>0){ 
+#            e.len<-distij[k]*tl.max/tl[i,j] MSH
+             e.len<-tl.max
+             e.curv<-c(e.curv,edge.len*sqrt((e.len/2)^2-(distij[k]/2)^2))
            }else{      
              e.curv<-c(e.curv,0)   
            }
          }else{        #Otherwise, use prespecified edge.curve
-           e.curv<-c(e.curv,edge.curve[i,j])
+           e.curv<-c(e.curv,edge.curve[k])
          }
        }
+   }
    #Plot loops for the diagonals, if diag==TRUE, rotating wrt center of mass
    if(diag&&(length(px0)>0)&&sum(e.diag>0)){  #Are there any loops present?
      network.loop(as.vector(px0)[e.diag],as.vector(py0)[e.diag], length=1.5*baserad*arrowhead.cex,angle=25,width=e.lwd[e.diag]*baserad/10,col=e.col[e.diag],border=e.col[e.diag],lty=e.type[e.diag],offset=e.hoff[e.diag],edge.steps=loop.steps,radius=e.rad[e.diag],arrowhead=usearrows,xctr=mean(cx[use]),yctr=mean(cy[use]))
