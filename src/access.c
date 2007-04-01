@@ -666,6 +666,49 @@ SEXP addEdges_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEX
   return x;
 }
 
+SEXP toggleDyads_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP edgeCheck)
+/*Toggle multiple dyads in x.  Note that we assume tail, head, et al. to be lists of identical length.*/
+{
+  int i,pc=0;
+  SEXP h, t;
+  char neigh[]="combined";
+  
+  PROTECT(h=coerceVector(head,INTSXP)); pc++;
+  PROTECT(t=coerceVector(tail,INTSXP)); pc++;
+
+  for(i=0;i<length(tail);i++){
+    if(isAdjacent(x,INTEGER(t)[i],INTEGER(h)[i], 0)){
+     x=deleteEdges_R(x,
+		     getEdgeIDs(x,INTEGER(t)[i],INTEGER(h)[i],neigh,0)
+		    );
+    }else{
+     x=addEdge_R(x,VECTOR_ELT(tail,i), VECTOR_ELT(head,i),
+		 VECTOR_ELT(namesEval,i),VECTOR_ELT(valsEval,i),edgeCheck);
+    }
+  }
+  
+  UNPROTECT(pc);
+  return x;
+}
+SEXP accumulateEdges_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP edgeCheck)
+/*Toggle multiple dyads in x.  Note that we assume tail, head, et al. to be lists of identical length.*/
+{
+  int i,pc=0;
+  SEXP h, t;
+  
+  PROTECT(h=coerceVector(head,INTSXP)); pc++;
+  PROTECT(t=coerceVector(tail,INTSXP)); pc++;
+
+  for(i=0;i<length(tail);i++){
+    if(!isAdjacent(x,INTEGER(t)[i],INTEGER(h)[i], 0)){
+     x=addEdge_R(x,VECTOR_ELT(tail,i), VECTOR_ELT(head,i),
+		 VECTOR_ELT(namesEval,i),VECTOR_ELT(valsEval,i),edgeCheck);
+    }
+  }
+  
+  UNPROTECT(pc);
+  return x;
+}
 
 SEXP addVertices_R(SEXP x, SEXP nv, SEXP vattr)
 {

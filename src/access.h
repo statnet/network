@@ -74,6 +74,10 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
 
 SEXP addEdges_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP edgeCheck);
 
+SEXP toggleDyads_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP edgeCheck);
+
+SEXP accumulateEdges_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP edgeCheck);
+
 SEXP addVertices_R(SEXP x, SEXP nv, SEXP vattr);
 
 SEXP deleteEdgeAttribute_R(SEXP x, SEXP attrname);
