@@ -1,0 +1,13 @@
+Package: network
+Version: 1.1-2
+Date: December 17, 2006
+Title:  Classes for Relational Data
+Author: Carter T. Butts <buttsc@uci.edu>, with help
+	from David Hunter <dhunter@stat.psu.edu> 
+	and Mark S. Handcock <handcock@stat.washington.edu>
+Maintainer: Carter T. Butts <buttsc@uci.edu>
+Depends: R (>= 2.0.0), utils
+Suggests: sna
+Description: Tools to create and modify network objects.  The network class can represent a range of relational data types, and supports arbitrary vertex/edge/graph attributes.
+License: GPL version 2 (June, 1991)
+Packaged: Sun Dec 17 19:42:16 2006; eagle
