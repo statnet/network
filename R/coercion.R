@@ -84,7 +84,14 @@ as.matrix.network.adjacency<-function(x,attrname=NULL){
   if(!is.directed(x)){
 # changed by MSH to allow non binary values
 #   m<-pmax(m,t(m))
-    m[m==0] <- t(m)[m==0]
+# changed by MSH to reduce memory use (as a cost of speed)
+#   m[m==0] <- t(m)[m==0]
+   if(length(tl[!nal])>0){
+    m[hl[!nal]+(tl[!nal]-1)*network.size(x)]<-val[!nal]
+   }
+   if(length(tl[ nal])>0){
+    m[hl[ nal]+(tl[ nal]-1)*network.size(x)]<-NA
+   }
   }
   #Set row/colnames to vertex names
   xnames <- network.vertex.names(x)
