@@ -94,6 +94,57 @@ add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
   invisible(.Call("addEdges_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network"))
 }
 
+toggle.dyads<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
+  #Check to be sure we were called with a network
+  if(!is.network(x))
+    stop("toggle.dyads requires an argument of class network.")
+  #Ensure that the inputs are set up appropriately 
+  if(!is.list(tail))
+    tail<-as.list(tail)
+  if(!is.list(head))
+    head<-as.list(rep(head,length=length(tail)))
+  if(is.null(names.eval))
+    names.eval<-replicate(length(tail),NULL)
+  else if(!is.list(names.eval))
+    names.eval<-as.list(rep(names.eval,length=length(tail)))
+  if(is.null(vals.eval))
+    vals.eval<-replicate(length(tail),NULL)
+  else if(!is.list(vals.eval))
+    vals.eval<-as.list(rep(vals.eval,length=length(names.eval)))
+  if(length(unique(c(length(tail),length(head),length(names.eval), length(vals.eval))))>1)
+    stop("head, tail, and value lists passed to toggle.dyads must be of the same length!\n")
+  edge.check<-list(...)$edge.check
+  if(is.null(edge.check))
+    edge.check<-FALSE
+  #Pass the inputs to the C side
+  invisible(.Call("toggleDyads_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network"))
+}
+
+accumulate.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
+  #Check to be sure we were called with a network
+  if(!is.network(x))
+    stop("accumulate.edges requires an argument of class network.")
+  #Ensure that the inputs are set up appropriately 
+  if(!is.list(tail))
+    tail<-as.list(tail)
+  if(!is.list(head))
+    head<-as.list(rep(head,length=length(tail)))
+  if(is.null(names.eval))
+    names.eval<-replicate(length(tail),NULL)
+  else if(!is.list(names.eval))
+    names.eval<-as.list(rep(names.eval,length=length(tail)))
+  if(is.null(vals.eval))
+    vals.eval<-replicate(length(tail),NULL)
+  else if(!is.list(vals.eval))
+    vals.eval<-as.list(rep(vals.eval,length=length(names.eval)))
+  if(length(unique(c(length(tail),length(head),length(names.eval), length(vals.eval))))>1)
+    stop("head, tail, and value lists passed to accumulate.edges must be of the same length!\n")
+  edge.check<-list(...)$edge.check
+  if(is.null(edge.check))
+    edge.check<-FALSE
+  #Pass the inputs to the C side
+  invisible(.Call("accumulateEdges_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network"))
+}
 
 # Add nv vertices to network x.  Vertex attributes (in addition to those which
 # are required) are to be provided in vattr; vattr must be a list containing
