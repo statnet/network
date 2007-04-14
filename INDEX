@@ -15,6 +15,7 @@ get.edges               Retrieve Edges or Edge IDs Associated with a
 get.neighborhood        Obtain the Neighborhood of a Given Vertex
 is.adjacent             Determine Whether Two Vertices Are Adjacent
 network                 Networks
+network-package         Classes for Relational Data
 network.arrow           Add Arrows or Segments to a Plot
 network.density         Compute the Density of a Network
 network.dyadcount       Return the Number of Edges in a Network Object
@@ -26,7 +27,6 @@ network.initialize      Initialize a Network Class Object
 network.layout          Vertex Layout Functions for plot.network
 network.loop            Add Loops to a Plot
 network.operators       Network Operators
-network-package         Classes for Relational Data
 network.size            Return the Size of a Network
 network.vertex          Add Vertices to a Plot
 permute.vertexIDs       Permute (Relabel) the Vertices Within a Network
