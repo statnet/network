@@ -28,7 +28,7 @@
 /*LIST ACCESS/MODIFICATION ROUTINES-----------------------------------------*/
 
 
-SEXP deleteListElement(SEXP list, char *str)
+SEXP deleteListElement(SEXP list, const char *str)
 /*Given a list and a character string, return a new list with the element whose name matches said string removed.  If this is the only element of list, NULL is returned; if the element is not found, list is returned unmodified.*/
 {
   int pc=0,i,flag;
@@ -70,7 +70,7 @@ SEXP deleteListElement(SEXP list, char *str)
 }
 
 
-SEXP getListElement(SEXP list, char *str)
+SEXP getListElement(SEXP list, const char *str)
 /*Given a list and a character string, return a pointer to the element with the specified name (or else NULL).  This is taken from the Writing R Extensions manual.*/
 {
   SEXP elmt = R_NilValue, names = getAttrib(list, R_NamesSymbol);
@@ -85,7 +85,7 @@ SEXP getListElement(SEXP list, char *str)
 }
 
 
-SEXP setListElement(SEXP list, char *str, SEXP elem)
+SEXP setListElement(SEXP list, const char *str, SEXP elem)
 /*Given a list, an element, and a character string, write the element with the specified name to the list.  If an element by that name already exists, it is replaced.*/
 {
   SEXP names, newlist;

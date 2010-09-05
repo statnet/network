@@ -22,7 +22,7 @@ read.paj(file, verbose = FALSE, debug = FALSE, edge.name = NULL,
 
 \value{\code{read.paj} returns a 'network' object (for .net input) or a list of networks (for .paj input). Additional information in the .paj file (like partition information) is attached to the network objects in another higher order list.}
 
-\author{ Dave Schruth \email{dschruth@u.washington.edu}, Mark S. Handcock \email{handcock@stat.washington.edu}}
+\author{ Dave Schruth \email{dschruth@u.washington.edu}, Mark S. Handcock \email{handcock@stat.washington.edu} (with additional input from Alex Montgomery \email{ahm@reed.edu})}
 \seealso{\code{\link[statnet]{statnet}}, \code{\link{network}}, \code{\link[networkdata]{networkdata}}}
 \examples{
 \dontrun{

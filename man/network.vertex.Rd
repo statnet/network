@@ -27,7 +27,8 @@ network.vertex(x, y, radius = 1, sides = 4, border = 1, col = 2,
 \value{
   None
 }
-%\references{ ~put references to the literature/web site here ~ }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 \note{ \code{network.vertex} is a direct adaptation of \code{\link[sna]{gplot.vertex}} from the \code{sna} package. }
 

@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 8/18/05
+# Last Modified 7/23/08
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -36,13 +36,13 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
    
     if (is.character(file)) {
         file <- file(file, "rt")
-        on.exit(close(file),new=TRUE)
+        on.exit(close(file))
     }
     if (!inherits(file, "connection")) 
         stop("argument 'file' must be a character string or connection")
     if (!isOpen(file)) {
         open(file, "rt")
-        on.exit(close(file),new=TRUE)
+        on.exit(close(file))
     }
     
 
@@ -119,15 +119,47 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
       for(i in seq(along=network.names)){
         if(verbose) print(paste("working along network names",network.names))        
         temp <- get(network.names[i])
-        if(!is.null(vector)){
-          if(nrow(as.data.frame(vector))== network.size(temp)) {#should i be doing this? why don't these numbers match all time
-            temp <- set.vertex.attribute(temp, vector.name , value=as.matrix(vector))
-                   #set.vertex.attribute(x   , attrname    , value,      v=1:network.size(x))
-            if(debug) print("set vector to network")
-          }else{
-            warning(paste("vectorLength (",nrow(as.data.frame(vector)),") != number of nodes (",temp$gal$n,"), vertex attribute not set",sep=""))
-           #dschruth added... crashing on Scotland.paj vector length != numOfEdges (http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.htm)
-          }
+        if(!is.null(vertex)){   #Changed "vector" to "vertex"
+           ##Start new addition from Alex Montgomery (Thanks AHM!)
+           if (nrow(as.data.frame(vertex)) == network.size(temp)) {
+               temp <- set.vertex.attribute(temp, "vertex.names",
+                 as.character(vertex[as.numeric(vertex[,1]),2]))
+               if (ncol(vertex)>2) { # number of columns > 2 -> vertex has attributes
+                 vert.attr.nam <- c("na","vertex.names","x","y","z") #assume first three are coords (true?)
+                 if (ncol(vertex)>5) vert.attr.nam <- c(vert.attr.nam,6:ncol(vertex)) #temp names for rest
+                 for (vert.attr.i in 3:ncol(vertex)){
+                   v <- vertex[,vert.attr.i]
+                   if (is.factor(v)){ # if it's a factor, then
+                     vert.attr.nam.tmp <- levels(v)[1] # see if the first factor is an attribute name
+                     if (vert.attr.nam.tmp=="") vert.attr.nam.tmp <- levels(v)[2] # in case of missing data
+                     if (nlevels(v)<=2&!is.na(match(vert.attr.nam.tmp, # check for match if # factors <=2
+                                  c("s_size","x_fact","y_fact","phi","r","q",
+                                    "ic","bc","bw","lc","la","lr",
+                                    "lphi","fos","font")))) { #from pajekman.pdf v1.2.3 p.69-70
+                       vert.attr.nam[vert.attr.i+1] <- vert.attr.nam.tmp #if match, name the next column
+                     } else { #if not, set the attribute, converting to character (networks incompat w/factors)
+                       temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i],
+                                                    as.character(vertex[as.numeric(vertex[,1]),vert.attr.i]))
+                     }
+                   } else { #not a factor, set the attribute and don't convert to character
+                     temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i],
+                                                  vertex[as.numeric(vertex[,1]),vert.attr.i])
+                   }
+                 }
+               }
+              if (debug)
+                 print("set vertex names to matrix")
+           }
+           ##End AHM addition
+##Original code from Dave Schruth:
+##          if(nrow(as.data.frame(vector))== network.size(temp)) {#should i be doing this? why don't these numbers match all time
+##            temp <- set.vertex.attribute(temp, vector.name , value=as.matrix(vector))
+##                   #set.vertex.attribute(x   , attrname    , value,      v=1:network.size(x))
+##            if(debug) print("set vector to network")
+##          }else{
+##            warning(paste("vectorLength (",nrow(as.data.frame(vector)),") != number of nodes (",temp$gal$n,"), vertex attribute not set",sep=""))
+##           #dschruth added... crashing on Scotland.paj vector length != numOfEdges (http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.htm)
+##          }
         }
         if(!is.null(network.title)){
           temp <- set.network.attribute(temp, "title", network.title)
@@ -289,8 +321,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
         line <- readAndVectorizeLine(file)
       }
       while(!any(grep("\\*[a-zA-Z]", line)) & length(line)>0){  #dschruth changed \\*  to \\*[a-zA-Z] to allow for time asterisks
-        
-        dyadList[[listIndex]] <- as.numeric(line)        # dyads <- rbind(dyads, as.numeric(line[1:3]))  # this is the old way
+        dyadList[[listIndex]] <- as.numeric(gsub("Newline","",line))        # dyads <- rbind(dyads, as.numeric(line[1:3]))  # this is the old way
         line <- readAndVectorizeLine(file)       
         listIndex <- listIndex+1
         
@@ -353,7 +384,9 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
           if(verbose) print("edge end out of range, skipping network creation")
           if(verbose) print("first dyad list (arcs?), is too short to be a full network, skipping to next dyad list (edges?)")
         }else{
-          temp <- network(x=dyads[,1:2],directed=directed)#arcsLinePresent)#dschruth added
+          temp <- network.initialize(n=nvertex, directed=directed)
+          add.edges(temp,tail=dyads[,1],head=dyads[,2])
+#          temp <- network(x=dyads[,1:2],directed=directed)#arcsLinePresent)#dschruth added
 #         temp <- set.edge.value(temp,"FALSE",NULL) #dschruth is this necessary??   should i comment out?
 #         temp <- set.edge.value(temp,"NULL",NULL)  #dschruth is this necessary??   should i comment out?
           if(dim(dyads)[2]>2){  #only try to set the edge value if there is a third column
@@ -424,15 +457,47 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
       for(i in seq(along=network.names)){
         if(verbose) print(paste("working along network names",network.names))        
         temp <- get(network.names[i])
-        if(!is.null(vector)){
-          if(nrow(as.data.frame(vector))== network.size(temp)) {#should i be doing this? why don't these numbers match all time
-            temp <- set.vertex.attribute(temp, vector.name , value=as.matrix(vector))
-                   #set.vertex.attribute(x   , attrname    , value,      v=1:network.size(x))
-            if(debug) print("set vector to network")
-          }else{
-            warning(paste("vectorLength (",nrow(as.data.frame(vector)),") != number of nodes (",temp$gal$n,"), vertex attribute not set",sep=""))
-           #dschruth added... crashing on Scotland.paj vector length != numOfEdges (http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.htm)
-          }
+        if(!is.null(vertex)){  #Changed "vector" to "vertex"
+           ##Start new addition from Alex Montgomery (Thanks AHM!)
+           if (nrow(as.data.frame(vertex)) == network.size(temp)) {
+               temp <- set.vertex.attribute(temp, "vertex.names",
+                 as.character(vertex[as.numeric(vertex[,1]),2]))
+               if (ncol(vertex)>2) { # number of columns > 2 -> vertex has attributes
+                 vert.attr.nam <- c("na","vertex.names","x","y","z") #assume first three are coords (true?)
+                 if (ncol(vertex)>5) vert.attr.nam <- c(vert.attr.nam,6:ncol(vertex)) #temp names for rest
+                 for (vert.attr.i in 3:ncol(vertex)){
+                   v <- vertex[,vert.attr.i]
+                   if (is.factor(v)){ # if it's a factor, then
+                     vert.attr.nam.tmp <- levels(v)[1] # see if the first factor is an attribute name
+                     if (vert.attr.nam.tmp=="") vert.attr.nam.tmp <- levels(v)[2] # in case of missing data
+                     if (nlevels(v)<=2&!is.na(match(vert.attr.nam.tmp, # check for match if # factors <=2
+                                  c("s_size","x_fact","y_fact","phi","r","q",
+                                    "ic","bc","bw","lc","la","lr",
+                                    "lphi","fos","font")))) { #from pajekman.pdf v1.2.3 p.69-70
+                       vert.attr.nam[vert.attr.i+1] <- vert.attr.nam.tmp #if match, name the next column
+                     } else { #if not, set the attribute, converting to character (networks incompat w/factors)
+                       temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i],
+                                                    as.character(vertex[as.numeric(vertex[,1]),vert.attr.i]))
+                     }
+                   } else { #not a factor, set the attribute and don't convert to character
+                     temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i],
+                                                  vertex[as.numeric(vertex[,1]),vert.attr.i])
+                   }
+                 }
+               }
+              if (debug)
+                 print("set vertex names to matrix")
+           }
+           ##End AHM addition
+##Original by Dave Schruth:
+##          if(nrow(as.data.frame(vector))== network.size(temp)) {#should i be doing this? why don't these numbers match all time
+##            temp <- set.vertex.attribute(temp, vector.name , value=as.data.frame(vector))
+##                   #set.vertex.attribute(x   , attrname    , value,      v=1:network.size(x))
+##            if(debug) print("set vector to network")
+##          }else{
+##            warning(paste("vectorLength (",nrow(as.data.frame(vector)),") != number of nodes (",temp$gal$n,"), vertex attribute not set",sep=""))
+##           #dschruth added... crashing on Scotland.paj vector length != numOfEdges (http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.htm)
+##          }
         }
         if(!is.null(network.title)){
           temp <- set.network.attribute(temp, "title", network.title)

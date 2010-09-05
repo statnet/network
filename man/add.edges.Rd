@@ -28,7 +28,8 @@ Edges can also be added/removed via the extraction/replacement operators.  See t
     Invisibly, \code{add.edge} and \code{add.edges} return pointers to their modified arguments; both functions modify their arguments in place..
 }
 \author{ Carter T. Butts \email{buttsc@uci.edu}}
-\references{ Butts, C.T.  2002.  ``Memory Structures for Relational Data in R: Classes and Interfaces''  Working Paper. }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 %\note{ }
 \seealso{\code{\link{network}}, \code{\link{add.vertices}}, \code{\link{network.extraction}}, \code{\link{delete.edges}}}
 \examples{

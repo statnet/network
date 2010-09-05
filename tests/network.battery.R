@@ -58,7 +58,7 @@ check[20]<-all(temp[,1]==temp[1,])   #Verify edges
 temp<-permute.vertexIDs(temp,5:1)       #Permute 
 check[21]<-all(temp[1,]==c(0,0,0,0,1))  #Verify permutation
 check[22]<-all(temp[,5]==rep(1,5))
-check[23]<-get.neighborhood(temp,1)==5               #Check neighborhoods
+check[23]<-all(get.neighborhood(temp,1)%in%c(5,1)) #Check neighborhoods
 check[24]<-all(sort(get.neighborhood(temp,5))==1:5)
 check[25]<-length(get.edges(temp,5))==5            #Check get.edges
 check[26]<-length(get.edges(temp,5,2))==1
@@ -75,7 +75,7 @@ check[33]<-all(as.matrix.network.edgelist(temp,"newval")==cbind(row(g)[g>0],col(
 temp[1:3,1:5,names.eval="newval"]<-matrix(1:15,3,5)
 check[34]<-all(as.sociomatrix(temp,"newval")[1:3,1:5]==g[1:3,1:5]*matrix(1:15,3,5))
 temp[,,"na"]<-TRUE                         #Verify NA filtering
-check[35]<-sum(temp[,])==0
+check[35]<-sum(temp[,,na.omit=TRUE])==0
 check[36]<-sum(is.na(temp[,,na.omit=FALSE]))==sum(g)
 
 #Check assignment, deletion, and adjacency for hypergraphs
@@ -126,12 +126,11 @@ g<-rgraph(10)
 temp<-network(g,names.eval="value",ignore.eval=FALSE)
 temp2<-network(g*2,names.eval="value",ignore.eval=FALSE)
 check[54]<-all(g==as.sociomatrix(temp+temp2))
-#Note: prior to R 2.4.0, could use "+" instead of "+.network" here...
-check[55]<-all(g*3==as.sociomatrix("+.network"(temp,temp2,"value"),"value"))
+check[55]<-all(g*3==as.sociomatrix(sum(temp,temp2,attrname="value"),"value"))
 check[56]<-all(g==as.sociomatrix(temp*temp2))
-check[57]<-all(g*2==as.sociomatrix("*.network"(temp,temp2,"value"),"value"))
+check[57]<-all(g*2==as.sociomatrix(prod(temp,temp2,attrname="value"),"value"))
 check[58]<-all(0==as.sociomatrix(temp-temp2))
-check[59]<-all(-g==as.sociomatrix("-.network"(temp,temp2,"value"),"value"))
+check[59]<-all(-g==as.sociomatrix(sum(temp,-as.sociomatrix(temp2,"value"),attrname="value"),"value"))
 check[60]<-all(((g%*%g)>0)==as.sociomatrix("%c%.network"(temp,temp2)))
 check[61]<-all(((g%*%g)>0)==as.sociomatrix(temp%c%temp2))
 check[62]<-all(((!temp)[,]==!g)[diag(10)<1])

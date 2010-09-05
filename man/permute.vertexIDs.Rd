@@ -19,7 +19,8 @@ permute.vertexIDs(x, vids)
 \value{
   Invisibly, a pointer to the permuted network.  \code{permute.vertexIDs} modifies its argument in place.
 }
-\references{ Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods and Applications}.  Cambridge: Cambridge University Press. }
+\references{Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 %\note{ ~~further notes~~ }
 

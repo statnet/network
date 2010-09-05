@@ -7,8 +7,8 @@
   \code{as.network.matrix} attempts to coerce its first argument to an object of class \code{network}.
 }
 \usage{
-as.network.default(x, ...)
-as.network.matrix(x, matrix.type = NULL, directed = TRUE, 
+\method{as.network}{default}(x, ...)
+\method{as.network}{matrix}(x, matrix.type = NULL, directed = TRUE, 
     hyper = FALSE, loops = FALSE, multiple = FALSE, bipartite = FALSE,
     ignore.eval = TRUE, names.eval = NULL, na.rm = FALSE, 
     edge.check = FALSE, ...)
@@ -34,7 +34,8 @@ as.network.matrix(x, matrix.type = NULL, directed = TRUE,
 \value{
   An object of class \code{network}
 }
-\references{ Butts, C.T.  2002.  ``Memory Structures for Relational Data in R: Classes and Interfaces''  Working Paper. }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 \author{ Carter T. Butts \email{buttsc@uci.edu} and David Hunter \email{dhunter@stat.psu.edu} }
 %\note{ ~~further notes~~ }
 %

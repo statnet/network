@@ -22,7 +22,9 @@ Note that the combined neighborhood is the union of the in and out neighborhoods
 \value{
   A vector containing the vertex IDs for the chosen neighborhood.
 }
-\references{ Wasserman, S. and Faust, K.  1994.  \emph{Social Network Analysis: Methods and Applications.}  Cambridge: Cambridge University Press. }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+
+Wasserman, S. and Faust, K.  1994.  \emph{Social Network Analysis: Methods and Applications.}  Cambridge: Cambridge University Press. }
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 %\note{ ~~further notes~~ }
 %

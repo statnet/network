@@ -20,8 +20,8 @@
 Various operators which allow extraction or replacement of various components of a \code{network} object.
 }
 \usage{
-\S3method{[}{network}(x, i, j, na.omit = TRUE)
-\S3method{[}{network}(x, i, j, names.eval=NULL, add.edges=FALSE) <- value
+\method{[}{network}(x, i, j, na.omit = FALSE)
+\method{[}{network}(x, i, j, names.eval=NULL, add.edges=FALSE) <- value
 x \%e\% attrname
 x \%e\% attrname <- value
 x \%eattr\% attrname
@@ -41,7 +41,7 @@ x \%vattr\% attrname <- value
 \arguments{
   \item{x}{ an object of class \code{network}. }
   \item{i, j}{ indices of the vertices with respect to which adjacency is to be tested.  Empty values indicate that all vertices should be employed (see below). }
-  \item{na.omit}{ logical; should missing edges be omitted (treated as no-adjacency), or should \code{NA}s be returned? }
+  \item{na.omit}{ logical; should missing edges be omitted (treated as no-adjacency), or should \code{NA}s be returned?  (Default: return \code{NA} on missing.)}
   \item{names.eval}{optionally, the name of an edge attribute to use for assigning edge values.}
   \item{add.edges}{logical; should new edges be added to \code{x} where edges are absent and the appropriate element of \code{value} is non-zero?}
   \item{value}{the value (or set thereof) to be assigned to the selected element of \code{x}.}
@@ -59,7 +59,8 @@ x \%vattr\% attrname <- value
 \value{
   The extracted data, or none.
 }
-%\references{ Wasserman and  }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 %\note{ ~~further notes~~ }
 

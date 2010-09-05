@@ -6,30 +6,34 @@
   \code{is.adjacent} returns \code{TRUE} iff \code{vi} is adjacent to \code{vj} in \code{x}.  Missing edges may be omitted or not, as per \code{na.omit}.
 }
 \usage{
-is.adjacent(x, vi, vj, na.omit = TRUE)
+is.adjacent(x, vi, vj, na.omit = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an object of class \code{network} }
   \item{vi}{ a vertex ID }
   \item{vj}{ a second vertex ID }
-  \item{na.omit}{ logical; should missing edges count when assessing adjacency? }
+  \item{na.omit}{ logical; should missing edges be ignored when assessing adjacency? }
 }
 \details{
   Vertex \eqn{v} is said to be adjacent to vertex \eqn{v'} within directed network \eqn{G} iff there exists some edge whose tail set contains \eqn{v} and whose head set contains \eqn{v'}.  In the undirected case, head and tail sets are exchangeable, and thus \eqn{v} is adjacent to \eqn{v'} if there exists an edge such that \eqn{v} belongs to one endpoint set and \eqn{v'} belongs to the other.  (In dyadic graphs, these sets are of cardinality 1, but this may not be the case where hyperedges are admitted.)
+  
+  If an edge which would make \eqn{v} and \eqn{v'} adjacent is marked as missing (via its \code{na} attribute), then the behavior of \code{is.adjacent} depends upon \code{na.omit}.  If \code{na.omit==FALSE} (the default), then the return value is considered to be \code{NA} unless there is also \emph{another} edge from \eqn{v} to \eqn{v'} which is \emph{not} missing (in which case the two are clearly adjacent).  If \code{na.omit==TRUE}, on the other hand the missing edge is simply disregarded in assessing adjacency (i.e., it effectively treated as not present).  It is important not to confuse \dQuote{not present} with \dQuote{missing} in this context: the former indicates that the edge in question does not belong to the network, while the latter indicates that the state of the corresponding edge is regarded as unknown.  By default, all edge states are assumed \dQuote{known} unless otherwise indicated (by setting the edge's \code{na} attribute to \code{TRUE}; see \code{\link{attribute.methods}}).
 
   Adjacency can also be determined via the extraction/replacement operators.  See the associated man page for details.
 }
 \value{
   A logical, giving the status of the (i,j) edge
 }
-\references{ Wasserman, S. and Faust, K.  1994.  \emph{Social Network Analysis: Methods and Applications}.  Cambridge: Cambridge University Press. }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+
+Wasserman, S. and Faust, K.  1994.  \emph{Social Network Analysis: Methods and Applications}.  Cambridge: Cambridge University Press. }
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
-%\note{ ~~further notes~~ }
+\note{ Prior to version 1.4, \code{na.omit} was set to \code{TRUE} by default. }
 %
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{ \code{\link{get.neighborhood}}, \code{\link{network.extraction}}}
+\seealso{ \code{\link{get.neighborhood}}, \code{\link{network.extraction}}, \code{\link{attribute.methods}}}
 \examples{
 #Create a very simple graph
 g<-network.initialize(3)

@@ -19,11 +19,12 @@ network.edgecount(x, na.omit = TRUE)
 \value{
   The number of edges
 }
-\references{ Butts, C.T.  2002.  ``Memory Structures for Relational Data in R: Classes and Interfaces''  Working Paper. }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 %\note{ ~~further notes~~ }
 %
-% ~Make other sections like Warning with \section{Warning }{....} ~
+\section{Warning }{\code{network.edgecount} uses the real state of the network object to count edges, not the state it hypothetically should have.  Thus, if you add extra edges to a non-multiplex network, directed edges to an undirected network, etc., the actual number of edges in the object will be returned (and not the number you would expect if you relied only on the putative number of possible edges as reflected by the \link{network.indicators}).  Don't create \code{network} objects with contradictory attributes unless you know what you are doing. }
 
 \seealso{ \code{\link{get.network.attribute}} }
 \examples{

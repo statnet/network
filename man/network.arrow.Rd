@@ -36,7 +36,8 @@ network.arrow(x0, y0, x1, y1, length = 0.1, angle = 20,
 \value{
   None.
 }
-%\references{ ~put references to the literature/web site here ~ }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 \note{ \code{network.arrow} is a direct adaptation of \code{\link[sna]{gplot.arrow}} from the \code{sna} package. }
 

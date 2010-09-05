@@ -18,7 +18,8 @@ which.matrix.type(x)
 \value{
   One of \code{"adjacency"}, \code{"incidence"}, or \code{"edgelist"}
 }
-%\references{ Wasserman and  }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 \author{ David Hunter \email{dhunter@stat.psu.edu} }
 %\note{ ~~further notes~~ }
 

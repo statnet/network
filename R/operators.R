@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 10/19/06
+# Last Modified 03/25/08
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -15,6 +15,7 @@
 #
 # Contents:
 #
+# "$<-.network"
 # "[.network"
 # "[<-.network"
 # "%e%"
@@ -29,8 +30,14 @@
 # "%v%<-"
 # "%vattr%"
 # "%vattr%<-"
+# "+"
+# "+.default"
 # "+.network"
+# "-"
+# "-.default"
 # "-.network"
+# "*"
+# "*.default"
 # "*.network"
 # "!.network"
 # "|.network"
@@ -38,18 +45,38 @@
 # "%*%.network"
 # "%c%"
 # "%c%.network"
+# prod.network
+# sum.network
 # 
 ######################################################################
 
+"<-.network"<-function(x,i,value){
+  cl<-oldClass(x)
+  class(x)<-NULL
+  x[[i]]<-network.copy(value)
+  class(x)<-cl
+  return(x)
+}
 
-"[.network"<-function(x,i,j,na.omit=TRUE){
+
+"$<-.network"<-function(x,i,value){
+  cl<-oldClass(x)
+  class(x)<-NULL
+  x[[i]]<-value
+  class(x)<-cl
+  return(x)
+}
+
+
+"[.network"<-function(x,i,j,na.omit=FALSE){
+  narg<-nargs()+missing(na.omit)
   n<-network.size(x)
   xnames <- network.vertex.names(x)
   if(missing(i))              #If missing, use 1:n
     i<-1:n
-  if(missing(j))
+  if((narg>3)&&missing(j))
     j<-1:n
-  if(is.matrix(i)&&(min(dim(i))==1))  #Vectorize if degenerate matrix
+  if(is.matrix(i)&&(NCOL(i)==1))  #Vectorize if degenerate matrix
     i<-as.vector(i)
   if(is.matrix(i)){    #Still a matrix?
     if(is.logical(i)){                    #Subset w/T/F?
@@ -61,6 +88,10 @@
         i<-apply(i,c(1,2),match,xnames)
       out<-is.adjacent(x,i[,1],i[,2], na.omit=na.omit)
     }
+  }else if((narg<3)&&missing(j)){   #Here, assume a list of cell numbers
+    ir<-1+((i-1)%%n)
+    ic<-1+((i-1)%/%n)
+    out<-is.adjacent(x,ir,ic,na.omit=na.omit)
   }else{                      #Otherwise, assume a vector or submatrix
     if(is.character(i))
       i<-match(i,xnames)
@@ -92,13 +123,14 @@
   if(is.hyper(x))
     stop("Assignment operator overloading does not currently support hypergraphic networks.");
   #Set up the edge list to change
+  narg<-nargs()+missing(names.eval)+missing(add.edges)
   n<-network.size(x)
   xnames <- network.vertex.names(x)
   if(missing(i))              #If missing, use 1:n
     i<-1:n
-  if(missing(j))
+  if((narg>5)&&missing(j))
     j<-1:n
-  if(is.matrix(i)&&(min(dim(i))==1))  #Vectorize if degenerate matrix
+  if(is.matrix(i)&&(NCOL(i)==1))  #Vectorize if degenerate matrix
     i<-as.vector(i)
   if(is.matrix(i)){    #Still a matrix?
     if(is.logical(i)){                    #Subset w/T/F?
@@ -110,6 +142,8 @@
         i<-apply(i,c(1,2),match,xnames)
       el<-i
     }
+  }else if((narg<6)&&missing(j)){  #Here, assume a list of cell numbers
+    el<-1+cbind((i-1)%%n,(i-1)%/%n)
   }else{                      #Otherwise, assume a vector or submatrix
     if(is.character(i))
       i<-match(i,xnames)
@@ -137,12 +171,21 @@
     val<-rep(as.vector(value),length=NROW(el))
   #Perform the changes
   if(is.null(names.eval)){  #If no names given, don't store values
+    valna<-is.na(val)           #Pull out missing edges
+    val[valna]<-1               #Treat missing as "present" for our purposes
     toadd<-(val!=0)&(has.loops(x)|(el[,1]!=el[,2]))
     torem<-val==0
     if(sum(toadd)>0){           #Check for already extant edges
       toadd[toadd][is.adjacent(x,el[toadd,1],el[toadd,2])]<-FALSE
-      if(sum(toadd)>0)           #Add edges, if still needed
+      if(sum(toadd)>0)          #Add edges, if still needed
         x<-add.edges(x,as.list(el[toadd,1]),as.list(el[toadd,2]))
+      if(sum(valna)>0){         #Mark all relevant edges as missing
+        eid<-vector()
+        for(k in (1:length(valna))[valna]){
+          eid<-c(eid,get.edgeIDs(x,el[k,1],el[k,2],neighborhood="out", na.omit=FALSE))
+        }
+        set.edge.attribute(x,"na",TRUE,eid)
+      }
     }
     if(sum(torem)>0){          #Delete edges, if needed
       eid<-vector()
@@ -242,58 +285,105 @@
   x %v% attrname <- value
 }
 
-
-"+.network"<-function(x,y,attrname=NULL){
-  x<-as.sociomatrix(x,attrname=attrname)
-  y<-as.sociomatrix(y,attrname=attrname)
-  network(x+y,ignore.eval=is.null(attrname),names.eval=attrname)
+#"+"<-function(e1, e2, ...) UseMethod("+")
+#
+#"+.default"<-function(e1,e2,...) { (base::"+")(e1,e2) }
+#
+#"+.network"<-function(e1,e2,attrname=NULL,...){
+#  e1<-as.sociomatrix(e1,attrname=attrname)
+#  e2<-as.sociomatrix(e2,attrname=attrname)
+#  network(e1+e2,ignore.eval=is.null(attrname),names.eval=attrname)
+#}
+"+.network"<-function(e1,e2){
+  e1<-as.sociomatrix(e1)
+  e2<-as.sociomatrix(e2)
+  network(e1+e2)
 }
 
 
-"-.network"<-function(x,y,attrname=NULL){
-  x<-as.sociomatrix(x,attrname=attrname)
-  y<-as.sociomatrix(y,attrname=attrname)
-  network(x-y,ignore.eval=is.null(attrname),names.eval=attrname)
+#"-"<-function(e1, e2, ...) UseMethod("-")
+#
+#"-.default"<-function(e1,e2,...) { (base::"-")(e1,e2) }
+#
+"-.network"<-function(e1,e2){
+  e1<-as.sociomatrix(e1)
+  e2<-as.sociomatrix(e2)
+  network(e1-e2)
 }
 
 
-"*.network"<-function(x,y,attrname=NULL){
-  x<-as.sociomatrix(x,attrname=attrname)
-  y<-as.sociomatrix(y,attrname=attrname)
-  network(x*y,ignore.eval=is.null(attrname),names.eval=attrname)
+#"*"<-function(e1, e2, ...) UseMethod("*")
+#
+#"*.default"<-function(e1,e2,...) { (base::"*")(e1,e2) }
+#
+"*.network"<-function(e1,e2){
+  e1<-as.sociomatrix(e1)
+  e2<-as.sociomatrix(e2)
+  network(e1*e2)
 }
 
 
-"!.network"<-function(x){
-  y<-network.copy(x)
+"!.network"<-function(e1){
+  y<-e1
   y[,]<-!(y[,])
   y
 }
 
 
-"|.network"<-function(x,y){
-  network((x[,])|(y[,]))
+"|.network"<-function(e1,e2){
+  network((e1[,])|(e2[,]))
 }
 
 
-"&.network"<-function(x,y){
-  network((x[,])&(y[,]))
+"&.network"<-function(e1,e2){
+  network((e1[,])&(e2[,]))
 }
 
 
-"%c%"<-function(x,y){
-  UseMethod("%c%",x)
+"%c%"<-function(e1,e2){
+  UseMethod("%c%",e1)
 }
 
 
-"%c%.network"<-function(x,y){
+"%c%.network"<-function(e1,e2){
   #Convert to adjacency form
-  x<-as.sociomatrix(x)
-  y<-as.sociomatrix(y)
+  e1<-as.sociomatrix(e1)
+  e2<-as.sociomatrix(e2)
   #Check for conformability
-  if(dim(x)[2]!=dim(y)[1])
+  if(dim(e1)[2]!=dim(e2)[1])
     stop("Non-conformable relations in %c%.  Cannot compose.")
   #Obtain the composed graph
-  network(round((x%*%y)>0),loops=TRUE)
+  network(round((e1%*%e2)>0),loops=TRUE)
 }
 
+
+prod.network<-function(..., attrname=NULL, na.rm=FALSE){
+  inargs<-list(...)
+  y<-inargs[[1]]
+  for(i in (1:length(inargs))[-1]){
+    x<-as.sociomatrix(inargs[[i]],attrname=attrname)
+    if(na.rm)
+      x[is.na(x)]<-0
+    ym<-as.sociomatrix(y,attrname=attrname)
+    if(na.rm)
+      ym[is.na(ym)]<-0
+    y[,,names.eval=attrname,add.edges=TRUE]<-x*ym
+  }
+  y
+}
+
+
+sum.network<-function(..., attrname=NULL, na.rm=FALSE){
+  inargs<-list(...)
+  y<-inargs[[1]]
+  for(i in (1:length(inargs))[-1]){
+    x<-as.sociomatrix(inargs[[i]],attrname=attrname)
+    if(na.rm)
+      x[is.na(x)]<-0
+    ym<-as.sociomatrix(y,attrname=attrname)
+    if(na.rm)
+      ym[is.na(ym)]<-0
+    y[,,names.eval=attrname,add.edges=TRUE]<-x+ym
+  }
+  y
+}

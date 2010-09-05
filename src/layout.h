@@ -31,6 +31,10 @@ void network_layout_fruchtermanreingold_R(int *d, double *pn, int *pniter,
 double *pmaxdelta, double *pvolume, double *pcoolexp, double *prepulserad,
 double *x, double *y);
 
+void network_layout_fruchtermanreingold2_R(int *d, double *pn, int *pniter, 
+double *pmaxdelta, double *pvolume, double *pcoolexp, double *prepulserad,
+double *x, double *y, int *fixed);
+
 void network_layout_kamadakawai_R(int *d, double *pn, int *pniter, 
 double *elen, double *pinitemp, double *pcoolexp, double *pkkconst, 
 double *psigma, double *x, double *y);

@@ -39,11 +39,11 @@ void UNIMPLEMENTED_TYPE(char *s, SEXPTYPE t);
 
 /*LIST ACCESS/MODIFICATION ROUTINES-----------------------------------------*/
 
-SEXP deleteListElement(SEXP list, char *str);
+SEXP deleteListElement(SEXP list, const char *str);
 
-SEXP getListElement(SEXP list, char *str);
+SEXP getListElement(SEXP list, const char *str);
 
-SEXP setListElement(SEXP list, char *str, SEXP elem);
+SEXP setListElement(SEXP list, const char *str, SEXP elem);
 
 SEXP enlargeList(SEXP list, int n);
 

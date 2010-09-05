@@ -7,6 +7,8 @@
 \alias{summary.network}
 \alias{network.copy}
 \alias{print.summary.network}
+\alias{$<-.network}
+\alias{<-.network}
 \title{Networks}
 \description{
   Construct, coerce to, test for and print \code{network} objects.
@@ -17,9 +19,9 @@ network(x, vertex.attr=NULL, vertex.attrnames=NULL, directed=TRUE,
 network.copy(x)
 as.network(x, ...)
 is.network(x)
-print.network(x, matrix.type=which.matrix.type(x),
+\method{print}{network}(x, matrix.type=which.matrix.type(x),
     mixingmatrices=FALSE, na.omit=TRUE, ...)
-summary.network(object, na.omit=TRUE, mixingmatrices=FALSE, ...)
+\method{summary}{network}(object, na.omit=TRUE, mixingmatrices=FALSE, ...)
 }
 \arguments{
   \item{x}{for \code{network}, a matrix giving the network structure
@@ -41,7 +43,7 @@ summary.network(object, na.omit=TRUE, mixingmatrices=FALSE, ...)
 \details{
   \code{network} constructs a \code{network} class object from a matrix representation.
 
-  \code{network.copy} creates a new \code{network} object which duplicates its supplied argument.
+  \code{network.copy} creates a new \code{network} object which duplicates its supplied argument.  (Direct assignment with \code{<-} should be used rather than \code{network.copy} in most cases.)
 
   \code{as.network} tries to coerce its argument to a network, using the \code{network} function if necessary.
 
@@ -54,8 +56,13 @@ summary.network(object, na.omit=TRUE, mixingmatrices=FALSE, ...)
 \value{
 \code{network}, \code{as.network}, and \code{print.network} all return a network class object; \code{is.network} returns TRUE or FALSE.
 }
-\references{ Butts, C.T.  2002.  ``Memory Structures for Relational Data in R: Classes and Interfaces''  Working Paper. }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+
+}
 \author{ Carter T. Butts \email{buttsc@uci.edu} and David Hunter \email{dhunter@stat.psu.edu} }
+\note{
+Between versions 0.5 and 1.2, direct assignment of a network object created a pointer to the original object, rather than a copy.  As of version 1.2, direct assignment behaves in the same manner as \code{network.copy}.  Direct use of the latter is thus superfluous in most situations, and is discouraged.
+}
 \seealso{\code{\link{network.initialize}}, \code{\link{attribute.methods}}, \code{\link{as.network.matrix}}, \code{\link{as.matrix.network}}, \code{\link{deletion.methods}}, \code{\link{edgeset.constructors}}, \code{\link{network.indicators}}, \code{\link{plot.network}}}
 \examples{
 m <- matrix(rbinom(25,1,.4),5,5)
@@ -63,7 +70,7 @@ diag(m) <- 0
 g <- network(m, directed=FALSE)
 summary(g)
 
-h <- network.copy(g)       #Note: h<-g will not have the same effect!
+h <- network.copy(g)       #Note: same as h<-g
 summary(h)
 }
 \keyword{classes}

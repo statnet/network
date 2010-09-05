@@ -7,14 +7,14 @@
    \code{plot.network} produces a simple two-dimensional plot of network \code{x}, using optional attribute \code{attrname} to set edge values.  A variety of options are available to control vertex placement, display details, color, etc.
 }
 \usage{
-plot.network(x, \dots)
+\method{plot}{network}(x, \dots)
 
-plot.network.default(x, attrname = NULL, 
+\method{plot.network}{default}(x, attrname = NULL, 
     label = network.vertex.names(x), coord = NULL, jitter = TRUE,
     thresh = 0, usearrows = TRUE, mode = "fruchtermanreingold", 
     displayisolates = TRUE, interactive = FALSE, xlab = NULL, 
     ylab = NULL, xlim = NULL, ylim = NULL, pad = 0.2, label.pad = 0.5,
-    displaylabels = FALSE, boxed.labels = TRUE, label.pos = 0,
+    displaylabels = !missing(label), boxed.labels = TRUE, label.pos = 0,
     label.bg = "white", vertex.sides = 8, vertex.rot = 0,
     arrowhead.cex = 1, label.cex = 1, loop.cex = 1, vertex.cex = 1,
     edge.col = 1, label.col = 1, vertex.col = 2, label.border = 1,
@@ -84,7 +84,10 @@ Note that where \code{is.hyper(x)==TRUE}, the network is converted to bipartite 
 \value{
  A two-column matrix containing the vertex positions as x,y coordinates
 }
-\references{ Wasserman, S., and Faust, K.  (1994).  ``Social Network Analysis: Methods and Applications.''  Cambridge: Cambridge University Press. }
+\references{ 
+Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+
+Wasserman, S., and Faust, K.  (1994).  \emph{Social Network Analysis: Methods and Applications.}  Cambridge: Cambridge University Press. }
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 \note{ \code{plot.network} is adapted (with minor modifications) from the \code{\link[sna]{gplot}} function of the \code{sna} library (authors: Carter T. Butts and Alex Montgomery); eventually, these two packages will be integrated. }
 %

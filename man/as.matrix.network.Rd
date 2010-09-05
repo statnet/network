@@ -9,16 +9,17 @@
   The \code{as.matrix} methods attempt to coerce their input to a matrix in adjacency, incidence, or edgelist form.  Edge values (from a stored attribute) may be used if present.
 }
 \usage{
-as.matrix.network(x, matrix.type = NULL, attrname = NULL)
-as.matrix.network.adjacency(x,attrname=NULL)
-as.matrix.network.edgelist(x,attrname=NULL)
-as.matrix.network.incidence(x,attrname=NULL)
+\method{as.matrix}{network}(x, matrix.type = NULL, attrname = NULL, ...)
+\method{as.matrix.network}{adjacency}(x,attrname=NULL, ...)
+\method{as.matrix.network}{edgelist}(x,attrname=NULL, ...)
+\method{as.matrix.network}{incidence}(x,attrname=NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an object of class \code{network} }
   \item{matrix.type}{ one of \code{"adjacency"}, \code{"incidence"}, \code{"edgelist"}, or \code{NULL} }
   \item{attrname}{ optionally, the name of an edge attribute to use for edge values }
+  \item{...}{ additional arguments. }
 }
 \details{
   If no matrix type is specified, \code{\link{which.matrix.type}} will be used to make an educated guess based on the shape of \code{x}.  Where edge values are not specified, a dichotomous matrix will be assumed.
@@ -28,7 +29,8 @@ as.matrix.network.incidence(x,attrname=NULL)
 \value{
 An adjacency, incidence, or edgelist matrix
 }
-\references{ Butts, C.T.  2002.  ``Memory Structures for Relational Data in R: Classes and Interfaces''  Working Paper. }
+\references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
+}
 \author{ Carter T. Butts \email{buttsc@uci.edu} and David Hunter \email{dhunter@stat.psu.edu} }
 %\note{ ~~further notes~~ }
 %

@@ -6,8 +6,7 @@
 \usage{
  data(flo)
 }
-\source{Padgett, John F. 1994. Marriage and Elite Structure
-in Renaissance Florence, 1282-1500. Paper delivered to the
+\source{Padgett, John F.  (1994). \dQuote{Marriage and Elite Structure in Renaissance Florence, 1282-1500.} Paper delivered to the
 Social Science History Association.}
 \references{
 Wasserman, S. and Faust, K. (1994) \emph{Social Network Analysis: Methods and

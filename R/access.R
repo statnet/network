@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 10/19/06
+# Last Modified 03/25/08
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -42,8 +42,10 @@
 #   list.vertex.attributes
 #   network.dyadcount
 #   network.edgecount
+#   network.naedgecount
 #   network.size
 #   network.vertex.names
+#   network.vertex.names<-
 #   permute.vertexIDs
 #   set.edge.attribute
 #   set.edge.value
@@ -94,57 +96,6 @@ add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
   invisible(.Call("addEdges_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network"))
 }
 
-toggle.dyads<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("toggle.dyads requires an argument of class network.")
-  #Ensure that the inputs are set up appropriately 
-  if(!is.list(tail))
-    tail<-as.list(tail)
-  if(!is.list(head))
-    head<-as.list(rep(head,length=length(tail)))
-  if(is.null(names.eval))
-    names.eval<-replicate(length(tail),NULL)
-  else if(!is.list(names.eval))
-    names.eval<-as.list(rep(names.eval,length=length(tail)))
-  if(is.null(vals.eval))
-    vals.eval<-replicate(length(tail),NULL)
-  else if(!is.list(vals.eval))
-    vals.eval<-as.list(rep(vals.eval,length=length(names.eval)))
-  if(length(unique(c(length(tail),length(head),length(names.eval), length(vals.eval))))>1)
-    stop("head, tail, and value lists passed to toggle.dyads must be of the same length!\n")
-  edge.check<-list(...)$edge.check
-  if(is.null(edge.check))
-    edge.check<-FALSE
-  #Pass the inputs to the C side
-  invisible(.Call("toggleDyads_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network"))
-}
-
-accumulate.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("accumulate.edges requires an argument of class network.")
-  #Ensure that the inputs are set up appropriately 
-  if(!is.list(tail))
-    tail<-as.list(tail)
-  if(!is.list(head))
-    head<-as.list(rep(head,length=length(tail)))
-  if(is.null(names.eval))
-    names.eval<-replicate(length(tail),NULL)
-  else if(!is.list(names.eval))
-    names.eval<-as.list(rep(names.eval,length=length(tail)))
-  if(is.null(vals.eval))
-    vals.eval<-replicate(length(tail),NULL)
-  else if(!is.list(vals.eval))
-    vals.eval<-as.list(rep(vals.eval,length=length(names.eval)))
-  if(length(unique(c(length(tail),length(head),length(names.eval), length(vals.eval))))>1)
-    stop("head, tail, and value lists passed to accumulate.edges must be of the same length!\n")
-  edge.check<-list(...)$edge.check
-  if(is.null(edge.check))
-    edge.check<-FALSE
-  #Pass the inputs to the C side
-  invisible(.Call("accumulateEdges_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network"))
-}
 
 # Add nv vertices to network x.  Vertex attributes (in addition to those which
 # are required) are to be provided in vattr; vattr must be a list containing
@@ -378,7 +329,7 @@ has.loops<-function(x){
 # Return TRUE iff (vi,vj) in network x.  Where na.omit==TRUE, edges flagged
 # as missing are ignored.
 #
-is.adjacent<-function(x,vi,vj,na.omit=TRUE){
+is.adjacent<-function(x,vi,vj,na.omit=FALSE){
   if(!is.network(x))
     stop("is.adjacent requires an argument of class network.\n")
   if(length(vi)!=length(vj)){
@@ -435,6 +386,18 @@ is.multiplex<-function(x){
 }
 
 
+# Return a network whose edges are the missing edges of x
+#
+is.na.network<-function(x){
+  #Create an empty network with the same properties as x
+  y<-network.initialize(network.size(x),directed=is.directed(x), hyper=is.hyper(x),loops=has.loops(x),multiple=is.multiplex(x), bipartite=x%n%"bipartite")
+  #Add the missing edges of x to y
+  .Call("isNANetwork_R",x,y,PACKAGE="network")
+  #Return the updated network 
+  y
+}
+
+
 # Return TRUE iff x is a network.
 #
 is.network<-function(x){
@@ -473,7 +436,7 @@ list.vertex.attributes<-function(x){
   if(!is.network(x))
     stop("list.network.attributes requires an argument of class network.\n")
   #Accumulate names
-  allnam<-sapply(x$val,names)
+  allnam<-unlist(sapply(x$val,names))
   #Return the sorted, unique attribute names
   sort(unique(as.vector(allnam)))
 }
@@ -525,6 +488,17 @@ network.edgecount<-function(x,na.omit=TRUE){
 }
 
 
+#Retrieve the number of missing edges in network x
+#
+network.naedgecount<-function(x){
+  na<-get.edge.attribute(x$mel,"na")
+  if(is.null(na))
+    0
+  else
+    sum(na)
+}
+
+
 # Retrieve the size (i.e., number of vertices) of network x.
 #
 network.size<-function(x){
@@ -551,6 +525,13 @@ network.vertex.names<-function(x){
 }
 
 
+# Set the vertex names of network x
+#
+"network.vertex.names<-"<-function(x,value){
+  set.vertex.attribute(x,attrname="vertex.names",value=value)
+}
+
+
 # Permute the internal IDs (ordering) of the vertex set
 permute.vertexIDs<-function(x,vids){
   #First, check to see that this is a graph object
@@ -563,7 +544,7 @@ permute.vertexIDs<-function(x,vids){
   if(is.bipartite(x)){  #If bipartite, enforce partitioning
     bpc<-get.network.attribute(x,"bipartite")
     if(any(vids[1:bpc]>bpc)||(vids[(bpc+1):n]<=bpc))
-      warn("Performing a cross-mode permutation in permute.vertexIDs.  I hope you know what you're doing....")
+      warning("Performing a cross-mode permutation in permute.vertexIDs.  I hope you know what you're doing....")
   }
   #Return the permuted graph
   invisible(.Call("permuteVertexIDs_R",x,vids, PACKAGE="network"))

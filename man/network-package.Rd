@@ -16,11 +16,11 @@ Basic information on the creation of \code{network} objects can be found by typi
 
 \tabular{ll}{
 Package: \tab network\cr
-Version: \tab 1.1\cr
-Date: \tab August 25, 2006\cr
-Depends: \tab R (>= 2.0.0)\cr
+Version: \tab 1.4\cr
+Date: \tab July 26, 2008\cr
+Depends: \tab R (>= 2.0.0), utils\cr
 Suggests: \tab sna\cr
-License: \tab GPL version 2 (June, 1991)\cr
+License: \tab GPL version 2 (June, 1991) or later\cr
 }
 
 Index:
@@ -44,7 +44,8 @@ is.adjacent             Determine Whether Two Vertices Are Adjacent
 network                 Networks
 network.arrow           Add Arrows or Segments to a Plot
 network.density         Compute the Density of a Network
-network.dyadcount       Return the Number of Edges in a Network Object
+network.dyadcount       Return the Number of (Possibly Directed) Dyads
+                        in a Network Object
 network.edgecount       Return the Number of Edges in a Network Object
 network.extraction      Extraction and Replacement Operators for
                         Network Objects
@@ -52,14 +53,19 @@ network.indicators      Indicator Functions for Network Properties
 network.initialize      Initialize a Network Class Object
 network.layout          Vertex Layout Functions for plot.network
 network.loop            Add Loops to a Plot
+network.naedgecount     Identifying and Counting Missing Edges in a
+                        Network Object
 network.operators       Network Operators
+network-package         Classes for Relational Data
 network.size            Return the Size of a Network
 network.vertex          Add Vertices to a Plot
 permute.vertexIDs       Permute (Relabel) the Vertices Within a Network
 plot.network.default    Two-Dimensional Visualization for Network
                         Objects
+prod.network            Combine Networks by Edge Value Multiplication
 read.paj                Read a Pajek Project or Network File and
                         Convert to an R 'Network' Object
+sum.network             Combine Networks by Edge Value Addition
 which.matrix.type       Heuristic Determination of Matrix Types for
                         Network Storage
 }

@@ -57,9 +57,11 @@ network.layout.kamadakawai(d, layout.par)
 A matrix whose rows contain the x,y coordinates of the vertices of \code{d}.
 }
 \references{
-Fruchterman, T.M.J. and Reingold, E.M.  (1991).  ``Graph Drawing by Force-directed Placement.'' \emph{Software - Practice and Experience,} 21(11):1129-1164.
+Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 
-Kamada, T. and Kawai, S.  (1989).  ``An Algorithm for Drawing General Undirected Graphs.'' \emph{Information Processing Letters,} 31(1):7-15.
+Fruchterman, T.M.J. and Reingold, E.M.  (1991).  \dQuote{Graph Drawing by Force-directed Placement.} \emph{Software - Practice and Experience,} 21(11):1129-1164.
+
+Kamada, T. and Kawai, S.  (1989). \dQuote{An Algorithm for Drawing General Undirected Graphs.} \emph{Information Processing Letters,} 31(1):7-15.
   }
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 \note{ The \code{network.layout} routines shown here are adapted directly from the \code{\link[sna]{gplot.layout}} routines of the \code{sna} package. }

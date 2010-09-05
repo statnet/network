@@ -1,0 +1,48 @@
+Network API README-----------------------------------------------------------
+
+Last Changed 7/23/08
+
+The C-level network API allows backend access to many of the network package
+tools and features -- these allow for direct access and modification of 
+network objects using the .Call interface.  Currently, documentation of these
+routines is approximately non-existent (sorry :-(), but here are some pointers
+for the adventurous:
+
+1. To add the API to your program, include the files networkapi.h and
+networkapi.c at compile time.  These contain the definitions and namespace
+information needed to use the network routines.  (Note that you shouldn't
+need for the network package to be installed at compile time.)
+
+2. To activate the API routines you must call the C function
+netRegisterFunctions() at run-time.  It needs to be called only once at the C
+entry point, but repeated calls should be harmless.  (Note that it must be
+called at each entry point, since the function pointers it allocates vanish
+when the C routine exists.)
+
+3. Obviously, the network library must be loaded prior to invoking 
+netRegisterFunctions(); be sure to include network in your depends statement
+(for libraries) or use require(network) in a single-procedure context.
+
+4. While the C functions closely resemble their R counterparts, they are
+generally quite unforgiving: by tinkering directly with network objects, you
+have the chance to really screw things up.  On the other hand, this mode of
+access is usually much faster than the R-mediated approach (since the C
+routines waste less time checking/coercing your inputs).  If you're meddling
+with the backend, I assume that you know what you're doing.
+
+5. Although the API is not guaranteed to be stable, I do make every effort to
+avoid changing the interfaces.  In practice, they should be fairly stable (and
+become more so over time).
+
+6. Some introductory discussion of the API and its use can be found in 
+
+  Butts, Carter T.  (2008).  "network: a Package for Managing Relational Data 
+    in R."  Journal of Statistical Software, 24(2).
+
+  This article is a good source for insight into the package generally.
+
+Enjoy!
+
+-Carter
+
+------------------------------------------------------------------------------

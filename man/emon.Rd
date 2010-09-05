@@ -40,7 +40,7 @@ Drabek et al. (1981) provide seven case studies of emergent multi-organizational
 
 }
 \details{
-All networks collected by Drabek et al. reflect reported frequency of organizational interaction during the search and rescue effort; the (i,j) edge constitutes i's report regarding interaction with j, with non-adjacent vertices reporting no contact.  Frequency is rated on a four-point scale, with 1 indicating the highest frequency of interaction.  This is stored within the \code{"Frequency"} edge attribute.
+All networks collected by Drabek et al. reflect reported frequency of organizational interaction during the search and rescue effort; the (i,j) edge constitutes i's report regarding interaction with j, with non-adjacent vertices reporting no contact.  Frequency is rated on a four-point scale, with 1 indicating the highest frequency of interaction.  (Response options: 1=\dQuote{continuously}, 2=\dQuote{about once an hour}, 3=\dQuote{every few hours}, 4=\dQuote{about once a day or less})  This is stored within the \code{"Frequency"} edge attribute.
 
 For each network, several covariates are recorded as vertex attributes:
 
