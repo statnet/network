@@ -766,7 +766,7 @@ networkOperatorSetup<-function(x,y=NULL){
         my<-FALSE
         hy<-FALSE
         ly<-FALSE
-        by<-NROW(ey)
+        by<-NROW(y)
       }else{
         ny<-NROW(y)
         dy<-TRUE

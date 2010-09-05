@@ -26,7 +26,7 @@ is.color(x)
 is.discrete(x)
 is.discrete.character(x)
 is.discrete.numeric(x)
-networkOperatorSetup(x,y=NULL){
+networkOperatorSetup(x,y=NULL)
 }
 \details{
   Most of these are not to be called by the user.

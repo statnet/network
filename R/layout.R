@@ -25,14 +25,15 @@
 
 
 #Place vertices in a circular layout (for plot.network)
-network.layout.circle<-function(d,layout.par){ 
-  n<-dim(d)[1]
+network.layout.circle<-function(nw,layout.par){ 
+  n<-network.size(nw)
   cbind(sin(2*pi*((0:(n-1))/n)),cos(2*pi*((0:(n-1))/n)))
 }
 
 
 #Fruchterman-Reingold layout routine for plot.network
-network.layout.fruchtermanreingold<-function(d,layout.par){
+network.layout.fruchtermanreingold<-function(nw,layout.par){
+  d<- as.sociomatrix(nw)
   #Provide default settings
   n<-dim(d)[1]
   if(is.null(layout.par$niter))
@@ -73,7 +74,8 @@ network.layout.fruchtermanreingold<-function(d,layout.par){
 
 
 #Kamada-Kawai layout function for plot.network
-network.layout.kamadakawai<-function(d,layout.par){
+network.layout.kamadakawai<-function(nw,layout.par){
+  d<- as.sociomatrix(nw)
   n<-NROW(d)
   if(is.null(layout.par$niter)){
     niter<-1000

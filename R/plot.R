@@ -303,7 +303,7 @@ layout.par=NULL,
      layout.fun<-try(match.fun(paste("network.layout.",mode,sep="")), silent=TRUE)
      if(class(layout.fun)=="try-error")
        stop("Error in plot.network.default: no layout function for mode ",mode)
-     temp<-layout.fun(d,layout.par)
+     temp<-layout.fun(network(d,directed=is.directed(x)),layout.par)
      cx<-temp[,1]
      cy<-temp[,2]
    }
