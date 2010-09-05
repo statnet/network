@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 7/26/08
+# Last Modified 09/04/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -27,7 +27,7 @@
 # Printing for network class objects.
 #
 print.network<-function(x, matrix.type=which.matrix.type(x), 
-                      mixingmatrices=FALSE, na.omit=TRUE, ...)
+                      mixingmatrices=FALSE, na.omit=TRUE, print.adj=FALSE, ...)
 {
     cat(" Network attributes:\n")
     for(i in 1:length(x$gal)){
@@ -85,11 +85,18 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
       cat("\n","Vertex attribute names:","\n")
       cat("   ",vna,"\n")
     }
-    cat("\n",matrix.type,"matrix:\n")    
-    if(network.edgecount(x)>0)
-      print(as.matrix.network(x,matrix.type=matrix.type))
-    else
-      cat("Empty Graph\n")
+    #Print the adjacency structure, if desired
+    if(print.adj){
+      if(is.multiplex(x)&&(matrix.type=="adjacency"))
+        matrix.type<-"edgelist"
+      if(is.hyper(x))
+        matrix.type<-"incidence"
+      cat("\n",matrix.type,"matrix:\n")    
+      if(network.edgecount(x)>0)
+        print(as.matrix.network(x,matrix.type=matrix.type))
+      else
+        cat("Empty Graph\n")
+    }
     invisible(x)
 }
 
@@ -116,6 +123,7 @@ print.summary.network<-function(x, ...){
     #Pull any extra goodies from summary.network (stored in gal)
     na.omit<-x%n%"summary.na.omit"
     mixingmatrices<-x%n%"summary.mixingmatrices"
+    print.adj<-x%n%"summary.print.adj"
     #Print the network-level attributes
     class(x)<-"network"
     cat("Network attributes:\n")
@@ -272,12 +280,18 @@ print.summary.network<-function(x, ...){
     }
     
     #Print the adjacency structure
-    matrix.type=which.matrix.type(x)
-    cat("\nNetwork ",matrix.type," matrix:\n",sep="")    
-    if(network.edgecount(x)>0)
-      print(as.matrix.network(x,matrix.type=matrix.type))
-    else
-      cat("Empty Graph\n")
+    if(print.adj){
+      matrix.type=which.matrix.type(x)
+      if(is.multiplex(x)&&(matrix.type=="adjacency"))
+        matrix.type<-"edgelist"
+      if(is.hyper(x))
+        matrix.type<-"incidence"
+      cat("\nNetwork ",matrix.type," matrix:\n",sep="")    
+      if(network.edgecount(x)>0)
+        print(as.matrix.network(x,matrix.type=matrix.type))
+      else
+        cat("Empty Graph\n")
+    }
     invisible(x)
 }
 
@@ -291,10 +305,11 @@ summary.character <- function(object, ...){
 
 # Summaries of network objects
 #
-summary.network<-function(object, na.omit=TRUE, mixingmatrices=FALSE, ...){
+summary.network<-function(object, na.omit=TRUE, mixingmatrices=FALSE, print.adj=TRUE, ...){
   #Add printing parameters as network objects, and change the class
   object%n%"summary.na.omit"<-na.omit
   object%n%"summary.mixingmatrices"<-mixingmatrices
+  object%n%"summary.print.adj"<-print.adj
   class(object)<-"summary.network"
   #Return the object
   object

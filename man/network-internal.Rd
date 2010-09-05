@@ -15,6 +15,7 @@
 \alias{*.default}
 \alias{summary.character}
 \alias{print.summary.character}
+\alias{networkOperatorSetup}
 
 \description{
   Internal network functions.
@@ -25,12 +26,14 @@ is.color(x)
 is.discrete(x)
 is.discrete.character(x)
 is.discrete.numeric(x)
+networkOperatorSetup(x,y=NULL){
 }
 \details{
   Most of these are not to be called by the user.
 }
 \arguments{
- \item{x}{an object, to be designated either discrete or continuous.}
+ \item{x}{an object to be designated either discrete or continuous, or a network.}
+ \item{y}{a network or something coercible to one.}
 %\item{\dots}{further arguments passed to or used by methods.}
 }
 \seealso{network}

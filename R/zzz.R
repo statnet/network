@@ -6,16 +6,16 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 3/27/08
+# Last Modified 09/04/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
 #
-# .First.lib is run when the package is loaded with library(network)
+# .onLoad is run when the package is loaded with library(network)
 #
 ######################################################################
 
-.First.lib <- function(lib, pkg){
+.onLoad <- function(lib, pkg){
     library.dynam("network", pkg, lib)
     if(R.version$major=="1"){
      ehelp <- help(package="network")$info[[2]][[2]]

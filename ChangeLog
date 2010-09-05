@@ -1,5 +1,25 @@
 CHANGELOG:
 
+v1.5 Changes/Bug Fixes
+  New Features:
+    - print.network and print.summary.network now support an argument to allow
+      suppression of matrix output (helpful for very large graphs).  [CTB]
+  Changes: 
+    - By very popular demand, network now uses R name spaces.  [Credit to
+      Michal Bojanowski for convincing us to make the leap]
+    - Also by popular demand, print.network no longer displays the network 
+      itself by default.  [CTB]
+    - Elementwise network operators now support multigraphs, and use 
+      basic network attributes in a sane way.  Operator semantics have been
+      substantially expanded for the muligraph case; hypergraphs are not
+      yet supported, but missingness is.  [CTB, submitted by MSH]
+  Bug Fixes:
+    - is.na.network failed when called on networks with deleted edges.  
+      [CTB, submitted by MSH]
+    - print.network and print.summary.network could fail when called on
+      multiplex or hypergraphic networks with the wrong matrix.type settings.
+      [CTB]
+
 v1.4-1 Minor Changes/Bug Fixes
   Changes:
     - print.summary.character now behaves in a more intuitive way (and always
@@ -7,7 +27,7 @@ v1.4-1 Minor Changes/Bug Fixes
     - print.summary.network has been rewritten -- too much confusion about what
       it was supposed to do.  [CTB]
     - The na.omit option to print.summary.network and print.network should now
-      be considered deprecated (it does essentially nothing at this point.
+      be considered deprecated (it does essentially nothing at this point. [CTB]
   Bug Fixes:
     - print.summary.network was giving the same information twice (and other 
       information badly.  [CTB]

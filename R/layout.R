@@ -63,16 +63,10 @@ network.layout.fruchtermanreingold<-function(d,layout.par){
     x<-layout.par$seed.coord[,1]
     y<-layout.par$seed.coord[,2]
   }
-  if(is.null(layout.par$fixed)){
-    fixed <- rep(0,n)
-  }else{
-    fixed <- layout.par$fixed
-  }
   #Symmetrize the network, just in case
   d<-d|t(d)  
   #Perform the layout calculation
-  layout<-.C("network_layout_fruchtermanreingold2_R", as.integer(d), as.double(n), as.integer(niter), as.double(max.delta), as.double(area), as.double(cool.exp), as.double(repulse.rad), x=as.double(x), y=as.double(y), fixed=as.integer(fixed),
-             PACKAGE="network")
+  layout<-.C("network_layout_fruchtermanreingold_R", as.integer(d), as.double(n), as.integer(niter), as.double(max.delta), as.double(area), as.double(cool.exp), as.double(repulse.rad), x=as.double(x), y=as.double(y), PACKAGE="network")
   #Return the result
   cbind(layout$x,layout$y)
 }

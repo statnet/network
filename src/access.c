@@ -4,7 +4,7 @@
 # access.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 07/23/08
+# Last Modified 09/04/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -1212,12 +1212,15 @@ SEXP isNANetwork_R(SEXP x, SEXP y)
   PROTECT(tl=allocVector(VECSXP,length(mel))); pc++;
   
   /*Move through the edges, copying head/tail lists only when missing*/
-  for(i=0;i<length(mel);i++)
-   if(INTEGER(getListElement(getListElement(VECTOR_ELT(mel,i),"atl"),"na"))[0]){
-     SET_VECTOR_ELT(hl,count,duplicate(getListElement(VECTOR_ELT(mel,i), "inl")));
-     SET_VECTOR_ELT(tl,count++,duplicate(getListElement(VECTOR_ELT(mel,i), "outl")));
-   }
-
+  for(i=0;i<length(mel);i++){
+    if(VECTOR_ELT(mel,i)!=R_NilValue){
+      if(INTEGER(getListElement(getListElement(VECTOR_ELT(mel,i),"atl"), "na"))[0]){
+       SET_VECTOR_ELT(hl,count,duplicate(getListElement(VECTOR_ELT(mel,i), "inl")));
+       SET_VECTOR_ELT(tl,count++,duplicate(getListElement(VECTOR_ELT(mel,i), "outl")));
+      }
+    }
+  }
+  
   /*Contract lists, and allocate empty space for namesEval/valsEval*/
   PROTECT(hl=contractList(hl,count)); pc++;  
   PROTECT(tl=contractList(tl,count)); pc++;  

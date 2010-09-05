@@ -19,9 +19,10 @@ network(x, vertex.attr=NULL, vertex.attrnames=NULL, directed=TRUE,
 network.copy(x)
 as.network(x, ...)
 is.network(x)
-\method{print}{network}(x, matrix.type=which.matrix.type(x),
-    mixingmatrices=FALSE, na.omit=TRUE, ...)
-\method{summary}{network}(object, na.omit=TRUE, mixingmatrices=FALSE, ...)
+\method{print}{network}(x, matrix.type = which.matrix.type(x),
+    mixingmatrices = FALSE, na.omit = TRUE, print.adj = FALSE, ...)
+\method{summary}{network}(object, na.omit=TRUE, mixingmatrices=FALSE, 
+    print.adj = TRUE, ...)
 }
 \arguments{
   \item{x}{for \code{network}, a matrix giving the network structure
@@ -38,6 +39,7 @@ is.network(x)
   \item{object}{an object of class \code{network}.}
   \item{na.omit}{logical; omit summarization of missing attributes in \code{network}?}
   \item{mixingmatrices}{logical; print the mixing matrices for the discrete attributes?}
+  \item{print.adj}{logical; print the network adjacency structure?}
   \item{...}{additional arguments.}
 }
 \details{
