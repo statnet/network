@@ -9,7 +9,7 @@
 \alias{print.summary.network}
 \alias{$<-.network}
 \alias{<-.network}
-\title{Networks}
+\title{Network Objects}
 \description{
   Construct, coerce to, test for and print \code{network} objects.
 }

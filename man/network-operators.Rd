@@ -28,33 +28,39 @@
   \item{e2}{ another \code{network}. }
 }
 \details{
-  A more useful \dQuote{usage} statement than the above (but prohibited by R's overzealous documentation restrictions from appearing there) is as follows:
-  
-\preformatted{
-x + y
-x - y
-x * y
-x \%c\% y
+  In general, the binary network operators function by producing a new network object whose edge structure is based on that of the input networks.  The properties of the new structure depend upon the inputs as follows:
+  \itemize{
+  \item The size of the new network is equal to the size of the input networks (for all operators save \code{\%c\%}), which must themselves be of equal size.  Likewise, the \code{bipartite} attributes of the inputs must match, and this is preserved in the output.
+  \item If either input network allows loops, multiplex edges, or hyperedges, the output acquires this property.  (If both input networks do not allow these features, then the features are disallowed in the output network.)
+  \item If either input network is directed, the output is directed; if exactly one input network is directed, the undirected input is treated as if it were a directed network in which all edges are reciprocated.
+  \item Supplemental attributes (including vertex names, but not edgwise missingness) are not transferred to the output.
+  }
+  The unary operator acts per the above, but with a single input.  Thus, the output network has the same properties as the input, with the exception of supplemental attributes.
 
-!x
-x | y
-x & y
-}
+  The behavior of the composition operator, \code{\%c\%}, is somewhat more complex than the others.  In particular, it will return a bipartite network whenever either input network is bipartite \emph{or} the vertex names of the two input networks do not match (or are missing).  If both inputs are non-bipartite and have identical vertex names, the return value will have the same structure (but with loops).  This behavior corresponds to the interpretation of the composition operator as counting walks on labeled sets of vertices.
 
-  In general, the binary network operators currently function by converting their arguments to adjacency matrices, carrying out the specified operation on those matrices, and then returning the result in network form.  This is rather inefficient, and results in the loss of other attributes; such poor behavior is not guaranteed to be maintained in future versions of the \code{network} package.
-  
-  Apart from the above, the specific operations carried out by these operators are mostly self-explanatory.  One exception to this is \code{x \%c\% y}, which returns the network formed from the composition of graphs \code{x} and \code{y} (respectively).  (Note that this may contain loops, whether or not the original networks allowed them.)
+  Hypergraphs are not yet supported by these routines, but ultimately will be (as suggested by the above). 
 
-  Slightly different behavior is exhibited by the unary operator, \code{!}, which returns the complement of its argument.  The graph which is returned contains all attributes of the original, save for edge attributes (as none of the original edges are retained).  Note that the complement of a large, sparse graph has \emph{many} edges, with concomitant memory consumption.  When working with such graphs, consider whether some other mechanism (e.g., adjacency checking on the original graph) might prove more efficient.
+  The specific operations carried out by these operators are generally self-explanatory in the non-multiplex case, but semantics in the latter circumstance bear elaboration.  The following summarizes the behavior of each operator:
+  \describe{
+    \item{\code{+}}{An \eqn{(i,j)} edge is created in the return graph for every \eqn{(i,j)} edge in each of the input graphs.}
+    \item{\code{-}}{An \eqn{(i,j)} edge is created in the return graph for every \eqn{(i,j)} edge in the first input that is not matched by an \eqn{(i,j)} edge in the second input; if the second input has more \eqn{(i,j)} edges than the first, no \eqn{(i,j)} edges are created in the return graph.}
+    \item{\code{*}}{An \eqn{(i,j)} edge is created for every pairing of \eqn{(i,j)} edges in the respective input graphs.}
+    \item{\code{\%c\%}}{An \eqn{(i,j)} edge is created in the return graph for every edge pair \eqn{(i,k),(k,j)} with the first edge in the first input and the second edge in the second input.}
+    \item{\code{!}}{An \eqn{(i,j)} edge is created in the return graph for every \eqn{(i,j)} in the input not having an edge.}
+    \item{\code{|}}{An \eqn{(i,j)} edge is created in the return graph if either input contains an \eqn{(i,j)} edge.}
+    \item{\code{&}}{An \eqn{(i,j)} edge is created in the return graph if both inputs contain an \eqn{(i,j)} edge.}
+  }
+  Semantics for missing-edge cases follow from the above, under the interpretation that edges with \code{na==TRUE} are viewed as having an unknown state.  Thus, for instance, \code{x*y} with \code{x} having 2 \eqn{(i,j)} non-missing and 1 missing edge and \code{y} having 3 respective non-missing and 2 missing edges will yield an output network with 6 non-missing and 9 missing \eqn{(i,j)} edges.  
 }
 \value{
-   The resulting graph object.
+   The resulting network.
 }
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 
 Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods and Applications.}  Cambridge: University of Cambridge Press. }
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
-\note{ Currently, there is a naming conflict between the composition operator and the \code{\link[sna]{\%c\%}} operator in the \code{\link[sna]{sna}} package.  This will be resolved in future releases; for the time being, one can determine which version of \code{\%c\%} is in use by varying which package is loaded first.}
+\note{ Currently, there is a naming conflict between the composition operator and the \code{\%c\%} operator in the \code{\link[sna]{sna}} package.  This will be resolved in future releases; for the time being, one can determine which version of \code{\%c\%} is in use by varying which package is loaded first.}
 
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
@@ -76,7 +82,7 @@ gcgt
 
 #Perform various arithmatic and logical operations
 (g+gcgt)[,] == (g|gcgt)[,]             #All TRUE
-(g-gcgt)[,] == ((g|gcgt)&(!(g&gcgt)))[,]
+(g-gcgt)[,] == (g&(!(gcgt)))[,]
 (g*gcgt)[,] == (g&gcgt)[,]
 }
 \keyword{ math }% at least one, from doc/KEYWORDS

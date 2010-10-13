@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 7/23/08
+# Last Modified 9/05/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -229,6 +229,10 @@ network.incidence<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
 # MSH added bipartite
 #
 network.initialize<-function(n,directed=TRUE,hyper=FALSE,loops=FALSE,multiple=FALSE,bipartite=FALSE){
+  #If we don't have at least one vertex, we have a problem...
+  n<-round(n)
+  if(n<=0)
+    stop("Network objects must have at least one vertex.")
   #Create the base-level lists
   g<-list()
   g$mel<-list()

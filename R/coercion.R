@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 07/30/07
+# Last Modified 10/11/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -54,7 +54,7 @@ as.matrix.network<-function(x,matrix.type=NULL,attrname=NULL,...){
 # provided, attrname is used to identify an attribute to use for edge
 # values.
 #
-as.matrix.network.adjacency<-function(x,attrname=NULL,...){
+as.matrix.network.adjacency<-function(x,attrname=NULL,expand.bipartite=FALSE,...){
   #Check to make sure this is a supported network type
   if(is.hyper(x))
     stop("Hypergraphs not currently supported in as.matrix.network.adjacency.  Exiting.\n")
@@ -91,8 +91,8 @@ as.matrix.network.adjacency<-function(x,attrname=NULL,...){
   #Set row/colnames to vertex names
   xnames <- network.vertex.names(x)
   dimnames(m) <- list(xnames, xnames)
-  #If bipartite extract only it
-  if(is.bipartite(x)){
+  #If bipartite and !expand.bipartite, return in two-mode form
+  if(is.bipartite(x)&(!expand.bipartite)){
     nactors <- get.network.attribute(x, "bipartite")
     nevents <- network.size(x) - nactors
     m <- m[1:nactors, nactors+(1:nevents)]
@@ -116,12 +116,15 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,...){
   #Add edge values, if needed
   if(!is.null(attrname))
     m<-cbind(m,unlist(get.edge.attribute(x$mel,attrname)))
-  #Return the result
+  #Set additional attributes and return the result
   m<-m[!nal,,drop=FALSE]
   if(length(m)==0)
-    matrix(numeric(0),ncol=2)
-  else
-    m
+    m<-matrix(numeric(0),ncol=2)
+  attr(m,"n")<-network.size(x)
+  attr(m,"vnames")<-network.vertex.names(x)
+  if(is.bipartite(x))
+    attr(m,"bipartite")<-x%n%"bipartite"
+  m
 }
 
 
@@ -175,6 +178,12 @@ as.network.matrix<-function(x, matrix.type=NULL,
         directed=TRUE, hyper=FALSE, loops=FALSE, multiple=FALSE,
         bipartite=FALSE,
         ignore.eval=TRUE, names.eval=NULL, na.rm=FALSE, edge.check=FALSE, ...){
+  #Before doing anything else, pull any attributes from the matrix that we
+  #might need....
+  nattr<-attr(x,"n")             #Currently, only using sna edgelist attributes
+  battr<-attr(x,"bipartite")
+  vattr<-attr(x,"vnames")
+  #Convert logicals to numeric form
   if(is.logical(x)){x <- 1*x}
   #Get the matrix type
   if(is.null(matrix.type))
@@ -214,6 +223,8 @@ as.network.matrix<-function(x, matrix.type=NULL,
      unames[(dim(x)[1])+(1:(dim(x)[2]))] <- colnames(x)
    }
   }
+  if(!is.null(vattr))                        #If given names, use 'em
+    unames<-vattr
   #Initialize the network object
   n<-switch(matrix.type,	#Extract n based on matrix type
     adjacency=dim(x)[1],
@@ -221,6 +232,10 @@ as.network.matrix<-function(x, matrix.type=NULL,
     bipartite=sum(dim(x)),
     edgelist=max(x[,1:2]),
   )
+  if(is.numeric(nattr))                      #If given n, use it
+    n<-nattr
+  if(is.numeric(battr))                      #If given bipartite info, use it
+    bipartite<-battr
   g<-network.initialize(n,directed=directed, hyper=hyper, loops=loops, multiple=multiple,bipartite=bipartite)
   #Call the specific coercion routine, depending on matrix type
   g<-switch(matrix.type,
@@ -245,13 +260,13 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #Force the input into sociomatrix form.  This is a shortcut to 
 #as.matrix.network.adjacency, which ensures that a raw matrix is
 #passed through as-is.
-as.sociomatrix<-function(x, attrname=NULL, simplify=TRUE,...){
+as.sociomatrix<-function(x, attrname=NULL, simplify=TRUE, expand.bipartite=FALSE, ...){
   if(is.network(x)){ #If network, coerce to adjacency matrix
-    g<-as.matrix.network.adjacency(x,attrname=attrname,...)
+    g<-as.matrix.network.adjacency(x,attrname=attrname, expand.bipartite=expand.bipartite,...)
   }else if(is.matrix(x)||is.array(x)){ #If an array/matrix, use as-is
     g<-x
   }else if(is.list(x)){  #If a list, recurse on list elements
-    g<-lapply(x,as.sociomatrix,attrname=attrname,simplify=simplify)
+    g<-lapply(x,as.sociomatrix,attrname=attrname,simplify=simplify, expand.bipartite=expand.bipartite,...)
   }else{
     stop("as.sociomatrix input must be an adjacency matrix/array, network, or list.")
   }

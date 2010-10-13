@@ -4,7 +4,7 @@
 # access.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 09/04/10
+# Last Modified 09/05/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -521,7 +521,7 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
   
   /*No matter what, ensure that all vertex references are legal; otherwise,*/
   /*addEdge_R will segfault on an illegal head/tail specification.*/
-  if((vecMin(inl)<1.0)||(vecMin(outl)<1.0)|| (vecMax(inl)>(double)networkSize(x)) ||(vecMax(outl)>(double)networkSize(x)))
+  if(vecAnyNA(inl)||vecAnyNA(outl)||(vecMin(inl)<1.0)||(vecMin(outl)<1.0)|| (vecMax(inl)>(double)networkSize(x)) ||(vecMax(outl)>(double)networkSize(x)))
     error("(edge check) Illegal vertex reference in addEdge_R.  Exiting.");
   
   /*If necessary, verify that new edge satisfies existing graph requirements*/
@@ -696,7 +696,7 @@ SEXP addEdges_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEX
   
     /*No matter what, ensure that all vertex references are legal; otherwise,*/
     /*addEdges_R will segfault on an illegal head/tail specification.*/
-    if((vecMin(inl)<1.0)||(vecMin(outl)<1.0)|| (vecMax(inl)>(double)networkSize(x)) ||(vecMax(outl)>(double)networkSize(x)))
+    if(vecAnyNA(inl)||vecAnyNA(outl)||(vecMin(inl)<1.0)||(vecMin(outl)<1.0)|| (vecMax(inl)>(double)networkSize(x)) ||(vecMax(outl)>(double)networkSize(x)))
       error("(edge check) Illegal vertex reference in addEdges_R.  Exiting.");
   
     /*If necessary, verify that new edge satisfies existing graph requirements*/

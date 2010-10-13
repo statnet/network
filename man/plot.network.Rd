@@ -14,8 +14,8 @@
     thresh = 0, usearrows = TRUE, mode = "fruchtermanreingold", 
     displayisolates = TRUE, interactive = FALSE, xlab = NULL, 
     ylab = NULL, xlim = NULL, ylim = NULL, pad = 0.2, label.pad = 0.5,
-    displaylabels = !missing(label), boxed.labels = TRUE, label.pos = 0,
-    label.bg = "white", vertex.sides = 8, vertex.rot = 0,
+    displaylabels = !missing(label), boxed.labels = FALSE, label.pos = 0,
+    label.bg = "white", vertex.sides = 50, vertex.rot = 0,
     arrowhead.cex = 1, label.cex = 1, loop.cex = 1, vertex.cex = 1,
     edge.col = 1, label.col = 1, vertex.col = 2, label.border = 1,
     vertex.border = 1, edge.lty = 1, label.lty = NULL, vertex.lty = 1,
@@ -30,7 +30,7 @@
   \item{x}{ an object of class \code{network}. }
   \item{attrname}{ an optional edge attribute, to be used to set edge values. }
   \item{label}{ a vector of vertex labels, if desired; defaults to the vertex labels returned by \code{\link{network.vertex.names}}. }
-  \item{coord}{ user-specified vertex coordinates, in an NCOL(dat)x2 matrix.  Where this is specified, it will override the \code{mode} setting. }
+  \item{coord}{ user-specified vertex coordinates, in an network.size(x)x2 matrix.  Where this is specified, it will override the \code{mode} setting. }
   \item{jitter}{ boolean; should the output be jittered? }
   \item{thresh}{ real number indicating the lower threshold for tie values.  Only ties of value >\code{thresh} are displayed.  By default, \code{thresh}=0.}
   \item{usearrows}{ boolean; should arrows (rather than line segments) be used to indicate edges? }

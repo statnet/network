@@ -4,7 +4,7 @@
 # utils.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 4/12/06
+# Last Modified 9/05/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -381,6 +381,46 @@ SEXP permuteList(SEXP list, SEXP ord)
 
 
 /*VECTOR COMPARISON ROUTINES------------------------------------------------*/
+
+int vecAnyNA(SEXP a)
+/*Check to see if the vector in question contains any missing values.  A NULL (zero-length) vector returns 0, as does a positive length vector of type VECSXP with no NULL entries.*/
+{
+  int i,type;
+  
+  if(a==R_NilValue)       /*If the vector is zero-length, return 0.*/
+    return 0;
+  if(length(a)==0)
+    return 0;
+  type=TYPEOF(a);         /*Proceed by type*/
+  switch(type){
+    case REALSXP:
+      for(i=0;i<length(a);i++)
+        if(REAL(a)[i]==NA_REAL)
+          return 1;
+      break;
+    case INTSXP:
+    case LGLSXP:
+      for(i=0;i<length(a);i++)
+        if(INTEGER(a)[i]==NA_INTEGER)
+          return 1;
+      break;
+    case VECSXP:
+      for(i=0;i<length(a);i++)
+        if(VECTOR_ELT(a,i)==R_NilValue)
+          return 1;
+      break;
+    case STRSXP:
+      for(i=0;i<length(a);i++)
+        if(STRING_ELT(a,i)==NA_STRING)
+          return 1;
+      break;
+    default:
+      UNIMPLEMENTED_TYPE("vecAnyNA",type);
+  }
+  
+  /*If we made it this far, all is copacetic.*/
+  return 0;
+}
 
 
 int vecEq(SEXP a, SEXP b)

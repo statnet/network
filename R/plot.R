@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 7/23/08
+# Last Modified 09/06/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -218,10 +218,10 @@ ylim=NULL,
 pad=0.2,
 label.pad=0.5,
 displaylabels=!missing(label),
-boxed.labels=TRUE,
+boxed.labels=FALSE,
 label.pos=0,
 label.bg="white",
-vertex.sides=8,
+vertex.sides=50,
 vertex.rot=0,
 arrowhead.cex=1,
 label.cex=1,
@@ -258,52 +258,82 @@ layout.par=NULL,
    "%iin%"<-function(x,int) (x>=int[1])&(x<=int[2])
    #Extract the network to be displayed
    if(is.hyper(x)){    #Is this a hypergraph?  If so, use two-mode form.
-     d<-as.matrix.network(x,matrix.type="incidence",attrname=attrname)
-     n<-sum(dim(d))
-     temp<-matrix(0,nrow=n,ncol=n)
-     if(is.directed(x)){  #If directed, depict as such.
-       temp[1:dim(d)[1],(dim(d)[1]+1):n]<-abs(pmin(d,0))     #Tail set
-       temp[(dim(d)[1]+1):n,1:dim(d)[1]]<-t(abs(pmax(d,0)))  #Head set
-       d<-temp
-     }else{
-       temp[1:dim(d)[1],(dim(d)[1]+1):n]<-d
-       temp[lower.tri(temp)]<-t(temp)[lower.tri(temp)]
-       d<-temp
-       usearrows<-FALSE   #Don't use labels for undirected graphs
+     #Create a new graph to store the two-mode structure
+     xh<-network.initialize(network.size(x)+sum(!sapply(x$mel, is.null)), 
+       directed=is.directed(x))
+     #Port attributes, in case we need them
+     for(i in list.vertex.attributes(x)){
+       set.vertex.attribute(xh,attrname=i,
+       value=get.vertex.attribute(x,attrname=i,null.na=FALSE,unlist=FALSE),
+       v=1:network.size(x))
      }
+     for(i in list.network.attributes(x)){
+       if(!(i%in%c("bipartite","directed","hyper","loops","mnext","multiple",
+          "n")))
+         set.network.attribute(xh,attrname=i,
+           value=get.network.attribute(x,attrname=i,unlist=FALSE))
+     }
+     #Now, import the edges
+     cnt<-1
+     for(i in 1:length(x$mel)){  #Not a safe way to do this, long-term
+       if(!is.null(x$mel[[i]])){
+         for(j in x$mel[[i]]$outl){
+           if(!is.adjacent(xh,j,network.size(x)+cnt))
+             add.edge(xh,j,network.size(x)+cnt,names.eval=names(x$mel[[i]]$atl),
+               vals.eval=x$mel[[i]]$atl)
+         }
+         for(j in x$mel[[i]]$inl){
+           if(!is.adjacent(xh,network.size(x)+cnt,j)){
+             add.edge(xh,network.size(x)+cnt,j,names.eval=names(x$mel[[i]]$atl),
+               vals.eval=x$mel[[i]]$atl)
+           }
+         }
+         cnt<-cnt+1                    #Increment the edge counter
+       }
+     }
+     cnt<-cnt-1
      if(length(label)==network.size(x))  #Fix labels, if needed
-       label<-c(label,paste("e",1:(n-network.size(x)),sep=""))
+       label<-c(label,paste("e",1:cnt,sep=""))
+     xh%v%"vertex.names"<-c(x%v%"vertex.names",paste("e",1:cnt,sep=""))
+     x<-xh
+     n<-network.size(x)
+     d<-as.matrix.network(x,matrix.type="edgelist",attrname=attrname)
+     if(!is.directed(x))
+       usearrows<-FALSE
    }else if(is.bipartite(x)){
      n<-network.size(x)
-     temp<-as.matrix.network(x,matrix.type="adjacency",attrname=attrname)
-     d<-matrix(0,n,n)
-     d[1:NROW(temp),(NROW(temp)+1):NCOL(d)]<-temp
-     d[(NROW(temp)+1):NCOL(d),1:NROW(temp)]<-t(temp)
-     colnames(d)<-c(rownames(temp),colnames(temp))
-     rownames(d)<-c(rownames(temp),colnames(temp))
+     d<-as.matrix.network(x,matrix.type="edgelist",attrname=attrname)
      usearrows<-FALSE
    }else{
      n<-network.size(x)
-     d<-as.matrix.network(x,matrix.type="adjacency",attrname=attrname)
+     d<-as.matrix.network(x,matrix.type="edgelist",attrname=attrname)
      if(!is.directed(x))
        usearrows<-FALSE
+   }
+   #Make sure that edge values are in place, matrix has right shape, etc.
+   if(NCOL(d)==2){
+     if(NROW(d)==0)
+       d<-matrix(nr=0,nc=3)
+     else
+       d<-cbind(d,rep(1,NROW(d)))
    }
    diag<-has.loops(x)         #Check for existence of loops
    #Replace NAs with 0s
    d[is.na(d)]<-0
-   #Save a copy of d, in case values are needed
+   #Determine which edges should be used when plotting
+   edgetouse<-d[,3]>thresh
+   d<-d[edgetouse,,drop=FALSE]
+   #Save original matrix, which we may use below
    d.raw<-d
-   #Dichotomize d
-   d<-matrix(as.numeric(d>thresh),n,n)
    #Determine coordinate placement
    if(!is.null(coord)){      #If the user has specified coords, override all other considerations
-      cx<-coord[,1]
-      cy<-coord[,2]
+     cx<-coord[,1]
+     cy<-coord[,2]
    }else{   #Otherwise, use the specified layout function
      layout.fun<-try(match.fun(paste("network.layout.",mode,sep="")), silent=TRUE)
      if(class(layout.fun)=="try-error")
        stop("Error in plot.network.default: no layout function for mode ",mode)
-     temp<-layout.fun(network(d,directed=is.directed(x)),layout.par)
+     temp<-layout.fun(x,layout.par)
      cx<-temp[,1]
      cy<-temp[,2]
    }
@@ -313,7 +343,7 @@ layout.par=NULL,
       cy<-jitter(cy)
    }
    #Which nodes should we use?
-   use<-displayisolates|(((apply(d,1,sum)+apply(d,2,sum))>0))   
+   use<-displayisolates|(((sapply(x$iel,length)+sapply(x$oel,length))>0))   
    #Deal with axis labels
    if(is.null(xlab))
      xlab=""
@@ -445,77 +475,98 @@ layout.par=NULL,
    e.toff<-vector() #Offset radii for tails
    e.diag<-vector() #Indicator for self-ties
    e.rad<-vector()  #Edge radius (only used for loops)
-   #Obtain the correct edge properties (possibly as attributes)
-   if(is.character(edge.col)&&(length(edge.col)==1)){
-     if(edge.col%in%list.edge.attributes(x)){
-       edge.col <- as.matrix.network.adjacency(x,attrname=edge.col)
+   if(NROW(d)>0){
+     #Edge color
+     if(length(dim(edge.col))==2)   #Coerce edge.col/edge.lty to vector form
+       edge.col<-edge.col[d[,1:2]]
+     else if(is.character(edge.col)&&(length(edge.col)==1)){
+       edge.col<-(x%e%edge.col)[edgetouse]
        if(!all(is.color(edge.col),na.rm=TRUE))
-         edge.col<-matrix(as.color(edge.col),NROW(edge.col),NCOL(edge.col))
+         edge.col<-as.color(edge.col)
+     }else
+       edge.col<-rep(edge.col,length=NROW(d))
+     #Edge line type
+     if(length(dim(edge.lty))==2)
+       edge.lty<-edge.lty[d[,1:2]]
+     else if(is.character(edge.lty)&&(length(edge.lty)==1)){
+       edge.lty<-(x%e%edge.lty)[edgetouse]
+       if(all(is.na(edge.lty)))
+         stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+     }else
+       edge.lty<-rep(edge.lty,length=NROW(d))
+     #Edge line width
+     if(length(dim(edge.lwd))==2){
+       edge.lwd<-edge.lwd[d[,1:2]]
+       e.lwd.as.mult<-FALSE
+     }else if(is.character(edge.lwd)&&(length(edge.lwd)==1)){
+       edge.lwd<-(x%e%edge.lwd)[edgetouse]
+       if(all(is.na(edge.lwd)))
+         stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+       e.lwd.as.mult<-FALSE
+     }else{ 
+       if(length(edge.lwd)==1)
+         e.lwd.as.mult<-TRUE
+       else
+         e.lwd.as.mult<-FALSE
+       edge.lwd<-rep(edge.lwd,length=NROW(d))
      }
-   }
-   if(is.character(edge.lty)&&(length(edge.lty)==1)){
-     temp<-edge.lty
-     edge.lty <- as.matrix.network.adjacency(x,attrname=edge.lty)
-     if(all(is.na(edge.lty)))
-       stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
-   }
-   if(is.character(edge.lwd)&&(length(edge.lwd)==1)){
-     temp<-edge.lwd
-     edge.lwd <- as.matrix.network.adjacency(x,attrname=edge.lwd)
-     if(all(is.na(edge.lwd)))
-       stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
-   }
-   if(is.character(edge.curve)&&(length(edge.curve)==1)){
-     temp<-edge.curve
-     edge.curve <- as.matrix.network.adjacency(x,attrname=edge.curve)
-     if(all(is.na(edge.curve)))
-       stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
-   }
-   #Coerce edge properties to appropriate forms
-   if(!is.array(edge.col))   #Coerce edge.col/lty/lwd/curve to array form
-     edge.col<-array(edge.col,dim=dim(d))
-   if(!is.array(edge.lty))
-     edge.lty<-array(edge.lty,dim=dim(d))
-   if(!is.array(edge.lwd)){
-     if(edge.lwd>0)
-       edge.lwd<-array(edge.lwd*d.raw,dim=dim(d))
-     else
-       edge.lwd<-array(1,dim=dim(d))
-   }
-   if(!is.array(edge.curve)){
-     if(!is.null(edge.curve))  #If it's a scalar, multiply by edge str
-       edge.curve<-array(edge.curve*d.raw,dim=dim(d))
-     else
-       edge.curve<-array(0,dim=dim(d))
-   }
-   dist<-as.matrix(dist(cbind(cx,cy))) #Get the inter-point distances for curves
-   tl<-d.raw*dist   #Get rescaled edge lengths
-   tl.max<-max(tl)  #Get maximum edge length   
-   for(i in (1:n)[use])    #Plot edges for displayed vertices
-     for(j in (1:n)[use])
-       if(d[i,j]){       #Perform for actually existing edges
-         px0<-c(px0,as.real(cx[i]))  #Store endpoint coordinates
-         py0<-c(py0,as.real(cy[i]))
-         px1<-c(px1,as.real(cx[j]))
-         py1<-c(py1,as.real(cy[j]))
-         e.toff<-c(e.toff,vertex.radius[i]) #Store endpoint offsets
-         e.hoff<-c(e.hoff,vertex.radius[j])
-         e.col<-c(e.col,edge.col[i,j])    #Store other edge attributes
-         e.type<-c(e.type,edge.lty[i,j])
-         e.lwd<-c(e.lwd,edge.lwd[i,j])
-         e.diag<-c(e.diag,i==j)  #Is this a loop?
-         e.rad<-c(e.rad,vertex.radius[i]*loop.cex[i])
+     #Edge curve
+     if(!is.null(edge.curve)){
+       if(length(dim(edge.curve))==2){
+         edge.curve<-edge.curve[d[,1:2]]
+         e.curv.as.mult<-FALSE
+       }else{ 
+         if(length(edge.curve)==1)
+           e.curv.as.mult<-TRUE
+         else
+           e.curv.as.mult<-FALSE
+         edge.curve<-rep(edge.curve,length=NROW(d))
+       }
+     }else if(is.character(edge.curve)&&(length(edge.curve)==1)){
+       edge.curve<-(x%e%edge.curve)[edgetouse]
+       if(all(is.na(edge.curve)))
+         stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+       e.curv.as.mult<-FALSE
+     }else
+       edge.curve<-rep(0,length=NROW(d))
+     #Proceed with edge setup
+     dist<-((cx[d[,1]]-cx[d[,2]])^2+(cy[d[,1]]-cy[d[,2]])^2)^0.5  #Get the inter-point distances for curves
+     tl<-d.raw*dist   #Get rescaled edge lengths
+     tl.max<-max(tl)  #Get maximum edge length
+     for(i in 1:NROW(d))
+       if(use[d[i,1]]&&use[d[i,2]]){  #Plot edges for displayed vertices
+         px0<-c(px0,as.real(cx[d[i,1]]))  #Store endpoint coordinates
+         py0<-c(py0,as.real(cy[d[i,1]]))
+         px1<-c(px1,as.real(cx[d[i,2]]))
+         py1<-c(py1,as.real(cy[d[i,2]]))
+         e.toff<-c(e.toff,vertex.radius[d[i,1]]) #Store endpoint offsets
+         e.hoff<-c(e.hoff,vertex.radius[d[i,2]])
+         e.col<-c(e.col,edge.col[i])    #Store other edge attributes
+         e.type<-c(e.type,edge.lty[i])
+         if(edge.lwd[i]>0){
+           if(e.lwd.as.mult)
+             e.lwd<-c(e.lwd,edge.lwd[i]*d.raw[i,3])
+           else
+             e.lwd<-c(e.lwd,edge.lwd[i])
+         }else
+           e.lwd<-c(e.lwd,1)
+         e.diag<-c(e.diag,d[i,1]==d[i,2])  #Is this a loop?
+         e.rad<-c(e.rad,vertex.radius[d[i,1]]*loop.cex[d[i,1]])
          if(uselen){   #Should we base curvature on interpoint distances?
-           if(tl[i,j]>0){ 
-             e.len<-dist[i,j]*tl.max/tl[i,j]
-             e.curv<-c(e.curv,edge.len*sqrt((e.len/2)^2-(dist[i,j]/2)^2))
-           }else{      
+           if(tl[i]>0){ 
+             e.len<-dist[i]*tl.max/tl[i]
+             e.curv<-c(e.curv,edge.len*sqrt((e.len/2)^2-(dist[i]/2)^2))
+           }else{
              e.curv<-c(e.curv,0)   
            }
          }else{        #Otherwise, use prespecified edge.curve
-           e.curv<-c(e.curv,edge.curve[i,j])
+           if(e.curv.as.mult)    #If it's a scalar, multiply by edge str
+             e.curv<-c(e.curv,edge.curve[i]*d.raw[i])
+           else
+             e.curv<-c(e.curv,edge.curve[i])
          }
        }
+     }
    #Plot loops for the diagonals, if diag==TRUE, rotating wrt center of mass
    if(diag&&(length(px0)>0)&&sum(e.diag>0)){  #Are there any loops present?
      network.loop(as.vector(px0)[e.diag],as.vector(py0)[e.diag], length=1.5*baserad*arrowhead.cex,angle=25,width=e.lwd[e.diag]*baserad/10,col=e.col[e.diag],border=e.col[e.diag],lty=e.type[e.diag],offset=e.hoff[e.diag],edge.steps=loop.steps,radius=e.rad[e.diag],arrowhead=usearrows,xctr=mean(cx[use]),yctr=mean(cy[use]))
@@ -536,10 +587,10 @@ layout.par=NULL,
    }
    if(!usecurve&!uselen){   #Straight-line edge case
      if(length(px0)>0)
-       network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col, lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff, arrowhead=usearrows)
+       network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col,lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff,arrowhead=usearrows)
    }else{   #Curved edge case
      if(length(px0)>0){
-       network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col, lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff, arrowhead=usearrows,curve=e.curv,edge.steps=edge.steps)
+       network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col,lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff,arrowhead=usearrows,curve=e.curv,edge.steps=edge.steps)
      }
    }
    #Plot vertices now, if we haven't already done so
@@ -548,14 +599,54 @@ layout.par=NULL,
    #Plot vertex labels, if needed
    if(displaylabels&(!all(label==""))&(!all(use==FALSE))){
      if (label.pos==0){
+       xhat <- yhat <- rhat <- rep(0,n) 
+       #Set up xoff yoff and roff when we get odd vertices
+       xoff <- cx[use]-mean(cx[use])
+       yoff <- cy[use]-mean(cy[use])
+       roff <- sqrt(xoff^2+yoff^2)
+       #Loop through vertices
+       for (i in (1:n)[use]){
+         #Find all in and out ties that aren't loops
+         ij <- unique(c(d[d[,2]==i&d[,1]!=i,1],d[d[,1]==i&d[,2]!=i,2]))
+         ij.n <- length(ij)
+         if (ij.n>0) {
+           #Loop through all ties and add each vector to label direction
+           for (j in ij){
+             dx <- cx[i]-cx[j]
+             dy <- cy[i]-cy[j]
+             dr <- sqrt(dx^2+dy^2)
+             xhat[i] <- xhat[i]+dx/dr
+             yhat[i] <- yhat[i]+dy/dr
+           }
+           #Take the average of all the ties
+           xhat[i] <- xhat[i]/ij.n
+           yhat[i] <- yhat[i]/ij.n
+           rhat[i] <- sqrt(xhat[i]^2+yhat[i]^2)
+           if (rhat[i]!=0) { # normalize direction vector
+             xhat[i] <- xhat[i]/rhat[i]
+             yhat[i] <- yhat[i]/rhat[i]
+           } else { #if no direction, make xhat and yhat away from center
+             xhat[i] <- xoff[i]/roff[i]
+             yhat[i] <- yoff[i]/roff[i]
+           }
+         } else { #if no ties, make xhat and yhat away from center
+           xhat[i] <- xoff[i]/roff[i]
+           yhat[i] <- yoff[i]/roff[i]
+         }
+         if (xhat[i]==0) xhat[i] <- .01 #jitter to avoid labels on points
+         if (yhat[i]==0) yhat[i] <- .01
+       }
+       xhat <- xhat[use]
+       yhat <- yhat[use]
+     } else if (label.pos<5) {
+       xhat <- switch(label.pos,0,-1,0,1)
+       yhat <- switch(label.pos,-1,0,1,0)
+     } else if (label.pos==6) {
        xoff <- cx[use]-mean(cx[use])
        yoff <- cy[use]-mean(cy[use])
        roff <- sqrt(xoff^2+yoff^2)
        xhat <- xoff/roff
        yhat <- yoff/roff
-     } else if (label.pos<5) {
-       xhat <- switch(label.pos,0,-1,0,1)
-       yhat <- switch(label.pos,-1,0,1,0)
      } else {
        xhat <- 0
        yhat <- 0
@@ -564,15 +655,15 @@ layout.par=NULL,
      lw<-strwidth(label[use],cex=label.cex)/2
      lh<-strheight(label[use],cex=label.cex)/2
      if(boxed.labels){
-       rect(cx[use]-lw*(1+label.pad)+xhat*(lw*(1+label.pad+0.2)+ vertex.radius[use]),
-            cy[use]-lh*(1+label.pad)+yhat*(lh*(1+label.pad+0.2)+ vertex.radius[use]),
-            cx[use]+lw*(1+label.pad)+xhat*(lw*(1+label.pad+0.2)+ vertex.radius[use]),
-            cy[use]+lh*(1+label.pad)+yhat*(lh*(1+label.pad+0.2)+ vertex.radius[use]),
-            col=label.bg,border=label.border,lty=label.lty,lwd=label.lwd)
+       rect(cx[use]+xhat*vertex.radius[use]-(lh*label.pad+lw)*((xhat<0)*2+ (xhat==0)*1),
+         cy[use]+yhat*vertex.radius[use]-(lh*label.pad+lh)*((yhat<0)*2+ (yhat==0)*1),
+         cx[use]+xhat*vertex.radius[use]+(lh*label.pad+lw)*((xhat>0)*2+ (xhat==0)*1),
+         cy[use]+yhat*vertex.radius[use]+(lh*label.pad+lh)*((yhat>0)*2+ (yhat==0)*1),
+         col=label.bg,border=label.border,lty=label.lty,lwd=label.lwd)
      }
-     text(cx[use]+xhat*(lw*(1+label.pad+0.2)+vertex.radius[use]),
-          cy[use]+yhat*(lh*(1+label.pad+0.2)+vertex.radius[use]),
-          label[use],cex=label.cex,col=label.col,offset=0)
+     text(cx[use]+xhat*vertex.radius[use]+(lh*label.pad+lw)*((xhat>0)-(xhat<0)),
+          cy[use]+yhat*vertex.radius[use]+(lh*label.pad+lh)*((yhat>0)-(yhat<0)),
+          label[use],cex=label.cex,col=label.col,offset=0)         
    }
    #If interactive, allow the user to mess with things
    if(interactive&&((length(cx)>0)&&(!all(use==FALSE)))){
@@ -600,7 +691,7 @@ layout.par=NULL,
        cl$interactive<-FALSE           #Turn off interactivity
        cl$coord<-cbind(cx,cy)          #Set the coordinates
        cl$x<-x                         #"Fix" the data array
-       return(eval(cl))     #Execute the function and return
+       return(eval.parent(cl))     #Execute the function and return
      }else{
        #Figure out which vertex was selected
        clickdis<-sqrt((clickpos[1]-cx[use])^2+(clickpos[2]-cy[use])^2)
@@ -630,7 +721,7 @@ layout.par=NULL,
        cl<-match.call()                #Get the args of the current function
        cl$coord<-cbind(cx,cy)          #Set the coordinates
        cl$x<-x                         #"Fix" the data array
-       return(eval(cl))     #Execute the function and return
+       return(eval.parent(cl))     #Execute the function and return
      }
    }
    #Return the vertex positions, should they be needed

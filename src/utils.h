@@ -54,7 +54,9 @@ SEXP concatList(int nel, int names, ...);
 SEXP permuteList(SEXP list, SEXP ord);
 
 
-/*VECTOR COMPARISON ROUTINES------------------------------------------------*/
+/*VECTOR COMPARISON/TEST ROUTINES-------------------------------------------*/
+
+int vecAnyNA(SEXP a);
 
 int vecEq(SEXP a, SEXP b);
 

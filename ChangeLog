@@ -1,9 +1,29 @@
 CHANGELOG:
 
-v1.5 Changes/Bug Fixes
+v1.5 New Functions, New Features, Changes, and Bug Fixes
+  New Functions:
+    - get.inducedSubgraph: return induced subgraphs and edge cuts from a 
+      network object.  A new operator, %s%, has been introduced to simplify
+      this process.  [CTB]
   New Features:
+    - add.vertices now supports adding vertices to the first mode of a 
+      bipartite network (default behavior is unchanged).  [CTB]
+    - as.matrix.network.adjacency and as.sociomatrix now support an optional
+      argument to force bipartite graphs to be returned in full one-mode 
+      adjacency form (rather than the current, two-mode default).  [CTB]
     - print.network and print.summary.network now support an argument to allow
       suppression of matrix output (helpful for very large graphs).  [CTB]
+    - network.layout.fruchtermanreingold now uses a cell-based acceleration
+      scheme for large graphs, which can be adjusted using layout.par; it also
+      operates entirely on edgelists, and is no longer O(N^2) in typical
+      applications.
+    - Network coercion methods now recognize/use sna edgelist attributes
+      (even if the matrix is not actually an sna edgelist!) automagically.
+      Coercion to edgelist form also sets the sna edgelist attributes.  In
+      addition to being useful for interoperability, this now makes it easier
+      to import network data in edgelist form (previously, one had to be 
+      careful about setting vertex sizes, which could only be crudely inferred
+      from the edgelist matrix itself).  [CTB]
   Changes: 
     - By very popular demand, network now uses R name spaces.  [Credit to
       Michal Bojanowski for convincing us to make the leap]
@@ -13,9 +33,26 @@ v1.5 Changes/Bug Fixes
       basic network attributes in a sane way.  Operator semantics have been
       substantially expanded for the muligraph case; hypergraphs are not
       yet supported, but missingness is.  [CTB, submitted by MSH]
+    - Support for bipartite graphs in read.paj has been improved.  [MSH]
+    - In addition to changes noted above, network.layout.fruchtermanreingold 
+      uses a lightly different repulse radius by default; this seems to
+      work better on large graphs.  [CTB]
+    - plot.network has some overdue performance enhancements, including
+      a more scalable Fruchterman-Reingold implementation.  Note that
+      plot.network no longer coerces anything to adjacency form, although
+      particular layout methods might.  [CTB]
   Bug Fixes:
+    - add.edge and add.edges would crash when called with NA vertex IDs in the
+      head or tail lists.  [CTB, submitted by Skye Bender-deMoll]
     - is.na.network failed when called on networks with deleted edges.  
       [CTB, submitted by MSH]
+    - network.dyadcount handled NAs improperly in some cases.  [MSH]
+    - network.initialize now stops with an error when called with <=0
+      vertices, rather than producing undefined behavior.  [CTB, submitted
+      by Skye Bender-deMoll]
+    - Various minor issues in plot.network have bee fixed.  [CTB, mostly
+      based on imports from gplot in sna; some gplot fixes contributed by Alex
+      Montgomery]
     - print.network and print.summary.network could fail when called on
       multiplex or hypergraphic networks with the wrong matrix.type settings.
       [CTB]

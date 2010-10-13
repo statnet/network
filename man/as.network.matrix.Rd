@@ -30,6 +30,14 @@
 }
 \details{
   Depending on \code{matrix.type}, one of three edgeset constructor methods will be employed to read the input matrix (see \code{\link{edgeset.constructors}}).  If \code{matrix.type==NULL}, \code{\link{which.matrix.type}} will be used to guess the appropriate matrix type.
+  
+  The coercion methods will recognize and attempt to utilize the \code{sna} extended matrix attributes where feasible.  These are as follows:
+  \itemize{
+    \item{\code{"n"}: taken to indicate number of vertices in the network.}
+    \item{\code{"bipartite"}: taken to indicate the network's \code{bipartite} attribute, where present.}
+    \item{\code{"vnames"}: taken to contain vertex names, where present.}
+  }
+  These attributes are generally used with edgelists, and indeed data in \code{sna} edgelist format should be transparently converted in most cases.  Where the extended matrix attributes are in conflict with the actual contents of \code{x}, results are no guaranteed (but the latter will usually override the former).
 }
 \value{
   An object of class \code{network}

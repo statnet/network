@@ -10,7 +10,8 @@
 }
 \usage{
 \method{as.matrix}{network}(x, matrix.type = NULL, attrname = NULL, ...)
-\method{as.matrix.network}{adjacency}(x,attrname=NULL, ...)
+\method{as.matrix.network}{adjacency}(x,attrname=NULL, 
+    expand.bipartite = FALSE, ...)
 \method{as.matrix.network}{edgelist}(x,attrname=NULL, ...)
 \method{as.matrix.network}{incidence}(x,attrname=NULL, ...)
 }
@@ -19,10 +20,13 @@
   \item{x}{ an object of class \code{network} }
   \item{matrix.type}{ one of \code{"adjacency"}, \code{"incidence"}, \code{"edgelist"}, or \code{NULL} }
   \item{attrname}{ optionally, the name of an edge attribute to use for edge values }
+  \item{expand.bipartite}{ logical; if \code{x} is bipartite, should we return the full adjacency matrix (rather than the abbreviated, two-mode form)?}
   \item{...}{ additional arguments. }
 }
 \details{
   If no matrix type is specified, \code{\link{which.matrix.type}} will be used to make an educated guess based on the shape of \code{x}.  Where edge values are not specified, a dichotomous matrix will be assumed.
+
+  Edgelists returned by these methods are in a slightly different form from the \code{sna} edgelist standard, but do contain the \code{sna} extended matrix attributes (see \code{\link{as.network.matrix}}).  They should typically be compatible with \code{sna} library functions.
   
   Note that adjacency matrices may also be obtained using the extraction operator.  See the relevant man page for details.
 }

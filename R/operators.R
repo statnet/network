@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 09/05/10
+# Last Modified 10/04/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -26,6 +26,7 @@
 # "%n%<-"
 # "%nattr%"
 # "%nattr%<-"
+# "%s%"
 # "%v%"
 # "%v%<-"
 # "%vattr%"
@@ -264,6 +265,14 @@
 
 "%nattr%<-"<-function(x,attrname,value){
   x %n% attrname <- value
+}
+
+
+"%s%"<-function(x,v){
+  if(is.list(v))
+    get.inducedSubgraph(x,v=v[[1]],alters=v[[2]])
+  else
+    get.inducedSubgraph(x,v=v)
 }
 
 
@@ -692,14 +701,108 @@
 
 
 "%c%.network"<-function(e1,e2){
-  #Convert to adjacency form
-  e1<-as.sociomatrix(e1)
-  e2<-as.sociomatrix(e2)
-  #Check for conformability
-  if(dim(e1)[2]!=dim(e2)[1])
+  #Set things up
+  net1<-networkOperatorSetup(x=e1)
+  net2<-networkOperatorSetup(x=e2)
+  if(is.bipartite(net1$net)){          #Find in/out set sizes for e1
+    insz1<-net1$net%n%"bipartite"
+    outsz1<-net1$net%n%"n"-net1$net%n%"bipartite"
+  }else{
+    insz1<-net1$net%n%"n"
+    outsz1<-net1$net%n%"n"
+  }
+  if(is.bipartite(net2$net)){          #Find in/out set sizes for e2
+    insz2<-net2$net%n%"bipartite"
+    outsz2<-net2$net%n%"n"-net2$net%n%"bipartite"
+  }else{
+    insz2<-net2$net%n%"n"
+    outsz2<-net2$net%n%"n"
+  }
+  if(outsz1!=insz2)
     stop("Non-conformable relations in %c%.  Cannot compose.")
-  #Obtain the composed graph
-  network(round((e1%*%e2)>0),loops=TRUE)
+  if(is.hyper(net1$net)||is.hyper(net2$net))  #Hypergraph; for now, stop
+    stop("Elementwise operations on hypergraphs not yet supported.")
+  #Test for vertex name matching (governs whether we treat as bipartite)
+  if(is.network(e1))
+    vnam1<-network.vertex.names(e1)
+  else if(!is.null(attr(e1,"vnames")))
+    vnam1<-attr(e1,"vnames")
+  else if(is.matrix(e1)||is.data.frame(e1)||is.array(e1))
+    vnam1<-row.names(e1)
+  else
+    vnam1<-NULL
+  if(is.network(e2))
+    vnam2<-network.vertex.names(e2)
+  else if(!is.null(attr(e2,"vnames")))
+    vnam2<-attr(e2,"vnames")
+  else if(is.matrix(e2)||is.data.frame(e2)||is.array(e2))
+    vnam2<-row.names(e2)
+  else
+    vnam2<-NULL
+  if((!is.null(vnam1))&&(!is.null(vnam2))&&(length(vnam1)==length(vnam2)) &&all(vnam1==vnam2))
+    vnammatch<-TRUE
+  else
+    vnammatch<-FALSE
+  #Decide on bipartite representation and create graph
+  if((!is.bipartite(net1$net))&&(!is.bipartite(net2$net))&&vnammatch)
+    out<-network.initialize(insz1, directed=is.directed(net1$net)|is.directed(net2$net), loops=TRUE,multiple=is.multiplex(net1$net)|is.multiplex(net2$net))
+  else
+    out<-network.initialize(insz1+outsz2,bipartite=insz1, directed=is.directed(net1$net)|is.directed(net2$net),multiple=is.multiplex(net1$net)|is.multiplex(net2$net))
+  #Accumulate edges (yeah, could be made more efficient -- cope with it)
+  el<-matrix(nr=0,nc=2)
+  elna<-matrix(nr=0,nc=2)
+  bip1<-net1$net%n%"bipartite"
+  bip2<-net2$net%n%"bipartite"
+  if(!is.directed(net1$net)){  #Double the edges if undirected
+    net1$elx<-rbind(net1$elx,net1$elx[net1$elx[,1]!=net1$elx[,2],2:1])
+    net1$elnax<-rbind(net1$elnax,net1$elnax[net1$elnax[,1]!=net1$elnax[,2],2:1])
+  }
+  if(!is.directed(net2$net)){  #Double the edges if undirected
+    net2$elx<-rbind(net2$elx,net2$elx[net2$elx[,1]!=net2$elx[,2],2:1])
+    net2$elnax<-rbind(net2$elnax,net2$elnax[net2$elnax[,1]!=net2$elnax[,2],2:1])
+  }
+  if(NROW(net1$elx)>0){
+    for(i in 1:NROW(net1$elx)){
+      sel<-net2$elx[net2$elx[,1]==(net1$elx[i,2]-bip1),2]-bip2
+      if(length(sel)>0)
+        el<-rbind(el,cbind(rep(net1$elx[i,1],length(sel)),sel+insz1))
+    }
+  }
+  if(NROW(net1$elnax)>0){
+    for(i in 1:NROW(net1$elnax)){
+      sel<-net2$elnax[net2$elnax[,1]==(net1$elnax[i,2]-bip1),2]-bip2
+      if(length(sel)>0)
+        elna<-rbind(elna,cbind(rep(net1$elnax[i,1],length(sel)),sel+insz1))
+    }
+  }
+  if(!is.bipartite(out)){     #If not bipartite, remove the insz1 offset
+    if(NROW(el)>0)
+      el[,2]<-el[,2]-insz1
+    if(NROW(elna)>0)
+      elna[,2]<-elna[,2]-insz1
+  }
+  if(!is.multiplex(out)){     #If necessary, consolidate edges
+    if(NROW(el)>1)
+      el<-unique(el)
+    if(NROW(elna)>1){
+      elna<-unique(elna)
+    }
+    if(NROW(elna)*NROW(el)>0){
+      sel<-rep(TRUE,NROW(elna))
+      for(i in 1:NROW(elna)){
+        if(any((el[,1]==elna[i,1])&(el[,2]==elna[i,2])))
+          sel[i]<-FALSE
+      }
+      elna<-elna[sel,]
+    }
+  }
+  #Add the edges
+  if(NROW(el)>0)                             #Add non-missing edges
+    add.edges(out,tail=el[,1],head=el[,2])
+  if(NROW(elna)>0)                           #Add missing edges
+    add.edges(out,tail=elna[,1],head=elna[,2], names.eval=replicate(NROW(elna),list("na")), vals.eval=replicate(NROW(elna),list(list(na=TRUE))))
+  #Return the resulting network
+  out
 }
 
 

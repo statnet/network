@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 03/25/08
+# Last Modified 09/05/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -27,6 +27,7 @@
 #   get.edge.value
 #   get.edgeIDs
 #   get.edges
+#   get.inducedSubgraph
 #   get.network.attribute
 #   get.neighborhood
 #   get.vertex.attribute
@@ -101,7 +102,7 @@ add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
 # are required) are to be provided in vattr; vattr must be a list containing
 # nv elements, each of which is equal to the desired val[i] entry.
 #
-add.vertices<-function(x, nv, vattr=NULL){
+add.vertices<-function(x, nv, vattr=NULL, last.mode=TRUE){
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("add.vertices requires an argument of class network.\n")
@@ -113,9 +114,18 @@ add.vertices<-function(x, nv, vattr=NULL){
       vattr<-as.list(rep(vattr,length=nv))
   }
   #Perform the addition
-  if(nv>0)
-    invisible(.Call("addVertices_R",x,nv,vattr, PACKAGE="network"))
-  else
+  if(nv>0){
+    if(last.mode||(!is.bipartite(x)))
+      invisible(.Call("addVertices_R",x,nv,vattr, PACKAGE="network"))
+    else{
+      .Call("addVertices_R",x,nv,vattr, PACKAGE="network")
+      newid<-c(1:(x%n%"bipartite"),network.size(x),
+        ((x%n%"bipartite"+1)):(network.size(x)-1))
+      permute.vertexIDs(x,vid=newid)
+      x%n%"bipartite"<-x%n%"bipartite"+1
+      invisible(x)
+    }
+  }else
     invisible(x)
 }
 
@@ -259,6 +269,56 @@ get.edges<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.
     neighborhood=match.arg(neighborhood)
   #Do the deed
   .Call("getEdges_R",x,v,alter,neighborhood,na.omit, PACKAGE="network")
+}
+
+
+# Given a network and a set of vertices, return the subgraph induced by those
+# vertices (preserving all associated metadata); if given two such sets, 
+# return the edge cut (along with the associated vertices and meta-data) as
+# a bipartite network.
+#
+get.inducedSubgraph<-function(x, v, alters=NULL){
+  #Check to be sure we were called with a network
+  if(!is.network(x))
+    stop("get.inducedSubgraph requires an argument of class network.")
+  #Do some reality checking
+  n<-network.size(x)
+  if((length(v)<1)||any(is.na(v))||any(v<1)||any(v>n))
+    stop("Illegal vertex selection in get.inducedSubgraph")
+  if(!is.null(alters)){
+    if((length(alters)<1)||any(is.na(alters))||any(alters<1)||any(alters>n)|| any(alters%in%v))
+      stop("Illegal vertex selection (alters) in get.inducedSubgraph")
+  }
+  #Start by making a copy of our target network (yes, this can be wasteful)
+  new<-network.copy(x)
+  #Now, strip out what is needed, and/or permute in the two-mode case
+  if(is.null(alters)){                    #Simple case
+    delete.vertices(new,(1:n)[-v])           #Get rid of everyone else
+  }else{                                  #Really an edge cut, but w/vertices
+    nv<-length(v)
+    na<-length(alters)
+    newids<-sort(c(v,alters))
+    newv<-match(v,newids)
+    newalt<-match(alters,newids)
+    delete.vertices(new,(1:n)[-c(v,alters)])  #Get rid of everyone else
+    permute.vertexIDs(new,c(newv,newalt))    #Put the new vertices first
+    #Remove within-group edges
+    for(i in 1:nv)
+      for(j in (i:nv)[-1]){
+        torem<-get.edgeIDs(new,i,alter=j,neighborhood="combined",na.omit=FALSE)
+        if(length(torem)>0)
+          delete.edges(new,torem)
+      }
+    for(i in (nv+1):(nv+na))
+      for(j in (i:(nv+na))[-1]){
+        torem<-get.edgeIDs(new,i,alter=j,neighborhood="combined",na.omit=FALSE)
+        if(length(torem)>0)
+          delete.edges(new,torem)
+      }
+    new%n%"bipartite"<-nv   #Set bipartite attribute
+  }
+  #Return the updated object
+  new
 }
 
 
@@ -445,37 +505,40 @@ list.vertex.attributes<-function(x){
 # Retrieve the number of free dyads (i.e., number of non-missing) of network x.
 #
 network.dyadcount<-function(x,na.omit=TRUE){
-  if(!is.network(x))
-    stop("network.dyadcount requires an argument of class network.")
+ if(!is.network(x))
+   stop("network.dyadcount requires an argument of class network.")
 
-  nodes <- network.size(x)
-  if(is.directed(x)){
-     dyads <- nodes * (nodes-1)
+ nodes <- network.size(x)
+ if(is.directed(x)){
+    dyads <- nodes * (nodes-1)
+ }else{
+  if(is.bipartite(x)){
+   nactor <- get.network.attribute(x,"bipartite")
+   nevent <- nodes - nactor
+   dyads <- nactor * nevent
   }else{
-   if(is.bipartite(x)){
-    nactor <- get.network.attribute(x,"bipartite")
-    nevent <- nodes - nactor
-    dyads <- nactor * nevent
-   }else{
-    dyads <- nodes * (nodes-1)/2
-   }
+   dyads <- nodes * (nodes-1)/2
   }
-  if(na.omit){
+ }
+ if(na.omit){
 #
 #  Adjust for missing
 #
-   design <- get.network.attribute(x,"design")
+  design <- get.network.attribute(x,"design")
+  if(!is.null(design)){
+   dyads <- dyads - network.edgecount(design)
+  }else{
+   design <- get.network.attribute(x,"mClist.design")
    if(!is.null(design)){
-    dyads <- dyads - network.edgecount(design)
+    dyads <- dyads - design$nedges
    }else{
-    design <- get.network.attribute(x,"mClist.design")
-    if(!is.null(design)){
-     dyads <- dyads - design$nedges
-    }
+    dyads <- dyads - network.naedgecount(x)
    }
   }
-  dyads
+ }
+ dyads
 }
+
 
 #Retrieve the number of edges in network x.
 #

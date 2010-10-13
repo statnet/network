@@ -9,7 +9,7 @@ read.paj(file, verbose = FALSE, debug = FALSE, edge.name = NULL,
     simplify = FALSE)
 }
 \description{
-  Return a (list of) \code{\link{network}} object(s) after reading a corresponding .net or .paj file.  The code accepts ragged array edgelists, but cannot currently handle 2-mode,  multirelational (e.g. KEDS), or networks with entries for both edges and arcs (e.g. GD-a99m).  Also, this archive currently only contains networks under 10,000 nodes.
+  Return a (list of) \code{\link{network}} object(s) after reading a corresponding .net or .paj file.  The code accepts ragged array edgelists, but cannot currently handle 2-mode,  multirelational (e.g. KEDS), or networks with entries for both edges and arcs (e.g. GD-a99m).
   See \code{network}, \code{statnet}, or \code{sna} for more information.
 }
 \arguments{
@@ -23,7 +23,7 @@ read.paj(file, verbose = FALSE, debug = FALSE, edge.name = NULL,
 \value{\code{read.paj} returns a 'network' object (for .net input) or a list of networks (for .paj input). Additional information in the .paj file (like partition information) is attached to the network objects in another higher order list.}
 
 \author{ Dave Schruth \email{dschruth@u.washington.edu}, Mark S. Handcock \email{handcock@stat.washington.edu} (with additional input from Alex Montgomery \email{ahm@reed.edu})}
-\seealso{\code{\link[statnet]{statnet}}, \code{\link{network}}, \code{\link[networkdata]{networkdata}}}
+\seealso{ \code{\link{network}}}
 \examples{
 \dontrun{
 require(network)

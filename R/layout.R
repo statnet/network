@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 2/06/05
+# Last Modified 9/06/10
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -33,9 +33,9 @@ network.layout.circle<-function(nw,layout.par){
 
 #Fruchterman-Reingold layout routine for plot.network
 network.layout.fruchtermanreingold<-function(nw,layout.par){
-  d<- as.sociomatrix(nw)
   #Provide default settings
-  n<-dim(d)[1]
+  n<-network.size(nw)
+  d<-as.matrix.network(nw,matrix.type="edgelist")[,1:2]
   if(is.null(layout.par$niter))
     niter<-500
   else
@@ -53,9 +53,29 @@ network.layout.fruchtermanreingold<-function(nw,layout.par){
   else
     cool.exp<-layout.par$cool.exp
   if(is.null(layout.par$repulse.rad))
-    repulse.rad<-area*n
+    repulse.rad<-area*log(n)
   else
     repulse.rad<-layout.par$repulse.rad
+  if(is.null(layout.par$ncell))
+    ncell<-ceiling(n^0.4)
+  else
+    ncell<-layout.par$ncell
+  if(is.null(layout.par$cell.jitter))
+    cell.jitter<-0.5
+  else
+    cell.jitter<-layout.par$cell.jitter
+  if(is.null(layout.par$cell.pointpointrad))
+    cell.pointpointrad<-0
+  else
+    cell.pointpointrad<-layout.par$cell.pointpointrad
+  if(is.null(layout.par$cell.pointcellrad))
+    cell.pointcellrad<-18
+  else
+    cell.pointcellrad<-layout.par$cell.pointcellrad
+  if(is.null(layout.par$cellcellcellrad))
+    cell.cellcellrad<-ncell^2
+  else
+    cell.cellcellrad<-layout.par$cell.cellcellrad
   if(is.null(layout.par$seed.coord)){
     tempa<-sample((0:(n-1))/n) #Set initial positions randomly on the circle
     x<-n/(2*pi)*sin(2*pi*tempa)
@@ -65,9 +85,9 @@ network.layout.fruchtermanreingold<-function(nw,layout.par){
     y<-layout.par$seed.coord[,2]
   }
   #Symmetrize the network, just in case
-  d<-d|t(d)  
+  d<-unique(rbind(d,d[,2:1]))  
   #Perform the layout calculation
-  layout<-.C("network_layout_fruchtermanreingold_R", as.integer(d), as.double(n), as.integer(niter), as.double(max.delta), as.double(area), as.double(cool.exp), as.double(repulse.rad), x=as.double(x), y=as.double(y), PACKAGE="network")
+  layout<-.C("network_layout_fruchtermanreingold_R", as.double(d), as.double(n), as.double(NROW(d)), as.integer(niter), as.double(max.delta), as.double(area), as.double(cool.exp), as.double(repulse.rad), as.integer(ncell), as.double(cell.jitter), as.double(cell.pointpointrad), as.double(cell.pointcellrad), as.double(cell.cellcellrad), x=as.double(x), y=as.double(y), PACKAGE="network")
   #Return the result
   cbind(layout$x,layout$y)
 }
@@ -75,8 +95,8 @@ network.layout.fruchtermanreingold<-function(nw,layout.par){
 
 #Kamada-Kawai layout function for plot.network
 network.layout.kamadakawai<-function(nw,layout.par){
-  d<- as.sociomatrix(nw)
-  n<-NROW(d)
+  n<-network.size(nw)
+  d<-as.sociomatrix(nw)
   if(is.null(layout.par$niter)){
     niter<-1000
   }else
