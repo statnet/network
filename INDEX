@@ -1,0 +1,43 @@
+add.edges               Add Edges to a Network Object
+add.vertices            Add Vertices to an Existing Network
+as.matrix.network       Coerce a Network Object to Matrix Form
+as.network.matrix       Coercion from Matrices to Network Objects
+as.sociomatrix          Coerce One or More Networks to Sociomatrix Form
+attribute.methods       Attribute Interface Methods for the Network
+                        Class
+deletion.methods        Remove Elements from a Network Object
+edgeset.constructors    Edgeset Constructors for Network Objects
+emon                    Interorganizational Search and Rescue Networks
+                        (Drabek et al.)
+flo                     Florentine Wedding Data (Padgett)
+get.edges               Retrieve Edges or Edge IDs Associated with a
+                        Given Vertex
+get.neighborhood        Obtain the Neighborhood of a Given Vertex
+is.adjacent             Determine Whether Two Vertices Are Adjacent
+network                 Networks
+network.arrow           Add Arrows or Segments to a Plot
+network.density         Compute the Density of a Network
+network.dyadcount       Return the Number of (Possibly Directed) Dyads
+                        in a Network Object
+network.edgecount       Return the Number of Edges in a Network Object
+network.extraction      Extraction and Replacement Operators for
+                        Network Objects
+network.indicators      Indicator Functions for Network Properties
+network.initialize      Initialize a Network Class Object
+network.layout          Vertex Layout Functions for plot.network
+network.loop            Add Loops to a Plot
+network.naedgecount     Identifying and Counting Missing Edges in a
+                        Network Object
+network.operators       Network Operators
+network-package         Classes for Relational Data
+network.size            Return the Size of a Network
+network.vertex          Add Vertices to a Plot
+permute.vertexIDs       Permute (Relabel) the Vertices Within a Network
+plot.network.default    Two-Dimensional Visualization for Network
+                        Objects
+prod.network            Combine Networks by Edge Value Multiplication
+read.paj                Read a Pajek Project or Network File and
+                        Convert to an R 'Network' Object
+sum.network             Combine Networks by Edge Value Addition
+which.matrix.type       Heuristic Determination of Matrix Types for
+                        Network Storage
