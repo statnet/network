@@ -1,0 +1,42 @@
+\name{network.operators}
+\alias{network.operators}
+\alias{\%c\%}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{ Network Operators }
+\description{
+ These operators allow for algebraic manipulation of relational structures.
+}
+\usage{
+x \%c\% y
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{x}{ an object of class \code{network}. }
+  \item{y}{ another \code{network}. }
+}
+\details{
+  Currently, only one operator is supported.  \code{x \%c\% y} returns the network formed from the composition of graphs \code{x} and \code{y} (respectively).  (Note that this may contain loops.)
+}
+\value{
+   The resulting graph object.
+}
+\references{ Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods and Applications.}  Cambridge: University of Cambridge Press. }
+\author{ Carter T. Butts \email{buttsc@uci.edu} }
+\note{ This operator is adapted from the corresponding version in the \code{sna} package. }
+
+% ~Make other sections like Warning with \section{Warning }{....} ~
+
+%\seealso{ ~~objects to See Also as \code{\link{~~fun~~}}, ~~~ }
+\examples{
+#Create an in-star
+g<-matrix(0,6,6)
+g[2:6,1]<-1
+plot(network(g))
+
+#Compose g with its transpose
+gcgt<-network(g)\%c\%network(t(g))
+plot(gcgt)
+gcgt
+}
+\keyword{ math }% at least one, from doc/KEYWORDS
+\keyword{ graphs }% __ONLY ONE__ keyword per line
