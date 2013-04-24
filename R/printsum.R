@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 09/04/10
+# Last Modified 7/05/11
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -46,8 +46,8 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
         }else{
           cat(" ",attributeName,":\n",sep="")
           if(is.discrete(attributeValue)){
-            assign(paste(" ",attributeName,attributeValue))
-            print(table(get(paste("  ",attributeName))))
+            assign(paste(" ",attributeName),attributeValue)
+            print(table(get(paste(" ",attributeName))))
             if(mixingmatrices){
               cat("\n","mixing matrix for ",attributeName,":\n",sep="")
               print(mixingmatrix(x,attributeName))
@@ -59,13 +59,13 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
       }else{
         if(attributeName!="mnext"){
            if(is.discrete(attributeValue)){
-             assign(paste(" ",attributeName,attributeValue))
-             print(table(get(paste("  ",attributeName))))
+             assign(paste(" ",attributeName),attributeValue)
+             print(table(get(paste(" ",attributeName))))
           }else{
-             if(length(attributeValue) < 10){
+             if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double"))&&(length(attributeValue) < 10)){
                cat(" ",attributeName,"=",attributeValue,"\n")
              }else{
-               cat(" ",attributeName,":\n", sep="")
+               cat("  ",attributeName,":\n", sep="")
                print(summary(attributeValue))
              }
           }
@@ -92,9 +92,13 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
       if(is.hyper(x))
         matrix.type<-"incidence"
       cat("\n",matrix.type,"matrix:\n")    
-      if(network.edgecount(x)>0)
-        print(as.matrix.network(x,matrix.type=matrix.type))
-      else
+      if(network.edgecount(x)>0){
+        mat<-as.matrix.network(x,matrix.type=matrix.type)
+        attr(mat,"n")<-NULL            #Get rid of any extra attributes
+        attr(mat,"vnames")<-NULL
+        attr(mat,"bipartite")<-NULL
+        print(mat)
+      }else
         cat("Empty Graph\n")
     }
     invisible(x)
@@ -135,7 +139,7 @@ print.summary.network<-function(x, ...){
         attributeName<-names(x$gal)[i]
         attributeValue<-x$gal[[i]]
       }
-      if(!(attributeName%in%c("mnext","summary.na.omit", "summary.mixingmatrices"))){
+      if(!(attributeName%in%c("mnext","summary.na.omit", "summary.mixingmatrices","summary.print.adj"))){
         if(is.network(attributeValue)){
           if(attributeName=="design"){
             cat(" ",attributeName,"=\n")
@@ -147,17 +151,17 @@ print.summary.network<-function(x, ...){
           }
         }else{
           if(is.discrete(attributeValue)){
-            assign(paste(" ",attributeName,attributeValue))
+            assign(paste(" ",attributeName),attributeValue)
             print(table(get(paste(" ",attributeName))))
             if(mixingmatrices){
               cat("\n","mixing matrix for ",attributeName,":\n",sep="")
               print(mixingmatrix(x,attributeName))
             }
           }else{
-            if(length(attributeValue) < 10){
-              cat(" ",attributeName," = ",attributeValue,"\n",sep="")
+            if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double"))&& (length(attributeValue) < 10)){
+              cat("  ",attributeName," = ",attributeValue,"\n",sep="")
             }else{
-              cat(" ",attributeName,":\n", sep="")
+              cat("  ",attributeName,":\n", sep="")
               print(summary(attributeValue))
             }
           }
@@ -180,7 +184,7 @@ print.summary.network<-function(x, ...){
       cat("\nVertex attributes:\n")
       for (i in (1:length(van))){ 
         if(van[i]=="vertex.names"){
-          cat(" vertex.names:\n")
+          cat("  vertex.names:\n")
           cat("   character valued attribute\n")
           cat("   ",sum(!is.na(network.vertex.names(x)))," valid vertex names\n",sep="")
         }else{
@@ -207,7 +211,7 @@ print.summary.network<-function(x, ...){
           }
         }else{
           cat("   ",aaclass," valued attribute\n",sep="")
-          cat("   ",length(aaval),"values\n",sep="")
+          cat("   ",length(aaval)," values\n",sep="")
         }
       }
     }
@@ -287,9 +291,13 @@ print.summary.network<-function(x, ...){
       if(is.hyper(x))
         matrix.type<-"incidence"
       cat("\nNetwork ",matrix.type," matrix:\n",sep="")    
-      if(network.edgecount(x)>0)
-        print(as.matrix.network(x,matrix.type=matrix.type))
-      else
+      if(network.edgecount(x)>0){
+        mat<-as.matrix.network(x,matrix.type=matrix.type)
+        attr(mat,"n")<-NULL            #Get rid of any extra attributes
+        attr(mat,"vnames")<-NULL
+        attr(mat,"bipartite")<-NULL
+        print(mat)
+      }else
         cat("Empty Graph\n")
     }
     invisible(x)

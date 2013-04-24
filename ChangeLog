@@ -1,4 +1,78 @@
 CHANGELOG:
+v1.7.2 New Features/Changes/Bug Fixes
+  New Features:
+    - networks with zero vertices (zero-order networks) are now supported. Some functions now give explicit errors for networks with size zero because behavior is not well defined.
+  Changes
+    - package is now hosted as part of the statnet project
+    - get.edge.attribute will now silently call get.edge.value if accidentally called with a network instead of net$mel.
+    - some minor additions to documentation
+    - original JStatSoftware article included as package vignette
+    - package now requires the sna package, to provide some functions needed for network layouts
+  Bug Fixes
+    - fixed bug in add vertices when adding to second mode of biparite network
+    - fixed deprecation warning for R v2.15.3
+    - Fixed bug where replacement operator can add multiple edges to pair of vertices
+
+v1.7-1 Bug Fixes
+  Bug Fixes:
+    - .onLoad's startup message code caused excitingly bad behavior with recent
+      versions of R. [CTB]
+    - network.adjacency, network.edgelist, etc. were no longer modifying their
+      arguments in place, and have had their correct behavior restored.  [CTB]
+    - delete.vertices was building up too many protection stack calls, which
+      could cause issues in some cases.  [CTB, submitted by Adrian Albert]
+
+v1.7 New Features/Changes/Bug Fixes
+  New Features:
+    - as.matrix.network.edgelist now supports an argument, as.sna.edgelist,
+      that will return a fully compliant sna edgelist representation of the
+      network.  For sna versions 2.3 and later, this will among other things
+      allow missing data information to be automagically retained when passing
+      network objects to sna functions.  (Previous to this, missing edges were
+      stripped on conversion.)  [CTB]
+  Changes:
+    - print.summary.network no longer dumps excessive information when printing
+      edge lists.  [CTB]
+    - Built-in data objects are now compressed (not that it made much
+      difference, but CRAN was complaining).  This also requires R version
+      2.10 or later (previously required R>=2.0).  [CTB]
+  Bug Fixes:
+    - The network summary and print methods could in some cases fail if called
+      on a network with non-trivial graph-level attributes.  [CTB, submitted by 
+      Zack Almquist; closely related bug fixed by MSH]
+    - If called with ignore.eval=T but no specified names.eval, as.network
+      and friends generated an object with mislabeled edge attributes; note
+      that a warning is still given with such a call, since it is unwise not
+      to specify attribute names.  [CTB, submitted by DH]
+
+v1.6 Changes/Bug Fixes
+  Changes:
+    - In-place modification methods now use draconian measures to force 
+      evaluation of their arguments prior to modification, and overwrite
+      non-anonymous arguments in their original frame on exit.  This is a kludge
+      to cope with R's lazy evaluation strategy, which does not play well
+      with in-place modification of arguments.
+  Bug Fixes:
+    - Per the above, semantics for in-place modification of objects should now
+      operate correctly (was conflicting with R's lazy evaluation scheme,
+      sometimes resulting in bizarre behavior).  [CTB, submitted by Ronggui
+      Huang]
+    - plot.network was failing when edge.col was called with single color terms.
+      [CTB, submitted by Philip Leifeld]
+    - network.layout.fruchtermanreingold failed when called with a network
+      having exactly one edge.  [DRH]
+
+v1.5-1 Minor Changes/Bug Fixes
+  Changes:
+    - The mixingmatrix function has been moved from ergm to network (currently
+      as an undocumented internal function).  [CTB, but original function is
+      due to MSH]
+  Bug fixes:
+    - plot.network generated an error in some cases when edge.curv was set.
+      [CTB, submitted by Brian Ripley]
+    - summary.network generated an error if mixingmatrices=TRUE was set and
+      ergm was not loaded.  (The mixingmatrix function has now been moved into
+      the network package.)  [CTB, submitted by Ronggui Huang]
 
 v1.5 New Functions, New Features, Changes, and Bug Fixes
   New Functions:

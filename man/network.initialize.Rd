@@ -16,7 +16,7 @@ network.initialize(n, directed = TRUE, hyper = FALSE, loops = FALSE,
   \item{hyper}{logical; are hyperedges allowed?}
   \item{loops}{logical; should loops be allowed?}
   \item{multiple}{logical; are multiplex edges allowed?}
-  \item{bipartite}{count; should the network be interpreted as bipartite? If present (i.e., non-NULL) it is the count of the number of actors in the bipartite network. In this case, the number of nodes is equal to the number of actors plus the number of events (with all actors preceeding all events). The edges are then interpreted as nondirected.}
+  \item{bipartite}{count; should the network be interpreted as bipartite? If present (i.e., non-NULL) it is the count of the number of actors in the first mode of the bipartite network. In this case, the overall number of vertices is equal to the number of 'actors' (first mode) plus the number of `events' (second mode), with the vertex.ids of all actors preceeding all events. The edges are then interpreted as nondirected.}
 }
 \details{
   Generally, \code{network.initialize} is called by other constructor functions as part of the process of creating a network.

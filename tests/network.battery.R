@@ -121,6 +121,7 @@ temp<-set.edge.value(temp,"value",g*matrix(1:100,10,10))
 check[52]<-all(get.edge.value(temp,"value")==(g*matrix(1:100,10,10))[g>0])
 check[53]<-all(as.sociomatrix(temp,"value")==(g*matrix(1:100,10,10)))
 
+
 #Check additional operators
 g<-rgraph(10)
 temp<-network(g,names.eval="value",ignore.eval=FALSE)
@@ -141,6 +142,43 @@ check[65]<-all(temp%v%"value"==1:10)
 temp%n%"value"<-"pork!"
 check[66]<-temp%n%"value"=="pork!"
 
-#If everything worked, check is TRUE
-all(check)                                               #Should be TRUE
+#Check to ensure that in-place modification is not producing side effects
+g<-network.initialize(5); checkg<-g; add.vertices(g,3)
+check[67]<-(network.size(checkg)==5)&&(network.size(g)==8)
+g<-network.initialize(5); checkg<-g; delete.vertices(g,2)
+check[68]<-(network.size(checkg)==5)&&(network.size(g)==4)
+g<-network.initialize(5); checkg<-g; add.edge(g,2,3)
+check[69]<-(sum(checkg[,])==0)&&(sum(g[,])==1)
+g<-network.initialize(5); checkg<-g; add.edges(g,c(2,2,2),c(1,3,4))
+check[70]<-(sum(checkg[,])==0)&&(sum(g[,])==3)
+g<-network.initialize(5); checkg<-g; g%v%"boo"<-1:5
+check[71]<-all(is.na(checkg%v%"boo"))&&all(g%v%"boo"==1:5)
+g<-network.initialize(5); checkg<-g; g%n%"boo"<-1:5
+check[72]<-is.null(checkg%n%"boo")&&all(g%n%"boo"==1:5)
+g<-network.initialize(5); g[1,]<-1; checkg<-g; g%e%"boo"<-col(matrix(0,5,5))
+check[73]<-is.null(checkg%e%"boo")&&all(g%e%"boo"==2:5)
+g<-network.initialize(5); checkg<-g; permute.vertexIDs(g,5:1)
+check[74]<-all(checkg%v%"vertex.names"==1:5)&&all(g%v%"vertex.names"==5:1)
+g<-network.initialize(5); temp<-(function(){add.vertices(g,3); network.size(g)})()
+check[75]<-(network.size(g)==5)&&(temp==8)
+g<-network.initialize(5); (function(){g<-network.initialize(4); add.vertices(g,3)})()
+check[76]<-(network.size(g)==5)
 
+# tests for specific bugs/edgecases
+
+# ticket #180 (used to throw error if no edges exist)
+set.edge.attribute(network.initialize(3),"test","a")
+
+# check for network of zero size --used to give error ticket #255
+set.vertex.attribute(network.initialize(0),'foo','bar')
+
+# check get edge attribute overloading
+net<-network.initialize(3)
+add.edges(net,c(1,2,3),c(2,3,1))
+set.edge.attribute(net,'test',"a")
+if(!all(get.edge.attribute(net,'test')==c("a","a","a"))){stop("overloading of get.edge.attribute to get.edge.value not working correctly ")}
+
+#If everything worked, check is TRUE
+if(!all(check)){                                               #Should be TRUE
+ stop(paste("network package test failed on test(s):",which(!check)))
+}

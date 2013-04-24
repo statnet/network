@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 10/11/10
+# Last Modified 02/26/13
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -61,7 +61,9 @@ as.matrix.network.adjacency<-function(x,attrname=NULL,expand.bipartite=FALSE,...
   if(is.multiplex(x))
     stop("Multigraphs not currently supported in as.matrix.network.adjacency.  Exiting.\n")
   #Generate the adjacency matrix 
-  m<-matrix(0,nr=network.size(x),nc=network.size(x))
+  m<-matrix(0,nrow=network.size(x),ncol=network.size(x))
+  if(network.size(x)==0)
+    return(m)
   tl<-unlist(sapply(x$mel,"[[","outl")) #Can unlist b/c no hyperedges
   hl<-unlist(sapply(x$mel,"[[","inl"))
   nal<-as.logical(get.edge.attribute(x$mel,"na",unlist=TRUE))
@@ -103,9 +105,11 @@ as.matrix.network.adjacency<-function(x,attrname=NULL,expand.bipartite=FALSE,...
 
 
 # Coerce a network object to an edgelist matrix.  If provided, attrname is 
-# used to identify an attribute to use for edge values.
+# used to identify an attribute to use for edge values.  Setting as.sna.edgelist
+# results in output in the sna edgelist format (including missing edge handling)
+# and is used by the sna package for coercion.
 #
-as.matrix.network.edgelist<-function(x,attrname=NULL,...){
+as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,...){
   #Check to make sure this is a supported network type
   if(is.hyper(x))
     stop("Hypergraphs not currently supported in as.matrix.network.edgelist.  Exiting.\n")
@@ -116,10 +120,18 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,...){
   #Add edge values, if needed
   if(!is.null(attrname))
     m<-cbind(m,unlist(get.edge.attribute(x$mel,attrname)))
+  else if(as.sna.edgelist)
+    m<-cbind(m,rep(1,NROW(m)))
   #Set additional attributes and return the result
-  m<-m[!nal,,drop=FALSE]
+  if(as.sna.edgelist)
+    m[nal,3]<-NA
+  else
+    m<-m[!nal,,drop=FALSE]
   if(length(m)==0)
-    m<-matrix(numeric(0),ncol=2)
+    m<-matrix(numeric(0),ncol=2+as.sna.edgelist)
+  else if((!is.directed(x))&&as.sna.edgelist){    #sna uses directed form
+    m<-rbind(m,m[m[,2]!=m[,1],c(2:1,3)])
+  }
   attr(m,"n")<-network.size(x)
   attr(m,"vnames")<-network.vertex.names(x)
   if(is.bipartite(x))
@@ -206,8 +218,10 @@ as.network.matrix<-function(x, matrix.type=NULL,
       unames <- sort(unique(as.vector(x)))
       x <- cbind(match(x[,1],unames),match(x[,2],unames))
     }
-    if(!is.null(vals))
+    if(!is.null(vals)){
       x<-cbind(x,vals)
+      colnames(x)<-NULL  #R creates these, and they are annoying later
+    }
   }
   if(matrix.type=="adjacency" && !is.null(colnames(x))){
     unames <- colnames(x)

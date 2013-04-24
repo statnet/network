@@ -1,6 +1,7 @@
 \name{missing.edges}
 \alias{network.naedgecount}
 \alias{is.na.network}
+\alias{missing.edges}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Identifying and Counting Missing Edges in a Network Object }
 \description{

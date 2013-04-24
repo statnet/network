@@ -20,7 +20,7 @@ add.edges(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
   \item{...}{ additional arguments }
 }
 \details{
-The edge checking procedure is very slow, but should always be employed when debugging; without it, one cannot guarantee that the network state is consistent with network level variables (see \code{\link{network.indicators}}).
+The edge checking procedure is very slow, but should always be employed when debugging; without it, one cannot guarantee that the network state is consistent with network level variables (see \code{\link{network.indicators}}). For example, by default it is possible to add multiple edges to a pair of vertices.
 
 Edges can also be added/removed via the extraction/replacement operators.  See the associated man page for details.
 }
@@ -41,6 +41,7 @@ add.edge(g,1,2)
 g
 
 #Can also add edges using the extraction/replacement operators
+#note that replacement operators are much slower than add.edges()
 g[,3]<-1
 g[,]
 }

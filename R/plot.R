@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 09/06/10
+# Last Modified 02/26/13
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -249,6 +249,11 @@ vertices.last=TRUE,
 new=TRUE,
 layout.par=NULL,
 ...){
+   #Check to see that things make sense
+   if(!is.network(x))
+     stop("plot.network requires a network object.")
+   if(network.size(x)==0)
+     stop("plot.network called on a network of order zero - nothing to plot.")
    #Turn the annoying locator bell off, and remove recursion limit
    bellstate<-options()$locatorBell
    expstate<-options()$expression
@@ -313,7 +318,7 @@ layout.par=NULL,
    #Make sure that edge values are in place, matrix has right shape, etc.
    if(NCOL(d)==2){
      if(NROW(d)==0)
-       d<-matrix(nr=0,nc=3)
+       d<-matrix(nrow=0,ncol=3)
      else
        d<-cbind(d,rep(1,NROW(d)))
    }
@@ -372,7 +377,7 @@ layout.par=NULL,
      temp<-vertex.cex
      vertex.cex <- rep(get.vertex.attribute(x,vertex.cex),length=n)
      if(all(is.na(vertex.cex)))
-       stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+       stop("Attribute '",temp,"' had illegal missing values for vertex.cex or was not present in plot.network.default.")
    }else
      vertex.cex <- rep(vertex.cex,length=n)
    vertex.radius<-rep(baserad*vertex.cex,length=n)   #Create vertex radii
@@ -380,7 +385,7 @@ layout.par=NULL,
      temp<-vertex.sides
      vertex.sides <- rep(get.vertex.attribute(x,vertex.sides),length=n)
      if(all(is.na(vertex.sides)))
-       stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+       stop("Attribute '",temp,"' had illegal missing values for vertex.sides or was not present in plot.network.default.")
    }else
      vertex.sides <- rep(vertex.sides,length=n)
    if(is.character(vertex.border)&&(length(vertex.border)==1)){
@@ -409,21 +414,21 @@ layout.par=NULL,
      temp<-vertex.lty
      vertex.lty <- rep(get.vertex.attribute(x,vertex.lty),length=n)
      if(all(is.na(vertex.lty)))
-       stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+       stop("Attribute '",temp,"' had illegal missing values for vertex.col or was not present in plot.network.default.")
    }else
      vertex.lty <- rep(vertex.lty,length=n)
    if(is.character(vertex.rot)&&(length(vertex.rot)==1)){
      temp<-vertex.rot
      vertex.rot <- rep(get.vertex.attribute(x,vertex.rot),length=n)
      if(all(is.na(vertex.rot)))
-       stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+       stop("Attribute '",temp,"' had illegal missing values for vertex.rot or was not present in plot.network.default.")
    }else
      vertex.rot <- rep(vertex.rot,length=n)
    if(is.character(loop.cex)&&(length(loop.cex)==1)){
      temp<-loop.cex
      loop.cex <- rep(get.vertex.attribute(x,loop.cex),length=n)
      if(all(is.na(loop.cex)))
-       stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+       stop("Attribute ",temp," had illegal missing values for loop.cex or was not present in plot.network.default.")
    }else
      loop.cex <- rep(loop.cex,length=n)
    if(is.character(label.col)&&(length(label.col)==1)){
@@ -480,18 +485,24 @@ layout.par=NULL,
      if(length(dim(edge.col))==2)   #Coerce edge.col/edge.lty to vector form
        edge.col<-edge.col[d[,1:2]]
      else if(is.character(edge.col)&&(length(edge.col)==1)){
-       edge.col<-(x%e%edge.col)[edgetouse]
-       if(!all(is.color(edge.col),na.rm=TRUE))
-         edge.col<-as.color(edge.col)
+       temp<-edge.col
+       edge.col<-x%e%edge.col
+       if(!is.null(edge.col)){
+         edge.col<-edge.col[edgetouse]
+         if(!all(is.color(edge.col),na.rm=TRUE))
+           edge.col<-as.color(edge.col)
+       }else
+         edge.col<-rep(temp,length=NROW(d))  #Assume it was a color word
      }else
        edge.col<-rep(edge.col,length=NROW(d))
      #Edge line type
      if(length(dim(edge.lty))==2)
        edge.lty<-edge.lty[d[,1:2]]
      else if(is.character(edge.lty)&&(length(edge.lty)==1)){
+       temp<-edge.lty
        edge.lty<-(x%e%edge.lty)[edgetouse]
        if(all(is.na(edge.lty)))
-         stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+         stop("Attribute '",temp,"' had illegal missing values for edge.lty or was not present in plot.network.default.")
      }else
        edge.lty<-rep(edge.lty,length=NROW(d))
      #Edge line width
@@ -499,9 +510,10 @@ layout.par=NULL,
        edge.lwd<-edge.lwd[d[,1:2]]
        e.lwd.as.mult<-FALSE
      }else if(is.character(edge.lwd)&&(length(edge.lwd)==1)){
+       temp<-edge.lwd
        edge.lwd<-(x%e%edge.lwd)[edgetouse]
        if(all(is.na(edge.lwd)))
-         stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+         stop("Attribute '",temp,"' had illegal missing values for edge.lwd or was not present in plot.network.default.")
        e.lwd.as.mult<-FALSE
      }else{ 
        if(length(edge.lwd)==1)
@@ -523,22 +535,25 @@ layout.par=NULL,
          edge.curve<-rep(edge.curve,length=NROW(d))
        }
      }else if(is.character(edge.curve)&&(length(edge.curve)==1)){
+       temp<-edge.curve
        edge.curve<-(x%e%edge.curve)[edgetouse]
        if(all(is.na(edge.curve)))
-         stop("Attribute",temp,"had illegal missing values or was not present in plot.graph.default.")
+         stop("Attribute '",temp,"' had illegal missing values for edge.curve or was not present in plot.network.default.")
        e.curv.as.mult<-FALSE
-     }else
+     }else{
        edge.curve<-rep(0,length=NROW(d))
+       e.curv.as.mult<-FALSE
+     }
      #Proceed with edge setup
      dist<-((cx[d[,1]]-cx[d[,2]])^2+(cy[d[,1]]-cy[d[,2]])^2)^0.5  #Get the inter-point distances for curves
      tl<-d.raw*dist   #Get rescaled edge lengths
      tl.max<-max(tl)  #Get maximum edge length
      for(i in 1:NROW(d))
        if(use[d[i,1]]&&use[d[i,2]]){  #Plot edges for displayed vertices
-         px0<-c(px0,as.real(cx[d[i,1]]))  #Store endpoint coordinates
-         py0<-c(py0,as.real(cy[d[i,1]]))
-         px1<-c(px1,as.real(cx[d[i,2]]))
-         py1<-c(py1,as.real(cy[d[i,2]]))
+         px0<-c(px0,as.double(cx[d[i,1]]))  #Store endpoint coordinates
+         py0<-c(py0,as.double(cy[d[i,1]]))
+         px1<-c(px1,as.double(cx[d[i,2]]))
+         py1<-c(py1,as.double(cy[d[i,2]]))
          e.toff<-c(e.toff,vertex.radius[d[i,1]]) #Store endpoint offsets
          e.hoff<-c(e.hoff,vertex.radius[d[i,2]])
          e.col<-c(e.col,edge.col[i])    #Store other edge attributes

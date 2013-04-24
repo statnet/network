@@ -37,7 +37,7 @@
     \item{\code{"bipartite"}: taken to indicate the network's \code{bipartite} attribute, where present.}
     \item{\code{"vnames"}: taken to contain vertex names, where present.}
   }
-  These attributes are generally used with edgelists, and indeed data in \code{sna} edgelist format should be transparently converted in most cases.  Where the extended matrix attributes are in conflict with the actual contents of \code{x}, results are no guaranteed (but the latter will usually override the former).
+  These attributes are generally used with edgelists, and indeed data in \code{sna} edgelist format should be transparently converted in most cases.  Where the extended matrix attributes are in conflict with the actual contents of \code{x}, results are no guaranteed (but the latter will usually override the former). For an edge list, the number of nodes in a network is determined by the number of unique nodes specified. If there are isolate nodes not in the edge list, the "n" attribute needs to be set. See example below.
 }
 \value{
   An object of class \code{network}
@@ -57,6 +57,11 @@ diag(m)<-0
 
 #Coerce to network form
 g<-as.network.matrix(m,matrix.type="adjacency")
+
+# edge list example. Only 4 nodes in the edge list.
+m = matrix(c(1,2, 2,3, 3,4), byrow = TRUE, nrow=3)
+attr(m, 'n') = 7
+as.network(m, matrix.type='edgelist')
 }
 \keyword{ classes }% at least one, from doc/KEYWORDS
 \keyword{ graphs }% __ONLY ONE__ keyword per line

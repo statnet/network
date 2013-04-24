@@ -18,10 +18,10 @@ add.vertices(x, nv, vattr = NULL, last.mode = TRUE)
 \details{
 New vertices are generally appended to the end of the network (i.e., their vertex IDs begin with \code{network.size(x)} an count upward).  The one exception to this rule is when \code{x} is bipartite and \code{last.mode==FALSE}.  In this case, new vertices are added to the end of the first mode, with existing second-mode vertices being permuted upward in ID.  (\code{x}'s \code{bipartite} attribute is adjusted accordingly.)
 
-Note that the attribute format used here is based on the internal (vertex-wise) storage method, as opposed to the attribute-wise format used by \code{\link{network}}.
+Note that the attribute format used here is based on the internal (vertex-wise) storage method, as opposed to the attribute-wise format used by \code{\link{network}}.  Specifically, \code{vattr} should be a list with one entry per new vertex, the ith element of which should be a list with an element for every attribute of the ith vertex.  (If the required \code{na} attribute is not given, it will be automatically created.)
 }
 \value{
-  Invisibly, a pointer to the updated \code{network} object; \code{add.vertices} modifies its argument in place.
+  Invisibly, a pointer to the updated \code{network} object; \code{add.vertices} modifies its argument in place. 
 }
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
@@ -39,6 +39,18 @@ g
 #Add five more vertices
 add.vertices(g,5)
 g
+
+#Create two more, with attributes
+vat<-replicate(2,list(is.added=TRUE,num.added=2),simplify=FALSE)
+add.vertices(g,2,vattr=vat)
+g\%v\%"is.added"       #Values are only present for the new cases
+g\%v\%"num.added"
+
+#Add to a bipartite network
+bip <-network.initialize(5,bipartite=3)
+get.network.attribute(bip,'bipartite') # how many vertices in first mode?
+add.vertices(bip,3,last.mode=FALSE)
+get.network.attribute(bip,'bipartite')
 }
 \keyword{ classes }% at least one, from doc/KEYWORDS
 \keyword{ graphs }% __ONLY ONE__ keyword per line

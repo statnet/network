@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 9/06/10
+# Last Modified 03/4/13
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -35,7 +35,7 @@ network.layout.circle<-function(nw,layout.par){
 network.layout.fruchtermanreingold<-function(nw,layout.par){
   #Provide default settings
   n<-network.size(nw)
-  d<-as.matrix.network(nw,matrix.type="edgelist")[,1:2]
+  d<-as.matrix.network(nw,matrix.type="edgelist")[,1:2,drop=FALSE]
   if(is.null(layout.par$niter))
     niter<-500
   else
@@ -118,6 +118,7 @@ network.layout.kamadakawai<-function(nw,layout.par){
   }else
     kkconst<-layout.par$kkconst
   if(is.null(layout.par$elen)){
+    require(sna)
     elen<-geodist(symmetrize(d),inf.replace=sqrt(n))$gdist
   }else
     elen<-layout.par$elen

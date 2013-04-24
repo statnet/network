@@ -35,7 +35,7 @@ is.network(x)
   \item{loops}{logical; should loops be allowed?}
   \item{multiple}{logical; are multiplex edges allowed?}
   \item{bipartite}{count; should the network be interpreted as bipartite? If present (i.e., non-NULL) it is the count of the number of actors in the bipartite network. In this case, the number of nodes is equal to the number of actors plus the number of events (with all actors preceeding all events). The edges are then interpreted as nondirected.}
-  \item{matrix.type}{one of \code{"adjacency"}, \code{"edgelist"}, \code{"incidence"}.}
+  \item{matrix.type}{one of \code{"adjacency"}, \code{"edgelist"}, \code{"incidence"}. See \code{\link{edgeset.constructors}} for details and optional additional arguments}
   \item{object}{an object of class \code{network}.}
   \item{na.omit}{logical; omit summarization of missing attributes in \code{network}?}
   \item{mixingmatrices}{logical; print the mixing matrices for the discrete attributes?}
@@ -43,7 +43,7 @@ is.network(x)
   \item{...}{additional arguments.}
 }
 \details{
-  \code{network} constructs a \code{network} class object from a matrix representation.
+  \code{network} constructs a \code{network} class object from a matrix representation. It is strongly recommended that you specify the \code{matrix.type} parameter, to avoid ambiguity in the type of input matrix. See the documentation of \code{edgeset.constructors} for the format of these input matrices.
 
   \code{network.copy} creates a new \code{network} object which duplicates its supplied argument.  (Direct assignment with \code{<-} should be used rather than \code{network.copy} in most cases.)
 

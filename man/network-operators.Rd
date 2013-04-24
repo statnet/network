@@ -18,7 +18,7 @@
 \method{-}{network}(e1, e2)
 \method{*}{network}(e1, e2)
 \method{\%c\%}{network}(e1, e2)
-! e1
+\method{!}{network}(e1)
 \method{|}{network}(e1, e2)
 \method{&}{network}(e1, e2)
 }

@@ -4,7 +4,7 @@
 # access.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 09/05/10
+# Last Modified 04/02/13
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -1058,11 +1058,12 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
   /*Get rid of all edges having any of the vid vertices as endpoints*/
   /*Rprintf("\tUnique vid entries:%d\n",length(vid));*/
   for(i=0;i<length(vid);i++){
-    PROTECT(eids=getEdgeIDs(x,INTEGER(vid)[i],0,neigh,0)); pc++;
+    PROTECT(eids=getEdgeIDs(x,INTEGER(vid)[i],0,neigh,0));
     /*Rprintf("\tgetIDs claims %d edges to remove.\n",length(eids));
     if(length(eids)>0)
       Rprintf("\tFirst ID is %d\n",INTEGER(eids)[0]);*/
     x=deleteEdges_R(x,eids);
+    UNPROTECT(1);
   }
 
   /*Permute the vertices in vid to the end of the graph*/
@@ -1418,7 +1419,7 @@ SEXP setEdgeValue_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
           COMPLEX(newval)[0].i=COMPLEX(value)[t-1+(h-1)*n].i;
           break;
         default:
-          UNIMPLEMENTED_TYPE("setEdgeValue_R",type);
+          SN_UNIMPLEMENTED_TYPE("setEdgeValue_R",type);
       }
       PROTECT(atl=setListElement(atl,anam,newval)); pc++;
       el=setListElement(el,"atl",atl);

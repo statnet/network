@@ -26,7 +26,9 @@ network.bipartite(x, g, ignore.eval = TRUE, names.eval = NULL, ...)
 \details{
   Each of the above functions takes a \code{network} and a matrix as input, and modifies the supplied \code{network} object by adding the appropriate edges.  \code{network.adjacency} takes \code{x} to be an adjacency matrix; \code{code.edgelist} takes \code{x} to be an edgelist matrix; and \code{network.incidence} takes \code{x} to be an incidence matrix.  \code{network.bipartite} takes \code{x} to be a two-mode adjacency matrix where rows and columns reflect each respective mode (conventionally, actors and events); If \code{ignore.eval==FALSE}, (non-zero) edge values are stored as edgewise attributes with name \code{names.eval}.  Any additional command line parameters are passed to \code{\link{add.edge}}.
 
-  Edgelist matrices to be used with \code{network.edgelist} should have one row per edge, with the first two columns indicating the sender and receiver of each edge (respectively).  Edge values may be provided in additional columns.  Incidence matrices should contain one row per vertex, with one column per edge.  In the directed case, negative cell values are taken to indicate tail vertices, while positive values indicate head vertices. 
+  Edgelist matrices to be used with \code{network.edgelist} should have one row per edge, with the first two columns indicating the sender and receiver of each edge (respectively).  Edge values may be provided in additional columns. The vertices specified in the first two columns, which can be characters, are added to the network in default sort order. The edges are added in the order specified by the edgelist matrix.
+  
+  Incidence matrices should contain one row per vertex, with one column per edge.  In the directed case, negative cell values are taken to indicate tail vertices, while positive values indicate head vertices. 
 
   Results similar to \code{network.adjacency} can also be obtained by means of extraction/replacement operators.  See the associated man page for details.
 }

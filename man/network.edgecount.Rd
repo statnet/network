@@ -14,7 +14,9 @@ network.edgecount(x, na.omit = TRUE)
   \item{na.omit}{ logical; omit edges with \code{na==TRUE} from the count? }
 }
 \details{
-  The return value \code{network.edgecount} is equal to \code{x\%n\%"mnext"-1}, minus the number of \code{NULL} edges (and missing edges, if \code{na.omit==TRUE}).  Note that \code{g\%n\%"mnext"-1} cannot, by itself, be counted upon to be an accurate count of the number of edges!
+  The return value is the number of distinct edges within the network object, including multiplex edges as appropriate.  (So if there are 3 edges from vertex i to vertex j, each contributes to the total edge count.)
+
+  The return value \code{network.edgecount} is in the present implementation related to the (required) \code{mnext} network attribute.  \code{mnext} is an internal legacy attribute that currently indicates the index number of the next edge to be added to a network object.  (Do not modify it unless you enjoy unfortunate surprises.)  The number of edges returned by \code{network.edgecount} is equal to \code{x\%n\%"mnext"-1}, minus the number of \code{NULL} edges (and missing edges, if \code{na.omit==TRUE}).  Note that \code{g\%n\%"mnext"-1} cannot, by itself, be counted upon to be an accurate count of the number of edges!  As \code{mnext} is not part of the API (and is not guaranteed to remain), users and developers are urged to use \code{network.edgecount} instead.
 }
 \value{
   The number of edges

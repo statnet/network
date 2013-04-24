@@ -37,20 +37,20 @@ list.network.attributes(x)
 list.edge.attributes(x)
 list.vertex.attributes(x)
 
-set.edge.attribute(x, attrname, value, e=1:length(x$mel))
-set.edge.value(x, attrname, value, e=1:length(x$mel))
+set.edge.attribute(x, attrname, value, e=seq_along(x$mel))
+set.edge.value(x, attrname, value, e=seq_along(x$mel))
 set.network.attribute(x, attrname, value)
-set.vertex.attribute(x, attrname, value, v=1:network.size(x))
+set.vertex.attribute(x, attrname, value, v=seq_len(network.size(x)))
 network.vertex.names(x) <- value
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{el}{ a list of edges (possibly \code{network$mel}). }
+  \item{el}{ a list of edges (possibly \code{network$mel}), or an object of class \code{network} from which the full list of edges will be extracted}
   \item{x}{ an object of class \code{network}. }
   \item{attrname}{ the name of the attribute to get or set. }
   \item{unlist}{ logical; should retrieved attributes be \code{\link{unlist}}ed prior to being returned? }
   \item{na.omit}{ logical; should values from missing vertices/edges be removed? }
-  \item{null.na}{ logical; should \code{NULL} values be replaced with \code{NA}s? }
+  \item{null.na}{ logical; should \code{NULL} values (corresponding to vertices with no attribute values set) be replaced with \code{NA}s in output? }
   \item{value}{ values of the attribute to be set; these should be in \code{vector} or \code{list} form for the \code{edge} and \code{vertex} cases, or \code{matrix} form for \code{set.edge.value}.}
   \item{e}{ IDs for the edges whose attributes are to be altered. }
   \item{v}{ IDs for the vertices whose attributes are to be altered. }
@@ -58,7 +58,7 @@ network.vertex.names(x) <- value
 \details{
 The \code{list.attributes} functions return the names of all edge, network, or vertex attributes (respectively) in the network.  All attributes need not be defined for all elements; the union of all extant attributes for the respective element type is returned.
 
-The \code{get.attribute} functions look for an edge, network, or vertex attribute (respectively) with the name \code{attrname}, returning its values.  Note that, to retrieve an edge attribute from all edges within a network \code{x}, \code{x$mel} should be used as the first argument to \code{get.edge.attribute}; \code{get.edge.value} is a convenience function which does this automatically.  \code{network.vertex.names} is a convenience function to extract the \code{"vertex.names"} attribute from all vertices.
+The \code{get.attribute} functions look for an edge, network, or vertex attribute (respectively) with the name \code{attrname}, returning its values.  Note that, to retrieve an edge attribute from all edges within a network \code{x}, \code{x$mel} should be used as the first argument to \code{get.edge.attribute}; \code{get.edge.value} is a convenience function which does this automatically. As of v1.7.2, if a \code{network} object is passed to \code{get.edge.attribute} it will automatically call \code{get.edge.value} instead of returning NULL. \code{network.vertex.names} is a convenience function to extract the \code{"vertex.names"} attribute from all vertices.
 
 The \code{set.attribute} functions allow one to set the values of edge, network, or vertex attributes.  \code{set.edge.value} is a convenience function which allows edge attributes to be given in adjacency matrix form, and the assignment form of \code{network.attribute.names} is likewise a convenient front-end to \code{set.vertex.attribute} for vertex names.  The \code{delete.attribute} functions, by contrast, remove the named attribute from the network, from all edges, or from all vertices (as appropriate).  If \code{attrname} is a vector of attribute names, each will be removed in turn.  These functions modify their arguments in place, although a pointer to the modified object is also (invisibly) returned.
 
