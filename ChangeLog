@@ -1,0 +1,441 @@
+CHANGELOG:
+v1.7.2 New Features/Changes/Bug Fixes
+  New Features:
+    - networks with zero vertices (zero-order networks) are now supported. Some functions now give explicit errors for networks with size zero because behavior is not well defined.
+  Changes
+    - package is now hosted as part of the statnet project
+    - get.edge.attribute will now silently call get.edge.value if accidentally called with a network instead of net$mel.
+    - some minor additions to documentation
+    - original JStatSoftware article included as package vignette
+    - package now requires the sna package, to provide some functions needed for network layouts
+  Bug Fixes
+    - fixed bug in add vertices when adding to second mode of biparite network
+    - fixed deprecation warning for R v2.15.3
+    - Fixed bug where replacement operator can add multiple edges to pair of vertices
+
+v1.7-1 Bug Fixes
+  Bug Fixes:
+    - .onLoad's startup message code caused excitingly bad behavior with recent
+      versions of R. [CTB]
+    - network.adjacency, network.edgelist, etc. were no longer modifying their
+      arguments in place, and have had their correct behavior restored.  [CTB]
+    - delete.vertices was building up too many protection stack calls, which
+      could cause issues in some cases.  [CTB, submitted by Adrian Albert]
+
+v1.7 New Features/Changes/Bug Fixes
+  New Features:
+    - as.matrix.network.edgelist now supports an argument, as.sna.edgelist,
+      that will return a fully compliant sna edgelist representation of the
+      network.  For sna versions 2.3 and later, this will among other things
+      allow missing data information to be automagically retained when passing
+      network objects to sna functions.  (Previous to this, missing edges were
+      stripped on conversion.)  [CTB]
+  Changes:
+    - print.summary.network no longer dumps excessive information when printing
+      edge lists.  [CTB]
+    - Built-in data objects are now compressed (not that it made much
+      difference, but CRAN was complaining).  This also requires R version
+      2.10 or later (previously required R>=2.0).  [CTB]
+  Bug Fixes:
+    - The network summary and print methods could in some cases fail if called
+      on a network with non-trivial graph-level attributes.  [CTB, submitted by 
+      Zack Almquist; closely related bug fixed by MSH]
+    - If called with ignore.eval=T but no specified names.eval, as.network
+      and friends generated an object with mislabeled edge attributes; note
+      that a warning is still given with such a call, since it is unwise not
+      to specify attribute names.  [CTB, submitted by DH]
+
+v1.6 Changes/Bug Fixes
+  Changes:
+    - In-place modification methods now use draconian measures to force 
+      evaluation of their arguments prior to modification, and overwrite
+      non-anonymous arguments in their original frame on exit.  This is a kludge
+      to cope with R's lazy evaluation strategy, which does not play well
+      with in-place modification of arguments.
+  Bug Fixes:
+    - Per the above, semantics for in-place modification of objects should now
+      operate correctly (was conflicting with R's lazy evaluation scheme,
+      sometimes resulting in bizarre behavior).  [CTB, submitted by Ronggui
+      Huang]
+    - plot.network was failing when edge.col was called with single color terms.
+      [CTB, submitted by Philip Leifeld]
+    - network.layout.fruchtermanreingold failed when called with a network
+      having exactly one edge.  [DRH]
+
+v1.5-1 Minor Changes/Bug Fixes
+  Changes:
+    - The mixingmatrix function has been moved from ergm to network (currently
+      as an undocumented internal function).  [CTB, but original function is
+      due to MSH]
+  Bug fixes:
+    - plot.network generated an error in some cases when edge.curv was set.
+      [CTB, submitted by Brian Ripley]
+    - summary.network generated an error if mixingmatrices=TRUE was set and
+      ergm was not loaded.  (The mixingmatrix function has now been moved into
+      the network package.)  [CTB, submitted by Ronggui Huang]
+
+v1.5 New Functions, New Features, Changes, and Bug Fixes
+  New Functions:
+    - get.inducedSubgraph: return induced subgraphs and edge cuts from a 
+      network object.  A new operator, %s%, has been introduced to simplify
+      this process.  [CTB]
+  New Features:
+    - add.vertices now supports adding vertices to the first mode of a 
+      bipartite network (default behavior is unchanged).  [CTB]
+    - as.matrix.network.adjacency and as.sociomatrix now support an optional
+      argument to force bipartite graphs to be returned in full one-mode 
+      adjacency form (rather than the current, two-mode default).  [CTB]
+    - print.network and print.summary.network now support an argument to allow
+      suppression of matrix output (helpful for very large graphs).  [CTB]
+    - network.layout.fruchtermanreingold now uses a cell-based acceleration
+      scheme for large graphs, which can be adjusted using layout.par; it also
+      operates entirely on edgelists, and is no longer O(N^2) in typical
+      applications.
+    - Network coercion methods now recognize/use sna edgelist attributes
+      (even if the matrix is not actually an sna edgelist!) automagically.
+      Coercion to edgelist form also sets the sna edgelist attributes.  In
+      addition to being useful for interoperability, this now makes it easier
+      to import network data in edgelist form (previously, one had to be 
+      careful about setting vertex sizes, which could only be crudely inferred
+      from the edgelist matrix itself).  [CTB]
+  Changes: 
+    - By very popular demand, network now uses R name spaces.  [Credit to
+      Michal Bojanowski for convincing us to make the leap]
+    - Also by popular demand, print.network no longer displays the network 
+      itself by default.  [CTB]
+    - Elementwise network operators now support multigraphs, and use 
+      basic network attributes in a sane way.  Operator semantics have been
+      substantially expanded for the muligraph case; hypergraphs are not
+      yet supported, but missingness is.  [CTB, submitted by MSH]
+    - Support for bipartite graphs in read.paj has been improved.  [MSH]
+    - In addition to changes noted above, network.layout.fruchtermanreingold 
+      uses a lightly different repulse radius by default; this seems to
+      work better on large graphs.  [CTB]
+    - plot.network has some overdue performance enhancements, including
+      a more scalable Fruchterman-Reingold implementation.  Note that
+      plot.network no longer coerces anything to adjacency form, although
+      particular layout methods might.  [CTB]
+  Bug Fixes:
+    - add.edge and add.edges would crash when called with NA vertex IDs in the
+      head or tail lists.  [CTB, submitted by Skye Bender-deMoll]
+    - is.na.network failed when called on networks with deleted edges.  
+      [CTB, submitted by MSH]
+    - network.dyadcount handled NAs improperly in some cases.  [MSH]
+    - network.initialize now stops with an error when called with <=0
+      vertices, rather than producing undefined behavior.  [CTB, submitted
+      by Skye Bender-deMoll]
+    - Various minor issues in plot.network have bee fixed.  [CTB, mostly
+      based on imports from gplot in sna; some gplot fixes contributed by Alex
+      Montgomery]
+    - print.network and print.summary.network could fail when called on
+      multiplex or hypergraphic networks with the wrong matrix.type settings.
+      [CTB]
+
+v1.4-1 Minor Changes/Bug Fixes
+  Changes:
+    - print.summary.character now behaves in a more intuitive way (and always
+      generates at least marginally useful output).  [CTB]
+    - print.summary.network has been rewritten -- too much confusion about what
+      it was supposed to do.  [CTB]
+    - The na.omit option to print.summary.network and print.network should now
+      be considered deprecated (it does essentially nothing at this point. [CTB]
+  Bug Fixes:
+    - print.summary.network was giving the same information twice (and other 
+      information badly.  [CTB]
+v1.4 New Functions, New Features, Changes, and Bug Fixes
+  New Functions:
+    - is.na.network: returns a network whose edges correspond to missing edges
+      in the original network.  (Also supported by new backend function 
+      isNANetwork_R.)  [CTB]
+    - network.naedgecount: returns the number of missing edges in a network
+      object.  [CTB]
+    - Internal functions summary.character and print.summary.character have
+      been added for use with network print/summary methods.  [MSH]
+    - Internal function is.color has been added to allow heuristic
+      identification of color names (for use with attribute plotting).  
+      as.color similarly attempts to coerce its input into some reasonable
+      color value for display purposes.  [CTB]
+  New Features:
+    - The network edge assignment operator ([<-.network) now allows NAs to be
+      given as assignment values (resulting in missing edges if no attribute
+      specified, or missing attribute values otherwise).  [CTB]
+    - The C-level network API headers are now contained in the "inst" directory;
+      from now on, they will be maintained there.  [CTB]
+    - read.paj now imports vertex attributes.  [Patch submitted by Alexander
+      Montgomery]
+  Changes:
+    - Many minor documentation updates (including adding references to the 
+      recent JSS article).  [CTB]
+    - CITATION file has been updated to reflect current R standards.  [CTB]
+    - Color support in plot.network.default has been greatly expanded and
+      rationalized.  [CTB]
+    - is.adjacent now sets na.omit=FALSE by default; there seems to be a general
+      consensus that this results in the more obvious pattern of behavior
+      (i.e., missing edges from i to j result in a value of NA, unless there 
+      are also non-missing (i,j) edges present).  The man page has also been
+      updated to describe this behavior in greater detail.  [CTB]
+    - Per the above, as.sociomatrix and related coercion methods also now
+      display missing data information by default.  [CTB]
+    - summary.network now returns a summary.network object, and printing takes
+      place within print.summary.network (which is standard R behavior).
+      Something approximately like this was being done before, but behavior
+      should now be more conventional; summary.network objects can also carry
+      optional information as network attributes with names of the form
+      "summary.*". [CTB; Submitted by DRH]
+    - plot.network.default now automagically displays labels if manually
+      supplied (following the behavior of sna's gplot).  [CTB]
+    - print.network now shows missing edge information.  [CTB]
+    - The man page for network.dyadcount now emphasizes the fact that
+      directed dyads are returned when is.directed(x)==TRUE.  (This was noted
+      in the example, but was explicitly discussed in the main page.)  [CTB;
+      Submitted by DRH]
+    - as.matrix.network.edgelist and as.matrix.network.incidence now return
+      degenerate matrices instead of NULL when called with an empty graph.
+      [Pavel Krivitsky]
+    - Undocumented support for the design matrix and special "respondent"
+      attributes should be considered deprecated, and will be removed in the
+      next version.  [CTB]
+  Bug Fixes:
+    - as.matrix.network.edgelist dropped the dimensions of its output when
+      called on a graph with one edge.  [CTB]
+    - as.matrix.network.incidence produced an error when called with an 
+      empty graph, and generated incorrect matrices when called with graphs
+      containing missing or previously deleted edges.  [CTB]
+    - get.neighborhood was incorrectly including ego for loopless undirected
+      graphs.  [CTB]
+    - list.vertex.attributes produced an error when called on networks with
+      different attributes on each vertex.  [CTB]
+    - plot.network.default was not displaying colors as advertised in some
+      cases [CTB; Submitted by Cori Mar]
+    - print.network and summary.network were giving ugly output.  [MSH]
+    - read.paj was reversing arc directions.  [CTB; Submitted by Kevin Lewis]
+    - The initial startup message was giving the wrong help command.  [CTB;
+      Submitted by Kevin Zembower]
+    - read.paj was failing in some cases.  [Pavel Krivitsky]
+    - summary.network didn't call the mixing matrix summary properly.  [MSH]
+v1.3 New Functions, New Features, Changes, and Bug Fixes
+  New Functions:
+    - network.vertex.names<-: simplified assignment for vertex names.  [CTB]
+  New Features:
+    - A CITATION file has now been added to the package, to encourage good
+      behavior.  The initial on-load announcements have been tweaked
+      accordingly.  [CTB]
+  Changes:
+    - add.edges (via the backend routine add_edges_R) now adds edges in a
+      more efficient way; substantial performance gains should be observed
+      when adding multiple edges at one time, versus previous package
+      versions.  [CTB]
+    - network print and summary methods now consistently refer to "vertex 
+      attributes" instead of "nodal attributes."  [CTB]
+    - network constructors now set vertex names by default; this brings the
+      actual behavior of the package in line with its apparent behavior (since
+      network.vertex names and similar routines will "fake" vertex names if 
+      none are present, thus producing results which are inconsistent with
+      get.vertex.attribute in the latter case).  [CTB]
+    - The DESCRIPTION file has been tweaked to be a bit more professional, and
+      to add the statnet web site.  [CTB]
+  Bug Fixes:
+    - Fixed "virtual subsetting" for network objects when a single vector of
+      virtual cell numbers is provided, or when a one-row, two-column matrix is
+      given.  In both cases, network was treating the numbers as if they were
+      first-column selectors.  [CTB]
+    - Direct assignment to internal components of network objects was failing
+      in certain cases. This has been fixed, although users should note that
+      this behavior is both unsupported and generally a Bad Idea (TM).  Please
+      use interface methods instead!  [CTB; Submitted by Skye Bender-deMoll]
+    - Fixed bug in read.paj.  [MSH]
+    - Fixed display of attribute information in summary.network.  [MSH]
+    - plot.network is now compatible with the updated ergm package.  [CTB]
+    - Previously implemented functionality in plot.network allowing one-word
+      specification of vertex or edge attributes for display parameters was
+      not working uniformly.  [CTB]
+v1.2 New Functions, Changes, Bug Fixes
+  New Functions:
+    - $<-.network: replacement method for network objects.  [CTB]
+    - sum.network, prod.network: sums and products of multiple network 
+      objects.  [CTB]
+  Changes:
+    - Direct assignments with network objects on the right-hand side now copy
+      their right-hand argument (per standard R semantics).  Originally, a 
+      pointer to the right-hand argument was copied (and network.copy was 
+      required for direct assignment).  The direct use of network.copy is now
+      unnecessary for most purposes, and should be avoided.  [CTB]
+    - network.density now allows explicit control of missing data behavior,
+      support for ignoring "structural zeros" (per bipartite), and supports
+      a wider range of hypergraphic cases.  [CTB]
+    - Some adjustments have been made to the overloading of network arithmetic
+      operators, to ensure compatibility with future versions of R.  Most
+      importantly, the passing of an attrname argument to arithmetic operators
+      is now defunct (since it violates the S3 generics).  The addition of
+      more general sum and prod methods hopefully make up for this 
+      regression.  [CTB]
+    - The network extraction and assignment operators now behave more like 
+      conventional matrices.  In particular, single vectors are assumed to 
+      contain lists of cell indices (when given in isolation), and one-row,
+      two-column matrices are treated as other two-column matrices.  [CTB]
+    - Various minor documentation and test file updates.  [CTB]
+  Bug Fixes:
+    - as.matrix arguments have been modified to harmonize with the new R (2.5)
+      generics definitions.  [CTB]
+    - Annoying but harmless tracer messages have been removed.  [CTB]
+    - Protection stack could overflow when large numbers of edges were deleted
+      in a single call.  [CTB; Submitted by Pavel Krivitsky]
+v1.1-2 Changes, Bug Fixes
+  Changes:
+    - getNeighborhood, getEdges, and getEdgeIDs (internal) now force
+      type="combined" behavior on undirected networks; this was done at the R
+      level before, but is now enforced in C as well.  This is not generally
+      user-level transparent, but affects the experimental network API [CTB]
+  Bug Fixes:
+    - as.network.matrix was not setting the bipartite attribute of the returned
+      network properly, when called with a non-FALSE bipartite argument [MSH]
+    - An error was present in some error return functions, causing errors on
+      errors (which, happily, were only relevant when an error occurred)
+      [CTB; Submitted by Skye Bender-deMoll]
+v1.1-1 New Functions, Changes
+  New Functions:
+    - The internal function setVertexAttribute has been added.  This has
+      no immediate user-level effect, but the new function is supported
+      in the C API [CTB]
+  Changes:
+    - Use of the protection stack has been changed, so as to avoid racking up
+      huge stacks when creating very large networks.  This is expected to have
+      a minimal impact on performance, but will avoid protection stack overflow
+      issues in some cases  [CTB]
+    - A change in R 2.4.0 has apparently made it impossible for generic 
+      two-argument Ops (e.g., +,-,*) to dispatch to functions with more than
+      two arguments.  A side effect of this is that "+.network" and friends
+      must be called with the full function name (as opposed to simply "+") 
+      when the optional attrname argument is being used.  Note that this is
+      not a change in the network package (although the test code has been
+      updated to reflect it), but a regression due to R.  Go complain to the
+      R team  [CTB]
+v1.1 New Features, Bug Fixes, Changes
+  New Features:
+    - [.network and [<-.network now allow the use of vertex names (where
+      present) for selection of vertices [CTB]
+  Bug Fixes:
+    - add.vertices did not verify the integrity of vattr, and could generate
+      a segfault if incorrectly called with a non-null, non-list value [CTB;
+      reported by Skye Bender-deMoll]
+    - as.network (and friends) could segfault if matrix.type was forced
+      to adjacency while bipartite>0; new behavior essentially forces the
+      use of the bipartite matrix method in this case [CTB]
+    - delete.edges and set.edge.attribute returned an annoying (but harmless)
+      warning when called with zero-length eid [CTB; reported by David Hunter]
+    - delete.vertices did not adjust bipartite attribute (where present) to
+      account for loss of mode 1 vertices [CTB]
+    - get.vertex.attribute generated an error when called with na.omit=TRUE
+      in some cases [CTB]
+    - network.incidence could not be used to construct undirected dyadic
+      networks [CTB]
+    - set.vertex.attribute generated an error if called with attribute lists
+      of length != network.size [CTB; reported by Skye Bender-deMoll]
+  Changes:
+    - Added a new overview man page (network-package) with information on how
+      to get started with network [CTB]
+    - [<-.network will now remove edges with zero values if both names.eval and
+      add.edges are set, and will not add edges for those cells.  Previously,
+      the standard behavior was to add edges for all cells [CTB]
+    - Added delete.edges to the "see also" for add.edges [CTB; suggested by
+      Skye Bender-deMoll]
+    - permute.vertexIDs now throws a warning when called with a cross-mode
+      vertex exchange on a bipartite graph [CTB]
+    - Default matrix type for as.matrix.network is now "adjacency," rather than
+      the output of which.matrix.type().  Coercion methods should not have
+      variable behavior depending on features such as network size, even if
+      it is convenient for some purposes!  The old behavior can be easily
+      obtained via setting matrix.type=which.matrix.type(x), for those who
+      want it [CTB]
+v1.0-1 Minor Bug Fixes, Changes
+  Bug Fixes:
+    - Various warnings were removed (apparently, these only appeared in 
+      R<2.1) [CTB]
+    - plot.network was failing on networks where is.bipartite==TRUE [CTB]
+  Changes:
+    - The generic form of %c% was temporarily removed, to avoid namespace
+      issues with sna.  (This will be rectified in future releases.) [CTB]
+v1.0 New Functions, New Features, Changes, and Bug Fixes
+  New Functions:
+    - Operator overloading for +, -, *, |, &, and ! have been added, as has the
+      composition operator, %c% [CTB]
+    - Operator overloading is now supported for "[" and "[<-"; this allows
+      network objects to be treated transparently as if they were adjacency
+      matrices (in some cases, at least).  New extraction/replacement operators
+      %n%, %n%<-, %v%, %v%<- have been added for extracting/assigning values to
+      network and vertex attributes (respectively) [CTB]
+    - network.copy: returns a copy of the input network [CTB]
+    - network.dyadcount: return the number of dyads in a network (optionally
+      adjusting for the missing dyads) [MSH]
+  New Features:
+    - add.edges now checks for illegal loop-like edges when edge.check==TRUE
+      [CTB]
+    - get.neighborhood now allows users to specify whether missing edges should
+      be ignored [CTB]
+    - set.edge.value now accepts edge values in vector format [CTB]
+  Changes:
+    - All access access functions now modify their arguments in place; this
+      greatly improves performance, but may produce unexpected behavior.
+      If users wish to generate a modified copy of a network, they must
+      first generate the copy and then modify it.  Otherwise, the old
+      object will be modified as well. In accordance with this, modification
+      methods now return their (modified) arguments invisibly.  [CTB]
+    - Most access functions have now been backended; this has improved the
+      performance of many operations by as much as two orders of magnitude [CTB]
+    - get.edges and get.edgeIDs now treat all undirected networks as if
+      called with neighborhood=="combined" [CTB]
+    - as.matrix.network.incidence now handles undirected edges in a more
+      conventional way [CTB]
+    - network.adjacency will now ignore diagonal entries if has.loops=FALSE 
+      [CTB]
+  Bug Fixes:
+    - as.network.edgelist and as.network.incidence were producing spurious edge
+      attributes [CTB]
+    - list.edge.attributes generated failed under certain conditions (submitted
+      by Matthew Wiener) [CTB]
+    - set.edge.attribute was able to write attributes into non-existent (NULL)
+      edges [CTB]
+    - set.edge.value could exhibit strange behavior when carelessly chosen
+      edge subsets were selected [CTB]
+    
+v0.5-4 New Facilities for Bipartite, New Features, Changes, and Bug Fixes
+  New Functions:
+    - network.bipartite to store an explicit bipartite network.
+      Modified network.initialize, etc, to accept "bipartite" argument. [MSH]
+    - is.bipartite: logical test for a bipartite network [MSH]
+    - read.paj: read one or more network objects from a Pajek file [MSH, DS]
+  New Features:
+    - summary.network now reports on edge attributes [MSH]
+  Changes:
+    - The composition operator (%c%) has been removed due to a name conflict
+      with the sna package; since sna now supports network objects, its
+      version can be used instead. [CTB]
+    - as.sociomatrix is now properly configured to work in tandem with 
+      as.sociomatrix.sna (in the sna package).  The functionality of the 
+      routine has also been extended slightly.  [CTB]
+  Bug Fixes:
+    - .First.lib: Print out correct welcome banner for package [MSH]
+    - Fix displayisolates determination in plot.network.default [MSH]
+
+v0.5-3 New Functions, New Data Set, and Changes
+  New Functions:
+    - permute.vertexIDs: Permute vertices in their internal representation [CTB]
+  New Data:
+    - emon: Drabek et al.'s Emergent Multi-organizational Networks [CTB]
+  Changes:
+    - The obsolete examples directory has been removed. [CTB]
+
+v0.5-2 New Features, New Functions and Bug Fixes
+  New Functions:
+    - delete.vertices: Remove one or more vertices (and associated edges)
+      from a network object.
+    - delete.edge.attribute, delete.network.attribute, delete.vertex attribute:
+      Remove an edge/network/vertex attribute.
+    - list.edge.attributes, list.network.attributes, list.vertex attributes:
+      List all edge/network/vertex attribute names.
+  New Features:
+    - plot.graph.default now accepts vertex/edge attribute names for most
+      vertex/edge display properties.
+  Bug Fixes:
+    - Edge deletion produced exciting and unexpected behavior in some cases.
+    - network.initialize set vertex na attributes to TRUE by default.
