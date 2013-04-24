@@ -1,0 +1,149 @@
+CHANGELOG:
+
+v1.1-1 New Functions, Changes
+  New Functions:
+    - The internal function setVertexAttribute has been added.  This has
+      no immediate user-level effect, but the new function is supported
+      in the C API [CTB]
+  Changes:
+    - Use of the protection stack has been changed, so as to avoid racking up
+      huge stacks when creating very large networks.  This is expected to have
+      a minimal impact on performance, but will avoid protection stack overflow
+      issues in some cases  [CTB]
+    - A change in R 2.4.0 has apparently made it impossible for generic 
+      two-argument Ops (e.g., +,-,*) to dispatch to functions with more than
+      two arguments.  A side effect of this is that "+.network" and friends
+      must be called with the full function name (as opposed to simply "+") 
+      when the optional attrname argument is being used.  Note that this is
+      not a change in the network package (although the test code has been
+      updated to reflect it), but a regression due to R.  Go complain to the
+      R team  [CTB]
+v1.1 New Features, Bug Fixes, Changes
+  New Features:
+    - [.network and [<-.network now allow the use of vertex names (where
+      present) for selection of vertices [CTB]
+  Bug Fixes:
+    - add.vertices did not verify the integrity of vattr, and could generate
+      a segfault if incorrectly called with a non-null, non-list value [CTB;
+      reported by Skye Bender-deMoll]
+    - as.network (and friends) could segfault if matrix.type was forced
+      to adjacency while bipartite>0; new behavior essentially forces the
+      use of the bipartite matrix method in this case [CTB]
+    - delete.edges and set.edge.attribute returned an annoying (but harmless)
+      warning when called with zero-length eid [CTB; reported by David Hunter]
+    - delete.vertices did not adjust bipartite attribute (where present) to
+      account for loss of mode 1 vertices [CTB]
+    - get.vertex.attribute generated an error when called with na.omit=TRUE
+      in some cases [CTB]
+    - network.incidence could not be used to construct undirected dyadic
+      networks [CTB]
+    - set.vertex.attribute generated an error if called with attribute lists
+      of length != network.size [CTB; reported by Skye Bender-deMoll]
+  Changes:
+    - Added a new overview man page (network-package) with information on how
+      to get started with network [CTB]
+    - [<-.network will now remove edges with zero values if both names.eval and
+      add.edges are set, and will not add edges for those cells.  Previously,
+      the standard behavior was to add edges for all cells [CTB]
+    - Added delete.edges to the "see also" for add.edges [CTB; suggested by
+      Skye Bender-deMoll]
+    - permute.vertexIDs now throws a warning when called with a cross-mode
+      vertex exchange on a bipartite graph [CTB]
+    - Default matrix type for as.matrix.network is now "adjacency," rather than
+      the output of which.matrix.type().  Coercion methods should not have
+      variable behavior depending on features such as network size, even if
+      it is convenient for some purposes!  The old behavior can be easily
+      obtained via setting matrix.type=which.matrix.type(x), for those who
+      want it [CTB]
+v1.0-1 Minor Bug Fixes, Changes
+  Bug Fixes:
+    - Various warnings were removed (apparently, these only appeared in 
+      R<2.1) [CTB]
+    - plot.network was failing on networks where is.bipartite==TRUE [CTB]
+  Changes:
+    - The generic form of %c% was temporarily removed, to avoid namespace
+      issues with sna.  (This will be rectified in future releases.) [CTB]
+v1.0 New Functions, New Features, Changes, and Bug Fixes
+  New Functions:
+    - Operator overloading for +, -, *, |, &, and ! have been added, as has the
+      composition operator, %c% [CTB]
+    - Operator overloading is now supported for "[" and "[<-"; this allows
+      network objects to be treated transparently as if they were adjacency
+      matrices (in some cases, at least).  New extraction/replacement operators
+      %n%, %n%<-, %v%, %v%<- have been added for extracting/assigning values to
+      network and vertex attributes (respectively) [CTB]
+    - network.copy: returns a copy of the input network [CTB]
+    - network.dyadcount: return the number of dyads in a network (optionally
+      adjusting for the missing dyads) [MSH]
+  New Features:
+    - add.edges now checks for illegal loop-like edges when edge.check==TRUE
+      [CTB]
+    - get.neighborhood now allows users to specify whether missing edges should
+      be ignored [CTB]
+    - set.edge.value now accepts edge values in vector format [CTB]
+  Changes:
+    - All access access functions now modify their arguments in place; this
+      greatly improves performance, but may produce unexpected behavior.
+      If users wish to generate a modified copy of a network, they must
+      first generate the copy and then modify it.  Otherwise, the old
+      object will be modified as well. In accordance with this, modification
+      methods now return their (modified) arguments invisibly.  [CTB]
+    - Most access functions have now been backended; this has improved the
+      performance of many operations by as much as two orders of magnitude [CTB]
+    - get.edges and get.edgeIDs now treat all undirected networks as if
+      called with neighborhood=="combined" [CTB]
+    - as.matrix.network.incidence now handles undirected edges in a more
+      conventional way [CTB]
+    - network.adjacency will now ignore diagonal entries if has.loops=FALSE 
+      [CTB]
+  Bug Fixes:
+    - as.network.edgelist and as.network.incidence were producing spurious edge
+      attributes [CTB]
+    - list.edge.attributes generated failed under certain conditions (submitted
+      by Matthew Wiener) [CTB]
+    - set.edge.attribute was able to write attributes into non-existent (NULL)
+      edges [CTB]
+    - set.edge.value could exhibit strange behavior when carelessly chosen
+      edge subsets were selected [CTB]
+    
+v0.5-4 New Facilities for Bipartite, New Features, Changes, and Bug Fixes
+  New Functions:
+    - network.bipartite to store an explicit bipartite network.
+      Modified network.initialize, etc, to accept "bipartite" argument. [MSH]
+    - is.bipartite: logical test for a bipartite network [MSH]
+    - read.paj: read one or more network objects from a Pajek file [MSH, DS]
+  New Features:
+    - summary.network now reports on edge attributes [MSH]
+  Changes:
+    - The composition operator (%c%) has been removed due to a name conflict
+      with the sna package; since sna now supports network objects, its
+      version can be used instead. [CTB]
+    - as.sociomatrix is now properly configured to work in tandem with 
+      as.sociomatrix.sna (in the sna package).  The functionality of the 
+      routine has also been extended slightly.  [CTB]
+  Bug Fixes:
+    - .First.lib: Print out correct welcome banner for package [MSH]
+    - Fix displayisolates determination in plot.network.default [MSH]
+
+v0.5-3 New Functions, New Data Set, and Changes
+  New Functions:
+    - permute.vertexIDs: Permute vertices in their internal representation [CTB]
+  New Data:
+    - emon: Drabek et al.'s Emergent Multi-organizational Networks [CTB]
+  Changes:
+    - The obsolete examples directory has been removed. [CTB]
+
+v0.5-2 New Features, New Functions and Bug Fixes
+  New Functions:
+    - delete.vertices: Remove one or more vertices (and associated edges)
+      from a network object.
+    - delete.edge.attribute, delete.network.attribute, delete.vertex attribute:
+      Remove an edge/network/vertex attribute.
+    - list.edge.attributes, list.network.attributes, list.vertex attributes:
+      List all edge/network/vertex attribute names.
+  New Features:
+    - plot.graph.default now accepts vertex/edge attribute names for most
+      vertex/edge display properties.
+  Bug Fixes:
+    - Edge deletion produced exciting and unexpected behavior in some cases.
+    - network.initialize set vertex na attributes to TRUE by default.
