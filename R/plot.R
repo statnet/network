@@ -170,7 +170,7 @@ network.loop<-function(x0,y0,length=0.1,angle=10,width=0.01,col=1,border=1,lty=1
 
 
 #Routine to plot vertices, using polygons
-network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,...){
+network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=1,...){
   #Introduce a function to make coordinates for a single polygon
   make.coords<-function(x,y,r,s,rot){
     ang<-(1:s)/s*2*pi+rot*2*pi/360
@@ -184,12 +184,15 @@ network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,...)
   col<-rep(col,length=n)
   lty<-rep(lty,length=n)
   rot<-rep(rot,length=n)
+  lwd<-rep(lwd,length=n)
   #Obtain the coordinates
   coord<-vector()
-  for(i in 1:length(x))
-    coord<-rbind(coord,make.coords(x[i],y[i],radius[i],sides[i],rot[i]))
+  for(i in 1:length(x)) {
+    coord<-make.coords(x[i],y[i],radius[i],sides[i],rot[i])
+    polygon(coord,border=border[i],col=col[i],lty=lty[i],lwd=lwd[i], ...)
+  }
   #Plot the polygons
-  polygon(coord,border=border,col=col,lty=lty,...)
+  
 }
 
 
@@ -223,6 +226,7 @@ label.pos=0,
 label.bg="white",
 vertex.sides=50,
 vertex.rot=0,
+vertex.lwd=1,
 arrowhead.cex=1,
 label.cex=1,
 loop.cex=1,
@@ -424,6 +428,15 @@ layout.par=NULL,
        stop("Attribute '",temp,"' had illegal missing values for vertex.rot or was not present in plot.network.default.")
    }else
      vertex.rot <- rep(vertex.rot,length=n)
+   
+   if(is.character(vertex.lwd)&&(length(vertex.lwd)==1)){
+     temp<-vertex.lwd
+     vertex.lwd <- rep(get.vertex.attribute(x,vertex.lwd),length=n)
+     if(all(is.na(vertex.lwd)))
+       stop("Attribute '",temp,"' had illegal missing values for vertex.lwd or was not present in plot.network.default.")
+   }else
+     vertex.lwd <- rep(vertex.lwd,length=n)
+   
    if(is.character(loop.cex)&&(length(loop.cex)==1)){
      temp<-loop.cex
      loop.cex <- rep(get.vertex.attribute(x,loop.cex),length=n)
@@ -466,7 +479,7 @@ layout.par=NULL,
      label.bg <- rep(label.bg,length=n)
    #Plot vertices now, if desired
    if(!vertices.last)
-     network.vertex(cx[use],cy[use],radius=vertex.radius[use], sides=vertex.sides[use],col=vertex.col[use],border=vertex.border[use],lty=vertex.lty[use],rot=vertex.rot[use])
+     network.vertex(cx[use],cy[use],radius=vertex.radius[use], sides=vertex.sides[use],col=vertex.col[use],border=vertex.border[use],lty=vertex.lty[use],rot=vertex.rot[use], lwd=vertex.lwd[use])
    #Generate the edges and their attributes
    px0<-vector()   #Create position vectors (tail, head)
    py0<-vector()
@@ -610,7 +623,7 @@ layout.par=NULL,
    }
    #Plot vertices now, if we haven't already done so
    if(vertices.last)
-     network.vertex(cx[use],cy[use],radius=vertex.radius[use], sides=vertex.sides[use],col=vertex.col[use],border=vertex.border[use],lty=vertex.lty[use],rot=vertex.rot[use])
+     network.vertex(cx[use],cy[use],radius=vertex.radius[use], sides=vertex.sides[use],col=vertex.col[use],border=vertex.border[use],lty=vertex.lty[use],rot=vertex.rot[use], lwd=vertex.lwd[use])
    #Plot vertex labels, if needed
    if(displaylabels&(!all(label==""))&(!all(use==FALSE))){
      if (label.pos==0){

@@ -7,7 +7,7 @@
 }
 \usage{
 network.vertex(x, y, radius = 1, sides = 4, border = 1, col = 2, 
-    lty = NULL, rot = 0, ...)
+    lty = NULL, rot = 0, lwd = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,7 @@ network.vertex(x, y, radius = 1, sides = 4, border = 1, col = 2,
   \item{col}{ a vector of vertex interior colors. }
   \item{lty}{ a vector of vertex border line types. }
   \item{rot}{ a vector of vertex rotation angles (in degrees). }
+  \item{lwd}{ a vector of vertex border line widths. }
   \item{\dots}{ Additional arguments to \code{\link{polygon}} }
 }
 \details{

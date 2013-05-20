@@ -15,7 +15,7 @@
     displayisolates = TRUE, interactive = FALSE, xlab = NULL, 
     ylab = NULL, xlim = NULL, ylim = NULL, pad = 0.2, label.pad = 0.5,
     displaylabels = !missing(label), boxed.labels = FALSE, label.pos = 0,
-    label.bg = "white", vertex.sides = 50, vertex.rot = 0,
+    label.bg = "white", vertex.sides = 50, vertex.rot = 0, vertex.lwd=1,
     arrowhead.cex = 1, label.cex = 1, loop.cex = 1, vertex.cex = 1,
     edge.col = 1, label.col = 1, vertex.col = 2, label.border = 1,
     vertex.border = 1, edge.lty = 1, label.lty = NULL, vertex.lty = 1,
@@ -49,6 +49,7 @@
   \item{label.bg}{ background color for label boxes (if \code{boxed.labels==TRUE}); may be a vector, if boxes are to be of different colors.}
   \item{vertex.sides}{ number of polygon sides for vertices; may be given as a vector or a vertex attribute name, if vertices are to be of different types. }
   \item{vertex.rot}{ angle of rotation for vertices (in degrees); may be given as a vector or a vertex attribute name, if vertices are to be rotated differently. }
+  \item{vertex.lwd}{ line width of vertex borders; may be given as a vector or a vertex attribute name, if vertex borders are to have different line widths. }
   \item{arrowhead.cex}{ expansion factor for edge arrowheads.}
   \item{label.cex}{ character expansion factor for label text. }
   \item{loop.cex}{ expansion factor for loops; may be given as a vector or a vertex attribute name, if loops are to be of different sizes. }
