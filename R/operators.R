@@ -542,7 +542,7 @@
     #Start with the complete graph, and cut things away
     el<-cbind(rep(1:n,each=n),rep(1:n,n))
     if(!is.directed(out))         #Needs to match order in networkOperatorSetup
-      el<-el[el[,1]>=el[,2],]
+      el<-el[el[,1]<=el[,2],]
     if(!has.loops(out))
       el<-el[el[,1]!=el[,2],]
     elnum<-(el[,1]-1)+n*(el[,2]-1)
@@ -895,6 +895,9 @@ networkOperatorSetup<-function(x,y=NULL){
       if(d&(!dx)){      #Need to add two-way edges; BTW, can't have (!d)&dx...
         elx<-rbind(elx,elx[elx[,2]!=elx[,1],2:1,drop=FALSE])
         elnax<-rbind(elnax,elnax[,2:1])
+      } else if (!dx){ # need to enforce edge ordering i<j for comparison
+        # replace all rows where i<j with j,i
+        elx[elx[,1]>elx[,2],]<-elx[elx[,1]>elx[,2],c(2,1)]
       }
     }else{
       elx<-which(x!=0,arr.ind=TRUE)
@@ -902,7 +905,7 @@ networkOperatorSetup<-function(x,y=NULL){
       if(!d){   #Sociomatrix already has two-way edges, so might need to remove
         elx<-elx[elx[,1]>=elx[,2],,drop=FALSE]
         elnax<-elnax[elnax[,1]>=elnax[,2],,drop=FALSE]
-      }
+      } 
     }
     if(!is.null(y)){
       if(is.network(y)){
@@ -911,6 +914,9 @@ networkOperatorSetup<-function(x,y=NULL){
         if(d&(!dy)){      #Need to add two-way edges; BTW, can't have (!d)&dy...
           ely<-rbind(ely,ely[ely[,2]!=ely[,1],2:1,drop=FALSE])
           elnay<-rbind(elnay,elnay[,2:1])
+        } else if (!dy){ # need to enforce edge ordering i<j for comparison
+          # replace all rows where i<j with j,i
+          ely[ely[,1]>ely[,2],]<-ely[ely[,1]>ely[,2],c(2,1)]
         }
       }else{
         ely<-which(y!=0,arr.ind=TRUE)
