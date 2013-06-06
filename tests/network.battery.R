@@ -172,6 +172,23 @@ set.edge.attribute(network.initialize(3),"test","a")
 # check for network of zero size --used to give error ticket #255
 set.vertex.attribute(network.initialize(0),'foo','bar')
 
+# check for operators with undirected edge error ticket #279
+  # nw1 is assigned tail<head
+  nw1<-network.initialize(3,directed=FALSE)
+  nw1[1,2]<-1
+
+  # nw2 is assigned tail>head
+  nw2<-network.initialize(3,directed=FALSE)
+  nw2[2,1]<-1
+
+# Which, the binary network operators don't take into account:
+check[77]<-network.edgecount(nw1-nw2)==0 # Should have 0, has 1.
+check[78]<-network.edgecount(nw1|nw2)==1 # Should have 1, has 2 (1->2 and 2->1).
+check[79]<-network.edgecount(nw1&nw2)==1 # Should have 1, has 0 (since it treats 1->2 and 2->1 differently).
+check[80]<-network.edgecount(!nw1)==2 # Should have choose(3,2)-1=2, has 3.
+check[81]<-network.edgecount(!nw2)==2 # Should have choose(3,2)-1=2, has 2.
+
+
 # check get edge attribute overloading
 net<-network.initialize(3)
 add.edges(net,c(1,2,3),c(2,3,1))
