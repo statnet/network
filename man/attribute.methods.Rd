@@ -62,6 +62,8 @@ The \code{get.attribute} functions look for an edge, network, or vertex attribut
 
 The \code{set.attribute} functions allow one to set the values of edge, network, or vertex attributes.  \code{set.edge.value} is a convenience function which allows edge attributes to be given in adjacency matrix form, and the assignment form of \code{network.attribute.names} is likewise a convenient front-end to \code{set.vertex.attribute} for vertex names.  The \code{delete.attribute} functions, by contrast, remove the named attribute from the network, from all edges, or from all vertices (as appropriate).  If \code{attrname} is a vector of attribute names, each will be removed in turn.  These functions modify their arguments in place, although a pointer to the modified object is also (invisibly) returned.
 
+Additional practical example of how to load and attach attributes are on the \code{\link{loading.attributes}} page. 
+
 Note that some attribute assignment/extraction can be performed through the various extraction/replacement operators.  See the associated man page for details.
 }
 \value{
@@ -74,7 +76,7 @@ For the \code{list.attributes} methods, a vector containing attribute names.  Fo
 %
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{ \code{\link{network}}, \code{\link{as.network.matrix}}, \code{\link{as.sociomatrix}}, \code{\link{as.matrix.network}}, \code{\link{network.extraction}}}
+\seealso{ \code{\link{loading.attributes}},\code{\link{network}}, \code{\link{as.network.matrix}}, \code{\link{as.sociomatrix}}, \code{\link{as.matrix.network}}, \code{\link{network.extraction}}}
 \examples{
 #Create a network with three edges
 m<-matrix(0,3,3)

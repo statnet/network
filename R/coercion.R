@@ -211,7 +211,7 @@ as.network.matrix<-function(x, matrix.type=NULL,
   unames <- NULL
   if(matrix.type=="edgelist"){
     if(dim(x)[2]>2)
-      vals<-x[,-(1:2)]
+      vals<-x[,-(1:2),drop=FALSE]
     else
       vals<-NULL
     if(is.character(x<-as.matrix(x[,1:2,drop=FALSE]))){
@@ -220,7 +220,13 @@ as.network.matrix<-function(x, matrix.type=NULL,
     }
     if(!is.null(vals)){
       x<-cbind(x,vals)
-      colnames(x)<-NULL  #R creates these, and they are annoying later
+      
+      if (is.null(colnames(vals))){
+        colnames(x)<-NULL  #R creates these, and they are annoying later
+      } else {
+        # leave colnames for vals intact so they can be used for edge attributes
+        colnames(x)<-c(NA,NA,colnames(vals))
+      }
     }
   }
   if(matrix.type=="adjacency" && !is.null(colnames(x))){

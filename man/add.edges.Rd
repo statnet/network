@@ -14,7 +14,7 @@ add.edges(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
   \item{x}{an object of class \code{network}}
   \item{tail}{for \code{add.edge}, a vector of vertex IDs reflecting the tail set for the edge to be added; for \code{add.edges}, a list of such vectors}
   \item{head}{for \code{add.edge}, a vector of vertex IDs reflecting the head set for the edge to be added; for \code{add.edges}, a list of such vectors}
-  \item{names.eval}{for \code{add.edge}, an optional list of names for edge attributes; for \code{add.edges}, a list of such lists}
+  \item{names.eval}{for \code{add.edge}, an optional list of names for edge attributes; for \code{add.edges}, a list of length equal to the number of edges, with each element containing a list of names for the attributes of the corresponding edge}
   \item{vals.eval}{for \code{add.edge}, an optional list of edge attribute values (matching \code{names.eval}); for \code{add.edges}, a list of such lists}
   \item{edge.check}{ logical; should we perform (computationally expensive) tests to check for the legality of submitted edges? }
   \item{...}{ additional arguments }
@@ -31,7 +31,7 @@ Edges can also be added/removed via the extraction/replacement operators.  See t
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
 %\note{ }
-\seealso{\code{\link{network}}, \code{\link{add.vertices}}, \code{\link{network.extraction}}, \code{\link{delete.edges}}}
+\seealso{\code{\link{network}}, \code{\link{add.vertices}}, \code{\link{network.extraction}}, \code{\link{delete.edges}}, \code{\link{network.edgelist}}}
 \examples{
 #Initialize a small, empty network
 g<-network.initialize(3)
@@ -44,6 +44,28 @@ g
 #note that replacement operators are much slower than add.edges()
 g[,3]<-1
 g[,]
+
+#Add multiple edges with attributes to a network
+
+# pretend we just loaded in this data.frame from a file
+# Note: network.edgelist() may be simpler for this case
+elData<-data.frame(
+  from_id=c("1","2","3","1","3","1","2"),
+  to_id=c("1", "1", "1", "2", "2", "3", "3"),
+  myEdgeWeight=c(1, 2, 1, 2, 5, 3, 9.5),
+  someLetters=c("B", "W", "L", "Z", "P", "Q", "E"),
+  edgeCols=c("red","green","blue","orange","pink","brown","gray"),
+  stringsAsFactors=FALSE
+)
+
+valueNet<-network.initialize(3,loops=TRUE)
+
+add.edges(valueNet,elData[,1],elData[,2],
+    names.eval=rep(list(list("myEdgeWeight","someLetters","edgeCols")),nrow(elData)), 
+    vals.eval=lapply(1:nrow(elData),function(r){as.list(elData[r,3:5])}))
+
+list.edge.attributes(valueNet)
+
 }
 \keyword{classes}
 \keyword{graphs}
