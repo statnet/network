@@ -19,14 +19,14 @@ network.bipartite(x, g, ignore.eval = TRUE, names.eval = NULL, ...)
 \arguments{
   \item{x}{ a matrix containing edge information }
   \item{g}{ an object of class \code{network} }
-  \item{ignore.eval}{ logical; ignore edge values? }
-  \item{names.eval}{ the edge attribute under which to store edge values, if any }
-  \item{\dots}{ additional arguments to \code{\link{add.edge}} }
+  \item{ignore.eval}{ logical; ignore edge value information in x? }
+  \item{names.eval}{ a name for the edge attribute under which to store edge values, if any }
+  \item{\dots}{ additional arguments to \code{\link{add.edges}} }
 }
 \details{
   Each of the above functions takes a \code{network} and a matrix as input, and modifies the supplied \code{network} object by adding the appropriate edges.  \code{network.adjacency} takes \code{x} to be an adjacency matrix; \code{code.edgelist} takes \code{x} to be an edgelist matrix; and \code{network.incidence} takes \code{x} to be an incidence matrix.  \code{network.bipartite} takes \code{x} to be a two-mode adjacency matrix where rows and columns reflect each respective mode (conventionally, actors and events); If \code{ignore.eval==FALSE}, (non-zero) edge values are stored as edgewise attributes with name \code{names.eval}.  Any additional command line parameters are passed to \code{\link{add.edge}}.
 
-  Edgelist matrices to be used with \code{network.edgelist} should have one row per edge, with the first two columns indicating the sender and receiver of each edge (respectively).  Edge values may be provided in additional columns. The vertices specified in the first two columns, which can be characters, are added to the network in default sort order. The edges are added in the order specified by the edgelist matrix.
+  Edgelist matrices to be used with \code{network.edgelist} should have one row per edge, with the first two columns indicating the sender and receiver of each edge (respectively).  Edge values may be provided in additional columns. The edge attributes will be created with names corresponding to the column names unless alternate names are provided via \code{names.eval}. The vertices specified in the first two columns, which can be characters, are added to the network in default sort order. The edges are added in the order specified by the edgelist matrix.
   
   Incidence matrices should contain one row per vertex, with one column per edge.  In the directed case, negative cell values are taken to indicate tail vertices, while positive values indicate head vertices. 
 
@@ -41,7 +41,7 @@ network.bipartite(x, g, ignore.eval = TRUE, names.eval = NULL, ...)
 
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{ \code{\link{network}}, \code{\link{network.initialize}}, \code{\link{add.edge}}, \code{\link{network.extraction}}}
+\seealso{ \code{\link{loading.attributes}}, \code{\link{network}}, \code{\link{network.initialize}}, \code{\link{add.edges}}, \code{\link{network.extraction}}}
 \examples{
 #Create an arbitrary adjacency matrix
 m<-matrix(rbinom(25,1,0.5),5,5)
@@ -53,6 +53,29 @@ network.adjacency(m,g)      #Import the edge data
 #Do the same thing, using replacement operators
 g<-network.initialize(5)
 g[,]<-m
+
+# load edges from a data.frame via network.edgelist
+edata <-data.frame(
+  tails=c(1,2,3),
+  heads=c(2,3,1),
+  love=c('yes','no','maybe'),
+  hate=c(3,-5,2),
+  stringsAsFactors=FALSE
+  )
+
+g<-network.edgelist(edata,network.initialize(4),ignore.eval=FALSE)
+as.sociomatrix(g,attrname='hate')
+g\%e\%'love'
+
+# load edges from an incidence matrix
+inci<-matrix(c(1,1,0,0, 0,1,1,0, 1,0,1,0),ncol=3,byrow=FALSE)
+inci
+g<-network.incidence(inci,network.initialize(4,directed=FALSE))
+as.matrix(g)
+
 }
+
+
+
 \keyword{ classes }% at least one, from doc/KEYWORDS
 \keyword{ graphs }% __ONLY ONE__ keyword per line

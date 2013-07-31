@@ -95,7 +95,7 @@ add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
   else if(!is.list(vals.eval))
     vals.eval<-as.list(rep(vals.eval,length=length(names.eval)))
   if(length(unique(c(length(tail),length(head),length(names.eval), length(vals.eval))))>1)
-    stop("head, tail, and value lists passed to add.edges must be of the same length!\n")
+    stop("head, tail, names.eval and vals.eval lists passed to add.edges must be of the same length!\n")
   edge.check<-list(...)$edge.check
   if(is.null(edge.check))
     edge.check<-FALSE

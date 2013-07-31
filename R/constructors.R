@@ -179,8 +179,19 @@ network.edgelist<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   l<-dim(x)[2]
   #Traverse the edgelist matrix, adding edges as we go.
   if((l>2)&&(!ignore.eval)){		#Use values if present...
-    edge.check<-list(...)$edge.check      
-    g<-add.edges(g,as.list(x[,1]),as.list(x[,2]),as.list(rep(names.eval, length=NROW(x))),apply(x[,3:l,drop=FALSE],1,list),edge.check=edge.check)
+    #if names not given, try to use the names from data frame
+    if (is.null(names.eval)){
+      names.eval<-names(x)[3:l]
+    }
+    #if it is still null, its going to crash, so throw an informative error
+    if (is.null(names.eval)){
+      stop("unable to add attribute values to edges because names are not provided for each attribute (names.eval=NULL)")
+    }
+    edge.check<-list(...)$edge.check 
+    eattrnames <-lapply(seq_len(NROW(x)),function(r){as.list(names.eval)})
+   # eattrvals <-apply(x[,3:l,drop=FALSE]
+    eattrvals <-lapply(seq_len(NROW(x)),function(r){as.list(x[r,3:l,drop=FALSE])})
+    g<-add.edges(g,as.list(x[,1]),as.list(x[,2]),eattrnames,eattrvals,edge.check=edge.check)
   }else{				#...otherwise, don't.
     edge.check<-list(...)$edge.check      
     g<-add.edges(g,as.list(x[,1]),as.list(x[,2]),edge.check=edge.check)
