@@ -64,6 +64,8 @@ is.network(x)
 \author{ Carter T. Butts \email{buttsc@uci.edu} and David Hunter \email{dhunter@stat.psu.edu} }
 \note{
 Between versions 0.5 and 1.2, direct assignment of a network object created a pointer to the original object, rather than a copy.  As of version 1.2, direct assignment behaves in the same manner as \code{network.copy}.  Direct use of the latter is thus superfluous in most situations, and is discouraged.
+
+Many of the network package functions modify their network object arguments in-place. For example, \code{set.network.attribute(net,"myVal",5)} will have the same effect as \code{net<-set.network.attribute(net,"myVal",5)}.  Unfortunately, the current implementation of in-place assignment breaks when the network argument is an element of a list or a named part of another object. So \code{set.network.attribute(myListOfNetworks[[1]],"myVal",5)} will silently fail to modify its network argument, likely leading to incorrect output.   
 }
 \seealso{\code{\link{network.initialize}}, \code{\link{attribute.methods}}, \code{\link{as.network.matrix}}, \code{\link{as.matrix.network}}, \code{\link{deletion.methods}}, \code{\link{edgeset.constructors}}, \code{\link{network.indicators}}, \code{\link{plot.network}}}
 \examples{

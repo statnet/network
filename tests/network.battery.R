@@ -124,6 +124,7 @@ if(!all(list.edge.attributes(temp)==c('goodbye','hello','na'))){
 if(!all(temp%e%'goodbye'==c(3,0,2))){
     stop("problem with network edgelist coercion from data frame")
 }   
+
    
 
 #---- Check attribute assignment/access ----
