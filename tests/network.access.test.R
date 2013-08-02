@@ -7,6 +7,25 @@ set.vertex.attribute(binet, 'myval', paste('b2', 1:4), v=7:10)
 check <- vector()
 check[1] <- all(get.vertex.attribute(binet, 'myval') == c("b1 1", "b1 2", "b1 3", "b1 4", "b1 5", "b1 6", "b2 1", "b2 2", "b2 3" ,"b2 4"))
 
+# check for distinction between bipartite=FALSE and bipartite=0
+testA<-network.initialize(3,bipartite=0)
+if(!is.bipartite(testA)){
+  stop('failed test of is.bipartite for bipartite=0')
+}
+
+testB<-network.initialize(3,bipartite=FALSE)
+if(is.bipartite(testB)){
+  stop('failed test of is.bipartite for bipartite=FALSE')
+}
+
+testC<-network.initialize(3,bipartite=TRUE)
+if(!is.bipartite(testC)){
+  stop('failed test of is.bipartite for bipartite=TRUE')
+}
+
+if(!is.bipartite(binet)){
+  stop('failed test of is.bipartite for bipartite=6')
+}
 
 # add vertices to bipartite graphs
 g = binet; add.vertices(g, 5, last.mode=F)
@@ -14,6 +33,21 @@ check[2] <- network.size(g) == 15
 check[3] <- get.network.attribute(g, 'bipartite') == 11
 check[4] <- identical(get.vertex.attribute(g, 'myval'),
   c("b1 1", "b1 2", "b1 3", "b1 4", "b1 5", "b1 6", NA,NA,NA,NA,NA,"b2 1","b2 2","b2 3","b2 4"))
+
+test<-network.initialize(3,bipartite=0)
+test%v%'letters'<-LETTERS[1:3]
+add.vertices(test,nv=1,last.mode=FALSE)
+if(!identical(test%v%'letters',c(NA,"A","B","C"))){
+  stop("Error adding vertices to first mode of network with biparite=0")
+}
+
+test<-network.initialize(3,bipartite=0)
+test%v%'letters'<-LETTERS[1:3]
+add.vertices(test,nv=1,last.mode=TRUE)
+if(!identical(test%v%'letters',c("A","B","C",NA))){
+  stop("Error adding vertices to last mode of network with biparite=0")
+}
+
 
 g = binet
 add.vertices(g, 5, last.mode=T)

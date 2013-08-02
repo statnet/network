@@ -260,7 +260,7 @@ network.incidence<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
 # MSH added bipartite
 #
 network.initialize<-function(n,directed=TRUE,hyper=FALSE,loops=FALSE,multiple=FALSE,bipartite=FALSE){
-  #If we don't have at least one vertex, we have a problem...
+  #If we have a negative number of vertices, we have a problem...
   n<-round(n)
   if(n<0)
     stop("Network objects cannot be of negative order.")

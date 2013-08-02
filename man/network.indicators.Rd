@@ -28,7 +28,7 @@ is.multiplex(x)
   
   \code{has.loops} returns \code{TRUE} iff \code{x} is allowed to contain loops (or loop-like edges, in the hypergraphic case).
   
-  \code{is.bipartite} returns \code{TRUE} iff the \code{x} has been explicitly bipartite-coded.  (Note that \code{is.bipartite} refers only to the storage properties of \code{x}; \code{is.bipartite(x)==FALSE} it does \emph{not} mean that \code{x} cannot admit a bipartition!)
+  \code{is.bipartite} returns \code{TRUE} iff the \code{x} has been explicitly bipartite-coded. Values of \code{bipartite=NULL}, and \code{bipartite=FALSE} will evaluate to \code{FALSE}, numeric values of \code{bipartite>=0} will evaluate to \code{TRUE}. (The value \code{bipartite==0} indicates that it is a bipartite network with a zero-sized first partition.) Note that \code{is.bipartite} refers only to the storage properties of \code{x} and how it should be treated by some algorithms; \code{is.bipartite(x)==FALSE} it does \emph{not} mean that \code{x} cannot admit a bipartition!
 
   \code{is.directed} returns \code{TRUE} iff the edges of \code{x} are to be interpreted as directed.
 

@@ -62,6 +62,9 @@ mixingmatrix <- function(nw, attrname) {
   if(!is.network(nw)){
     stop("mixingmatrix() requires a network object")
   }
+  if(missing(attrname)){
+    stop("attrname argument is missing. mixingmatrix() requires an an attribute name")
+  }
   if(network.size(nw)==0){
     warning("mixing matrices not well-defined for graphs with no vertices.")
     type<-"directed"
@@ -85,7 +88,7 @@ mixingmatrix <- function(nw, attrname) {
     rowswitch <- apply(el, 1, function(x) x[1]>x[2])
     el[rowswitch, 1:2] <- el[rowswitch, 2:1]
     nb1 <- get.network.attribute(nw,"bipartite")
-    u<-sort(unique(nodecov[1:nb1]))
+    u<-sort(unique(nodecov[0:nb1]))
     From <- c(u, nodecov[el[,1]])
     u<-sort(unique(nodecov[(nb1+1):network.size(nw)]))
     To <- c(u, nodecov[el[,2]])
@@ -123,7 +126,7 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   n<-network.size(x)
   bip<-x%n%"bipartite"
   if(is.hyper(x)){
-    if((bip>0)&&(discount.bipartite)){
+    if((bip>=0)&&(discount.bipartite)){
       pe<-choose(bip,1:bip)*choose(n-bip,1:(n-bip))*(1+is.directed(x))
     }else{
       if(has.loops(x))
@@ -132,7 +135,7 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
         pe<-sum(choose(n,1:n))/(1+!is.directed(x))
     }
   }else{
-    if((bip>0)&&(discount.bipartite)){
+    if((bip>=0)&&(discount.bipartite)){
       pe<-bip*(n-bip)*(1+is.directed(x))
     }else{
       pe<-n*(n-1)/(1+!is.directed(x))+(has.loops(x)*network.size(x))

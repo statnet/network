@@ -34,7 +34,7 @@ is.network(x)
   \item{hyper}{logical; are hyperedges allowed?}
   \item{loops}{logical; should loops be allowed?}
   \item{multiple}{logical; are multiplex edges allowed?}
-  \item{bipartite}{count; should the network be interpreted as bipartite? If present (i.e., non-NULL) it is the count of the number of actors in the bipartite network. In this case, the number of nodes is equal to the number of actors plus the number of events (with all actors preceeding all events). The edges are then interpreted as nondirected.}
+  \item{bipartite}{count; should the network be interpreted as bipartite? If present (i.e., non-NULL, non-FALSE) it is the count of the number of actors in the bipartite network. In this case, the number of nodes is equal to the number of actors plus the number of events (with all actors preceeding all events). The edges are then interpreted as nondirected. Values of bipartite==0 are permited, indicating a bipartite network with zero-sized first partition.}
   \item{matrix.type}{one of \code{"adjacency"}, \code{"edgelist"}, \code{"incidence"}. See \code{\link{edgeset.constructors}} for details and optional additional arguments}
   \item{object}{an object of class \code{network}.}
   \item{na.omit}{logical; omit summarization of missing attributes in \code{network}?}
