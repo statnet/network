@@ -488,9 +488,11 @@ is.bipartite<-function(x){
   else
     bip <- get.network.attribute(x,"bipartite")
   if(is.null(bip)){
-   FALSE
+   return(FALSE)
+  } else if (is.logical(bip)){
+   return(bip)  
   }else{
-   bip>0
+   return(bip>=0)
   }
 }
 
@@ -692,7 +694,7 @@ permute.vertexIDs<-function(x,vids){
     stop("Invalid permutation vector in permute.vertexIDs.")
   if(is.bipartite(x)){  #If bipartite, enforce partitioning
     bpc<-get.network.attribute(x,"bipartite")
-    if(any(vids[1:bpc]>bpc)||(vids[(bpc+1):n]<=bpc))
+    if(any(vids[0:bpc]>bpc)||(vids[(bpc+1):n]<=bpc))
       warning("Performing a cross-mode permutation in permute.vertexIDs.  I hope you know what you're doing....")
   }
   #Return the permuted graph
