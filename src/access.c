@@ -4,7 +4,7 @@
 # access.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 04/02/13
+# Last Modified 08/01/13
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -1269,24 +1269,26 @@ SEXP permuteVertexIDs_R(SEXP x, SEXP vids)
   int i,j,k,pc=0,ccount=0,flag=0;
   char neigh[] = "combined";
   SEXP eids,cvids,cpos,val,iel,oel,epl,mel,idlist,edge;
+  PROTECT_INDEX ipx;
 
   /*Set up the initial variables*/
   PROTECT(vids=coerceVector(vids,INTSXP)); pc++;
   PROTECT(cpos=allocVector(INTSXP,length(vids))); pc++;
   PROTECT(cvids=allocVector(INTSXP,length(vids))); pc++;
-  PROTECT(eids=allocVector(INTSXP,0)); pc++;
+  PROTECT_WITH_INDEX(eids=allocVector(INTSXP,0),&ipx); pc++;
 
   /*Determine which vertices have moved, and accumulate affected edges*/
   for(i=0;i<networkSize(x);i++)
     if(INTEGER(vids)[i]!=i+1){
       INTEGER(cpos)[ccount]=i+1;                      /*New positions*/
       INTEGER(cvids)[ccount++]=INTEGER(vids)[i];      /*Old positions*/
-      PROTECT(idlist=coerceVector(getEdgeIDs(x,INTEGER(vids)[i],0, neigh,0),INTSXP)); pc++;
-      PROTECT(eids=vecAppend(eids,idlist)); pc++;
+      PROTECT(idlist=coerceVector(getEdgeIDs(x,INTEGER(vids)[i],0, neigh,0),INTSXP));
+      REPROTECT(eids=vecAppend(eids,idlist),ipx);
+      UNPROTECT(1);
     }
   PROTECT(cpos=contractList(cpos,ccount)); pc++;    /*Shrink vID lists*/
   PROTECT(cvids=contractList(cvids,ccount)); pc++;
-  PROTECT(eids=vecUnique(eids)); pc++;             /*Remove duplicates*/
+  REPROTECT(eids=vecUnique(eids),ipx);              /*Remove duplicates*/
 
   /*For each affected edge, revise vertex IDs as needed*/
   mel=getListElement(x,"mel");
@@ -1294,7 +1296,7 @@ SEXP permuteVertexIDs_R(SEXP x, SEXP vids)
     edge=VECTOR_ELT(mel,INTEGER(eids)[i]-1);
     /*Correct the head list (inl)*/
     epl=getListElement(edge,"inl");
-    PROTECT(epl=coerceVector(epl,INTSXP)); pc++;
+    PROTECT(epl=coerceVector(epl,INTSXP));
     for(j=0;j<length(epl);j++){
       flag=0;
       for(k=0;(k<length(cpos))&&(!flag);k++)
@@ -1306,7 +1308,7 @@ SEXP permuteVertexIDs_R(SEXP x, SEXP vids)
     edge=setListElement(edge,"inl",epl);
     /*Correct the tail list (outl)*/
     epl=getListElement(edge,"outl");
-    PROTECT(epl=coerceVector(epl,INTSXP)); pc++;
+    PROTECT(epl=coerceVector(epl,INTSXP));
     for(j=0;j<length(epl);j++){
       flag=0;
       for(k=0;(k<length(cpos))&&(!flag);k++)
@@ -1316,6 +1318,7 @@ SEXP permuteVertexIDs_R(SEXP x, SEXP vids)
         }
     }
     edge=setListElement(edge,"outl",epl);
+    UNPROTECT(2);
   }
 
   /*Now, reorder the vertex properties*/
@@ -1325,7 +1328,6 @@ SEXP permuteVertexIDs_R(SEXP x, SEXP vids)
   x=setListElement(x,"val",val);
   x=setListElement(x,"iel",iel);
   x=setListElement(x,"oel",oel);
-
   /*Unprotect and return*/
   UNPROTECT(pc);
   return x;

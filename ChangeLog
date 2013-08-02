@@ -1,4 +1,9 @@
 CHANGELOG:
+
+v1.8 Bug Fixes
+  Bug Fixes
+    - permute.vertexIDs was triggering a protection stack overflow on large graphs.
+
 v1.7.2 New Features/Changes/Bug Fixes
   New Features:
     - networks with zero vertices (zero-order networks) are now supported. Some functions now give explicit errors for networks with size zero because behavior is not well defined.
