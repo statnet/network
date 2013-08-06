@@ -76,6 +76,9 @@ network.bipartite<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   if(!is.null(colnames(x)) & !is.null(rownames(x))){
     g <- set.vertex.attribute(g,"vertex.names",c(rownames(x),colnames(x)))
   }
+  # convert x into a matrix
+  x<-as.matrix(x)
+  
   X <- matrix(0,ncol=n,nrow=n)
 # diag(X) <- 0
   X[1:nactors, nactors+(1:nevents)] <- x
@@ -94,7 +97,7 @@ network.bipartite<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   }else{
     xv<-x
     ev<-apply(cbind(as.list(as.logical(missing[x!=0])),as.list(xv[x!=0])),1, as.list)
-    en<-replicate(length(ev),list("na",names.eval))
+    en<-replicate(length(ev),list(list("na",names.eval)))
   }
   if(sum(x!=0)>0)
     add.edges(g, as.list(1+e%%n), as.list(1+e%/%n),
