@@ -71,6 +71,15 @@ check[12] <- network.edgecount(y, na.omit=F) == 6
 y[,] <- 0
 check[13] <- network.edgecount(y, na.omit=F) == 0
 
+
+# ------ test valid.eids function
+net<-network.initialize(4)
+net[,]<-1
+delete.edges(net,eid=4:6)
+if(!all(valid.eids(net)==c(1,2,3,7,8,9,10,11,12))){
+  stop('valid.eids did not return correct ids for non-null elements of network')
+}
+
 #If everything worked, check is TRUE
 if(!all(check)){                                               #Should be TRUE
   stop(paste("network package test failed on test(s):",which(!check)))

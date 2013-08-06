@@ -52,6 +52,7 @@
 #   set.edge.value
 #   set.network.attribute
 #   set.vertex.attribute
+#   valid.eids
 #
 ######################################################################
 
@@ -824,5 +825,15 @@ set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
   invisible(x)
+}
+
+# valid.eids  returns a list of non-null edge ids for a given network
+valid.eids <-function(x){
+  # maybe should omit class test for speed?
+  if (!is.network(x)){
+    stop("cannot determine non-null edge ids because argument x is not a network object")
+  }
+  # get the ids of all the non-null elements on the edgelist of x
+  return(which(!sapply(x$mel,is.null)))
 }
 

@@ -18,7 +18,7 @@ delete.vertices(x, vid)
   \item{vid}{ a vector of vertex IDs. }
 }
 \details{
-  Note that an edge's ID number corresponds to its order within \code{x$mel}.  To determine edge IDs, see \code{\link{get.edgeIDs}}.  Likewise, vertex ID numbers reflect the order with which vertices are listed internally (e.g., the order of \code{x$oel} and \code{x$iel}, or that used by \code{as.matrix.network.adjacency}).  When vertices are removed from a network, all edges having those vertices as endpoints are removed as well.  
+  Note that an edge's ID number corresponds to its order within \code{x$mel}.  To determine edge IDs, see \code{\link{get.edgeIDs}}.  Likewise, vertex ID numbers reflect the order with which vertices are listed internally (e.g., the order of \code{x$oel} and \code{x$iel}, or that used by \code{as.matrix.network.adjacency}).  When vertices are removed from a network, all edges having those vertices as endpoints are removed as well.  When edges are removed, the remaining edge ids are NOT permuted and \code{NULL} elements will be left on the list of edges, which may complicate some functions that require eids (such as \code{\link{set.edge.attribute}}).  The function \code{\link{valid.eids}} provides a means to determine the set of valid (non-NULL) edge ids. 
   
 Edges can also be added/removed via the extraction/replacement operators.  See the associated man page for details.
 }
@@ -32,7 +32,7 @@ Edges can also be added/removed via the extraction/replacement operators.  See t
 %
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{ \code{\link{get.edgeIDs}}, \code{\link{network.extraction}}}
+\seealso{ \code{\link{get.edgeIDs}}, \code{\link{network.extraction}}, \code{\link{valid.eids}}}
 \examples{
 #Create a network with three edges
 m<-matrix(0,3,3)
