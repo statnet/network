@@ -28,7 +28,7 @@ network.bipartite(x, g, ignore.eval = TRUE, names.eval = NULL, ...)
 
   Edgelist matrices to be used with \code{network.edgelist} should have one row per edge, with the first two columns indicating the sender and receiver of each edge (respectively).  Edge values may be provided in additional columns. The edge attributes will be created with names corresponding to the column names unless alternate names are provided via \code{names.eval}. The vertices specified in the first two columns, which can be characters, are added to the network in default sort order. The edges are added in the order specified by the edgelist matrix.
   
-  Incidence matrices should contain one row per vertex, with one column per edge.  In the directed case, negative cell values are taken to indicate tail vertices, while positive values indicate head vertices. 
+  Incidence matrices should contain one row per vertex, with one column per edge. A non-zero entry in the matrix means that the edge with the id corresponding to the column index will have an incident vertex with an id corresponding to the row index. In the directed case, negative cell values are taken to indicate tail vertices, while positive values indicate head vertices. 
 
   Results similar to \code{network.adjacency} can also be obtained by means of extraction/replacement operators.  See the associated man page for details.
 }
@@ -72,6 +72,15 @@ inci<-matrix(c(1,1,0,0, 0,1,1,0, 1,0,1,0),ncol=3,byrow=FALSE)
 inci
 g<-network.incidence(inci,network.initialize(4,directed=FALSE))
 as.matrix(g)
+
+# load in biparite dataframe with weights
+bipMat<-data.frame(
+        event1=c(1,2,1,0),
+        event2=c(0,0,3,0),
+        event3=c(1,1,0,4),
+        row.names=c("a","b","c","d"))
+net<-network(bipMat,matrix.type='bipartite',ignore.eval=FALSE,names.eval='pies')
+as.matrix(net,attername='pies')
 
 }
 
