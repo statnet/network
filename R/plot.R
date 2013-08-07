@@ -195,6 +195,14 @@ network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=
   
 }
 
+# draw a label for a network edge
+network.edgelabel<-function(px0,py0,px1,py1,label,...){
+    lpx<-px0+((px1-px0)/2)
+    lpy<-py0+((py1-py0)/2)
+    # assumes that line is straight
+    text(lpx,lpy,labels=label,...)
+}
+
 
 #Generic plot.network method. 
 plot.network <- function(x, ...){
@@ -240,6 +248,9 @@ edge.lty=1,
 label.lty=NULL,
 vertex.lty=1,
 edge.lwd=0,
+edge.label=NULL,
+edge.label.cex=1,
+edge.label.col=1,                               
 label.lwd=par("lwd"),
 edge.len=0.5,
 edge.curve=0.1,
@@ -557,6 +568,57 @@ layout.par=NULL,
        edge.curve<-rep(0,length=NROW(d))
        e.curv.as.mult<-FALSE
      }
+     # only evaluate edge label stuff if we will draw label
+     if(!is.null(edge.label)){
+       #Edge label
+       if(length(dim(edge.label))==2){   #Coerce edge.label to vector form
+         edge.label<-edge.label[d[,1:2]]
+       }else if(is.character(edge.label)&&(length(edge.label)==1)){
+         temp<-edge.label
+         edge.label<-x%e%edge.label
+         if(!is.null(edge.label)){
+           edge.label<-edge.label[edgetouse]
+         }else
+           edge.label<-rep(temp,length=NROW(d))  #Assume it was a value to replicate
+       }else if(is.logical(edge.label)&&(length(edge.label)==1)) {
+         if (edge.label){
+           # default to edge ids.
+           edge.label<-valid.eids(x)[edgetouse]
+         } else {
+           # don't draw edge labels if set to FALSE
+           edge.label<-NULL
+         }
+       }else{   
+         
+         # do nothing and hope for the best!
+         edge.label<-rep(edge.label,length=NROW(d))
+       }
+       #Edge label color
+       if(length(dim(edge.col))==2)   #Coerce edge.label.col
+         edge.label.col<-edge.label.col[d[,1:2]]
+       else if(is.character(edge.label.col)&&(length(edge.label.col)==1)){
+         temp<-edge.label.col
+         edge.label.col<-x%e%edge.label.col
+         if(!is.null(edge.label.col)){
+           edge.label.col<-edge.label.col[edgetouse]
+           if(!all(is.color(edge.label.col),na.rm=TRUE))
+             edge.label.col<-as.color(edge.label.col)
+         }else
+           edge.label.col<-rep(temp,length=NROW(d))  #Assume it was a color word
+       }else
+         edge.label.col<-rep(edge.label.col,length=NROW(d))
+       #Edge label cex
+       if(length(dim(edge.label.cex))==2)
+         edge.label.cex<-edge.label.cex[d[,1:2]]
+       else if(is.character(edge.label.cex)&&(length(edge.label.cex)==1)){
+         temp<-edge.label.cex
+         edge.label.cex<-(x%e%edge.label.cex)[edgetouse]
+         if(all(is.na(edge.label.cex)))
+           stop("Attribute '",temp,"' had illegal missing values for edge.label.cex or was not present in plot.network.default.")
+       }else
+         edge.label.cex<-rep(edge.label.cex,length=NROW(d))
+     } # end edge label block
+     
      #Proceed with edge setup
      dist<-((cx[d[,1]]-cx[d[,2]])^2+(cy[d[,1]]-cy[d[,2]])^2)^0.5  #Get the inter-point distances for curves
      tl<-d.raw*dist   #Get rescaled edge lengths
@@ -616,11 +678,15 @@ layout.par=NULL,
    if(!usecurve&!uselen){   #Straight-line edge case
      if(length(px0)>0)
        network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col,lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff,arrowhead=usearrows)
+     if(!is.null(edge.label)){
+       network.edgelabel(px0,py0,px1,py1,edge.label,col=edge.label.col,cex=edge.label.cex)
+     }
    }else{   #Curved edge case
      if(length(px0)>0){
        network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col,lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff,arrowhead=usearrows,curve=e.curv,edge.steps=edge.steps)
      }
    }
+   
    #Plot vertices now, if we haven't already done so
    if(vertices.last)
      network.vertex(cx[use],cy[use],radius=vertex.radius[use], sides=vertex.sides[use],col=vertex.col[use],border=vertex.border[use],lty=vertex.lty[use],rot=vertex.rot[use], lwd=vertex.lwd[use])
