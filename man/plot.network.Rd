@@ -64,7 +64,7 @@
   \item{label.lty}{ line type for label boxes (if \code{boxed.labels==TRUE}); may be given as a vector, if label boxes are to have different line types. }
   \item{vertex.lty}{ line type for vertex borders; may be given as a vector or a vertex attribute name, if vertex borders are to have different line types. }
   \item{edge.lwd}{ line width scale for edges; if set greater than 0, edge widths are scaled by \code{edge.lwd*dat}.  May be given as a vector, adjacency matrix, or edge attribute name, if edges are to have different line widths. }
-  \item{edge.label}{if non-\code{NULL}, labels for edges will be drawn. May be given as a vector, adjacency matrix, or edge attribute name, if edges are to have different labels. A single value of \code{TRUE} will use edge ids as labels. NOTE: currently doesn't work for curved edges or loops.}
+  \item{edge.label}{if non-\code{NULL}, labels for edges will be drawn. May be given as a vector, adjacency matrix, or edge attribute name, if edges are to have different labels. A single value of \code{TRUE} will use edge ids as labels. NOTE: currently doesn't work for curved edges.}
   \item{edge.label.cex}{ character expansion factor for edge label text; may be given as a vector or a edge attribute name, if edge labels are to have different sizes.}
   \item{edge.label.col}{ color for edge labels; may be given as a vector or a edge attribute name, if labels are to be of different colors.}
   \item{label.lwd}{ line width for label boxes (if \code{boxed.labels==TRUE}); may be given as a vector, if label boxes are to have different line widths. }
