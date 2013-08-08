@@ -196,11 +196,23 @@ network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=
 }
 
 # draw a label for a network edge
-network.edgelabel<-function(px0,py0,px1,py1,label,...){
-    lpx<-px0+((px1-px0)/2)
-    lpy<-py0+((py1-py0)/2)
-    # assumes that line is straight
-    text(lpx,lpy,labels=label,...)
+network.edgelabel<-function(px0,py0,px1,py1,label,directed,cex,...){
+    if (directed){
+      # draw labels off center of line so won't overlap
+      lpx<-px0+((px1-px0)/3)
+      lpy<-py0+((py1-py0)/3)
+    } else {
+      # draw labels on center of line
+      lpx<-px0+((px1-px0)/2)
+      lpy<-py0+((py1-py0)/2)
+      # assumes that line is straight
+    }
+    # TODO:compute offset so that label doesn't land on line
+    #lw<-strwidth(label,cex=cex)/2
+    #lh<-strheight(label,cex=cex)/2
+    
+    # TODO:flip label to appropriate to side of edge corresponding to direction   
+    text(lpx,lpy,labels=label,cex=cex,...)
 }
 
 
@@ -679,7 +691,7 @@ layout.par=NULL,
      if(length(px0)>0)
        network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col,lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff,arrowhead=usearrows)
      if(!is.null(edge.label)){
-       network.edgelabel(px0,py0,px1,py1,edge.label,col=edge.label.col,cex=edge.label.cex)
+       network.edgelabel(px0,py0,px1,py1,edge.label,directed=is.directed(x),cex=edge.label.cex,col=edge.label.col)
      }
    }else{   #Curved edge case
      if(length(px0)>0){
@@ -727,8 +739,8 @@ layout.par=NULL,
            xhat[i] <- xoff[i]/roff[i]
            yhat[i] <- yoff[i]/roff[i]
          }
-         if (xhat[i]==0) xhat[i] <- .01 #jitter to avoid labels on points
-         if (yhat[i]==0) yhat[i] <- .01
+         if (xhat[i]==0 | is.nan(xhat[i])) xhat[i] <- .01 #jitter to avoid labels on points
+         if (yhat[i]==0 | is.nan(yhat[i])) yhat[i] <- .01
        }
        xhat <- xhat[use]
        yhat <- yhat[use]
