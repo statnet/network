@@ -196,23 +196,43 @@ network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=
 }
 
 # draw a label for a network edge
-network.edgelabel<-function(px0,py0,px1,py1,label,directed,cex,...){
-    if (directed){
-      # draw labels off center of line so won't overlap
-      lpx<-px0+((px1-px0)/3)
-      lpy<-py0+((py1-py0)/3)
+network.edgelabel<-function(px0,py0,px1,py1,label,directed,loops=FALSE,cex,...){
+  posl<-rep(0,length(label))
+  offsets<-rep(0.1,length(label))
+    if (loops){
+      # assume coordinates are the first pair
+      # math is hard.  For now just draw label near the vertex
+      lpx<-px0
+      lpy<-py0
+      # compute crude offset so that label doesn't land on vertex
+      # todo, this doesn't work well on all edge orientations
+      posl<-rep(0,length(label))
+      posl[(px0>px1) & (py0>py1)]<-4
+      posl[(px0<=px1) & (py0<=py1)]<-2
+      posl[(px0>px1) & (py0<=py1)]<-1
+      posl[(px0<=px1) & (py0>py1)]<-3
+      offsets<-rep(0.5,length(label))
+      
     } else {
-      # draw labels on center of line
-      lpx<-px0+((px1-px0)/2)
-      lpy<-py0+((py1-py0)/2)
-      # assumes that line is straight
-    }
-    # TODO:compute offset so that label doesn't land on line
-    #lw<-strwidth(label,cex=cex)/2
-    #lh<-strheight(label,cex=cex)/2
-    
-    # TODO:flip label to appropriate to side of edge corresponding to direction   
-    text(lpx,lpy,labels=label,cex=cex,...)
+      if (directed){
+        # draw labels off center of line so won't overlap
+        lpx<-px0+((px1-px0)/3)
+        lpy<-py0+((py1-py0)/3)
+      } else {
+        # draw labels on center of line
+        lpx<-px0+((px1-px0)/2)
+        lpy<-py0+((py1-py0)/2)
+        # assumes that line is straight
+      }
+      # compute crude offset so that label doesn't land on line
+      # todo, this doesn't work well on all edge orientations
+      posl[(px0>px1) & (py0>py1)]<-1
+      posl[(px0<=px1) & (py0<=py1)]<-3
+      posl[(px0>px1) & (py0<=py1)]<-2
+      posl[(px0<=px1) & (py0>py1)]<-4
+      
+  } # end non-loop case. 
+    text(lpx,lpy,labels=label,cex=cex,pos=posl,offset=offsets,...)
 }
 
 
@@ -672,6 +692,10 @@ layout.par=NULL,
    #Plot loops for the diagonals, if diag==TRUE, rotating wrt center of mass
    if(diag&&(length(px0)>0)&&sum(e.diag>0)){  #Are there any loops present?
      network.loop(as.vector(px0)[e.diag],as.vector(py0)[e.diag], length=1.5*baserad*arrowhead.cex,angle=25,width=e.lwd[e.diag]*baserad/10,col=e.col[e.diag],border=e.col[e.diag],lty=e.type[e.diag],offset=e.hoff[e.diag],edge.steps=loop.steps,radius=e.rad[e.diag],arrowhead=usearrows,xctr=mean(cx[use]),yctr=mean(cy[use]))
+     if(!is.null(edge.label)){
+       network.edgelabel(px0,py0,0,0,edge.label[e.diag],directed=is.directed(x),cex=edge.label.cex[e.diag],col=edge.label.col[e.diag],loops=TRUE)
+     }
+     
    }
    #Plot standard (i.e., non-loop) edges
    if(length(px0)>0){  #If edges are present, remove loops from consideration
@@ -691,7 +715,7 @@ layout.par=NULL,
      if(length(px0)>0)
        network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col,lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff,arrowhead=usearrows)
      if(!is.null(edge.label)){
-       network.edgelabel(px0,py0,px1,py1,edge.label,directed=is.directed(x),cex=edge.label.cex,col=edge.label.col)
+       network.edgelabel(px0,py0,px1,py1,edge.label[!e.diag],directed=is.directed(x),cex=edge.label.cex[!e.diag],col=edge.label.col[!e.diag])
      }
    }else{   #Curved edge case
      if(length(px0)>0){
