@@ -8,7 +8,7 @@ Plots a label corresponding to an edge in a network plot.
 Draws a text labels on (or adjacent to) the line segments connecting vertices on a network plot.  
 }
 \usage{
-network.edgelabel(px0, py0, px1, py1, label, directed, cex, ...)
+network.edgelabel(px0, py0, px1, py1, label, directed, loops = FALSE, cex, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,6 +29,9 @@ vector strings giving labels to be drawn for edge edge
 }
   \item{directed}{
 logical: is the underlying network directed? If FALSE, labels will be drawn in the middle of the line segment, otherwise in the first 3rd so that the labels for edges pointing in the opposite direction will not overlap. 
+}
+  \item{loops}{
+logical: if true, assuming the labels to be drawn belong to loop-type edges and render appropriately
 }
   \item{cex}{
 numeric vector giving the text expansion factor for each label
