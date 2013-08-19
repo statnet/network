@@ -7,6 +7,7 @@ v1.8 Fixes & Features
     - added basic plotting for edge labels (new plot.network arguments: edge.label, edge.label.cex, edge.label.col)
     - added valid.eids function to return the ids of non-NULL edges in a network
     - added a loading.attributes man page with more examples of attaching vertex and edge attributes
+    - print.network now lists edge attributes if there are less than 1k edges, otherwise a notice that attribute names are not shown (listing edge attributes is expensive)
   Bug Fixes
     - permute.vertexIDs was triggering a protection stack overflow on large graphs.
     - fixes for the undirected network subtraction operator and ! operator bug. resolution involved forcing a i<j ordering for comparisons of undirected networks.

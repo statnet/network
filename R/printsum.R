@@ -85,6 +85,24 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
       cat("\n","Vertex attribute names:","\n")
       cat("   ",vna,"\n")
     }
+    # Print list of edge attributes, but only if there are not very many edges
+    # because list.edge.attributes is expensive on large nets
+    if(length(x$mel)<=1000){
+      ena<-list.edge.attributes(x)
+      if(na.omit){
+        ena<-ena[ena!='na']
+      }
+      if(length(ena)==0){
+        cat("\n","No edge attributes","\n",sep="")
+      }else{
+        cat("\n","Edge attribute names:","\n")
+        cat("   ",ena,"\n")
+      }
+    } else {
+      cat("\n","Edge attribute names not shown","\n")
+    }
+    
+    
     #Print the adjacency structure, if desired
     if(print.adj){
       if(is.multiplex(x)&&(matrix.type=="adjacency"))
