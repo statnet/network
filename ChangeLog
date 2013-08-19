@@ -1,8 +1,18 @@
 CHANGELOG:
 
-v1.8 Bug Fixes
+v1.8 Fixes & Features
+  New Features
+    - now supports bipartite networks with zero-sized first mode. (biparite=0 no longer means the same thing as bipartite=FALSE, and is.bipartite() reflects this)
+    - added vertex.lwd attribute to plot.network for controling line widths around vertices
+    - added basic plotting for edge labels (new plot.network arguments: edge.label, edge.label.cex, edge.label.col)
+    - added valid.eids function to return the ids of non-NULL edges in a network
+    - added a loading.attributes man page with more examples of attaching vertex and edge attributes
   Bug Fixes
     - permute.vertexIDs was triggering a protection stack overflow on large graphs.
+    - fixes for the undirected network subtraction operator and ! operator bug. resolution involved forcing a i<j ordering for comparisons of undirected networks.
+    - fixed network.edgelist and as.network.matrix so that it is possible to construct networks using a matrix or dataframe in which the first 2 cols give tail and head ids, and remaining cols define attributes as docs state.
+    - fixed network.bipartite constructor so that it can correctly handle edge weights when building network from bipartite matrix. Also added automatric cast to matrix so it will work with data.frame argument.
+    - fixed  bug in how is.color() processed NA values that mangled colors in plots in some situations.
 
 v1.7.2 New Features/Changes/Bug Fixes
   New Features:

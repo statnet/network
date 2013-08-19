@@ -27,3 +27,5 @@ if(!all(is.color(col.list)[1:3] & is.na(is.color(col.list)[4]))){
   stop('is.color did not correctly recognize colors and NA values in a list')
 }
 
+plot(network.initialize(5),vertex.lwd=c(1,2,3,5,10))
+
