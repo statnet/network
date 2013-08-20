@@ -1421,7 +1421,7 @@ SEXP setEdgeValue_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
           COMPLEX(newval)[0].i=COMPLEX(value)[t-1+(h-1)*n].i;
           break;
         default:
-          SN_UNIMPLEMENTED_TYPE("setEdgeValue_R",type);
+          error("unimplemented type used in setEdgeValue_R\n");
       }
       PROTECT(atl=setListElement(atl,anam,newval)); pc++;
       el=setListElement(el,"atl",atl);
