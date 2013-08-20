@@ -4,7 +4,7 @@
 # utils.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 9/05/10
+# Last Modified 8/20/13
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -24,62 +24,6 @@
 #include <Rinternals.h>
 #include "utils.h"
 
-
-/*ERROR ROUTINES (PORTED FROM R)---------------------------------------------*/
-
-/*NOTE: The code that follows is ported from the R source (http://svn.r-project.org/R/trunk/src/main/util.c) with very minor changes - we only use it here because R won't let us make non-API internal calls anymore!  In the long run, may want to find an alternative.*/
-/*CODE USED FROM R SOURCE STARTS HERE*/
-const static struct {
-    const char * const str;
-    const int type;
-}
-snTypeTable[] = {
-    { "NULL",		NILSXP	   },  /* real types */
-    { "symbol",		SYMSXP	   },
-    { "pairlist",	LISTSXP	   },
-    { "closure",	CLOSXP	   },
-    { "environment",	ENVSXP	   },
-    { "promise",	PROMSXP	   },
-    { "language",	LANGSXP	   },
-    { "special",	SPECIALSXP },
-    { "builtin",	BUILTINSXP },
-    { "char",		CHARSXP	   },
-    { "logical",	LGLSXP	   },
-    { "integer",	INTSXP	   },
-    { "double",		REALSXP	   }, /*-  "real", for R <= 0.61.x */
-    { "complex",	CPLXSXP	   },
-    { "character",	STRSXP	   },
-    { "...",		DOTSXP	   },
-    { "any",		ANYSXP	   },
-    { "expression",	EXPRSXP	   },
-    { "list",		VECSXP	   },
-    { "externalptr",	EXTPTRSXP  },
-    { "bytecode",	BCODESXP   },
-    { "weakref",	WEAKREFSXP },
-    { "raw",		RAWSXP },
-    { "S4",		S4SXP },
-    /* aliases : */
-    { "numeric",	REALSXP	   },
-    { "name",		SYMSXP	   },
-
-    { (char *)NULL,	-1	   }
-};
-void SN_UNIMPLEMENTED_TYPEt(const char *s, SEXPTYPE t)
-{
-    int i;
-
-    for (i = 0; snTypeTable[i].str; i++) {
-	if (snTypeTable[i].type == t)
-	    error("unimplemented type '%s' in '%s'\n", snTypeTable[i].str, s);
-    }
-    error("unimplemented type (%d) in '%s'\n", t, s);
-}
-
-void SN_UNIMPLEMENTED_TYPE(const char *s, SEXP x)
-{
-    SN_UNIMPLEMENTED_TYPEt(s, TYPEOF(x));
-}
-/*CODE FROM R SOURCE ENDS HERE!*/
 
 /*LIST ACCESS/MODIFICATION ROUTINES-----------------------------------------*/
 
@@ -263,7 +207,7 @@ SEXP enlargeList(SEXP list, int n)
           setAttrib(newlist,R_NamesSymbol,newnames);
         break;
       default:
-        SN_UNIMPLEMENTED_TYPE("enlargeList",TYPEOF(list));
+        error("unimplemented type in enlargeList\n");        
     }
     UNPROTECT(pc);
     return newlist;
@@ -356,7 +300,7 @@ SEXP contractList(SEXP list, int n)
           setAttrib(newlist,R_NamesSymbol,newnames);
         break;
       default:
-        SN_UNIMPLEMENTED_TYPE("contractList",TYPEOF(list));
+        error("unimplemented type in contractList\n");        
     }
     UNPROTECT(pc);
     return newlist;
@@ -471,7 +415,7 @@ int vecAnyNA(SEXP a)
           return 1;
       break;
     default:
-      SN_UNIMPLEMENTED_TYPE("vecAnyNA",type);
+      error("unimplemented type in venAnyNA\n");        
   }
   
   /*If we made it this far, all is copacetic.*/
@@ -536,7 +480,7 @@ int vecEq(SEXP a, SEXP b)
       return 1;
       break;
     default:
-      SN_UNIMPLEMENTED_TYPE("vecEq",type);
+      error("unimplemented type in vecEq\n");        
   }
   /*Should never get here!*/
   return -1;
@@ -571,7 +515,7 @@ int vecIsIn(double a, SEXP b)
           return 1;
       break;
     default:
-      SN_UNIMPLEMENTED_TYPE("vecIsIn",TYPEOF(b));
+      error("unimplemented type in vecIsIn\n");        
   }
 
   /*If still here, a isn't in b*/
@@ -672,7 +616,7 @@ SEXP vecAppend(SEXP a, SEXP b)
         SET_VECTOR_ELT(v,i+length(a),VECTOR_ELT(b,i));
       break;
     default:
-      SN_UNIMPLEMENTED_TYPE("vecAppend",type);
+      error("unimplemented type in vecAppend\n");        
   }
 
   /*Unprotect and return*/
@@ -731,7 +675,7 @@ SEXP vecRemove(SEXP v, double e)
           RAW(newvec)[count++]=RAW(v)[i];
       break;
     default:
-      SN_UNIMPLEMENTED_TYPE("vecRemove",type);
+      error("unimplemented type in vecRemove\n");        
   }
 
   /*Unprotect and exit*/
@@ -849,7 +793,7 @@ SEXP vecUnique(SEXP a)
           RAW(newv)[dcount++]=RAW(a)[i];
       break;
     default:
-      SN_UNIMPLEMENTED_TYPE("vecUnion",TYPEOF(a));
+      error("unimplemented type in vecUnion\n");        
   }
 
   /*Unprotect and return*/
