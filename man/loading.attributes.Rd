@@ -45,7 +45,7 @@ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data i
 # LOADING IN A MATRIX
 \dontrun{
 # can download matrix file from 
-# https://statnet.csde.washington.edu/trac/raw-attachment/wiki/Resources/relationalDat
+# https://statnet.csde.washington.edu/trac/raw-attachment/wiki/Resources/relationalData.csv
 # and download vertex attribute file from
 # https://statnet.csde.washington.edu/trac/raw-attachment/wiki/Resources/vertexAttributes.csv
 
