@@ -16,63 +16,62 @@ Basic information on the creation of \code{network} objects can be found by typi
 
 \tabular{ll}{
 Package: \tab network\cr
-Version: \tab 1.7-1\cr
-Date: \tab March 1, 2012\cr
-Depends: \tab R (>= 2.0.0), utils\cr
-Suggests: \tab sna, statnet\cr
+Version: \tab 1.8.0\cr
+Date: \tab August 19, 2013\cr
+Depends: \tab R (>= 2.10), utils\cr
+Suggests: \tab sna\cr
 License: \tab GPL (>=2)\cr
 }
 
-Index:
+Index od documentation pages:
 \preformatted{
-add.edges               Add Edges to a Network Object
-add.vertices            Add Vertices to an Existing Network
-as.matrix.network       Coerce a Network Object to Matrix Form
-as.network.matrix       Coercion from Matrices to Network Objects
-as.sociomatrix          Coerce One or More Networks to Sociomatrix Form
-attribute.methods       Attribute Interface Methods for the Network
-                        Class
-deletion.methods        Remove Elements from a Network Object
-edgeset.constructors    Edgeset Constructors for Network Objects
-emon                    Interorganizational Search and Rescue Networks
-                        (Drabek et al.)
-flo                     Florentine Wedding Data (Padgett)
-get.edges               Retrieve Edges or Edge IDs Associated with a
-                        Given Vertex
-get.inducedSubgraph     Retrieve Induced Subgraphs and Cuts
-get.neighborhood        Obtain the Neighborhood of a Given Vertex
-is.adjacent             Determine Whether Two Vertices Are Adjacent
-network                 Network Objects
-network-package         Classes for Relational Data
-network.arrow           Add Arrows or Segments to a Plot
-network.density         Compute the Density of a Network
-network.dyadcount       Return the Number of (Possibly Directed) Dyads
-                        in a Network Object
-network.edgecount       Return the Number of Edges in a Network Object
-network.extraction      Extraction and Replacement Operators for
-                        Network Objects
-network.indicators      Indicator Functions for Network Properties
-network.initialize      Initialize a Network Class Object
-network.layout          Vertex Layout Functions for plot.network
-network.loop            Add Loops to a Plot
-network.naedgecount     Identifying and Counting Missing Edges in a
-                        Network Object
-network.operators       Network Operators
-network.size            Return the Size of a Network
-network.vertex          Add Vertices to a Plot
-permute.vertexIDs       Permute (Relabel) the Vertices Within a Network
-plot.network.default    Two-Dimensional Visualization for Network
-                        Objects
-prod.network            Combine Networks by Edge Value Multiplication
-read.paj                Read a Pajek Project or Network File and
-                        Convert to an R 'Network' Object
-sum.network             Combine Networks by Edge Value Addition
-which.matrix.type       Heuristic Determination of Matrix Types for
-                        Network Storage
+add.edges                    Add Edges to a Network Object
+add.vertices                 Add Vertices to an Existing Network
+as.matrix.network            Coerce a Network Object to Matrix Form
+as.network.matrix            Coercion from Matrices to Network Objects
+as.sociomatrix               Coerce One or More Networks to Sociomatrix Form
+attribute.methods            Attribute Interface Methods for the Network Class
+deletion.methods             Remove Elements from a Network Object
+edgeset.constructors         Edgeset Constructors for Network Objects
+emon                         Interorganizational Search and Rescue Networks (Drabek et
+                             al.)
+flo                          Florentine Wedding Data (Padgett)
+get.edges                    Retrieve Edges or Edge IDs Associated with a Given Vertex
+get.inducedSubgraph          Retrieve Induced Subgraphs and Cuts
+get.neighborhood             Obtain the Neighborhood of a Given Vertex
+is.adjacent                  Determine Whether Two Vertices Are Adjacent
+loading.attributes           Examples of how to load vertex and edge attributes into
+                             networks
+missing.edges                Identifying and Counting Missing Edges in a Network Object
+network                      Network Objects
+network.arrow                Add Arrows or Segments to a Plot
+network.density              Compute the Density of a Network
+network.dyadcount            Return the Number of (Possibly Directed) Dyads in a
+                             Network Object
+network.edgecount            Return the Number of Edges in a Network Object
+network.edgelabel            Plots a label corresponding to an edge in a network plot.
+network.extraction           Extraction and Replacement Operators for Network Objects
+network.indicators           Indicator Functions for Network Properties
+network.initialize           Initialize a Network Class Object
+network.layout               Vertex Layout Functions for plot.network
+network.loop                 Add Loops to a Plot
+network.operators            Network Operators
+network-package              Classes for Relational Data
+network.size                 Return the Size of a Network
+network.vertex               Add Vertices to a Plot
+permute.vertexIDs            Permute (Relabel) the Vertices Within a Network
+plot.network.default         Two-Dimensional Visualization for Network Objects
+prod.network                 Combine Networks by Edge Value Multiplication
+read.paj                     Read a Pajek Project or Network File and Convert to an R
+                             'Network' Object
+sum.network                  Combine Networks by Edge Value Addition
+valid.eids                   Get the valid edge which are valid in a network
+which.matrix.type            Heuristic Determination of Matrix Types for Network
+                             Storage
 }
 }
 \author{
-Carter T. Butts <buttsc@uci.edu>, with help from Mark S. Handcock <handcock@stat.washington.edu>, David Hunter <dhunter@stat.psu.edu> and Martina Morris <morrism@u.washington.edu>
+Carter T. Butts <buttsc@uci.edu>, with help from Mark S. Handcock <handcock@stat.ucla.edu>, David Hunter <dhunter@stat.psu.edu>, Martina Morris <morrism@u.washington.edu>, and Skye Bender-deMoll <skyebend@u.washington.edu>
 
 Maintainer: Carter T. Butts <buttsc@uci.edu>
 }
