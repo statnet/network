@@ -649,7 +649,7 @@ layout.par=NULL,
            stop("Attribute '",temp,"' had illegal missing values for edge.label.cex or was not present in plot.network.default.")
        }else
          edge.label.cex<-rep(edge.label.cex,length=NROW(d))
-     } # end edge label block
+     } # end edge label setup block
      
      #Proceed with edge setup
      dist<-((cx[d[,1]]-cx[d[,2]])^2+(cy[d[,1]]-cy[d[,2]])^2)^0.5  #Get the inter-point distances for curves
@@ -688,7 +688,7 @@ layout.par=NULL,
              e.curv<-c(e.curv,edge.curve[i])
          }
        }
-     }
+     } # end edges block
    #Plot loops for the diagonals, if diag==TRUE, rotating wrt center of mass
    if(diag&&(length(px0)>0)&&sum(e.diag>0)){  #Are there any loops present?
      network.loop(as.vector(px0)[e.diag],as.vector(py0)[e.diag], length=1.5*baserad*arrowhead.cex,angle=25,width=e.lwd[e.diag]*baserad/10,col=e.col[e.diag],border=e.col[e.diag],lty=e.type[e.diag],offset=e.hoff[e.diag],edge.steps=loop.steps,radius=e.rad[e.diag],arrowhead=usearrows,xctr=mean(cx[use]),yctr=mean(cy[use]))
@@ -712,10 +712,11 @@ layout.par=NULL,
      e.rad<-e.rad[!e.diag]
    }
    if(!usecurve&!uselen){   #Straight-line edge case
-     if(length(px0)>0)
+     if(length(px0)>0){
        network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col,lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff,arrowhead=usearrows)
-     if(!is.null(edge.label)){
-       network.edgelabel(px0,py0,px1,py1,edge.label[!e.diag],directed=is.directed(x),cex=edge.label.cex[!e.diag],col=edge.label.col[!e.diag])
+       if(!is.null(edge.label)){
+         network.edgelabel(px0,py0,px1,py1,edge.label[!e.diag],directed=is.directed(x),cex=edge.label.cex[!e.diag],col=edge.label.col[!e.diag])
+       }
      }
    }else{   #Curved edge case
      if(length(px0)>0){

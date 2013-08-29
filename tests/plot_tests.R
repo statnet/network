@@ -15,6 +15,11 @@ data(emon)
 par(mar=c(0,0,0,0))
 plot(emon[[5]],edge.label=TRUE,edge.label.cex=0.6,edge.col='gray',edge.lwd=(emon[[5]]%e%'Frequency')*2)
 
+# test for labeling network with no edges #521
+plot(network.initialize(1),edge.label=TRUE)
+
+# test color stuff
+
 col.list<-c('red','#800000','#80000505',NA)
 # test is.color for vector NA processing bug #491
 if(!all(is.color(col.list)[1:3] & is.na(is.color(col.list)[4]))){
