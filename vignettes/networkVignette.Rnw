@@ -1,0 +1,826 @@
+\documentclass[article,shortnames]{jss}
+%\documentclass{article}
+\usepackage{amsfonts,amssymb,amsthm,amsmath,rotating}
+%\usepackage{natbib} %for easy biblo
+%\usepackage{hyperref} %for url links
+%\usepackage{comment} 
+%\usepackage{color} 
+%This package is recommended
+\usepackage{thumbpdf}
+
+
+%\VignetteIndexEntry{network Vignette}
+
+
+\author{Carter T.\ Butts\\ University of California, Irvine}
+\Plainauthor{Carter T. Butts}
+
+\title{\pkg{network}: A Package for Managing Relational Data in \proglang{R}}
+\Plaintitle{network: A Package for Managing Relational Data in R}
+\Shorttitle{\pkg{network}: Managing Relational Data in \proglang{R}}
+
+\Abstract{
+Effective memory structures for relational data within \proglang{R} must be capable of representing a wide range of data while keeping overhead to a minimum.  The \pkg{network} package provides an class which may be used for encoding complex relational structures composed a vertex set together with any combination of undirected/directed, valued/unvalued, dyadic/hyper, and single/multiple edges; storage requirements are on the order of the number of edges involved.  Some simple constructor, interface, and visualization functions are provided, as well as a set of operators to facilitate employment by end users.  The package also supports a \proglang{C}-language API, which allows developers to work directly with \pkg{network} objects within backend code.}
+\Keywords{relational data, data structures, graphs, \pkg{network}, \pkg{statnet}, \proglang{R}}
+\Plainkeywords{relational data, data structures, graphs, network, statnet, R}
+
+\Volume{24}
+\Issue{2}
+\Month{February}
+\Year{2008}
+\Submitdate{2007-06-01}
+\Acceptdate{2007-12-25}
+
+\Address{
+  Carter T.\ Butts\\
+  Department of Sociology and Institute for Mathematical Behavioral Sciences\\
+  University of California, Irvine\\
+  Irvine, CA 92697-5100, United States of America\\
+  E-mail: \email{buttsc@uci.edu}\\
+  URL: \url{http://www.faculty.uci.edu/profile.cfm?faculty_id=5057}
+}
+
+\begin{document}
+
+\definecolor{Sinput}{rgb}{0.19,0.19,0.75}
+\definecolor{Soutput}{rgb}{0.2,0.3,0.2}
+\definecolor{Scode}{rgb}{0.75,0.19,0.19}
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{formatcom = {\color{Sinput}}} 
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{formatcom = {\color{Soutput}}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{formatcom = {\color{Scode}}} 
+\renewenvironment{Schunk}{}{}
+
+\SweaveOpts{concordance=TRUE}
+
+\section{Background and introduction}
+
+In early 2002, the author and several other members of what would ultimately become the \pkg{statnet} project \citep{statnet} came to the conclusion that the simple, matrix-based approach to representation of relational data utilized by early versions of packages such as \pkg{sna} were inadequate for the next generation of relational analysis tools in \proglang{R}.  Rather, what was required was a customized class structure to support relational data.  This class structure would be used for all \pkg{statnet} packages, thus insuring interoperability; ideally, it would also be possible to port this structure to other languages, thereby further enhancing compatibility.    
+
+The requirements which were posed for a network data class were as follows, in descending order of priority:
+\begin{enumerate}
+\item The class had to be sufficiently general to encode all major types of network data collected presently or in the foreseeable future;
+\item Class storage needed to be of sufficient efficiency to permit representation of large networks (in particular, storage which was sub-quadratic in graph order for sparse networks); and
+\item It had to be possible to develop interface methods to the class which were of reasonable computational efficiency.
+\end{enumerate}
+
+Clearly, there are multiple approaches which could be taken to construct such a class structure.  Here we
+describe the result of one particular effort, specifically the
+\pkg{network} package \citep{network}  
+for the \proglang{R} system for statistical computing \citep{R}.  
+
+\subsection{Historical note}
+
+The \pkg{network} package as described here evolved from a specification originally written as an unpublished
+working paper, ``Memory Structures for Relational Data in \proglang{R}: Classes and Interfaces'' \citep{butts:tr:2002}. 
+At this time, the class in question was tentatively entitled ``graph.''  It subsequently emerged that a
+similar package was being developed by Robert Gentleman under the \pkg{graph} title (as part of the
+BioConductor project) \citep{gentleman.et.al:sw:2007}, and the name of the present project was hence changed
+to ``network'' in early 2005.  A somewhat later version of the above relational data specification was also
+shared with Gabor Csardi in mid-2004, portions of which were incorporated in the development by Gabor of the
+\pkg{igraph} package \citep{gabor:sw:2007}.  As a result, there are currently three commonly available class
+systems for relational data in \proglang{R}, two of which (\pkg{network} and \pkg{igraph}) share some common
+syntax and interface concepts.  It should also be noted that (as mentioned above) both standard and sparse
+matrix \citep[e.g., \pkg{sparseM}][]{koenker.ng:sw:2007} classes have been and continue to be used to represent relational data in \proglang{R}.  This article does not attempt to address the relative benefits and drawbacks of these different tools, but readers should be aware that multiple alternatives are available.
+
+\subsection{A very quick note on notation}
+
+Throughout this paper we will use ``graph'' or ``network'' ($G$) generically to refer to any relational structure on a given vertex set ($V$), and ``edge'' to refer to a generalized edge (i.e., an ordered pair $(T,H)$ where $T$ is the ``tail set'' of the edge and $H$ is the corresponding ``head set,'' and where $T,H \subseteq V(G)$).  The cardinality of the vertex set we denote $|V(G)|=n$, and the cardinality of the corresponding edge set we likewise denote $|E(G)|=m$.  When discussing storage/computational complexity we will often use a loose order notation, where $\mathcal{O}\bigl(f\left(x\right)\bigr)$ is intended to indicate that the quantity in question grows more slowly than $f(x)$ as $x \to \infty$.  A general familiarity with the \proglang{R} statistical computing system (and related syntax/terminology) is assumed.  Those unfamiliar with \proglang{R} may wish to peruse a text such as those of \citet{venables.ripley:bk:2000,venables.ripley:bk:2002} or \citet{chambers:bk:1998}.
+
+\section[The network class]{The \code{network} class}
+
+The \code{network} class is a (reasonably) simple object structure designed to store a single relation on a vertex set of arbitrary size.  The relation stored by a \code{network} class object is based on a generalized edge model; thus, edges may be directed, arbitrarily valued (with multiple values per edge), multiplex (i.e., multiple edges per directed dyad), hyper (i.e., multiple head/tail vertices per edge), etc.  Storage requirements for the \code{network} class are on the order of the number of nodes plus the total number of edges (which is substantially sub-$n^2$ for sparse graphs), and retrieval of edge values has a time complexity which is no worse than $\mathcal{O}(n)$.\footnote{Edge retrieval actually scales with degree, and average retrieval time is hence approximately constant for many data sources.  For an argument regarding constraints on the growth of mean degree in interpersonal networks, see e.g., \citet{mayhew.levinger:ajs:1976}.}  For example, a network with 100,000 vertices and 100,000 edges currently consumes approximately 74MB of RAM (\proglang{R} 2.6.1), versus approximately 40GB for a full sociomatrix (a savings of approximately 99.8\%).  When dealing with extremely large, sparse graphs it therefore follows that \code{network} objects are substantially more efficient than simpler representations such as adjacency matrices.  The class also provides for the storage of arbitrary metadata at the edge, vertex, and network level.  Thus, \code{network} objects may be preferred to matrix representations for reasons of generality, performance, or integrative capability; while alternative means exist of obtaining these goals separately, \pkg{network} provides a single toolkit which is designed to be effective across a wide range of applications.
+
+In this section, we provide a basic introduction to the \code{network} class, from a user's point of view.  We describe the conditions which are necessary for \pkg{network} to be employed, and the properties of \code{network} objects (and their components).  This serves as background for a discussion of the use of \pkg{network} methods in practical settings, which is given in the section which follows.
+
+\subsection{Identification of vertices and edges}
+
+For purposes of storage, we presume that each vertex and each edge can be uniquely identified. 
+\citep[For partially labeled or unlabeled graphs, observe that this internal labeling is essentially arbitrary. See][for a discussion.]{butts.carley:cmot:2005} 
+Vertices are labeled by positive integers in the order of entry, with edges likewise; it is further assumed that this is maintained for vertices (e.g., removing a vertex requires relabeling) but not for edges.  (This last has to do with how edges are handled internally, but has the desirable side effect of making edge changes less expensive.)  Vertices and edges are always stored by label.  In the text that follows, any reference to a vertex or edge ``ID'' refers to these labeling numbers, and not to any other (external) identification that a vertex or edge may have.
+
+\subsection{Basic class structure}
+
+Functionally, a \code{network} object can be thought as a collection of vertices and edges, together with metadata regarding those vertices and edges (as well as the network itself).  As noted above, each vertex is assumed to be identifiable, and the number of vertices is fixed.  Here, we discuss the way in which edges are defined within \pkg{network}, as well as the manner in which associated metadata is stored.
+
+\subsubsection{Edge structure}
+
+Edges within a \code{network} object consist of three essential components.  First, each edge contains two vectors of vertex IDs, known respectively as the \emph{head} and \emph{tail} lists of the edge.  In addition to these lists, each edge also contains a list of attribute information.  This is discussed in more detail below.  The content and interpretation of the head and tail lists are dependent on the type of network in which they reside.  In a directed network, an edge connects the elements of its tail list with those of its head list, but not vice versa: $i$ is adjacent to $j$ iff there exists some edge, $e=(T,H)$, such that $i\in T, j\in H$.  In an undirected network, by contrast, the head and tail sets of an edge are regarded as exchangeable.  Thus, $i$ is adjacent to $j$ in an undirected network iff there exists an edge such that $i\in T, j\in H$ or $i\in H, j\in T$.  \pkg{network} methods which deal with adjacency and incidence make this distinction transparently, based on the network object's directedness attribute (see below).
+
+Note that in the familiar case of dyadic networks (the focus of packages such as \pkg{sna} \citep{sna}), the head and tail lists of any given edge must have exactly one element.  This need not be true in general, however.  An edge with a head or tail list containing more than one element is said to be \emph{hypergraphic}, reflecting a one-to-many, many-to-one, or many-to-many relationship.  Hyperedges are permitted natively within \pkg{network}, although some methods may not support them -- a corresponding network attribute is used by \pkg{network} methods to determine whether these edges are present, as explained below.  Finally, another fundamental distinction is made between edges in which $H$ and $T$ are disjoint, versus those in which these endpoint lists have one or more elements in common.  Edges of the latter type are said to be \emph{loop-like}, generalizing the familiar notion of ``loop'' (self-tie) from the theory of dyadic graphs.  Loop-like edges allow vertices to relate to themselves, and are disallowed in many applications.  Applicable methods are expected to interpret such edges intelligently, where present.
+
+\subsubsection[network attributes]{\code{network} attributes} \label{sec_net_attr}
+
+As we have already seen, each \code{network} object contains a range of metadata in addition to relational information.  This metadata -- in the form of attributes -- is divided into information stored at the network, vertex, and edge levels.  In all three cases, attributes are stored in \code{list}s, and are expected to be named.  While there is no limit to the user-defined attributes which may be stored in this manner, certain attributes are required of all \code{network} objects.  At the network level, such attributes describe general properties of the network as a whole; specifically, they may be enumerated as follows:
+
+\begin{description}
+\item[\code{bipartite}] This is a \code{numeric} attribute, which is used to indicate the presence of an
+intrinsic bipartition in the \code{network} object.  Formally, a bipartition is a partition of a network's
+vertices into two classes, such that no vertex in either class is adjacent to any vertex in the same
+class.  While such partitions occur naturally, they may also be specifically enforced by the nature of the
+data in question.  (This is the case, for instance, with two-mode networks \citep{wass:faus1994}, in which
+edges represent connections between two distinct classes of entities.)  Where \code{bipartite > 0},
+\pkg{network} methods will automatically assume that vertices with IDs less than or equal to \code{bipartite}
+belong to one such class, with those with IDs greater than \code{bipartite} belonging to the other.  This
+information may be used in selecting default modes for data display, calculating numbers of possible edges,
+etc.  When \code{bipartite == 0}, by contrast, no such bipartition is assumed.  It should be emphasized that \code{bipartite} is intended to reflect bipartitions which are required \emph{ex ante,} rather than those which happen to arise empirically.  There is also no performance advantage to the use of \code{bipartite}, since \pkg{network} only stores edges which are defined; it can make data processing more convenient, however, when working with intrinsically bipartite structures.
+
+\item[\code{directed}]  This is a \code{logical} attribute, which should be set to \code{TRUE} iff edges are to be interpreted as directed.  As explained earlier, \pkg{network} methods will regard edge endpoint lists as exchangeable when \code{directed} is \code{FALSE}, allowing for automatic handling of both directed and undirected networks.  For obvious reasons, misspecification of this attribute may lead to surprising results; it is generally set when a \code{network} object is created, and considered fixed thereafter.
+
+\item[\code{hyper}]  This attribute is a \code{logical} variable which is set to \code{TRUE} iff the network is allowed to contain hyperedges.  Since the vast majority of network data is dyadic, this attribute defaults to \code{FALSE} for must construction methods.  The setting of \code{hyper} to \code{TRUE} has potentially serious implications for edge retrieval, and so methods should not activate this option unless hypergraphic edges are explicitly to be permitted.
+
+\item[\code{loops}] As noted, loop-like edges are frequently undefined in practical settings.  The \code{loops} attribute is a \code{logical} which should be set to \code{TRUE} iff such edges are permitted within the network.
+
+\item[\code{multiple}] In most settings, an edge is uniquely defined by its head and tail lists.  In other cases, however, one must represent data in which multiple edges are permitted between the same endpoints.  (``Same'' here includes the effect of directedness; an edge from set $H$ to set $T$ is not the same as an edge from set $T$ to set $H$, unless the network is undirected.)  The \code{multiple} attribute is a \code{logical} variable which is set to \code{TRUE} iff such multiplex edges are permitted within the network.  Where \code{multiple} is \code{FALSE}, \pkg{network} methods will assume all edges to be unique -- like \code{directed}, the possibility of multiplex edges thus can substantially impact both behavior and performance.  For this reason, \code{multiple} is generally set to \code{FALSE} by default, and should not be set to \code{TRUE} unless it is specifically necessary to permit multiple edges between the same endpoint sets.
+
+\item[\code{n}] Finally, \code{n} is a \code{numeric} attribute containing the number of elements in the vertex set.  Applicable methods are expected to adjust this attribute up or down, should vertices be added or deleted from the network.
+\end{description}
+
+While these attributes are clearly reserved, any number of others may be added. Attributes specifically pertaining to edges and/or vertices can be stored at the network level, but this is generally non-optimal -- such attributes would have to be manually updated to reflect edge or vertex changes, and would require the creation of custom access methods.  The preferred approach is to store such information directly at the edge or vertex level, as we discuss below.
+
+\subsubsection[Vertex attributes]{Vertex attributes}
+
+As with the network as a whole, it is often useful to be able to supply attribute data for individual vertices (e.g., names, attributes, etc.).  Each vertex thus has a \code{list} of named attributes, which can be used to store arbitrary information on a per-vertex basis; there is no restriction on the type of information which may be stored in this fashion, nor are all vertices constrained to carry information regarding the same attributes.  Each vertex does carry two special attributes, however, which are assumed to be available to all class methods.  These are \code{vertex.names}, which must be a \code{character} containing the name of the vertex, and the \code{logical} attribute \code{na}.  Where \code{TRUE}, \code{na} indicates that the associated vertex is unobserved; this is useful in cases for which individual entities are known to belong to a given network, but where data regarding those entities is unavailable.  By default, \code{na} is set to \code{FALSE} and \code{vertex.names} is set equal to the corresponding vertex ID.
+
+\subsubsection[Edge attributes]{Edge attributes}
+
+Just as vertices can carry attributes, so too can edges.  Each edge is endowed with a \code{list} of named attributes, which can be used to carry arbitrary information (e.g., tie strength, onset and termination times, etc.).  As with vertex attributes, any information type may be employed and there is no requirement that all edges carry the same attributes.  The one attribute required to be carried by each edge is \code{na}, a \code{logical} which (like the vertex case) is used to indicate the missingness of a given edge.  Many \pkg{network} methods provide the option of filtering out missing edges when retrieving information, and/or returning the associated information (e.g., adjacency) as missing.
+
+\section[Using the network class]{Using the \code{network} class}
+
+In addition to the class itself, \pkg{network} provides a range of tools for creating, manipulating, and visualizing \code{network} objects.\footnote{These tools are currently implemented via S3 methods.}  Here, we provide an overview of some of these tools, with a focus on the basic tasks most frequently encountered by end users.  Additional information on these functions is also provided within the package manual.  For the examples below, we begin by loading the network package into memory; we also set the random seed, to ensure that examples using random data match the output shown here.  Within \proglang{R}, this may be accomplished via the following:
+<<>>=
+library(network)
+set.seed(1702)
+@
+Throughout, we will represent \proglang{R} code in the above format.  Readers may wish to try the demonstrations listed here for themselves, to get a better feel for how the package operates.
+
+\subsection{Importing data}
+
+It almost goes without saying that an important aspect of \pkg{network} functionality is the ability to import
+data from external sources.  \pkg{network} includes functionality for the importation of \pkg{Pajek} project
+files \citep{pajek}, a popular and versatile network data format, via the \code{read.paj} routine.  Other
+formats supported by \pkg{sna} can be used as well, by importing to adjacency matrix form (using the relevant
+\pkg{sna} routines) and then coercing the result into a \code{network} object as described below.  The
+\pkg{foreign} package can be used to import adjacency, edgelist, or incidence matrices from other computing
+environments in much the same way.  Future package versions may include support for converting to and from
+other related classes, e.g., those of
+\pkg{RBGL} \citep{carey.et.al:sw:2007} and \pkg{Rgraphviz} \citep{gentry.et.al:sw:2007}. 
+
+In addition to these methods, \code{network} objects can be loaded into \proglang{R} using native tools such as \code{load} (for saved objects) or \code{data} (for packaged data sets).  With respect to the latter, \pkg{network} contains two sample data sets: \code{flo}, John Padgett's Florentine wedding data \citep[from][]{wass:faus1994}; and \code{emon}, a set of interorganizational networks from search and rescue operations collected by \citet{drabek.et.al:bk:1981}.  \code{flo} consists of a single adjacency matrix, and is useful for illustrating the process of converting data from adjacency matrix to \code{network} form.  \code{emon}, on the other hand, consists of a list of seven \code{network} objects with vertex and edge metadata.  \code{emon} is thus especially useful for illustrating the use of \code{network} objects for rich data storage (in addition to being an interesting data set in its own right).  Loading these data sets is as simple as invoking the \code{data} command, like so:
+
+<<>>=
+data("flo")
+data("emon")
+@
+
+Further information on each of these data sets is given in the \pkg{network} manual.  We shall also use these data sets as illustrative examples at various points within this paper.
+
+\subsection[Creating and viewing network objects]{Creating and viewing \code{network} objects}
+
+While importation is sometimes possible, in other cases we must create our own \code{network} objects.  \pkg{network} supports two basic approaches to this task: create the object from scratch, or build it from existing relational data via coercion.  Both methods are useful, and we illustrate each here.
+
+In the most minimal case, we begin by creating an empty network to which edges may be added.  This task is performed by the \code{network.initialize} routine, which serves as a constructor for the \code{network} class.  \code{network.initialize} takes the order of the desired graph (i.e., $n$) as a required argument, and the required network attributes discussed in  Section~\ref{sec_net_attr} may be passed as well.  In the event that these are unspecified, it is assumed that a simple digraph (directed, no loops, hyperedges, multiplexity, or bipartitions) is desired.  For example, one may create and print an empty digraph like so:
+
+<<>>=
+net <- network.initialize(5)
+net
+@
+
+\pkg{network} has default \code{print} and \code{summary} methods, as well as low-level operators for assignment and related operations.  These do not show much in the above case, since the network in question caries little information.  To create a \code{network} along with a specified set of edges, the preferred high-level constructor is the eponymous \code{network}.  Like \code{network.initialize}, this function returns a newly allocated \code{network} object having specified properties.  Unlike the former, however, \code{network} may be called with adjacency and/or attribute information.  Adjacency information may be passed by using a full or bipartite adjacency matrix, incidence matrix, or edgelist as the function's first argument. These input types are defined as follows: 
+
+\begin{description}
+\item[Adjacency matrix:] This must consist of a square \code{matrix} or two-dimensional \code{array}, whose $i,j$th cell contains the value of the edge from $i$ to $j$; as such, adjacency matrices may only be used to specify dyadic networks.  By default, edges are assumed to exist for all non-zero matrix values, and are constructed accordingly.  Edge values may be retained by passing \code{ignore.eval = FALSE}, as described in the manual page for the \code{network.adjacency} constructor.  The \code{matrix.type} for an adjacency matrix is \code{"adjacency"}.
+
+\item[Bipartite adjacency matrix:] This must consist of a rectangular \code{matrix} or two-dimensional \code{array} whose row and column elements reflect vertices belonging to the lower and upper sets of a bipartition (respectively).  Otherwise, the matrix is interpreted as per a standard adjacency matrix.  (Thus, a bipartite adjacency matrix is simply the upper off-diagonal block of the full adjacency matrix for a bipartite graph, where vertices have been ordered by partition membership.  See also \citet{doreian.et.al:bk:2005}.)  The \code{matrix.type} for a bipartite adjacency matrix is \code{"bipartite"}.
+
+\item[Incidence matrix:] This must consist of a rectangular \code{matrix} or two-dimensional \code{array} whose row elements represent vertices, and whose column elements represent edges.  A non-zero value is placed in the $i,j$th cell if vertex $i$ is an endpoint of edge $j$.  In the directed case, negative values signify membership in the tail set of the corresponding edge, while positive values signify membership in the edge's head set.  Unlike adjacency matrices, incidence matrices can thus be used to describe hypergraphic edges (directed or otherwise).  Note, however, that an undirected hypergraph composed of two-endpoint edges is not the same as a simple graph, since the edges of the former are necessarily loop-like.  When \code{loops}, \code{hyper}, and \code{directed} are all \code{FALSE}, therefore, the two positive row-elements of an incidence matrix for each column are taken to signify the head and tail elements of a dyadic edge.  (This is without loss of generality, since such an incidence matrix would otherwise be inadmissible.)  When specifying that an incidence matrix is to be used, \code{matrix.type} should be set to \code{"incidence"}.
+
+\item[Edge list:] This must consist of a rectangular \code{matrix} or two-dimensional \code{array} whose row elements represent edges.  The $i,1$st cell of this structure is taken to be the ID of the tail vertex for the edge with ID $i$, with the $i,2$st cell containing the ID of the edge's head vertex.  (Only dyadic networks may be input in this fashion.)  Additional columns, if present, are taken to contain edge attribute values. The \code{matrix.type} for an edge list is \code{"edgelist"}.
+\end{description}
+
+As one might suspect, the \code{network} function actually operates by first calling \break\code{network.initialize} to create the required object, and then calling an appropriate edge set constructor based on the input type.  This fairly modular design allows for the eventual inclusion of a wider range of input formats (although the above covers the formats currently in widest use within the social network community).  Although \code{network} attempts to infer the matrix type from context, is wise to fix the function's behavior via the \code{matrix.type} argument when passing information which is not in the default, adjacency matrix form.  As a simple example of the \code{network} constructor in action, consider the following:
+
+%\begin{Code}
+%#Create a less empty network
+%nmat <- matrix(rbinom(25,1,0.5),nr=5,nc=5)      #Generate a random adjacency 
+%                                                #matrix
+%net <- network(nmat,loops=TRUE)                 #Use it to create a digraph
+%                                                #w/loops
+%net                                             #Display using print method
+%summary(net)                                    #Display using summary method
+%all(nmat==net[,])                               #Should be TRUE
+%\end{Code}
+<<>>=
+nmat <- matrix(rbinom(25, 1, 0.5), nr = 5, nc = 5)
+net <- network(nmat, loops = TRUE)
+net
+@
+<<>>=
+summary(net)
+@
+<<>>=
+all(nmat == net[,])
+@
+
+
+Here, we have generated a random adjacency matrix (permitting diagonal elements) and used this to construct a digraph (with loops) in \code{network} object form.  Since we employed an adjacency matrix, there was no need to set the matrix type explicitly; had we failed to set \code{loops = TRUE}, however, the diagonal entries of \code{nmat} would have been ignored.  The above example also demonstrates the use of an important form of operator overloading which can be used with dyadic network objects: specifically, dyadic network objects respond to the use of the subset and subset assignment operators \code{[} and \code{[<-} as if they were conventional adjacency matrices.  Thus, in the above case, \code{net[,]} returns \code{net}'s adjacency matrix (a fact we verify by comparing it with \code{nmat}).  This is an extremely useful ``shorthand'' which can be used to simplify otherwise cumbersome network operations, especially on small networks.
+
+The use of \code{network} function to create objects from input matrices has a functional parallel in the use of coercion methods to transform other objects into \code{network} form.  These operate in the same manner as the above, but follow the standard \proglang{R} syntax for coercion, e.g.:
+%\begin{Code}
+%#Can also use coercion
+%net <- as.network(nmat, loops = TRUE)
+%all(nmat==net[,])                                       #Should still be TRUE
+%\end{Code}
+<<>>=
+net <- as.network(nmat, loops = TRUE)
+all(nmat == net[,])
+@
+
+By default, \code{as.network} assumes that square input matrices should be treated as adjacency matrices, and that diagonal entries should be ignored; here we have overridden the latter behavior by invoking the additional argument \code{loops = TRUE}.  Matrix-based input can also be given in edgelist or incidence matrix form, as selected by the \code{matrix.type} argument.  This and other options are described in greater detail within the package documentation.
+
+The above methods can be used in conjunction with \code{data}, \code{load}, or \code{read} functions to convert imported relational data into \code{network} form.  For example, we may apply this to the Florentine data mentioned in the previous section:
+<<>>=
+nflo <- network(flo, directed = FALSE)
+nflo
+@
+
+Although the network's adjacency structure is summarized here in edgelist form, it may be queried in other ways.  For instance, the following example demonstrates three simple methods for examining the neighborhood of a particular vertex:
+<<>>=
+nflo[9,]
+nflo[9,1]
+nflo[9,4]
+is.adjacent(nflo, 9, 1)
+is.adjacent(nflo, 9, 4)
+@
+
+As the example shows, overloading can be used to extract partial as well as complete adjacency information from a \code{network} object.  A more cumbersome (but slightly faster) method is to use a direct call to \code{is.adjacent}, the general indicator method for network adjacency.  Calling the indicator method avoids the call parsing required by the extraction operator, which is the source of the performance difference.  In practice, however, the impact of call parsing is quite minimal, and users are unlikely to detect a difference between the two approaches.  (Where such overhead is an issue, it will generally be more efficacious to conduct adjacency queries directly from the backend code; this will be discussed below, in the context of the \proglang{C}-language API.)
+
+In addition to adjacency, \pkg{network} supplies methods to query many basic properties of \code{network}
+objects.  Although complex structural descriptives \citep[e.g., centrality scores][]{wass:faus1994} are the province of other packages, \pkg{network}'s built-in functionality is sufficient to determine the types of edges allowed within a \code{network} object and constraints such as enforced bipartitions, as well as essential quantities such as size (number of vertices), edge count, and density (the ratio of observed to potential edges).  Use of these indicator methods is straightforward, as illustrated by the following examples.
+<<>>=
+network.size(nflo)                 #Number of vertices
+network.edgecount(nflo)            #Number of edges
+network.density(nflo)              #Network density
+has.loops(nflo)                    #Can nflo have loops?
+is.bipartite(nflo)                 #Is nflo coded as bipartite?
+is.directed(nflo)                  #Is nflo directed?
+is.hyper(nflo)                     #Is nflo hypergraphic?
+is.multiplex(nflo)                 #Are multiplex edges allowed?
+@
+
+\subsection[Coercing network objects to other forms]{Coercing \code{network} objects to other forms}
+
+Just as one may often seek to coerce data from other forms into \code{network} object, so to does one sometimes need to coerce \code{network} objects into other data types.  \pkg{network} currently supports several such coercion functions, all of which take network objects as input and produce matrices of one type or another.  The class method for \code{as.matrix} performs this task, converting network objects to adjacency, incidence, or edgelist matrices as desired (adjacency being the default).  Scalar-valued edge attributes, where present, may be used to set edge values using the appropriate functional arguments.  Similar functionality is provided by \code{as.sociomatrix} and the extraction operator, although these are constrained to produce adjacency matrices.  These equivalent approaches may be illustrated with application to the Florentine data as follows:
+<<>>=
+as.sociomatrix(nflo)
+all(nflo[,]==as.sociomatrix(nflo))
+all(as.matrix(nflo)==as.sociomatrix(nflo))
+as.matrix(nflo,matrix.type="edgelist")
+@
+Note that vertex names (per the \code{vertex.names} attribute) are used by \code{as.sociomatrix} to set adjacency matrix row/column names where present.
+
+The less-flexible \code{as.sociomatrix} function also plays an important role with respect to coercion in the \pkg{sna} package; the latter's \code{as.sociomatrix.sna} dispatches to \pkg{network}'s \code{as.sociomatrix} routine when \pkg{network} is loaded and a \code{network} object is given.  The intent in both packages is to maintain an interoperable and uniform mechanism for guaranteeing adjacency matrix representations of input data (which are necessary for backward compatibility with some legacy functions).
+
+\subsection{Creating and modifying edges and vertices}
+
+In addition to coercion of data to \code{network} form, the \pkg{network} package contains many mechanisms for creating, modifying, and removing edges and vertices from \code{network} objects.  The simplest means of manipulating edges for most users is the use of the overloaded extraction and assignment operators, which (as noted previously) simulate the effects of working with an adjacency matrix.  Thus, a statement such as \code{g[i,j] <- 1} adds an edge between \code{i} and \code{j} (if one is not already present), \code{g[i,j] <- 0} removes an existing edge, and \code{g[i,j]} itself is a dichotomous indicator of adjacency.  Subset selection and assignment otherwise works in the same fashion as for \proglang{R} matrices, including the role of \code{logical}s and element lists.  (One minor exception involves the effects of assignment on undirected and/or loopless graphs: \pkg{network} will enforce symmetry and/or empty diagonal entries, and will ignore any assignments which are contrary to this.)  The uses of assignment by overloading are hence legion, as partially illustrated by the following:
+<<>>=
+#Add edges to an empty network
+net <- network.initialize(5,loops=TRUE)
+net[nmat>0] <- 1                       #One way to add edges
+all(nmat==net[,])                      #Should be TRUE
+net[,] <- 0                            #Remove the edges
+net[,] <- nmat                         #Not quite kosher, but _will_ work....
+all(nmat==net[,])                      #Should still be TRUE
+net[,] <- 0                            #Remove the edges
+for(i in 1:5)                          #Add the hard way!
+  for(j in 1:5)
+    if(nmat[i,j])
+      net[i,j] <- 1
+all(nmat==net[,])                      #Should STILL be TRUE
+net[,] <- 0                            #Remove the edges
+add.edges(net,row(nmat)[nmat>0],col(nmat)[nmat>0])
+all(nmat==net[,])                      #When will it all end??
+net[,] <- as.numeric(nmat[,])
+all(nmat==net[,])                      #When will it all end??
+@
+
+The above example also introduces \code{add.edges}, to which the overloaded assignment operator is a front end.  \code{add.edges} is more cumbersome to employ than the assignment operators, but is substantially more powerful.  In particular, it can be used to add edges of arbitrary type, with arbitrary attribute data.  A comparison of usage is instructive; we begin by creating an empty digraph, and adding a single edge:
+<<>>=
+#Add edges (redux)
+net<-network.initialize(5)                  #Create empty graph
+add.edge(net,2,3)                           #Create 2->3 edge
+net[,]                                      #Trust, but verify
+add.edges(net,c(3,5),c(4,4))                #3 and 5 send ties to 4
+net[,]                                      #Again, verify edges
+net[,2]<-1                                  #Everyone sends ties to 2
+net[,]                                      #Note that loops are not created!
+@
+
+Observe that the (2,2) loop is not created, since \code{loops} is \code{FALSE} for this network.  This automatic behavior is \emph{not} true of \code{add.edges}, unless optional edge checking is turned on (by means of the \code{edge.check} argument).  For this reason, explicit use of \code{add.edges} is discouraged for novice users.
+
+In addition to edge addition/removal, vertices can be added or removed via \code{add.vertices} and \code{delete.vertices}.  The former adds the specified number of vertices to a \code{network} object (along with any supplied attribute information), while the latter deletes a specified list of vertices from its argument.  Usage is straightforward:
+<<>>=
+#Deleting vertices
+delete.vertices(net,4)                                  #Remove vertex 4
+net[,]                                                  #It's gone!
+add.vertices(net,2)                                     #Add two new vertices
+net[,]                                                  #Both are isolates
+@
+
+As the above illustrates, vertex names are not automatically created for newly added vertices (but can be subsequently assigned).  New vertices are always added as isolates (i.e., without existing ties), and any edges having a deleted vertex as an endpoint are removed along with the deleted vertex.
+
+The use of \code{is.adjacent} (and friends) to perform adjacency testing has been shown above.  While this is adequate for many purposes, it is sometimes  necessary to examine an edge's contents in detail.  As we have seen, each edge can be thought of as a list made up of a vector of tail vertex IDs, a vector of head vertex IDs, and a vector of attributes.  The utility function \code{get.edges} retrieves edges in this form, returning them as lists with elements \code{inl} (tail), \code{outl} (head), and \code{atl} (attributes).  \code{get.edges} allows for edges to be retrieved by endpoint(s), and is usable even on multiplex networks.  Incoming or outgoing edges (or both) can be selected, as per the following example:
+<<>>=
+#Retrieving edges
+get.edges(net,1)                                  #Out-edges sent by vertex 1
+get.edges(net,2,neighborhood="in")                #In-edges to vertex 2
+get.edges(net,1,alter=2)                          #Out-edges from 1 to 2
+@
+The \code{alter} argument in the last case tells \code{get.edges} to supply only edges from vertex 1 to vertex 2.  As with other applications of \code{get.edges}, this will return all applicable edges in the multiplex case.
+
+Retrieving edges themselves is useful, but does not provide the edges' ID information -- particularly in multiplex networks, such information is needed to delete or modify edges.  For that purpose, we employ a parallel routine called \code{get.edgeIDs}:
+<<>>=
+#Retrieving edge IDs
+get.edgeIDs(net,1)                        #Same as above, but gets ID numbers
+get.edgeIDs(net,2,neighborhood="in") 
+get.edgeIDs(net,1,alter=2)     
+@
+
+By the same token, it is sometimes the vertex neighborhood (rather than edge neighborhood) which is of interest.  The \code{get.neighborhood} function can be used in these cases to obtain vertex neighborhoods directly, without having to first query edges.  (Since this operation is implemented in the underlying compiled code, it is considerably faster than an \proglang{R}-level front end would be.)
+<<>>=
+#Vertex neighborhoods
+get.neighborhood(net,1)                                    #1's out-neighbors
+get.neighborhood(net,2,type="in")                          #2's in-neighbors
+@
+
+Finally, we note that edge deletion can be performed either by assignment operators (as noted above) or by the \code{delete.edges} function.  \code{delete.edges} removes edges by ID, and hence is not primarily employed by end users.  In conjunction with tools such as \code{get.edgeIDs}, however, it can be seen to be quite versatile.  A typical example is as follows:
+<<>>=
+#Deleting edges
+net[2,3]<-0                                            #This deletes the 2->3
+                                                       #edge
+net[2,3]==0                                            #Should be TRUE
+delete.edges(net,get.edgeIDs(net,2,neighborhood="in")) #Remove all->2
+net[,]                        
+@
+
+Since it works by IDs, it should be noted that \code{delete.edges} can be used to selectively remove edges from multiplex networks.  The operator-based approach automatically removes any edges connecting the selected pair, and is not recommended for use with multiplex networks.
+
+\subsection{Working with attributes}
+
+A major advantage of \code{network} objects over simple matrix or list based data representations is the ability to store meta-information regarding vertices, edges, or the network as a whole.  For each such attribute type, \pkg{network} contains access functions to manage the creation, modification, and extraction of such information.  Here, we briefly introduce the primary functions used for these tasks, by attribute type.
+
+\subsubsection{Network attributes}
+
+As indicated previously, network-level attributes are those attached to the \code{network} object as a whole.  Such attributes are created via the \code{set.network.attribute} function, which takes as arguments the object to which the attribute should be attached, the name of the attribute, and the value of the attribute in question.  Network attributes may contain arbitrary data, as they are stored internally via generalized vectors (\code{list}s).  To streamline the creation of such attributes, the network attribute operator, \code{\%n\%}, has also been provided.  Assignment using the operator is performed via the syntax \code{network \%n\% "attrname" <- value}, as in the second portion of the example below (which assigns the first seven lowercase letters to an attribute called ``hoo'' in \code{net}).
+<<>>=
+net <- network.initialize(5)
+set.network.attribute(net, "boo", 1:10)
+net %n% "hoo" <- letters[1:7]
+@
+After network attributes have been created, they may be listed using the \break\code{list.network.attributes} command.  Attribute extraction may then be performed by a call to \code{get.network.attribute}, or via the network attribute operator.  In the latter case, a call of the form \code{network \%n\% "attrname"} returns the value of attribute ``attrname'' in the object ``network.''  In our current example, for instance, we have created the attributes ``boo'' and ``hoo,'' each of which may be accessed using either method:
+<<>>=
+#List attributes
+list.network.attributes(net)
+
+#Retrieve attributes
+get.network.attribute(net,"boo")
+net %n% "hoo"
+@
+
+Finally, it is sometimes desirable to remove network attributes which have been created.  This is accomplished using \code{delete.network.attributes}, which removes the indicated attribute from the network object (freeing the associated memory).  One can verify that the attribute has been removed by checking the list of network attributes, e.g:
+<<>>=
+#Delete attributes
+delete.network.attribute(net,"boo")
+list.network.attributes(net)
+@
+
+\subsubsection{Vertex attributes}
+
+Vertex attributes are manipulated in the same general manner as network attributes, with the caveat that each vertex can have its own attributes.  There is no requirement that all vertices have the same attributes, or that all attributes of a given name contain the same data type; however, not all extraction methods work well in the latter case.  Complete functionality for arbitrary vertex creation, listing, retrieval, and deletion is provided by the \code{set.vertex.attribute}, \code{list.vertex.attributes}, \code{get.vertex.attribute}, and \break\code{delete.vertex.attribute} methods (respectively).  These allow attribute data to be passed in list form (permitting arbitrary contents) and to be assigned to specific vertices.  While the generality of these functions is helpful, they are cumbersome to use for simple tasks such as assigning scalar or character values to each vertex (or retrieving the same).  To facilitate such routine tasks, \pkg{network} provides a vertex attribute operator, \code{\%v\%}.  The operator may be used either for extraction or assignment, treating the right-hand value as a vector of attribute values (with the $i$th element corresponding to the $i$th vertex).  By passing a \code{list} with a \code{list} for each element, one may assign arbitrary vertex values in this manner; however, the vertex operator will vectorize these values upon retrieval (and hence one must use \code{get.vertex.attribute} with \code{unlist = FALSE} to recover the full list structure).  If a requested attribute is unavailable for a particular vertex, an \code{NA} is returned.
+
+Typical use of the vertex attribute methods is illustrated via the following example.  Note that more complex usage is also possible, as detailed in the package manual.
+<<>>=
+#Add vertex attributes
+set.vertex.attribute(net,"boo",1:5)              #Create a numeric attribute
+net %v% "hoo" <- letters[1:5]                    #Now, a character attribute
+
+#Listing attributes
+list.vertex.attributes(net)                      #List all vertex attributes
+
+#Retrieving attributes
+get.vertex.attribute(net,"boo")                  #Retrieve 'em
+net %v% "hoo"
+
+#Deleting attributes
+delete.vertex.attribute(net,"boo")               #Remove one
+list.vertex.attributes(net)                      #Check to see that it's gone
+@
+
+\subsubsection{Edge attributes}
+
+Finally, we come to edge attributes.  The operations involved here are much like those for the network and vertex cases.  List, set, get, and delete methods exist for edge attributes (\code{list.edge.attributes}, \code{set.edge.attribute}, \code{get.edge.attribute}, and \break\code{delete.edge.attribute}), as does an edge attribute operator (\code{\%e\%}).  Operations with edges are rendered somewhat more complex, however, because of the need to employ edge IDs in referencing the edges themselves.  These can be obtained via the \code{get.edgeIDs} function (as described above), but this adds complexity which is unnecessary in the case of simple attribute assignment on non-multiplex, dyadic graphs (where edges are uniquely identifiable by a pair of endpoints).  For such cases, the convenience function \code{set.edge.value} allows edge values to be specified in adjacency matrix form.  Also useful is the bracket operator, which can be used to assign values as well as to create edges.  For network \code{net}, \code{net[sel, names.eval = "attrname"] <- value} will set the attribute named by ``attrname'' on the edges selected by \code{sel} (which follows standard \proglang{R} syntax for selection of cells from square matrices) to the values in \code{value}.  By default, values for non-existent edges are ignored (although new edges can be created by adding \code{add.edges = TRUE} to the included arguments).  Reasonable behavior for non-scalar values using this method is not guaranteed.
+
+In addition to the above, methods such as \code{as.sociomatrix} allow for edge attributes to be employed in some settings.  These provide a more convenient (if less flexible) interface for the common case of scalar attributes on the edges of non-multiplex, dyadic networks.  The following is a typical example of these routines in action, although much more exotic scenarios are certainly possible.
+
+<<>>=
+#Create a network with some edges
+net <- network(nmat)
+
+#Add attributes
+set.edge.attribute(net,"boo",sum(nmat):1)
+set.edge.value(net,"hoo",matrix(1:25,5,5)) #Note: only sets for extant edges!
+net %e% "woo" <- matrix(rnorm(25),5,5)     #Ditto
+net[,,names.eval="zoo"] <- nmat*6           #Ditto if add.edges!=TRUE
+
+#List attributes
+list.edge.attributes(net)
+
+#Retrieving attributes
+get.edge.attribute(get.edges(net,1),"boo") #Get the attribute for 1's out-edges
+get.edge.value(net,"hoo")
+net %e% "woo"
+as.sociomatrix(net,"zoo")
+
+#Deleting attributes
+delete.edge.attribute(net,"boo")
+list.edge.attributes(net)
+@
+
+As this example illustrates, edge attributes are only set for actually existing edges (although the optional \code{add.edges} argument to the network assignment operator can be used to force addition of edges with non-zero attribute values).  Also illustrated is the difference between attribute setting using \code{set.edge.attribute} (which is edge ID based) and function such as the assignment operator.  The relative ease of the latter recommends itself for everyday use, although more complex settings may call for the former approach.
+
+\subsubsection{From attributes to networks}
+
+In addition to simply storing covariate information, it should be noted that one can actively use attributes
+to construct new networks.  For instance, consider the \code{emon} data set used above.  Among other
+variables, each vertex carries an attribute called \code{"Location"} which contains information on whether the
+corresponding organization had headquarters or command post installations which were local, non-local, or both
+with respect to the operation from which the network was drawn.  We may thus use this information to construct
+a very simple hypergraph, in which locations constitute edges and edge membership is defined as having an
+installation at the respective location.  For the Mt.\ St.\ Helens network, such a network may be constructed as follows.  First, we extract the location information from the relevant network object, and use this to build an incidence matrix based on location.  Then we convert this incidence matrix to a hypergraphic network object (setting vertex names from the original network object for convenience).
+
+<<>>=
+#Extract location information
+MtSHloc<-emon$MtStHelens%v%"Location"
+
+#Build an incidence matrix based on Local/Non-local/Both placement
+MtSHimat<-cbind(MtSHloc%in%c("L","B"),MtSHloc%in%c("NL","B"))
+
+#Convert incidence matrix to a hypergraph
+MtSHbyloc<-network(MtSHimat,matrix="incidence",hyper=TRUE,directed=FALSE,
+  loops=TRUE)
+
+#Set vertex names, for convenience
+MtSHbyloc%v%"vertex.names"<-emon$MtStHelens%v%"vertex.names"
+
+#Examine the result
+MtSHbyloc
+@
+
+Obviously, the simple location coding used here cannot lead to a very complex structure.  Nevertheless, this
+case serves to illustrate the flexibility of the \pkg{network} tools in allowing attribute information to be
+used in creative ways.  In addition to constructing networks from attributes, one can use attributes to store
+networks \citep[useful for joint representation of cognitive and behavioral structures such as those of][]{krackhardt:sn:1988,killworth.bernard:ho:1976}, edge timing information (for dynamic structures), etc.  Appropriate use of network, edge, and vertex attributes allows a wide range of complex relational data structures to be supported without the need for a cumbersome array of of custom data classes.
+
+\subsection[Visualizing network objects]{Visualizing \code{network} objects}
+
+In addition to manipulating \code{network} objects, the \pkg{network} package provides built-in support for network visualization.  This capability is supplied by the package \code{plot} method (ported from \pkg{sna}'s \code{gplot}), which is dispatched transparently when \code{plot} is called with a \code{network} object.  The plot method supports a range of layout and display options, which are specified through additional arguments.  For instance, to visualize the Florentine marriage data we might use commands such as the following: 
+
+<<>>=
+plot(nflo, displaylabels = TRUE, boxed.labels = FALSE)
+plot(nflo, displaylabels = TRUE, mode = "circle")
+@
+
+Typical results of these commands are shown in Figure~\ref{f_nflo_layout}.  Note that the plot method
+automatically determines whether the network being visualized is directed, and adds or suppresses arrowheads
+accordingly.  For instance, compare the above with the Mt.\ Si communication network (Figure~\ref{f_mtsi}):
+
+\begin{figure}
+\begin{center}
+%\rotatebox{270}{\resizebox{3in}{6in}{\includegraphics{nflo.layouts.ps}}}
+%\rotatebox{270}{\resizebox{3in}{6in}{\includegraphics{Figures/nflo_layouts.pdf}}}
+<<fig=TRUE,echo=FALSE>>=
+op<-par() # cache the plot params
+par(mfcol=c(1,2),mar=c(1,1,1,1),cex=0.5) # adjust margins and text size to fit two panels
+plot(nflo, displaylabels = TRUE,boxed.labels = TRUE)
+plot(nflo, displaylabels = TRUE, mode = "circle")
+par(op) # reset the plot params
+@
+\caption{\label{f_nflo_layout} Sample displays of the Florentine marriage data; the left panel depicts the default Fruchterman-Reingold layout, while the right panel depicts a circular layout.}
+\end{center}
+\end{figure}
+
+<<>>=
+plot(emon$MtSi)
+@
+
+\begin{figure}
+\begin{center}
+%\rotatebox{270}{\resizebox{4in}{4in}{\includegraphics{mtsi.layout.ps}}}
+%\rotatebox{0}{\resizebox{4in}{4in}{\includegraphics{Figures/mtsi_layout.pdf}}}
+<<fig=TRUE,echo=FALSE>>=
+plot(emon$MtSi)
+@
+\caption{\label{f_mtsi} Sample display of the Mt.\ Si EMON data, using the default Fruchterman-Reingold layout.}
+\end{center}
+\end{figure}
+
+The default layout algorithm for the plot method is that of \citet{fruchterman.reingold:spae:1991}, a
+force-directed display with good overall performance.  Other layout methods are available \citep[including the
+well-known energy-minimization algorithm of][]{kamada.kawai:ipl:1989}, and support is included for user-added functions.  To create a custom layout method, one need only create a function with the prefix \code{network.layout} which supplies the appropriate formal arguments (see the \pkg{network} manual for details).  The \code{plot} method can then be directed to utilize the custom layout function, as in this simple example (shown in Figure~\ref{f_mtsthelens_custom}):
+
+<<>>=
+library(sna)
+network.layout.degree <- function(d, layout.par){
+      id <- degree(d, cmode = "indegree")
+      od <- degree(d, cmode = "outdegree")
+      cbind(id, od)
+    }
+plot(emon$MtStHelens, mode = "degree", displaylabels = TRUE, 
+    boxed.labels = FALSE, suppress.axes = FALSE, label.cex = 0.5,
+    xlab = "Indegree", ylab = "Outdegree", label.col = 3)
+@
+
+\begin{figure}
+\begin{center}
+%\rotatebox{270}{\resizebox{6in}{6in}{\includegraphics{mtsthelens.custom.layout.ps}}}
+%\rotatebox{270}{\resizebox{6in}{6in}{\includegraphics{Figures/mtsthelens_custom_layout.pdf}}}
+<<fig=TRUE,echo=FALSE>>=
+plot(emon$MtStHelens, mode = "degree", displaylabels = TRUE, 
+    boxed.labels = FALSE, suppress.axes = FALSE, label.cex = 0.5,
+    xlab = "Indegree", ylab = "Outdegree", label.col = 3)
+@
+\caption{\label{f_mtsthelens_custom} Sample display of the Mt.\ St.\ Helens EMON data, using a custom indegree/outdegree layout.}
+\end{center}
+\end{figure}
+
+As this example illustrates, most properties of the visualization can be adjusted where necessary.  This is especially helpful when visualizing structures such as hypergraphs:
+
+<<>>=
+plot(MtSHbyloc, displaylabels = TRUE, label = 
+    c(network.vertex.names(MtSHbyloc), "Local", "Non-Local"), 
+    boxed.labels = FALSE, label.cex = rep(c(0.5, 1), each = c(27, 2)),
+    label.col = rep(c(3, 4), each = c(27, 2)), vertex.col = rep(c(2, 5),
+    each = c(27, 2)))
+@
+
+Note that the \code{plot} method automatically recognizes that the network being passed is hypergraphic, an employs a two-mode representation for visualization purposes (see Figure~\ref{f_mtsthelens_twomode}).  Supplying custom labeling and vertex coloring helps clarify the interpretation.  For instance, here we can immediately see the division between organizations who maintained headquarters exclusively at local or remote locations during the Mount St. Helens search and rescue operation, as well as those organizations (e.g. the Salvation Army and Red Cross) which bridged the two.  Though simple, examples such as this demonstrate how the default \emph{plot} settings can be adjusted to produce effective visualizations of even complex relational data.
+
+\begin{figure}
+\begin{center}
+%\rotatebox{270}{\resizebox{4.5in}{6in}{\includegraphics{mtsthelens.twomode.ps}}}
+%\rotatebox{270}{\resizebox{4.5in}{6in}{\includegraphics{Figures/mtsthelens_twomode.pdf}}}
+<<fig=TRUE,echo=FALSE>>=
+plot(MtSHbyloc, displaylabels = TRUE, label = 
+    c(network.vertex.names(MtSHbyloc), "Local", "Non-Local"), 
+    boxed.labels = FALSE, label.cex = rep(c(0.5, 1), each = c(27, 2)),
+    label.col = rep(c(3, 4), each = c(27, 2)), vertex.col = rep(c(2, 5),
+    each = c(27, 2)))
+@
+\caption{\label{f_mtsthelens_twomode} Sample display of the Mt.\ St.\ Helens location hypergraph, showing division between locally, non-locally, and dual headquartered organizations.}
+\end{center}
+\end{figure}
+
+\section[C-language API]{\proglang{C}-language API}
+
+While the functionality described thus far has been aimed at users working within an interpreted \proglang{R} environment, many \pkg{network} package features can also be accessed through a \proglang{C}-language application programming interface (API).  Although this API still makes use of \proglang{R} data structures, it provides mechanisms for direct manipulation of those structures via compiled code.  While invisible to most end users, the API has a number of attractions for developers.  Chief among these is performance: in the author's experience, a reasonably well-designed \proglang{C} function can run as much as one to two orders of magnitude faster than an equivalent \proglang{R} implementation.  For many day-to-day applications, such gains are unlikely to be worth the considerable increase in implementation and maintenance costs associated with choosing \proglang{C} over \proglang{R}; however, they may prove vital when performing computationally demanding tasks such as Markov chain Monte Carlo simulation, large-graph computations, and small-N solutions for non-polynomial time problems (e.g., cycle counting).  Another useful feature of the \proglang{C} API is its ability to make the complex data storage capabilities of \code{network} objects accessible to developers whose projects involve existing backend code.  Instead of performing data extraction on a \code{network} object and passing the result to the compiled routine, the \pkg{network} API allows for such routines to work with such objects directly.  Finally, a third useful asset of the \pkg{network} API is the capacity it provides for generating user-transparent functionality which transcends what is feasible with \proglang{R}'s pass-by-value semantics.  The use of compiled code to directly modify objects without copying has been fundamental to the functionality of the package since version 1.0, as can be gleaned from an examination of the package source code.
+
+The mechanism by which the API is currently implemented is fairly simple.  A shared header file (which must be included in the user's application) defines a series of macros which point to the package's internal routines.  During program execution, a global registration function is used to map these macros to their internal symbols; following this, the macros may be called normally.  Other then ensuring that the \pkg{network} library is loaded prior to invoking the registration function, no other measures are necessary.  In particular, the calling routine does not have to be linked against the \pkg{network} library, although the aforementioned header/registration routines must be included at compile time.\footnote{Required files for the \pkg{network} API are available from \url{http://www.statnetproject.org/}.}
+
+\subsection[Using the network API]{Using the \pkg{network} API}
+
+To use the \pkg{network} API within one's own code, the following steps are necessary:
+
+\begin{enumerate}
+\item The required \pkg{network} header and function registration files must be added to the developer's source tree.
+\item The \pkg{network} header file must be included during compilation.
+\item The \code{netRegisterFunctions} function must be invoked at the entry point to any \proglang{C} program using the API.
+\item The \pkg{network} API functions must be used as required.
+\end{enumerate}
+
+The command \code{netRegisterFunctions} takes and returns no arguments, being invoked solely for its side effect.  Although it must be called at each entry to the \proglang{C} backend (i.e., each invocation of \code{.Call} or \code{.External} from \proglang{R}), its effects persist until the calling routine exits.  The API is designed for use with the \code{.Call} interface, although wrappers for conversion to \code{.External} are in principle possible.  Object references are maintained through \code{SEXP} pointers, as is standard for \proglang{R}'s \proglang{C} language interface.  Because references (rather than copies of the objects themselves) are passed to \proglang{C} via the interface, \proglang{C} routines may directly alter the objects with which they are called.  \pkg{network} has many routines for creating and modifying \code{networks}, as well as for accessing object contents within compiled code.  
+To illustrate the use of the network API in practical settings, we here provide a walk-through for a relatively simple (but non-trivial) example.  Consider a \proglang{C} function which generates an undirected network from a homogeneous Bernoulli graph distribution, tagging each edge with random ``onset'' and ``termination'' times based on a piecewise-exponential process with fixed onset/termination hazards.  Such a function might also keep track of the first and last edge times for each vertex (and for the network as a whole), storing these within the network object via appropriately named attributes.
+
+To implement our sample function, we begin with the standard header for a \code{.Call} function, which both takes and receives arguments of type \code{SEXP} (S-expression pointers).  In this case, the parameters to be passed consist of an initialized \code{network} object, the probability of an edge between any two vertices, and the hazards for edge onset and termination (respectively).  Note that we do not need to tell the function about properties such as network size, since it can determine these itself using the API's interface methods.
+
+\begin{Code}
+SEXP rnbernexp_R(SEXP g, SEXP ep, SEXP oh, SEXP th)
+/*
+C-Language code for a simple random dynamic network generator.  Arguments are
+as follows:
+  g - a pre-initialized network object
+  ep - the edge probability parameter
+  oh - the edge onset hazard parameter
+  th - the edge termination hazard parameter
+*/
+{
+  int n, i, w;
+  double u, fet, let, *vfet, *vlet, ot, tt;
+  SEXP tail, head, atl, atlnam, sot, stt, ec;
+
+  /*Verify that we were called properly, and set things up*/
+  netRegisterFunctions();
+  if(!netIsNetwork(g))
+    error("rnbernexp_R must be called with a network object.\n");
+  if(netIsDir(g))
+    error("Network passed to rnbernexp_R should be undirected.\n");
+  n = netNetSize(g);
+  PROTECT(ep = coerceVector(ep, REALSXP));
+  PROTECT(oh = coerceVector(oh, REALSXP));
+  PROTECT(th = coerceVector(th, REALSXP));
+  PROTECT(ec = allocVector(LGLSXP, 1));
+  LOGICAL(ec)[0] = 0;
+  GetRNGstate();
+  
+  /*Allocate memory for first/last edge time trackers*/
+  vfet = (double *)R_alloc(n, sizeof(double));
+  vlet = (double *)R_alloc(n, sizeof(double));
+  for(i = 0; i < n; i++)
+    vfet[i] = vlet[i] = NA_REAL;
+  fet = let = NA_REAL;
+\end{Code}
+
+In order to assure that all arguments are of the appropriate type, we employ a combination of verification and coercion.  After registering the \pkg{network} API functions using \code{netRegisterFunctions}, we use the indicators \code{netIsNetwork} and \code{netIsDir} to verify that the \code{g} argument is indeed a \code{network} object, and that it is undirected.  After verifying these conditions, we can use \code{netNetSize} to obtain the number of vertices in the network.  This quantity is saved for further use.
+
+With the preliminaries out of the way, we are now in a position to draw edges.  The algorithm used to generate the underlying graph is that of \cite{batagelj.brandes:pre:2005}, which scales well for sparse graphs (complexity is $\mathcal{O}(n+m)$).  Edges themselves are added via the \code{netAddEdge} API function, which is analogous to \code{add.edge} in the \proglang{R} interface.  Because we are operating directly on the network object, we must handle memory allocation ourselves: the \code{allocVector} calls in the following section are used to allocate memory for the head, tail, and attribute lists, and for the vector of attribute names.  These are set accordingly, with the ``OnsetTime'' and ``TerminationTime'' attributes being created to store edge onsets and terminations, respectively.  Once the edge elements are created, \code{netAddEdge} assures that they are placed within the \code{network} object; since \proglang{R}'s garbage collection mechanism protects these elements once they are linked to \code{g} (which is a protected object), we can subsequently remove them from the memory protection stack using \code{UNPROTECT}.
+
+\begin{Code}
+  /*Draw the network information*/
+  w = -1;
+  i = 1;
+  while(i < n){
+    u = runif(0.0, 1.0);
+    w += 1+ (int)floor(log(1.0 - u) / log(1.0 - REAL(ep)[0]));
+    while((w >= i) && (i < n)){
+      w -= i;
+      i++;
+    }
+    if(i < n){                                       /*Generate an edge*/
+      /*Draw and track timing information*/
+      ot = rexp(REAL(oh)[0]);
+      tt = ot + rexp(REAL(th)[0]);
+      fet = ((ISNA(fet)) || (ot < fet)) ? ot : fet;
+      let = ((ISNA(let)) || (tt > let)) ? tt : let;
+      vfet[i] = ((ISNA(vfet[i])) || (ot < vfet[i])) ? ot : vfet[i];
+      vlet[i] = ((ISNA(vlet[i])) || (tt > vlet[i])) ? tt : vlet[i];
+      /*Allocate memory for the new edge*/
+      PROTECT(tail = allocVector(INTSXP, 1));        /*Allocate head/tail*/
+      PROTECT(head = allocVector(INTSXP, 1));
+      INTEGER(tail)[0] = i + 1;
+      INTEGER(head)[0] = w + 1;
+      PROTECT(atl = allocVector(VECSXP, 2));         /*Allocate attributes*/
+      PROTECT(sot = allocVector(REALSXP, 1));
+      PROTECT(stt = allocVector(REALSXP, 1));
+      PROTECT(atlnam = allocVector(STRSXP, 2));
+      SET_STRING_ELT(atlnam, 0, mkChar("OnsetTime"));
+      SET_STRING_ELT(atlnam, 1, mkChar("TerminationTime"));
+      REAL(sot)[0] = ot;
+      REAL(stt)[0] = tt;
+      SET_VECTOR_ELT(atl, 0, sot);
+      SET_VECTOR_ELT(atl, 1, stt);     
+      g = netAddEdge(g, tail, head, atlnam, atl, ec);    /*Add the edge*/
+      UNPROTECT(6);
+    }
+  }
+\end{Code}
+
+At this point, all edges have been placed within the network.  While we could stop here, it seems useful to first tabulate some basic meta-data regarding the network being produced.  In particular, a function to analyze a network of this type would doubtless need to know the total time interval over which each vertex (and the network as a whole) is active.  Via the \pkg{network} API, we can easily store this information in \code{g}'s network and vertex attribute lists before returning.  To do this, we employ \code{netSetVertexAttrib} and \code{netSetNetAttrib}, API functions which are analogous to \code{set.vertex.attribute} and \code{set.network.attribute}.  As with the case of edge addition, we must allocate memory for the attribute entry prior to installing it -- the \code{netSet*} routines pass references to their arguments, rather than copying them -- but these functions do handle the creation of attribute names from raw strings.  After writing our metadata into the graph, we clear the protection stack and return the \proglang{R} object pointer.
+
+\begin{Code}
+  /*Add network and vertex attributes*/
+  for(i = 0; i < n; i++){
+    PROTECT(sot = allocVector(REALSXP, 1));
+    PROTECT(stt = allocVector(REALSXP, 1));
+    REAL(sot)[0] = vfet[i];
+    REAL(stt)[0] = vlet[i];
+    g = netSetVertexAttrib(g, "FirstOnsetTime", sot, i + 1);
+    g = netSetVertexAttrib(g, "LastTerminationTime", stt, i + 1);
+    UNPROTECT(2);
+  }
+  PROTECT(sot = allocVector(REALSXP, 1));
+  PROTECT(stt = allocVector(REALSXP, 1));
+  REAL(sot)[0] = fet;
+  REAL(stt)[0] = let;
+  g = netSetNetAttrib(g, "FirstOnsetTime", sot);
+  g = netSetNetAttrib(g, "LastTerminationTime", stt);
+
+  /*Clear protection stack and return*/
+  PutRNGstate();
+  UNPROTECT(6);
+  return g;
+}
+\end{Code}
+
+To use the \code{rnbernexp_R} function, it must be invoked from \proglang{R} using the \code{.Call} interface.  A simple wrapper function (whose behavior is similar to \proglang{R}'s built-in random number generation routines) might look like the following:
+
+<<>>=
+rnbernexp <- function(n, nv, p = 0.5, onset.hazard = 1, 
+    termination.hazard = 1){
+      nets <- list()
+      for(i in 1:n)
+        nets[[i]] <- .Call("rnbernexp_R", network.initialize(nv, 
+          directed = FALSE), p, onset.hazard, termination.hazard, 
+          PACKAGE = "networkapi.example")
+      if(i > 1)
+        nets
+      else
+        nets[[1]]
+    }
+@
+In actual use, the \code{PACKAGE} setting would be changed to the name of the shared object file in which the \code{rnbernexp_R} symbol resides.  (This file would need to be linked against the \code{networkapi} file, and dynamically loaded after \pkg{network} is in memory.  Linking against the entire \pkg{network} library is not required, however.)  Although the specific distribution simulated is too simplistic to serve as a very good model of social dynamics, it nevertheless illustrates how the \pkg{network} API can be used to efficiently simulate and store the results of non-trivial processes within compiled code.
+
+\section{Final comments}
+
+For several decades, tools for social network analysis were essentially isolated from those supporting conventional statistical analyses.  A major reason for this isolation was the difficulty in manipulating -- or even representing -- relational data within standard statistical packages.  In recent years, the emergence of flexible statistical computing environments such as \proglang{R} have helped to change this situation.  Platforms like \proglang{R} allow for the creation of the complex data structures needed to represent rich relational data, while also facilitating the development of tools to make such structures accessible to the end user.  The \pkg{network} package represents one attempt to leverage these capabilities in order to create a low-level infrastructure for the analysis of relational data.  Together with packages like \pkg{sna}, \pkg{ergm}, and the rest of the \pkg{statnet} suite, it is hoped that \pkg{network} will provide a useful resource for scientists both inside and outside of the social network community.
+
+\section*{Acknowledgments}
+
+The author gratefully acknowledges the input of present and past \pkg{statnet} collaborators, including Mark Handcock, David Hunter, Daniel Westreich, Martina Morris, Steve Goodreau, Pavel Krivitsky, and Krista Gile.  This paper is based upon work supported by National Institutes of Health award 5 R01 DA012831-05, subaward 918197, and by NSF award IIS-0331707.
+
+\begin{thebibliography}{}
+\bibitem[Batagelj \& Brandes(2005)]{batagelj.brandes:pre:2005}
+Batagelj V, Brandes U (2005). ``Efficient Generation of Large Random Networks.'' \emph{Physical Review E}, 71(3), 036113, 1-5. doi:10.1103/PhysRevE.71.036113.
+
+\bibitem[Batagelj(2007)]{pajek}
+Batagelj V, Mrvar A (2007). \emph{Pajek: Package for Large Network Analysis.} University of
+Ljubljana, Slovenia. URL \url{http://vlado.fmf.uni-lj.si/pub/networks/pajek/}.
+
+\bibitem[Butts(2002)]{butts:tr:2002}
+Butts CT (2002). ``Memory Structures for Relational Data in R: Classes and Interfaces.''
+\emph{Unpublished manuscript}, University of California, Irvine.
+
+\bibitem[Butts(2007)]{sna}
+Butts CT (2007). \emph{sna: Tools for Social Network Analysis}. Statnet Project \url{http://statnetproject.org/}, Seattle, WA. R package version 1.5, URL \url{http://CRAN.R-project.org/package=sna}.
+
+\bibitem[Butts \& Carley(2005)]{butts.carley:cmot:2005}
+Butts CT, Carley KM (2005). ``Some Simple Algorithms for Structural Comparison.' \emph{Computational and Mathematical Organization Theory}, 11(4), 291-305.
+
+\bibitem[Butts, et al.(2007)]{network}
+Butts CT, Handcock MS, Hunter DR (2007). \emph{network: Classes for Relational Data}. Statnet
+Project \url{http://statnetproject.org/}, Seattle, WA. R package version 1.3, URL \url{http://CRAN.R-project.org/package=network}.
+
+\bibitem[Carey, et al.(2007)]{carey.et.al:sw:2007}
+Carey VJ, Long L, Gentleman R (2007). \emph{RBGL: R Interface to Boost C++ Graph Library}. R package version 1.14.0, URL \url{http://www.bioconductor.org/}.
+
+\bibitem[Chambers(1998)]{chambers:bk:1998}
+Chambers JM (1998). \emph{Programming with Data}. Springer-Verlag, New York. ISBN 0-387-
+98503-4.
+
+\bibitem[Csardi \& Nepusz(2006)]{gabor:sw:2007}
+Csardi G, Nepusz T (2006). ``The igraph Software Package for Complex Network Re-
+search.'' \emph{InterJournal, Complex Systems}, 1695. URL \url{http://www.interjournal.org/manuscript_abstract.php?361100992.}
+
+\bibitem[Doreian, et al.(2005)]{doreian.et.al:bk:2005}
+Doreian P, Batagelj V, Ferlioj A (2005). \emph{Generalized Blockmodeling}. Cambridge University Press, Cambridge.
+
+\bibitem[Drabek, et al.(1981)]{drabek.et.al:bk:1981}
+Drabek TE, Tamminga HL, Kilijanek TS, Adams CR (1981). \emph{Managing Multiorganizational Emergency Responses: Emergent Search and Rescue Networks in Natural Disaster and Remote Area Settings}. Number Monograph 33 in Program on Technology, Environment, and Man. Institute of Behavioral Sciences, University of Colorado, Boulder, CO.
+
+\bibitem[Fruchterman \& Reingold(1991)]{fruchterman.reingold:spae:1991}
+Fruchterman TMJ, Reingold EM (1991). ``Graph Drawing by Force-directed Placement.' \emph{Software -- Practice and Experience}, 21(11), 1129-1164.
+
+\bibitem[Gentleman, et al.(2007)]{gentleman.et.al:sw:2007}
+Gentleman R, Whalen E, Huber W, Falcon S (2007). \emph{graph: A Package to Handle Graph Data Structures}. R package version 1.14.2, URL \url{http://CRAN.R-project.org/package=graph.}
+
+\bibitem[Gentry, et al.(2007)]{gentry.et.al:sw:2007}
+Gentry J, Long L, Gentleman R, Falcon S (2007). \emph{Rgraphviz: Plotting Capabilities for R Graph Objects}. R package version 1.16.0, URL \url{http://CRAN.R-project.org/package=Rgraphviz}.
+
+\bibitem[Handcock, et al.(2003)]{statnet}
+Handcock MS, Hunter DR, Butts CT, Goodreau SM, Morris M (2003). \emph{statnet: Software Tools for the Statistical Modeling of Network Data}.
+Statnet Project \url{http://statnetproject.org/}, Seattle, WA. R package version 2.0, URL \url{http://CRAN.
+R-project.org/package=statnet}.
+
+\bibitem[Kamada\& Kawai(1989)]{kamada.kawai:ipl:1989}
+Kamada T, Kawai S (1989). ``An Algorithm for Drawing General Undirected Graphs.'' \emph{Information Processing Letters}, 31(1), 7-15.
+
+\bibitem[Killworth \& Bernard(1976)]{killworth.bernard:ho:1976}
+Killworth PD, Bernard HR (1976). ``Informant Accuracy in Social Network Data.'' \emph{Human Organization}, 35(8), 269-286.
+
+\bibitem[Koenker \& Ng(2007)]{koenker.ng:sw:2007}
+Koenker R, Ng P (2007). \emph{SparseM: Sparse Linear Algebra}. R package version 0.73, URL
+\url{http://CRAN.R-project.org/package=SparseM}.
+
+\bibitem[Krackhardt(1988)]{krackhardt:sn:1988}
+Krackhardt D (1988). ``Predicting with Networks: Nonparametric Multiple Regression Anal-
+yses of Dyadic Data.'' \emph{Social Networks}, 10, 359-382.
+
+\bibitem[Mayhew \& Levinger(1976)]{mayhew.levinger:ajs:1976}
+Mayhew BH, Levinger RL (1976). ``Size and Density of Interaction in Human Aggregates.'' \emph{American Journal of Sociology}, 82, 86-110.
+
+\bibitem[R Development Core Team(2007)]{R}
+R Development Core Team (2007). \emph{R: A Language and Environment for Statistical Computing}. R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0,
+Version 2.6.1, URL \url{http://www.R-project.org/}.
+
+\bibitem[Venables \& Ripley(2000)]{venables.ripley:bk:2000}
+Venables WN, Ripley BD (2000). \emph{S Programming}. Springer-Verlag, New York. ISBN 0-387-98966-8.
+
+\bibitem[Venables \& Ripley(2002)]{venables.ripley:bk:2002}
+Venables WN, Ripley BD (2002). \emph{Modern Applied Statistics with S}. Springer-Verlag, New York, fourth edition. ISBN 0-387-95457-0.
+
+\bibitem[Wasserman \& Faust(1994)]{wass:faus1994}
+Wasserman SS, Faust K (1994). \emph{Social Network Analysis: Methods and Applications}. Structural Analysis in the Social Sciences. Cambridge University Press, Cambridge.
+
+
+\end{thebibliography}
+
+\end{document}
