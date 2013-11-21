@@ -1,12 +1,13 @@
 \name{add.vertices}
 \alias{add.vertices}
+\alias{add.vertices.network}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Add Vertices to an Existing Network }
 \description{
   \code{add.vertices} adds a specified number of vertices to an existing network; if desired, attributes for the new vertices may be specified as well.
 }
 \usage{
-add.vertices(x, nv, vattr = NULL, last.mode = TRUE)
+add.vertices(x, nv, vattr = NULL, last.mode = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,21 +15,23 @@ add.vertices(x, nv, vattr = NULL, last.mode = TRUE)
   \item{nv}{ the number of vertices to add }
   \item{vattr}{ optionally, a list of attributes with one entry per new vertex }
   \item{last.mode}{ logical; should the new vertices be added to the last (rather than the first) mode of a bipartite network?}
+  \item{...}{possible additional arguments to add.vertices}
 }
 \details{
 New vertices are generally appended to the end of the network (i.e., their vertex IDs begin with \code{network.size(x)} an count upward).  The one exception to this rule is when \code{x} is bipartite and \code{last.mode==FALSE}.  In this case, new vertices are added to the end of the first mode, with existing second-mode vertices being permuted upward in ID.  (\code{x}'s \code{bipartite} attribute is adjusted accordingly.)
 
 Note that the attribute format used here is based on the internal (vertex-wise) storage method, as opposed to the attribute-wise format used by \code{\link{network}}.  Specifically, \code{vattr} should be a list with one entry per new vertex, the ith element of which should be a list with an element for every attribute of the ith vertex.  (If the required \code{na} attribute is not given, it will be automatically created.)
 }
+
 \value{
   Invisibly, a pointer to the updated \code{network} object; \code{add.vertices} modifies its argument in place. 
 }
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
 \author{ Carter T. Butts \email{buttsc@uci.edu}}
-%\note{ ~~further notes~~ }
-%
-% ~Make other sections like Warning with \section{Warning }{....} ~
+\note{
+\code{add.vertices} was converted to an S3 generic funtion in version 1.9, so it actually calls \code{add.vertices.network} by default and may call other versions depending on context (i.e. when called with a \code{networkDynamic} object).
+}
 
 \seealso{ \code{\link{network}}, \code{\link{get.vertex.attribute}}, \code{\link{set.vertex.attribute}} }
 \examples{

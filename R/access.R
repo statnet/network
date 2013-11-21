@@ -58,8 +58,18 @@
 
 
 #Add a single edge to a network object.
-#
+# S3 method dispatch for add edge
 add.edge<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){
+   xn<-deparse(substitute(x))
+   ev<-parent.frame()
+   UseMethod("add.edge") 
+   if(exists(xn,envir=ev)){           #If x not anonymous, set in calling env 
+    on.exit(assign(xn,x,pos=ev)) 
+   }
+   invisible(x) 
+} 
+
+add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){ 
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("add.edge requires an argument of class network.")
@@ -74,11 +84,23 @@ add.edge<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FA
 }
 
 
+
+# S3 method dispatch for add.edges
+add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
+  xn<-deparse(substitute(x))
+  ev<-parent.frame()
+  UseMethod("add.edges") 
+  if(exists(xn,envir=ev)){            #If x not anonymous, set in calling env 
+        on.exit(assign(xn,x,pos=ev))
+  }
+  invisible(x) 
+} 
+
+
 # Add multiple edges to network x.  Tail must be a list, each element of
 # which is the tail set for a given edge (ditto for head).  If edge values
 # are provided, they must be given similarly as lists of lists.
-#
-add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
+add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("add.edges requires an argument of class network.")
@@ -111,11 +133,22 @@ add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
 }
 
 
+
+# S3 method dispatch for add.vertices
+add.vertices<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
+  xn<-deparse(substitute(x))
+  ev<-parent.frame()
+    UseMethod("add.vertices") 
+    if(exists(xn,envir=ev)){            #If x not anonymous, set in calling env 
+       on.exit(assign(xn,x,pos=ev))
+    }
+    invisible(x) 
+} 
+
 # Add nv vertices to network x.  Vertex attributes (in addition to those which
 # are required) are to be provided in vattr; vattr must be a list containing
 # nv elements, each of which is equal to the desired val[i] entry.
-#
-add.vertices<-function(x, nv, vattr=NULL, last.mode=TRUE){
+add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){ 
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("add.vertices requires an argument of class network.\n")
