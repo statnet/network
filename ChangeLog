@@ -1,4 +1,7 @@
 CHANGELOG:
+v1.9 Features & Fixes
+  New Features
+    - add.vertices, add.edge, and add.edges have been converted to S3 methods
 
 v1.8 Fixes & Features
   New Features

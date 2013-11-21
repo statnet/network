@@ -1,6 +1,8 @@
 \name{add.edges}
 \alias{add.edges}
 \alias{add.edge}
+\alias{add.edges.network}
+\alias{add.edge.network}
 \title{Add Edges to a Network Object}
 \description{
   Add one or more edges to an existing network object.
@@ -30,7 +32,9 @@ Edges can also be added/removed via the extraction/replacement operators.  See t
 \author{ Carter T. Butts \email{buttsc@uci.edu}}
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
-%\note{ }
+\note{
+\code{add.edges} and \code{add.edge} were converted to an S3 generic funtions in version 1.9, so they actually call \code{add.edges.network} and \code{add.edge.network} by default, and may call other versions depending on context (i.e. when called with a \code{networkDynamic} object).
+}
 \seealso{\code{\link{network}}, \code{\link{add.vertices}}, \code{\link{network.extraction}}, \code{\link{delete.edges}}, \code{\link{network.edgelist}}}
 \examples{
 #Initialize a small, empty network
