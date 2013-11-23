@@ -76,10 +76,10 @@ add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.
   #Do the deed
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
   x<-.Call("addEdge_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network")
-  if(exists(xn,envir=ev))            #If x not anonymous, set in calling env
+  if(exists(xn,envir=ev)){            #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
+  }
   invisible(x)
 }
 
@@ -125,7 +125,6 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
   #Pass the inputs to the C side
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
   x<-.Call("addEdges_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network")
   if(exists(xn,envir=ev))            #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
@@ -163,7 +162,6 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
   xn<-deparse(substitute(x))
   ev<-parent.frame()
   if(nv>0){
-    x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
     if(last.mode||(!is.bipartite(x))){
       x<-.Call("addVertices_R",x,nv,vattr, PACKAGE="network")
       if(exists(xn,envir=ev))           #If x not anonymous, set in calling env
@@ -176,7 +174,7 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
       nnew<-nr+nc
       nold<-network.size(x)
       bip<-x%n%"bipartite"
-      .Call("addVertices_R", x, nv, vattr, PACKAGE = "network")
+      x<-.Call("addVertices_R", x, nv, vattr, PACKAGE = "network")
       
       if(nr>0){
         if(bip>0)
@@ -212,7 +210,6 @@ delete.edge.attribute<-function(x,attrname){
   #Remove the edges
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
   x<-.Call("deleteEdgeAttribute_R",x,attrname, PACKAGE="network")
   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
@@ -233,7 +230,6 @@ delete.edges<-function(x,eid){
     if((min(eid)<1)|(max(eid)>length(x$mel)))
       stop("Illegal edge in delete.edges.\n")
     #Remove the edges
-    x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
     x<-.Call("deleteEdges_R",x,eid, PACKAGE="network")
     if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
       on.exit(assign(xn,x,pos=ev))
@@ -252,7 +248,6 @@ delete.network.attribute<-function(x,attrname){
   #Remove the edges
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
   x<-.Call("deleteNetworkAttribute_R",x,attrname, PACKAGE="network")
   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
@@ -270,7 +265,6 @@ delete.vertex.attribute<-function(x,attrname){
   if(network.size(x)>0){
     xn<-deparse(substitute(x))
     ev<-parent.frame()
-    x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
     x<-.Call("deleteVertexAttribute_R",x,attrname, PACKAGE="network")
     if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
       on.exit(assign(xn,x,pos=ev))
@@ -291,7 +285,6 @@ delete.vertices<-function(x,vid){
   xn<-deparse(substitute(x))
   ev<-parent.frame()
   if(length(vid)>0){
-    x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
     if(is.bipartite(x)){  #If bipartite, might need to adjust mode 1 count
       m1v<-get.network.attribute(x,"bipartite")  #How many mode 1 verts?
       set.network.attribute(x,"bipartite",m1v-sum(vid<=m1v))
@@ -734,7 +727,6 @@ permute.vertexIDs<-function(x,vids){
   #Return the permuted graph
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
   x<-.Call("permuteVertexIDs_R",x,vids, PACKAGE="network")
   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
@@ -763,7 +755,6 @@ set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
     if((min(e)<1)|(max(e)>length(x$mel)))
       stop("Illegal edge in set.edge.attribute.\n")
     #Do the deed
-    x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
     x<-.Call("setEdgeAttribute_R",x,attrname,value,e, PACKAGE="network")
     if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
       on.exit(assign(xn,x,pos=ev))
@@ -796,7 +787,6 @@ set.edge.value<-function(x,attrname,value,e=seq_along(x$mel)){
   #Do the deed
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
   x<-.Call("setEdgeValue_R",x,attrname,value,e, PACKAGE="network")
   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
@@ -824,7 +814,6 @@ set.network.attribute<-function(x,attrname,value){
   #Do the deed
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
   x<-.Call("setNetworkAttribute_R",x,attrname,value,PACKAGE="network")
   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
@@ -853,7 +842,6 @@ set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
   #Do the deed
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x$RIsTooLazy<-NULL    #Defeat R's pathological evaluation rules
   x<-.Call("setVertexAttribute_R",x,attrname,value,v, PACKAGE="network")
   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))

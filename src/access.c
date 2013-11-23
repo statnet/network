@@ -514,6 +514,9 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
   int pc=0,i,j,mnext;
   SEXP el,atl,atlnam,navec,inl,outl,elnam,mel,newmel,oel,iel,ptr,elem,mnptr,gal;
   char buf[64];
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++; 
 
   /*Make sure that we can read the head and tail lists*/
   PROTECT(inl = coerceVector(head, INTSXP)); pc++;
@@ -676,6 +679,9 @@ SEXP addEdges_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEX
   int pc=0,opc,i,j,mnext,z;
   SEXP el,atl,atlnam,navec,inl,outl,elnam,mel,newmel,oel,iel,ptr,elem,mnptr,gal;
   char buf[64];
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
   
   /*Create enlarged master edge list*/
   PROTECT(mnptr=coerceVector(getListElement(getListElement(x,"gal"), "mnext"),INTSXP)); pc++;
@@ -863,6 +869,9 @@ SEXP addVertices_R(SEXP x, SEXP nv, SEXP vattr)
   int pc=0,n,ninc,i;
   SEXP ns,oel,iel,val,el,atts,newna;
   
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
+  
   /*Update the network size attribute*/
   PROTECT(nv=coerceVector(nv,INTSXP)); pc++;
   ninc=INTEGER(nv)[0];
@@ -936,6 +945,9 @@ SEXP deleteEdgeAttribute_R(SEXP x, SEXP attrname)
   int i,j,pc=0,n;
   SEXP anam,mel;
   
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
+  
   /*Remove the attributes....*/
   mel=getListElement(x,"mel");
   n=length(mel);
@@ -957,6 +969,9 @@ SEXP deleteEdges_R(SEXP x, SEXP eid)
 {
   int pc=0,i,j,e,opc;
   SEXP mel,el,head,tail,oel,iel,newvec;
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
 
   /*Rprintf("deleteEdges; removing %d edges\n",length(eid));*/
   /*Coerce eid to the appropriate form*/
@@ -1012,6 +1027,9 @@ SEXP deleteNetworkAttribute_R(SEXP x, SEXP attrname)
   int i,pc=0;
   SEXP anam;
   
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
+  
   /*Remove the attributes....*/
   PROTECT(anam=coerceVector(attrname,STRSXP)); pc++;
   for(i=0;i<length(anam);i++){
@@ -1029,6 +1047,9 @@ SEXP deleteVertexAttribute_R(SEXP x, SEXP attrname)
 {
   int i,j,pc=0,n;
   SEXP anam;
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
   
   /*Remove the attributes....*/
   n=networkSize(x);
@@ -1050,6 +1071,9 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
   int i,count,pc=0;
   char neigh[]="combined";
   SEXP eids,nord,newsize,val,iel,oel;
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
   
   /*Coerce vid to integer form, and remove any duplicates*/
   /*Rprintf("Size on entry: %d, length of vid:%d\n",networkSize(x),length(vid));*/
@@ -1270,6 +1294,9 @@ SEXP permuteVertexIDs_R(SEXP x, SEXP vids)
   char neigh[] = "combined";
   SEXP eids,cvids,cpos,val,iel,oel,epl,mel,idlist,edge;
   PROTECT_INDEX ipx;
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
 
   /*Set up the initial variables*/
   PROTECT(vids=coerceVector(vids,INTSXP)); pc++;
@@ -1340,6 +1367,9 @@ SEXP setEdgeAttribute_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
   int i,pc=0;
   SEXP mel,el,atl;
   
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
+  
   /*Coerce edge IDs into integer format, and get the master edge list*/
   PROTECT(e=coerceVector(e,INTSXP)); pc++;
   mel=getListElement(x,"mel");
@@ -1375,6 +1405,9 @@ SEXP setEdgeValue_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
   int i,pc=0,type,h,t,n;
   const char *anam;
   SEXP mel,el,atl,newval=R_NilValue;
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
   
   /*Set things up*/
   mel=getListElement(x,"mel");
@@ -1439,6 +1472,9 @@ SEXP setNetworkAttribute_R(SEXP x, SEXP attrname, SEXP value)
 {
   int i,pc=0;
   
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
+  
   /*Coerce the attribute names*/
   PROTECT(attrname=coerceVector(attrname,STRSXP)); pc++;
 
@@ -1456,6 +1492,9 @@ SEXP setVertexAttribute_R(SEXP x, SEXP attrname, SEXP value, SEXP v)
 {
   int i,pc=0;
   SEXP val,vl;
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
   
   /*Coerce vertex IDs into integer format, and get the vertex attribute list*/
   PROTECT(v=coerceVector(v,INTSXP)); pc++;

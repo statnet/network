@@ -52,10 +52,11 @@
 # 
 ######################################################################
 
-"<-.network"<-function(x,value){
-  x<-network.copy(value)
-  return(x)
-}
+# removed this function because it appears that '<-' is no longer a generic in R, so it was never getting called and the copy was not being made. See ticket #550
+#"<-.network"<-function(x,value){
+#  x<-network.copy(value)
+#  return(x)
+#}
 
 
 "$<-.network"<-function(x,i,value){
