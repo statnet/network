@@ -93,7 +93,7 @@ SEXP getEdgeIDs(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
 /*Retrieve the IDs of all edges incident on v, in network x.  Outgoing or incoming edges are specified by neighborhood, while na.omit indicates whether or not missing edges should be omitted.  If alter>0, only edges whose alternate endpoints contain alter are returned.  The return value is a vector of edge IDs.*/
 {
   SEXP eids,newids,mel,ilist,olist,eplist;
-  int i,j,pc=0,ecount,*keep,dir;
+  int i,j,k,pc=0,ecount,*keep,dir;
   
   /*Enforce "combined" behavior unless x is directed*/
   dir=isDirected(x);
@@ -134,11 +134,33 @@ SEXP getEdgeIDs(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
         PROTECT(eplist=vecAppend(ilist,olist)); pc++;
       }
       /*Check to see if any endpoint matches alter*/
+      /*Rprintf("\t\tchecking endpoints of EID %d\n",INTEGER(eids)[i]);*/
       keep[i]=0;
-      for(j=0;(j<length(eplist))&&(!keep[i]);j++)
-        if(INTEGER(eplist)[j]==alter){
-          keep[i]++;
+      if (dir | v!=alter){
+        /* does this still work in hypergraphic case?*/
+        for(j=0;(j<length(eplist))&&(!keep[i]);j++){
+          /*Rprintf("\t\t\tendpoint %d\n",INTEGER(eplist)[j]);*/
+          if(INTEGER(eplist)[j]==alter){
+            keep[i]++;
+          }
         }
+      } else { /* need to avoid false matches against v when checking alter */
+          for(j=0;(j<length(olist))&&(!keep[i]);j++){
+            /*Rprintf("\t\t\tendpoint j %d",INTEGER(olist)[j]);*/
+            if (INTEGER(olist)[j]==v){ /* if the out element == v */
+              /* scan the in list for the alter */
+              for(k=0;(k<length(ilist))&&(!keep[i]);k++){
+                /*Rprintf("\t\t\tendpoint k %d\n",INTEGER(ilist)[k]);*/
+                if(INTEGER(ilist)[k]==alter){
+                  keep[i]++;
+                }
+              }
+              
+            } 
+            
+        }
+        
+      }
     }
     if(naOmit){                      /*Remove missing edges*/
       /*Rprintf("\t\t\tEntering Omit step...\n");*/
@@ -151,9 +173,11 @@ SEXP getEdgeIDs(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
   /*Rprintf("\tecount=%d\n",ecount);*/
   PROTECT(newids=allocVector(INTSXP,ecount)); pc++;  /*Create edge ID list*/
   ecount=0;
-  for(i=0;i<length(eids);i++)
-    if(keep[i])
+  for(i=0;i<length(eids);i++){
+    if(keep[i]){
       INTEGER(newids)[ecount++]=INTEGER(eids)[i];
+    }
+  }
   
  /* Rprintf("\tReturning %d edge IDs\n",length(newids));
   if(length(newids)>0)

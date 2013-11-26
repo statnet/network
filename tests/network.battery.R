@@ -226,3 +226,21 @@ if(!all(get.edge.attribute(net,'test')==c("a","a","a"))){stop("overloading of ge
 if(!all(check)){                                               #Should be TRUE
  stop(paste("network package test failed on test(s):",which(!check)))
 }
+
+# check for undirected loops getID cases #327 #609
+net<-network.initialize(2,loops=TRUE,directed=FALSE)
+net[1,1]<-1
+net[1,2]<-1
+net[2,2]<-1
+if(get.edgeIDs(net,v=1,alter=1)!=1){
+  stop("problem with get.edgeIDs on undirected network with loops")
+}
+if(get.edgeIDs(net,v=2,alter=2)!=3){
+  stop("problem with get.edgeIDs on undirected network with loops")
+}
+
+net<-network.initialize(2,loops=TRUE,directed=FALSE)
+net[1,2]<-1
+if(length(get.edgeIDs(net,v=2,alter=2))>0){
+  stop("problem with get.edgeIDs on undirected network with loops")
+}
