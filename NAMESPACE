@@ -6,4 +6,5 @@ import(utils)
 
 #Export everything, 'cuz that's how we roll
 exportPattern("^[^\\.]") 
-#S3method("<-",network)
+S3method("<-",network)
+
