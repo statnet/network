@@ -24,9 +24,10 @@
       " created on ",
       temp$Date,".\n", sep="")
   msg<-paste(msg,"copyright (c) 2005, Carter T. Butts, University of California-Irvine\n",
-"                    Mark S. Handcock, University of Washington\n",
+"                    Mark S. Handcock, University of California -- Los Angeles\n",
 "                    David R. Hunter, Penn State University\n",
-"                    Martina Morris, University of Washington\n",sep="")
+"                    Martina Morris, University of Washington\n",
+"                    Skye Bender-deMoll, University of Washington\n",sep="")
   msg<-paste(msg,'For citation information, type citation("network").\n')
   msg<-paste(msg,'Type help("network-package") to get started.\n')
   packageStartupMessage(msg)
