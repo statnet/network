@@ -244,3 +244,12 @@ net[1,2]<-1
 if(length(get.edgeIDs(net,v=2,alter=2))>0){
   stop("problem with get.edgeIDs on undirected network with loops")
 }
+
+
+# check for is.na.network problems #619
+x2<-network.initialize(3)
+x2[1,2]<-NA
+if(is.na.network(x2)[1,2]!=1){
+  stop('problem iwth is.na.netowrk')
+}
+

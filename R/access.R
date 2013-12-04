@@ -560,7 +560,7 @@ is.na.network<-function(x){
   #Create an empty network with the same properties as x
   y<-network.initialize(network.size(x),directed=is.directed(x), hyper=is.hyper(x),loops=has.loops(x),multiple=is.multiplex(x), bipartite=x%n%"bipartite")
   #Add the missing edges of x to y
-  .Call("isNANetwork_R",x,y,PACKAGE="network")
+  y<-.Call("isNANetwork_R",x,y,PACKAGE="network")
   #Return the updated network 
   y
 }
