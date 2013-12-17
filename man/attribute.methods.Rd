@@ -64,7 +64,11 @@ The \code{set.attribute} functions allow one to set the values of edge, network,
 
 Additional practical example of how to load and attach attributes are on the \code{\link{loading.attributes}} page. 
 
-Note that some attribute assignment/extraction can be performed through the various extraction/replacement operators.  See the associated man page for details.
+Some attribute assignment/extraction can be performed conveniently through the various extraction/replacement operators, although they may be less efficient.  See the associated man page for details.
+}
+
+\note{
+ As of version 1.9 the \code{set.vertex.attribute} function can accept and modify multiple attributes in a single call to improve efficiency.  For this case \code{attrname} can be a list or vector of attribute names and \code{value} is a list of values corresponding to the elements of \code{attrname} (can also be a list of lists of values if elements in v should have different values). 
 }
 \value{
 For the \code{list.attributes} methods, a vector containing attribute names.  For the \code{get.attribute} methods, a list containing the values of the attribute in question (or simply the value itself, for \code{get.network.attribute}).  For the \code{set.attribute} and \code{delete.attribute} methods, a pointer to the updated \code{network} object.

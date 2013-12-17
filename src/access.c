@@ -530,6 +530,8 @@ SEXP setVertexAttribute(SEXP x, const char *attrname, SEXP value, int v)
 }
 
 
+
+
 /*R-CALLABLE ROUTINES--------------------------------------------------*/
 
 
@@ -1535,5 +1537,39 @@ SEXP setVertexAttribute_R(SEXP x, SEXP attrname, SEXP value, SEXP v)
   UNPROTECT(pc);
   return x;
 }
+
+SEXP setVertexAttributes_R(SEXP x, SEXP attrnames, SEXP values, SEXP v)
+/*sets the attribute in attrname to the values in (list) value, for each corresponding vertex with ID in vector v.  Existing attribute entries are overwritten by this routine, where present; new attributes are added, if they do not exist.*/
+{
+  int i,j,pc=0;
+  SEXP val,vl,value;
+  const char * name;
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
+  PROTECT(values); pc++;
+  
+  /*Coerce vertex IDs into integer format, and get the vertex attribute list*/
+  PROTECT(v=coerceVector(v,INTSXP)); pc++;
+  PROTECT(val=getListElement(x,"val"));pc++;
+  
+  PROTECT(attrnames = coerceVector(attrnames,STRSXP)); pc++; /*Coerce to str*/
+
+  /*Update the attribute lists*/
+  for(j=0;j<length(attrnames);j++){ /* loop over attributes to be set */
+    PROTECT(value=VECTOR_ELT(values,j));pc++;
+    name=CHAR(STRING_ELT(attrnames,j));
+    for(i=0;i<length(v);i++){ /* loop over vertics */
+      PROTECT(vl=setListElement(VECTOR_ELT(val,INTEGER(v)[i]-1), name,VECTOR_ELT(value,i))); /*Protect temporarily*/
+      SET_VECTOR_ELT(val,INTEGER(v)[i]-1,vl);
+      UNPROTECT(1);  /*Remove protection to avoid stack overflow*/
+    }
+  }
+
+  /*Unprotect and return*/
+  UNPROTECT(pc);
+  return x;
+}
+
 
 

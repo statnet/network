@@ -2,6 +2,7 @@ CHANGELOG:
 v1.9 Features & Fixes
   New Features
     - add.vertices, add.edge, and add.edges have been converted to S3 methods
+    - set.vertex.attributes can now modify a list of attributes with a single call
 
 v1.8 Fixes & Features
   New Features
