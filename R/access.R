@@ -822,7 +822,42 @@ set.network.attribute<-function(x,attrname,value){
 
 
 # Set a vertex attribute for network x.
-#
+# This version has been removed so we can test one that can set multiple values at once
+# set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
+#   #Check to be sure we were called with a network
+#   if(!is.network(x))
+#     stop("set.vertex.attribute requires an argument of class network.")
+#   #Perform some sanity checks
+#   if(any((v>network.size(x))|(v<1)))
+#     stop("Vertex ID does not correspond to actual vertex in set.vertex.attribute.\n")
+#   #Make sure that value is appropriate, coercing if needed
+#   if(!is.list(value)){
+#     if(!is.vector(value))
+#       stop("Inappropriate value given in set.vertex.attribute.\n")
+#     else
+#       value<-as.list(rep(value,length=length(v)))
+#   }else
+#     if(length(value)!=length(v))
+#       value<-rep(value,length=length(v))
+#   #Do the deed
+#   xn<-deparse(substitute(x))
+#   ev<-parent.frame()
+#   x<-.Call("setVertexAttribute_R",x,attrname,value,v, PACKAGE="network")
+#   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
+#     on.exit(assign(xn,x,pos=ev))
+#   invisible(x)
+# }
+
+# valid.eids  returns a list of non-null edge ids for a given network
+valid.eids <-function(x){
+  # maybe should omit class test for speed?
+  if (!is.network(x)){
+    stop("cannot determine non-null edge ids because argument x is not a network object")
+  }
+  # get the ids of all the non-null elements on the edgelist of x
+  return(which(!sapply(x$mel,is.null)))
+}
+
 set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
   #Check to be sure we were called with a network
   if(!is.network(x))
@@ -830,19 +865,59 @@ set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
   #Perform some sanity checks
   if(any((v>network.size(x))|(v<1)))
     stop("Vertex ID does not correspond to actual vertex in set.vertex.attribute.\n")
-  #Make sure that value is appropriate, coercing if needed
-  if(!is.list(value)){
-    if(!is.vector(value))
-      stop("Inappropriate value given in set.vertex.attribute.\n")
-    else
-      value<-as.list(rep(value,length=length(v)))
-  }else
-    if(length(value)!=length(v))
-      value<-rep(value,length=length(v))
-  #Do the deed
+  
   xn<-deparse(substitute(x))
   ev<-parent.frame()
-  x<-.Call("setVertexAttribute_R",x,attrname,value,v, PACKAGE="network")
+  
+  #Make sure that value is appropriate, coercing if needed
+  if (length(attrname)==1){ # if we are only setting a single attribute use old version
+    if(!is.list(value)){
+      if(!is.vector(value)){
+        stop("Inappropriate value given in set.vertex.attribute.\n")
+      } else {
+        value<-as.list(rep(value,length=length(v)))
+      }
+    } else {
+      if(length(value)!=length(v)){
+        value<-rep(value,length=length(v))
+      }
+    }
+    # call older singular value version
+    x<-.Call("setVertexAttribute_R",x,attrname,value,v, PACKAGE="network")
+  } else { # setting multiple values
+    if (length(value)!=length(attrname)){
+      stop("the 'value' attribute must have an element corresponding to each attribute name in 'attrnames' in set.vertex.attribute")
+    }
+    if(!is.list(value)){
+      if(!is.vector(value)){
+        stop("Inappropriate value given in set.vertex.attribute.\n")
+      } else { # value is a vector
+    
+        # replicate each element of value v times if needed
+        value<-lapply(1:length(value),function(n){
+                  if (length(value[n])<length(v)){
+                    return(as.list(rep(value[n],length=length(v))))
+                  } else {
+                    return(as.list(value[n]))
+                  }
+              })
+      }
+    } else {  # value is a list
+      # replicate each element of value v times if needed
+      value<-lapply(1:length(value),function(n){
+        if (length(value[[n]])<length(v)){
+          return(as.list(rep(value[[n]],length=length(v))))
+        } else {
+          return(as.list(value[[n]]))
+        }
+      })
+    }
+    # call multiple value version
+    x<-.Call("setVertexAttributes_R",x,attrname,value,v, PACKAGE="network")
+  } # end setting multiple values
+  #Do the deed
+  
+  
   if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
     on.exit(assign(xn,x,pos=ev))
   invisible(x)

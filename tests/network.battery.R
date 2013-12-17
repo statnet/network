@@ -148,6 +148,44 @@ temp<-set.edge.value(temp,"value",g*matrix(1:100,10,10))
 check[52]<-all(get.edge.value(temp,"value")==(g*matrix(1:100,10,10))[g>0])
 check[53]<-all(as.sociomatrix(temp,"value")==(g*matrix(1:100,10,10)))
 
+# ----- check assigning multiple attribute values in a single call 
+test<-network.initialize(3)
+set.vertex.attribute(test,c('a','b'),c(1,2))
+if(!all(test%v%'a'==c(1,1,1) & test%v%'b'==c(2,2,2))){
+  stop('setting multiple attribute values with set.vertex.attribute failed')
+}
+
+test<-network.initialize(3)
+set.vertex.attribute(test,list('a','b'),c(1,2))
+if(!all(test%v%'a'==c(1,1,1) & test%v%'b'==c(2,2,2))){
+  stop('setting multiple attribute values with set.vertex.attribute failed')
+}
+
+test<-network.initialize(3)
+set.vertex.attribute(test,c('a','b'),list(c(1,2,3),c(4,5,6)))
+if(!all(test%v%'a'==c(1,2,3) & test%v%'b'==c(4,5,6))){
+  stop('setting multiple attribute values with set.vertex.attribute failed')
+}
+
+test<-network.initialize(3)
+set.vertex.attribute(test,c('a','b'),list(list(1,2,3),list(4,5,6)))
+if(!all(test%v%'a'==c(1,2,3) & test%v%'b'==c(4,5,6))){
+  stop('setting multiple attribute values with set.vertex.attribute failed')
+}
+
+test<-network.initialize(3)
+obj<-list(one='a complex object',two=c('with muliple','parts'))
+set.vertex.attribute(test,c('a','b'),list(list(as.list(obj)),list(as.list(obj))))
+if(!all(all.equal(get.vertex.attribute(test,'a',unlist=FALSE)[[1]],obj) & all.equal(get.vertex.attribute(test,'b',unlist=FALSE)[[1]],obj))){
+  stop('setting multiple attribute values with list values in set.vertex.attribute failed')
+}
+
+# check memory saftey with a big assignment
+net<-network.initialize(100000)
+set.vertex.attribute(net,LETTERS,LETTERS)
+
+
+
 
 #---- Check additional operators ----
 g<-rgraph(10)
