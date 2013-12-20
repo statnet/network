@@ -180,6 +180,20 @@ if(!all(all.equal(get.vertex.attribute(test,'a',unlist=FALSE)[[1]],obj) & all.eq
   stop('setting multiple attribute values with list values in set.vertex.attribute failed')
 }
 
+# test multiple assignment for network
+
+test<-network.initialize(3)
+set.network.attribute(test,c("a","b"),1:2)
+if (!all(test%n%'a'==1,test%n%'b'==2)){
+  stop('mulltiple attribute assignment failed for set.network.attribute')
+}
+
+test<-network.initialize(3)
+set.network.attribute(test,list("a","b"),as.list(1:2))
+if (!all(test%n%'a'==1,test%n%'b'==2)){
+  stop('mulltiple attribute assignment failed for set.network.attribute')
+}
+
 # check memory saftey with a big assignment
 net<-network.initialize(100000)
 set.vertex.attribute(net,LETTERS,LETTERS)

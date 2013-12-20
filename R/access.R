@@ -477,7 +477,11 @@ get.vertex.attribute<-function(x,attrname,na.omit=FALSE,null.na=TRUE,
   if(null.na)
     va[sapply(va,is.null)]<-NA
   #Return the result
-  x <- va[!vna]
+  if (na.omit){
+   x <- va[!vna]
+  } else {
+    x<-va
+  }
   if(unlist){unlist(x)}else{x}
 }
 

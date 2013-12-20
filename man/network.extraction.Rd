@@ -52,7 +52,7 @@ x \%vattr\% attrname <- value
 
   If an edge attribute is specified using \code{names.eval}, then the provided values will be assigned to that attribute.  When assigning values, only extant edges are employed (unless \code{add.edges==TRUE}); in the latter case, any non-zero assignment results in the addition of an edge where currently absent.  If the attribute specified is not present on a given edge, it is added.  Otherwise, any existing value is overwritten.  The \code{\%e\%} operator can also be used to extract/assign edge values; in those roles, it is respectively equivalent to \code{get.edge.value(x,attrname)} and \code{set.edge.value(x,attrname=attrname,value=value)}. Note that the assignment operator takes edge values input in adjacency matrix form.
 
-  The \code{\%n\%} and \code{\%v\%} operators serve as front-ends to the network and vertex extraction/assignment functions (respectively).  In the extraction case, \code{x \%n\% attrname} is equivalent to \code{get.network.attribute(x,attrname)}, with \code{x \%v\% attrname} corresponding to \code{get.vertex.attribute(x,attrname)}.  In assignment, the respective equivalences are to \code{set.network.attribute(x,attrname,value)} and  \code{set.vertex.attribute(x,attrname,value)}.  
+  The \code{\%n\%} and \code{\%v\%} operators serve as front-ends to the network and vertex extraction/assignment functions (respectively).  In the extraction case, \code{x \%n\% attrname} is equivalent to \code{get.network.attribute(x,attrname)}, with \code{x \%v\% attrname} corresponding to \code{get.vertex.attribute(x,attrname)}.  In assignment, the respective equivalences are to \code{set.network.attribute(x,attrname,value)} and  \code{set.vertex.attribute(x,attrname,value)}.  Note that the ``\%\%'' assignment forms are generally slower than the named versions of the functions beause they will trigger an additional internal copy of the network object. 
 
   The \code{\%eattr\%}, \code{\%nattr\%}, and \code{\%vattr\%} operators are equivalent to \code{\%e\%}, \code{\%n\%}, and \code{\%v\%} (respectively).  The short forms are more succinct, but may produce less readable code.
 }
@@ -62,7 +62,7 @@ x \%vattr\% attrname <- value
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
-%\note{ ~~further notes~~ }
+
 
 \seealso{ \code{\link{is.adjacent}}, \code{\link{as.sociomatrix}}, \code{\link{attribute.methods}}, \code{\link{add.edges}}, \code{\link{network.operators}}}
 \examples{
