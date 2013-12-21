@@ -180,6 +180,10 @@ if(!all(all.equal(get.vertex.attribute(test,'a',unlist=FALSE)[[1]],obj) & all.eq
   stop('setting multiple attribute values with list values in set.vertex.attribute failed')
 }
 
+# check memory saftey with a big assignment
+net<-network.initialize(100000)
+set.vertex.attribute(net,LETTERS,LETTERS)
+
 # test multiple assignment for network
 
 test<-network.initialize(3)
@@ -194,10 +198,41 @@ if (!all(test%n%'a'==1,test%n%'b'==2)){
   stop('mulltiple attribute assignment failed for set.network.attribute')
 }
 
+
+
+# test multiple assignment for edges
+
+test<-network.initialize(3)
+add.edges(test,tail=1:3,head=c(2,3,1))
+net<-test
+set.edge.attribute(net,c("a","b"),1:2)
+if (!all(net%n%'a'==1,net%n%'b'==2)){
+  stop('mulltiple attribute assignment failed for set.edge.attribute')
+}
+
+net<-test
+set.edge.attribute(net,c('a','b'),list(c(1,2,3),c(4,5,6)))
+if(!all(net%e%'a'==c(1,2,3) & net%e%'b'==c(4,5,6))){
+  stop('setting multiple attribute values with set.edge.attribute failed')
+}
+
+net<-test
+set.edge.attribute(net,c('a','b'),list(list(1,2,3),list(4,5,6)))
+if(!all(net%e%'a'==c(1,2,3) & net%e%'b'==c(4,5,6))){
+  stop('setting multiple attribute values with set.edge.attribute failed')
+}
+
+net<-test
+obj<-list(one='a complex object',two=c('with muliple','parts'))
+set.edge.attribute(net,c('a','b'),list(list(as.list(obj)),list(as.list(obj))))
+if(!all(all.equal(get.edge.attribute(net,'a',unlist=FALSE)[[1]],obj) & all.equal(get.edge.attribute(net,'b',unlist=FALSE)[[1]],obj))){
+  stop('setting multiple attribute values with list values in set.edge.attribute failed')
+}
+
 # check memory saftey with a big assignment
 net<-network.initialize(100000)
-set.vertex.attribute(net,LETTERS,LETTERS)
-
+net<-add.edges(net,1:99999,2:100000)
+set.edge.attribute(net,LETTERS,LETTERS)
 
 
 

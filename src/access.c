@@ -1424,6 +1424,52 @@ SEXP setEdgeAttribute_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
   return x;
 }
 
+/* this version is essentially the same as above, but allows passing in lists of attrnames and lists of lists of values */
+SEXP setEdgeAttributes_R(SEXP x, SEXP attrnames, SEXP values, SEXP e)
+/*Sets the attribute in attrname to the values in (list) value, for each corresponding edge with respective ID in vector e.  If an edge referred to in e does not actually exist (i.e., its entry in mel is NULL), then that edge (and the associated value) is silently skipped.  Note that existing attribute entries are overwritten by this routine, where present...if the named attribute does not exist, a new entry is created for each edge in question.*/
+{
+  int i,j,pc=0;
+  SEXP mel,el,atl, value;
+  const char * name;
+  
+  /* force a copy of x to avoid lazy evaluation problems*/
+  PROTECT(x = duplicate(x)); pc++;
+  
+  /*Coerce edge IDs into integer format, and get the master edge list*/
+  PROTECT(e=coerceVector(e,INTSXP)); pc++;
+  mel=getListElement(x,"mel");
+  
+  PROTECT(attrnames = coerceVector(attrnames,STRSXP)); pc++; /*Coerce to str*/
+  
+  /* for each attername, loop over the edges */
+  for(j=0;j<length(attrnames);j++){
+  /*For each edge ID in e, set the appropriate attribute to the
+  indicated value*/
+  PROTECT(value=VECTOR_ELT(values,j));pc++;
+  name=CHAR(STRING_ELT(attrnames,j));
+    for(i=0;i<length(e);i++){
+      el=VECTOR_ELT(mel,INTEGER(e)[i]-1);   /*Get the edge*/
+      if(el!=R_NilValue){                   /*Only proceed if edge exists*/
+        atl=getListElement(el,"atl");         /*Get attr list*/
+        PROTECT(atl=setListElement(atl,name, VECTOR_ELT(value,i)));                      /*Add/alter attribute*/
+        /*Note: b/c atl might have been extended, we have to re-write it into*/
+        /*the edge object.  The same is not true for the edge itself, b/c we*/
+        /*know that every edge must contain the element "atl"; the return*/
+        /*value is guaranteed to be the same as the original value, and we're*/
+        /*safe.  If setListElement ever changes this behavior, the following*/
+        /*line will no longer work as-is, and an additional line resetting el*/
+        /*within mel will be required!  You have been warned!*/
+        el=setListElement(el,"atl",atl);
+        UNPROTECT(1);
+      }
+    }
+  }
+    
+  /*Unprotect and return*/
+  UNPROTECT(pc);
+  return x;
+}
+
 
 SEXP setEdgeValue_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
 /*Set attribute attrname on the edges of x indexed by e, using the values in (adjacency matrix) value.  Loops and multiplex edges are allowed here, but hypergraphs are not!*/
