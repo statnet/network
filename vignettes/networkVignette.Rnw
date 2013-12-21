@@ -1,4 +1,4 @@
-\documentclass[article,shortnames]{jss}
+\documentclass[article,shortnames]{jssmod}
 %\documentclass{article}
 \usepackage{amsfonts,amssymb,amsthm,amsmath,rotating}
 %\usepackage{natbib} %for easy biblo

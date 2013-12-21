@@ -740,31 +740,100 @@ permute.vertexIDs<-function(x,vids){
 
 # Set an edge attribute for network x.
 #
+# set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
+#   #Check to be sure we were called with a network
+#   if(!is.network(x))
+#     stop("set.edge.attribute requires an argument of class network.")
+#   #Make sure that value is appropriate, coercing if needed
+#   if(!is.list(value)){
+#     if(!is.vector(value))
+#       stop("Inappropriate edge value given in set.edge.attribute.\n")
+#     else
+#       value<-as.list(rep(value,length=length(e)))
+#   }else
+#     if(length(value)!=length(e))
+#       value<-rep(value,length=length(e))
+#   xn<-deparse(substitute(x))
+#   ev<-parent.frame()
+#   if(length(e)>0){
+#     if((min(e)<1)|(max(e)>length(x$mel)))
+#       stop("Illegal edge in set.edge.attribute.\n")
+#     #Do the deed
+#     x<-.Call("setEdgeAttribute_R",x,attrname,value,e, PACKAGE="network")
+#     if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
+#       on.exit(assign(xn,x,pos=ev))
+#     invisible(x)
+#   }else
+#     invisible(x)
+# }
+
 set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
   #Check to be sure we were called with a network
-  if(!is.network(x))
+  if(!is.network(x)){
     stop("set.edge.attribute requires an argument of class network.")
-  #Make sure that value is appropriate, coercing if needed
-  if(!is.list(value)){
-    if(!is.vector(value))
-      stop("Inappropriate edge value given in set.edge.attribute.\n")
-    else
-      value<-as.list(rep(value,length=length(e)))
-  }else
-    if(length(value)!=length(e))
-      value<-rep(value,length=length(e))
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  }
+  # determine if we have to do anything at all
   if(length(e)>0){
-    if((min(e)<1)|(max(e)>length(x$mel)))
+    if((min(e)<1)|(max(e)>length(x$mel))){
       stop("Illegal edge in set.edge.attribute.\n")
-    #Do the deed
-    x<-.Call("setEdgeAttribute_R",x,attrname,value,e, PACKAGE="network")
-    if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
+    }
+    xn<-deparse(substitute(x))
+    ev<-parent.frame()
+    # determine if we will be setting single or multiple values
+    if(length(attrname)==1){
+      #Make sure that value is appropriate, coercing if needed
+      if(!is.list(value)){
+        if(!is.vector(value)){
+          stop("Inappropriate edge value given in set.edge.attribute.\n")
+        } else {
+          value<-as.list(rep(value,length=length(e)))
+        }
+      } else {
+        if(length(value)!=length(e)) {
+          value<-rep(value,length=length(e))
+        }
+      }
+      #Do the deed, call the set single value version
+      x<-.Call("setEdgeAttribute_R",x,attrname,value,e, PACKAGE="network")
+    } else { # we will be setting multiple values
+      if (length(attrname)!=length(value)){
+        stop("the 'value' attribute must have an element corresponding to each attribute name in 'attrname' in set.edge.attribute")
+      }
+      #Make sure that value is appropriate, coercing if needed
+      if(!is.list(value)){
+        if(!is.vector(value)){
+          stop("Inappropriate edge value given in set.edge.attribute.\n")
+        } else { # value must be a vector
+          # replicate each element of value e times if needed
+          value<-lapply(1:length(value),function(n){
+            if (length(value[n])<length(e)){
+              return(as.list(rep(value[n],length=length(e))))
+            } else {
+              return(as.list(value[n]))
+            }
+          })
+        }
+      } else {
+        # replicate each element of value e times if needed
+        value<-lapply(1:length(value),function(n){
+          if (length(value[[n]])<length(e)){
+            return(as.list(rep(value[[n]],length=length(e))))
+          } else {
+            return(as.list(value[[n]]))
+          }
+        })
+        
+      }
+      #Do the deed, call the set multiple version
+      x<-.Call("setEdgeAttributes_R",x,attrname,value,e, PACKAGE="network")
+    }
+    if(exists(xn,envir=ev)) {       #If x not anonymous, set in calling env
       on.exit(assign(xn,x,pos=ev))
+    }
     invisible(x)
-  }else
+  } else { # there were no edges to modifiy, so do nothing
     invisible(x)
+  }
 }
 
 
