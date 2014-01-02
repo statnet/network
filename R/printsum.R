@@ -65,8 +65,13 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
              if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double"))&&(length(attributeValue) < 10)){
                cat(" ",attributeName,"=",attributeValue,"\n")
              }else{
-               cat("  ",attributeName,":\n", sep="")
-               print(summary(attributeValue))
+               # don't print summary for net obs period or active attributes
+               if (attributeName=='net.obs.period' | grepl('.active$',attributeName) ){
+                 cat("  ",attributeName,": (not shown)\n", sep="")
+               } else {
+                 cat("  ",attributeName,":\n", sep="")
+                 print(summary(attributeValue))
+               }
              }
           }
         }
