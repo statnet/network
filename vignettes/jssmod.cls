@@ -1,8 +1,6 @@
-%%
-%% This is file `jss.cls',
-%% generated with the docstrip utility.
-%%
-%% The original source files were:
+%% this file jssmod.cls is based on the file jss.cls which has the copyright info noted below.  The modifications are to indicate that this is not a jss article and provide a link to the original article
+
+%% The original jss.cls source files were:
 %%
 %% jss.dtx  (with options: `class')
 %% 
@@ -16,12 +14,15 @@
 %% For distribution of the original source see the terms
 %% for copying and modification in the file jss.dtx.
 %% 
-%% This generated file may be distributed as long as the
+%% The original generated file may be distributed as long as the
 %% original source files, as listed above, are part of the
 %% same distribution. (The sources need not necessarily be
 %% in the same archive or directory.)
+
+
+
 \def\fileversion{1.6}
-\def\filename{jss}
+\def\filename{jssmod}
 \def\filedate{2007/01/28}
 %%
 %% Package `jss' to use with LaTeX2e for JSS publications
@@ -205,7 +206,7 @@
 %% new \maketitle
 \def\@myoddhead{
   {\color{white} JSS}\\[-1.42cm]
-  PLEASE NOTE: This document has been modified from the original paper to form a package vignette. The original paper is:\\
+  PLEASE NOTE: This document has been modified from the original paper to form a package vignette. It has been compiled with the version of the network package it is bundled with, but has not yet been updated to reflect some changes in the package. The original paper is:\\
 \pkg{network}: A Package for Managing Relational Data in \proglang{R}. \emph{Journal of Statistical Software} 24:2, 2008. \\
 \url{http://www.jstatsoft.org/v24/i02/paper}
 %  \hspace{-2em} \includegraphics[height=23mm,keepaspectratio]{jsslogo} \hfill
