@@ -1,8 +1,13 @@
 CHANGELOG:
 v1.9 Features & Fixes
   New Features
+    - minor tweak to print.network to not show summary information for net.obs.period and .active attributes when called from network dynamic
     - add.vertices, add.edge, and add.edges have been converted to S3 methods
     - set.vertex.attributes and set.edge.attributes can now modify a list of on a network attributes with a single call
+    - modified all of the set and add methods to remove the x$RisTooLazy?<-NULL copy-inducing kludge in favor of x<-duplicate(x) in the C version of the function. Seems to give moderate speed improvement for large networks
+  Fixes
+    - fixed a c-level bug in get.edge.ids that was giving bad values on undirected networks with loops.
+    - fixed a bug where [<-.network assignment operator fails to add edge in non-directed loops case
 
 v1.8 Fixes & Features
   New Features
