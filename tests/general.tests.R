@@ -36,8 +36,8 @@ if(!all(all.equal(get.vertex.attribute(test,'a',unlist=FALSE)[[1]],obj) & all.eq
 }
 
 # check memory saftey with a big assignment
-net<-network.initialize(100000)
-set.vertex.attribute(net,LETTERS,LETTERS)
+#net<-network.initialize(100000)
+#set.vertex.attribute(net,LETTERS,LETTERS)
 
 # test multiple assignment for network
 
@@ -85,9 +85,9 @@ if(!all(all.equal(get.edge.attribute(net,'a',unlist=FALSE)[[1]],obj) & all.equal
 }
 
 # check memory saftey with a big assignment
-net<-network.initialize(100000)
-net<-add.edges(net,1:99999,2:100000)
-set.edge.attribute(net,LETTERS,LETTERS)
+#net<-network.initialize(100000)
+#net<-add.edges(net,1:99999,2:100000)
+#set.edge.attribute(net,LETTERS,LETTERS)
 
 
 # check get edge attribute overloading
