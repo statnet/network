@@ -64,7 +64,7 @@ x \%vattr\% attrname <- value
 \author{ Carter T. Butts \email{buttsc@uci.edu} }
 
 
-\seealso{ \code{\link{is.adjacent}}, \code{\link{as.sociomatrix}}, \code{\link{attribute.methods}}, \code{\link{add.edges}}, \code{\link{network.operators}}}
+\seealso{ \code{\link{is.adjacent}}, \code{\link{as.sociomatrix}}, \code{\link{attribute.methods}}, \code{\link{add.edges}}, \code{\link{network.operators}}, and \code{\link{get.inducedSubgraph}}}
 \examples{
   #Create a random graph (inefficiently)
   g<-network.initialize(10)
