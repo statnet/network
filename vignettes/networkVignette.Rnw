@@ -1,4 +1,4 @@
-\documentclass[article,shortnames]{jssmod}
+\documentclass[article,shortnames,nojss]{jss}
 %\documentclass{article}
 \usepackage{amsfonts,amssymb,amsthm,amsmath,rotating}
 %\usepackage{natbib} %for easy biblo
@@ -51,6 +51,9 @@ Effective memory structures for relational data within \proglang{R} must be capa
 \renewenvironment{Schunk}{}{}
 
 \SweaveOpts{concordance=TRUE}
+
+PLEASE NOTE: This document has been modified from the original paper to form a package vignette. It has been compiled with the version of the network package it is bundled with, but has not yet been updated to reflect some changes in the package. The original paper is:\\
+\pkg{network}: A Package for Managing Relational Data in \proglang{R}. \emph{Journal of Statistical Software} 24:2, 2008. \url{http://www.jstatsoft.org/v24/i02/paper}
 
 \section{Background and introduction}
 
