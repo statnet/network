@@ -1096,14 +1096,16 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
 {
   int i,count,pc=0;
   char neigh[]="combined";
-  SEXP eids,nord,newsize,val,iel,oel;
+  SEXP eids,nord,newsize,val,iel,oel,vid_u;
+  PROTECT_INDEX ipx;
   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x),&ipx); pc++;
   
   /*Coerce vid to integer form, and remove any duplicates*/
   /*Rprintf("Size on entry: %d, length of vid:%d\n",networkSize(x),length(vid));*/
-  PROTECT(vid=coerceVector(vecUnique(vid),INTSXP)); pc++;
+  PROTECT(vid_u = vecUnique(vid)); pc++;
+  PROTECT(vid=coerceVector(vid_u,INTSXP)); pc++;
 
   /*Get rid of all edges having any of the vid vertices as endpoints*/
   /*Rprintf("\tUnique vid entries:%d\n",length(vid));*/
@@ -1112,7 +1114,7 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
     /*Rprintf("\tgetIDs claims %d edges to remove.\n",length(eids));
     if(length(eids)>0)
       Rprintf("\tFirst ID is %d\n",INTEGER(eids)[0]);*/
-    x=deleteEdges_R(x,eids);
+    REPROTECT(x=deleteEdges_R(x,eids),ipx);
     UNPROTECT(1);
   }
 
@@ -1125,23 +1127,23 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
       INTEGER(nord)[count++]=i+1;
   for(i=0;i<length(vid);i++)
     INTEGER(nord)[count+i]=INTEGER(vid)[i];
-  x=permuteVertexIDs_R(x,nord);
+  REPROTECT(x=permuteVertexIDs_R(x,nord),ipx);
   /*Rprintf("\tPermutation complete\n");*/
   
   /*Update the network size*/
   /*Rprintf("\tUpdating network size\n");*/
   PROTECT(newsize=allocVector(INTSXP,1)); pc++;
   INTEGER(newsize)[0]=networkSize(x)-length(vid);
-  x=setNetworkAttribute(x,"n",newsize);
+  REPROTECT(x=setNetworkAttribute(x,"n",newsize),ipx);
  
   /*Finally, get rid of the old vertices*/
   /*Rprintf("\tContracting vertex lists\n");*/
   PROTECT(val=contractList(getListElement(x,"val"),INTEGER(newsize)[0])); pc++;
   PROTECT(iel=contractList(getListElement(x,"iel"),INTEGER(newsize)[0])); pc++;
   PROTECT(oel=contractList(getListElement(x,"oel"),INTEGER(newsize)[0])); pc++;
-  x=setListElement(x,"val",val);
-  x=setListElement(x,"iel",iel);
-  x=setListElement(x,"oel",oel);
+  REPROTECT(x=setListElement(x,"val",val),ipx);
+  REPROTECT(x=setListElement(x,"iel",iel),ipx);
+  REPROTECT(x=setListElement(x,"oel",oel),ipx);
   /*Rprintf("Final size: %d, list lengths: %d %d %d\n",networkSize(x), length(val),length(iel),length(oel));*/
 
   /*Unprotect and return*/
