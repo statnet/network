@@ -47,7 +47,7 @@ is.network(x)
 
   \code{network.copy} creates a new \code{network} object which duplicates its supplied argument.  (Direct assignment with \code{<-} should be used rather than \code{network.copy} in most cases.)
 
-  \code{as.network} tries to coerce its argument to a network, using the \code{network} function if necessary.
+  \code{as.network} tries to coerce its argument to a network, using the \code{network} function if necessary. (If the argument is already a network object, it is returned as-is and all other arguments are ignored.)
 
   \code{is.network} tests whether its argument is a network (in the sense that it has class \code{network}).
 

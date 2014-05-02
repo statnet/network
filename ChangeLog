@@ -1,4 +1,7 @@
 CHANGELOG:
+v1.10 Fixes
+   - Fix to C-level stack protection bug in delete.vertices that could cause crashes under some conditions
+   - removed $<-.network assignment operator so that dispatch will occur via R internals. 
 v1.9 Features & Fixes
   New Features
     - minor tweak to print.network to not show summary information for net.obs.period and .active attributes when called from network dynamic
