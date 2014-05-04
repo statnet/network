@@ -67,6 +67,11 @@ SEXP setNetworkAttribute(SEXP x, const char *attrname, SEXP value);
 
 SEXP setVertexAttribute(SEXP x, const char *attrname, SEXP value, int v);
 
+SEXP deleteEdges(SEXP x, SEXP eid);
+
+SEXP permuteVertexIDs(SEXP x, SEXP vids);
+
+SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP edgeCheck);
 
 /*R-CALLABLE ROUTINES-------------------------------------------------------*/
 
