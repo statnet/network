@@ -21,7 +21,7 @@ network.naedgecount(x)
   It should be borne in mind that \dQuote{missingness} in the sense used here reflects the assertion that an edge's presence or absence is unknown, \emph{not} that said edge is known not to be present.  Thus, the \code{na} count for an empty graph is properly 0, since all edges are known to be absent.  Edges can be flagged as missing by setting their \code{na} attribute to \code{TRUE} using \code{\link{set.edge.attribute}}, or by appropriate use of the network assignment operators; see below for an example of the latter.
 }
 \value{
-  The number of missing edges
+  \code{is.na(x)} returns a network object, and \code{network.naedgecount(x)} returns the number of missing edges.
 }
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }

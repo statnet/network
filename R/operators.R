@@ -60,13 +60,15 @@
 }
 
 
-"$<-.network"<-function(x,i,value){
-  cl<-oldClass(x)
-  class(x)<-NULL
-  x[[i]]<-value
-  class(x)<-cl
-  return(x)
-}
+
+# removed so that will dispatch to internal primitive method #642
+#"$<-.network"<-function(x,i,value){
+#  cl<-oldClass(x)
+#  class(x)<-NULL
+#  x[[i]]<-value
+#  class(x)<-cl
+#  return(x)
+#}
 
 
 "[.network"<-function(x,i,j,na.omit=FALSE){
