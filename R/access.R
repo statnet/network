@@ -81,7 +81,7 @@ add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.
   invisible(x)
 }
 
-rel.add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){ 
+orig.add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){ 
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("add.edge requires an argument of class network.")
@@ -236,6 +236,25 @@ delete.edges<-function(x,eid){
     x<-.Call("deleteEdges_R",x,eid, PACKAGE="network")
     if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
       on.exit(eval.parent(call('<-',xn,x)))
+    }
+  }
+  invisible(x)
+}
+
+orig.delete.edges<-function(x,eid){
+  #Check to be sure we were called with a network
+  if(!is.network(x))
+    stop("delete.edges requires an argument of class network.")
+  xn<-deparse(substitute(x))
+  ev<-parent.frame()
+  if(length(eid)>0){
+    #Perform a sanity check
+    if((min(eid)<1)|(max(eid)>length(x$mel)))
+      stop("Illegal edge in delete.edges.\n")
+    #Remove the edges
+    x<-.Call("deleteEdges_R",x,eid, PACKAGE="network")
+    if(exists(xn,envir=ev)){            #If x not anonymous, set in calling env
+      on.exit(assign(xn,x,pos=ev))
     }
   }
   invisible(x)
