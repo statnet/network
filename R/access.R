@@ -846,6 +846,10 @@ set.edge.value<-function(x,attrname,value,e=seq_along(x$mel)){
   #Check to ensure that this is not a hypergraph
   if(is.hyper(x))
     stop("Hypergraphs not currently supported in set.edge.value.\n")
+  # Check edges
+  if (length(e)==0) return(invisible(x))
+  if((min(e)<1)|(max(e)>length(x$mel)))
+    stop("Illegal edge in set.edge.value.\n")
   #Make sure that value is appropriate, coercing if needed
   n<-network.size(x)
   if(!is.matrix(value)){
@@ -853,10 +857,9 @@ set.edge.value<-function(x,attrname,value,e=seq_along(x$mel)){
       value<-matrix(rep(value,length=n*n),n,n)
     else
       value<-matrix(value,n,n)
+  } else if (min(dim(value)) < n) {
+    stop("set.edge.value requires a matrix whose dimension is equal to or larger than the network size")
   }
-  #Perform additional sanity checks
-  if((min(e)<1)|(max(e)>length(x$mel)))
-    stop("Illegal edge in set.edge.value.\n")
   #Do the deed
   xn<-deparse(substitute(x))
   ev<-parent.frame()

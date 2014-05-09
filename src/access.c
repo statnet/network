@@ -1500,6 +1500,9 @@ SEXP setEdgeValue_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
   type=TYPEOF(value);
   anam=CHAR(STRING_ELT(attrname,0));
   n=networkSize(x);
+
+  /* TODO: Test value dimension and ensure it is equal to or greater
+  than the network size. We already do that at the R level -- jrhorner */
   
   /*For each edge in use, set equal to the appropriate entry from value*/
   for(i=0;i<length(e);i++){
@@ -1510,39 +1513,40 @@ SEXP setEdgeValue_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
       atl=getListElement(el,"atl");
       switch(type){
         case INTSXP:
-          PROTECT(newval=allocVector(INTSXP,1)); pc++;
+          PROTECT(newval=allocVector(INTSXP,1));
           INTEGER(newval)[0]=INTEGER(value)[t-1+(h-1)*n];
           break;
         case LGLSXP:
-          PROTECT(newval=allocVector(LGLSXP,1)); pc++;
+          PROTECT(newval=allocVector(LGLSXP,1));
           INTEGER(newval)[0]=INTEGER(value)[t-1+(h-1)*n];
           break;
         case REALSXP:
-          PROTECT(newval=allocVector(REALSXP,1)); pc++;
+          PROTECT(newval=allocVector(REALSXP,1));
           REAL(newval)[0]=REAL(value)[t-1+(h-1)*n];
           break;
         case RAWSXP:
-          PROTECT(newval=allocVector(RAWSXP,1)); pc++;
+          PROTECT(newval=allocVector(RAWSXP,1));
           RAW(newval)[0]=RAW(value)[t-1+(h-1)*n];
           break;
         case VECSXP:
-          PROTECT(newval=allocVector(VECSXP,1)); pc++;
+          PROTECT(newval=allocVector(VECSXP,1));
           SET_VECTOR_ELT(newval,0,VECTOR_ELT(value,t-1+(h-1)*n));
           break;
         case STRSXP:
-          PROTECT(newval=allocVector(STRSXP,1)); pc++;
+          PROTECT(newval=allocVector(STRSXP,1));
           SET_STRING_ELT(newval,0,STRING_ELT(value,t-1+(h-1)*n));
           break;
         case CPLXSXP:
-          PROTECT(newval=allocVector(CPLXSXP,1)); pc++;
+          PROTECT(newval=allocVector(CPLXSXP,1));
           COMPLEX(newval)[0].r=COMPLEX(value)[t-1+(h-1)*n].r;
           COMPLEX(newval)[0].i=COMPLEX(value)[t-1+(h-1)*n].i;
           break;
         default:
           error("unimplemented type used in setEdgeValue_R\n");
       }
-      PROTECT(atl=setListElement(atl,anam,newval)); pc++;
+      PROTECT(atl=setListElement(atl,anam,newval));
       el=setListElement(el,"atl",atl);
+      UNPROTECT(2);
     }
   }
   
