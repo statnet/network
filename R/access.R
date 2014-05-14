@@ -60,13 +60,12 @@
 #Add a single edge to a network object.
 # S3 method dispatch for add edge
 add.edge<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){
-   xn<-deparse(substitute(x))
-   ev<-parent.frame()
-   UseMethod("add.edge") 
-   if(exists(xn,envir=ev)){           #If x not anonymous, set in calling env 
-    on.exit(assign(xn,x,pos=ev)) 
-   }
-   invisible(x) 
+  xn<-substitute(x)
+  UseMethod("add.edge") 
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
+  invisible(x) 
 } 
 
 add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){ 
@@ -74,24 +73,20 @@ add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.
   if(!is.network(x))
     stop("add.edge requires an argument of class network.")
   #Do the deed
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
-  x<-.Call("addEdge_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network")
-  if(exists(xn,envir=ev)){            #If x not anonymous, set in calling env
-    on.exit(assign(xn,x,pos=ev))
+  xn<-substitute(x)
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
   }
+  x<-.Call("addEdge_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network")
   invisible(x)
 }
 
-
-
 # S3 method dispatch for add.edges
 add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   UseMethod("add.edges") 
-  if(exists(xn,envir=ev)){            #If x not anonymous, set in calling env 
-        on.exit(assign(xn,x,pos=ev))
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
   }
   invisible(x) 
 } 
@@ -123,11 +118,11 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
   if(is.null(edge.check))
     edge.check<-FALSE
   #Pass the inputs to the C side
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   x<-.Call("addEdges_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network")
-  if(exists(xn,envir=ev))            #If x not anonymous, set in calling env
-    on.exit(assign(xn,x,pos=ev))
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
   invisible(x)
 }
 
@@ -135,14 +130,13 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
 
 # S3 method dispatch for add.vertices
 add.vertices<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
-    UseMethod("add.vertices") 
-    if(exists(xn,envir=ev)){            #If x not anonymous, set in calling env 
-       on.exit(assign(xn,x,pos=ev))
-    }
-    invisible(x) 
-} 
+  xn<-substitute(x)
+  UseMethod("add.vertices") 
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
+  invisible(x) 
+}
 
 # Add nv vertices to network x.  Vertex attributes (in addition to those which
 # are required) are to be provided in vattr; vattr must be a list containing
@@ -159,14 +153,13 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
       vattr<-as.list(rep(vattr,length=nv))
   }
   #Perform the addition
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   if(nv>0){
+    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+      on.exit(eval.parent(call('<-',xn,x)))
+    }
     if(last.mode||(!is.bipartite(x))){
       x<-.Call("addVertices_R",x,nv,vattr, PACKAGE="network")
-      if(exists(xn,envir=ev))           #If x not anonymous, set in calling env
-        on.exit(assign(xn,x,pos=ev))
-      invisible(x)
     }else{
       
       nr<-nv
@@ -191,13 +184,10 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
         permute.vertexIDs(x,c(orow,nrow,ocol,ncol))
         set.network.attribute(x,"bipartite",bip+nr)
       }
-      
-      if(exists(xn,envir=ev))           #If x not anonymous, set in calling env
-        on.exit(assign(xn,x,pos=ev))
-      invisible(x)
     }
-  }else
-    invisible(x)
+  }
+
+  invisible(x)
 }
 
 
@@ -208,11 +198,11 @@ delete.edge.attribute<-function(x,attrname){
   if(!is.network(x))
     stop("delete.edge.attribute requires an argument of class network.")
   #Remove the edges
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   x<-.Call("deleteEdgeAttribute_R",x,attrname, PACKAGE="network")
-  if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
-    on.exit(assign(xn,x,pos=ev))
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
   invisible(x)
 }
  
@@ -223,21 +213,19 @@ delete.edges<-function(x,eid){
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("delete.edges requires an argument of class network.")
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   if(length(eid)>0){
     #Perform a sanity check
     if((min(eid)<1)|(max(eid)>length(x$mel)))
       stop("Illegal edge in delete.edges.\n")
     #Remove the edges
     x<-.Call("deleteEdges_R",x,eid, PACKAGE="network")
-    if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
-      on.exit(assign(xn,x,pos=ev))
-    invisible(x)
-  }else
-    invisible(x)
+    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+      on.exit(eval.parent(call('<-',xn,x)))
+    }
+  }
+  invisible(x)
 }
-
 
 # Remove the specified network-level attribute(s)
 #
@@ -246,11 +234,11 @@ delete.network.attribute<-function(x,attrname){
   if(!is.network(x))
     stop("delete.network.attribute requires an argument of class network.")
   #Remove the edges
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   x<-.Call("deleteNetworkAttribute_R",x,attrname, PACKAGE="network")
-  if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
-    on.exit(assign(xn,x,pos=ev))
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
   invisible(x)
 }
 
@@ -263,11 +251,11 @@ delete.vertex.attribute<-function(x,attrname){
     stop("delete.vertex.attribute requires an argument of class network.")
   #Remove the attribute (or do nothing, if there are no vertices)
   if(network.size(x)>0){
-    xn<-deparse(substitute(x))
-    ev<-parent.frame()
+    xn<-substitute(x)
     x<-.Call("deleteVertexAttribute_R",x,attrname, PACKAGE="network")
-    if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
-      on.exit(assign(xn,x,pos=ev))
+    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+      on.exit(eval.parent(call('<-',xn,x)))
+    }
   }
   invisible(x)
 }
@@ -282,19 +270,18 @@ delete.vertices<-function(x,vid){
   #Remove any vids which are out of bounds
   vid<-vid[(vid>0)&(vid<=network.size(x))]
   #Do the deed, if still needed
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   if(length(vid)>0){
     if(is.bipartite(x)){  #If bipartite, might need to adjust mode 1 count
       m1v<-get.network.attribute(x,"bipartite")  #How many mode 1 verts?
       set.network.attribute(x,"bipartite",m1v-sum(vid<=m1v))
     }
     x<-.Call("deleteVertices_R",x,vid, PACKAGE="network")
-    if(exists(xn,envir=ev))
-      on.exit(assign(xn,x,pos=ev))
-    invisible(x)
-  }else
-    invisible(x)
+    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+      on.exit(eval.parent(call('<-',xn,x)))
+    }
+  }
+  invisible(x)
 }
 
 
@@ -729,11 +716,11 @@ permute.vertexIDs<-function(x,vids){
       warning("Performing a cross-mode permutation in permute.vertexIDs.  I hope you know what you're doing....")
   }
   #Return the permuted graph
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   x<-.Call("permuteVertexIDs_R",x,vids, PACKAGE="network")
-  if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
-    on.exit(assign(xn,x,pos=ev))
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
   invisible(x)
 }
 
@@ -777,8 +764,7 @@ set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
     if((min(e)<1)|(max(e)>length(x$mel))){
       stop("Illegal edge in set.edge.attribute.\n")
     }
-    xn<-deparse(substitute(x))
-    ev<-parent.frame()
+    xn<-substitute(x)
     # determine if we will be setting single or multiple values
     if(length(attrname)==1){
       #Make sure that value is appropriate, coercing if needed
@@ -827,13 +813,11 @@ set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
       #Do the deed, call the set multiple version
       x<-.Call("setEdgeAttributes_R",x,attrname,value,e, PACKAGE="network")
     }
-    if(exists(xn,envir=ev)) {       #If x not anonymous, set in calling env
-      on.exit(assign(xn,x,pos=ev))
+    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+      on.exit(eval.parent(call('<-',xn,x)))
     }
-    invisible(x)
-  } else { # there were no edges to modifiy, so do nothing
-    invisible(x)
   }
+  invisible(x)
 }
 
 
@@ -861,11 +845,11 @@ set.edge.value<-function(x,attrname,value,e=seq_along(x$mel)){
     stop("set.edge.value requires a matrix whose dimension is equal to or larger than the network size")
   }
   #Do the deed
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   x<-.Call("setEdgeValue_R",x,attrname,value,e, PACKAGE="network")
-  if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
-    on.exit(assign(xn,x,pos=ev))
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
   invisible(x)
 }
 
@@ -888,11 +872,11 @@ set.network.attribute<-function(x,attrname,value){
       stop("Non-replicable value with multiple attribute names in set.network.attribute.\n")
   }
   #Do the deed
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   x<-.Call("setNetworkAttribute_R",x,attrname,value,PACKAGE="network")
-  if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
-    on.exit(assign(xn,x,pos=ev))
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
   invisible(x)
 }
 
@@ -942,8 +926,7 @@ set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
   if(any((v>network.size(x))|(v<1)))
     stop("Vertex ID does not correspond to actual vertex in set.vertex.attribute.\n")
   
-  xn<-deparse(substitute(x))
-  ev<-parent.frame()
+  xn<-substitute(x)
   
   #Make sure that value is appropriate, coercing if needed
   if (length(attrname)==1){ # if we are only setting a single attribute use old version
@@ -993,9 +976,9 @@ set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
   } # end setting multiple values
   #Do the deed
   
-  
-  if(exists(xn,envir=ev))          #If x not anonymous, set in calling env
-    on.exit(assign(xn,x,pos=ev))
+  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
+    on.exit(eval.parent(call('<-',xn,x)))
+  }
   invisible(x)
 }
 
