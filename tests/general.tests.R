@@ -35,6 +35,13 @@ if(!all(all.equal(get.vertex.attribute(test,'a',unlist=FALSE)[[1]],obj) & all.eq
   stop('setting multiple attribute values with list values in set.vertex.attribute failed')
 }
 
+# check assignment to list of networks
+net <- network.initialize(2)
+netlist <- list(net)
+set.network.attribute(netlist[[1]],"test","a value")
+if (!"test" %in% list.network.attributes(netlist[[1]]))
+  stop('assignment to list of networks failed')
+
 # check memory saftey with a big assignment
 net<-network.initialize(100000)
 set.vertex.attribute(net,LETTERS,LETTERS)
