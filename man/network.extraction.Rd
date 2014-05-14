@@ -83,7 +83,7 @@ x \%vattr\% attrname <- value
   g \%e\% "hoo" <- "wah"
   g \%e\% "hoo"
   #Assignment input should be as adjacency matrix
-  g \%e\% "age" <- as.matrix(1:100, 10, 10)
+  g \%e\% "age" <- matrix(1:100, 10, 10)
   g \%e\% "age"
   as.sociomatrix(g,"age")
 
