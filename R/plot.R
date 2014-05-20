@@ -242,7 +242,7 @@ plot.network <- function(x, ...){
 }
 
 
-#Two-dimensional network visualization; this is a direct port of the gplot
+#Two-dimensional network visualization; this was originally a direct port of the gplot
 #routine from sna (Carter T. Butts <buttsc@uci.edu>)
 plot.network.default<-function(x,
 attrname=NULL,
@@ -420,7 +420,20 @@ layout.par=NULL,
      plot(0,0,xlim=xlim,ylim=ylim,type="n",xlab=xlab,ylab=ylab,asp=1, axes=!suppress.axes,...)
    }
    #Fill out vertex vectors; assume we're using attributes if chars used
-   if(is.character(vertex.cex)&&(length(vertex.cex==1))){
+   if(is.character(label)&(length(label)==1)){
+     temp<-label
+     if(temp%in%list.vertex.attributes(x)){
+       label <- rep(get.vertex.attribute(x,temp),length=n)
+       if(all(is.na(label))){
+         stop("Attribute '",temp,"' had illegal missing values for label or was not present in plot.network.default.")
+       }
+     } else { # didn't match with a vertex attribute, assume we are supposed to replicate it
+       label <- rep(label,length=n)
+     }
+   }else{
+     label <- rep(as.character(label),length=n)
+   }
+   if(is.character(vertex.cex)&(length(vertex.cex)==1)){
      temp<-vertex.cex
      vertex.cex <- rep(get.vertex.attribute(x,vertex.cex),length=n)
      if(all(is.na(vertex.cex)))
