@@ -30,7 +30,7 @@
 \arguments{
   \item{x}{ an object of class \code{network}. }
   \item{attrname}{ an optional edge attribute, to be used to set edge values. }
-  \item{label}{ a vector of vertex labels, if desired; defaults to the vertex labels returned by \code{\link{network.vertex.names}}. Note that labels may be set but hidden by the \code{displaylabels} argument.}
+  \item{label}{ a vector of vertex labels, if desired; defaults to the vertex labels returned by \code{\link{network.vertex.names}}. If \code{label} has one element and it matches with a vertex attribute name, the value of the attribute will be used. Note that labels may be set but hidden by the \code{displaylabels} argument.}
   \item{coord}{ user-specified vertex coordinates, in an network.size(x)x2 matrix.  Where this is specified, it will override the \code{mode} setting. }
   \item{jitter}{ boolean; should the output be jittered? }
   \item{thresh}{ real number indicating the lower threshold for tie values.  Only ties of value >\code{thresh} are displayed.  By default, \code{thresh}=0.}
