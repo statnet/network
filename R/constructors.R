@@ -112,6 +112,14 @@ network.bipartite<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
 # Construct a network's edge set, using an adjacency matrix as input.
 #
 network.adjacency<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
+  # check that dimension of g is appropriate for x
+  if (nrow(x)!=ncol(x)){
+    stop('the network.adjacency constructor expects its matrix argument to be square (same number of rows and columns)')
+  }
+  if (network.size(g) != nrow(x)){
+    stop('the network.adjacency constructor requires that the size of its network argument (',network.size(g),') matches the dimensions of the matrix argument (',nrow(x),' by ',ncol(x),')')
+  }
+  
   #Set things up to edit g in place
   gn<-substitute(g)
   #Build head/tail lists; note that these cannot be hypergraphic or
