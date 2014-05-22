@@ -2,9 +2,7 @@
 useDynLib("network")
 
 #Import some required symbols
-import(utils)
+import(utils,statnet.common)
 
 #Export everything, 'cuz that's how we roll
 exportPattern("^[^\\.]") 
-S3method("<-",network)
-
