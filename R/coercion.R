@@ -205,8 +205,10 @@ as.network.matrix<-function(x, matrix.type=NULL,
                                          "bipartite"))
   if(is.logical(bipartite)&&bipartite)
     matrix.type<-"bipartite"
-  if((bipartite>0)&&(matrix.type=="adjacency")&&(NROW(x)==bipartite))  #Patch adj->bipartite case
+  #Patch adj->bipartite case
+  if((bipartite>0)&&(matrix.type=="adjacency")&&(NROW(x)==bipartite))  
     matrix.type<-"bipartite"
+  
   # Add names if available
   unames <- NULL
   if(matrix.type=="edgelist"){
@@ -256,6 +258,15 @@ as.network.matrix<-function(x, matrix.type=NULL,
     n<-nattr
   if(is.numeric(battr))                      #If given bipartite info, use it
     bipartite<-battr
+  
+  # if we are going to build an adjacency matrix and it doesn't match the nattr, give an error, because otherwise will crash
+  # this may happen if a square edgelist with attribute information is passed in
+  if (is.numeric(nattr) & matrix.type=='adjacency'){
+    if (nattr != ncol(x)){
+      stop('the dimensions of the matrix argument (',nrow(x),' by ', ncol(x),') do not match the network size indicated by the attached n attribute (',nattr,'), perhaps matrix.type argument is not correct')
+    }
+  }
+  
   g<-network.initialize(n,directed=directed, hyper=hyper, loops=loops, multiple=multiple,bipartite=bipartite)
   #Call the specific coercion routine, depending on matrix type
   g<-switch(matrix.type,
