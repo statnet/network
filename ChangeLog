@@ -1,9 +1,11 @@
 CHANGELOG:
 v1.10 Fixes
+   - The 'modify in place' syntax for network functions that modify their arguments now works correctly when the network to be modified is an element of a list
    - Modified plot.network.default so that if a single value is passed in that matches with a vertex attribute name, the value of the attribute will be used (to make it consistent with the rest of the plot arguments)
    - Fix to C-level stack protection bug in delete.vertices that could cause crashes under some conditions
    - removed $<-.network assignment operator so that dispatch will occur via R internals. 
    - Fix stack protection overflow in set.edge.value. Also check for correct dimension on value argument for set.edge.value.
+   - Minor documentation fixes
 v1.9 Features & Fixes
   New Features
     - minor tweak to print.network to not show summary information for net.obs.period and .active attributes when called from network dynamic
