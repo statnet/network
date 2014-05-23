@@ -2,7 +2,7 @@
 useDynLib("network")
 
 #Import some required symbols
-import(utils,statnet.common)
+import(utils)
 
 #Export everything, 'cuz that's how we roll
 exportPattern("^[^\\.]") 

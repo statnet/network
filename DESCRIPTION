@@ -1,5 +1,5 @@
 Package: network
-Version: 1.11
+Version: 1.10.0
 Date: 2014-05-22
 Title:  Classes for Relational Data
 Authors@R:c(
@@ -8,8 +8,8 @@ Authors@R:c(
     person("Mark", "Handcock", role=c("ctb"), email="handcock@stat.ucla.edu"),
     person("Skye", "Bender-deMoll", role=c("ctb"), email="skyebend@uw.edu"),
     person("Jeffrey", "Horner", role=c("ctb"), email="jeffrey.horner@gmail.com"))
-Depends: R (>= 2.10), utils, statnet.common (>= 3.1-0)
-Suggests: sna
+Depends: R (>= 2.10), utils
+Suggests: sna, statnet.common (>= 3.1-0)
 Description: Tools to create and modify network objects.  The network class can represent a range of relational data types, and supports arbitrary vertex/edge/graph attributes.
 License: GPL (>=2)
 URL: http://statnet.org/

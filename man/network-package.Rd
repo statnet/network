@@ -16,14 +16,14 @@ Basic information on the creation of \code{network} objects can be found by typi
 
 \tabular{ll}{
 Package: \tab network\cr
-Version: \tab 1.9\cr
-Date: \tab January 3, 2014\cr
+Version: \tab 1.10\cr
+Date: \tab May 22, 2014\cr
 Depends: \tab R (>= 2.10), utils\cr
-Suggests: \tab sna\cr
+Suggests: \tab sna, statnet.common (>= 3.1-0)\cr
 License: \tab GPL (>=2)\cr
 }
 
-Index od documentation pages:
+Index of documentation pages:
 \preformatted{
 add.edges                    Add Edges to a Network Object
 add.vertices                 Add Vertices to an Existing Network
@@ -71,7 +71,7 @@ which.matrix.type            Heuristic Determination of Matrix Types for Network
 }
 }
 \author{
-Carter T. Butts <buttsc@uci.edu>, with help from Mark S. Handcock <handcock@stat.ucla.edu>, David Hunter <dhunter@stat.psu.edu>, Martina Morris <morrism@u.washington.edu>, and Skye Bender-deMoll <skyebend@u.washington.edu>
+Carter T. Butts <buttsc@uci.edu>, with help from Mark S. Handcock <handcock@stat.ucla.edu>, David Hunter <dhunter@stat.psu.edu>, Martina Morris <morrism@u.washington.edu>, Skye Bender-deMoll <skyebend@u.washington.edu>, and Jeffrey Horner <jeffrey.horner@gmail.com>.
 
 Maintainer: Carter T. Butts <buttsc@uci.edu>
 }
