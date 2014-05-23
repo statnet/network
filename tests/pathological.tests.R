@@ -1,5 +1,5 @@
 library(network)
-
+library(statnet.common)
 opttest({
   gctorture(TRUE)
   n <- 10
