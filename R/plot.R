@@ -762,11 +762,13 @@ layout.par=NULL,
              xhat[i] <- xhat[i]+dx/dr
              yhat[i] <- yhat[i]+dy/dr
            }
+           
            #Take the average of all the ties
            xhat[i] <- xhat[i]/ij.n
            yhat[i] <- yhat[i]/ij.n
            rhat[i] <- sqrt(xhat[i]^2+yhat[i]^2)
-           if (rhat[i]!=0) { # normalize direction vector
+           if (!is.nan(rhat[i]) && rhat[i]!=0) { # watch out for NaN when vertices have same position
+             # normalize direction vector
              xhat[i] <- xhat[i]/rhat[i]
              yhat[i] <- yhat[i]/rhat[i]
            } else { #if no direction, make xhat and yhat away from center
@@ -777,8 +779,8 @@ layout.par=NULL,
            xhat[i] <- xoff[i]/roff[i]
            yhat[i] <- yoff[i]/roff[i]
          }
-         if (xhat[i]==0 | is.nan(xhat[i])) xhat[i] <- .01 #jitter to avoid labels on points
-         if (yhat[i]==0 | is.nan(yhat[i])) yhat[i] <- .01
+         if ( is.nan(xhat[i]) || xhat[i]==0 ) xhat[i] <- .01 #jitter to avoid labels on points
+         if (is.nan(yhat[i]) || yhat[i]==0 ) yhat[i] <- .01
        }
        xhat <- xhat[use]
        yhat <- yhat[use]

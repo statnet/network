@@ -48,3 +48,12 @@ plot(test,label=1)
 # should error if all values are missing
 #set.vertex.attribute(test,'bad',NA,v=1:3)
 #plot(test,label='bad')
+
+# tests for #673 plot.network.default gives error when rendering labels if two connected vertices have the same position
+test<-network.initialize(2)
+test[1,2]<-1
+plot(test,coord=cbind(c(1,1),c(1,1)),jitter=FALSE,displaylabels=TRUE)
+
+test<-network.initialize(3)
+test[1,2:3]<-1
+plot(test,coord=cbind(c(1,1,2),c(1,1,2)),jitter=FALSE,displaylabels=TRUE)
