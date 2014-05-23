@@ -1,5 +1,8 @@
 CHANGELOG:
 v1.10 Fixes
+   - fixed vertex label plotting bug when vertices have the same positions
+   - added dimension checks and more informative error for as.network.matrix for case when it assumes a square edgelist is an adjacency matrix
+   - added dependency on statnet.common library to facilitate some development testing
    - The 'modify in place' syntax for network functions that modify their arguments now works correctly when the network to be modified is an element of a list
    - Modified plot.network.default so that if a single value is passed in that matches with a vertex attribute name, the value of the attribute will be used (to make it consistent with the rest of the plot arguments)
    - Fix to C-level stack protection bug in delete.vertices that could cause crashes under some conditions
@@ -18,8 +21,8 @@ v1.9 Features & Fixes
 
 v1.8 Fixes & Features
   New Features
-    - now supports bipartite networks with zero-sized first mode. (biparite=0 no longer means the same thing as bipartite=FALSE, and is.bipartite() reflects this)
-    - added vertex.lwd attribute to plot.network for controling line widths around vertices
+    - now supports bipartite networks with zero-sized first mode. (bipartite=0 no longer means the same thing as bipartite=FALSE, and is.bipartite() reflects this)
+    - added vertex.lwd attribute to plot.network for controlling line widths around vertices
     - added basic plotting for edge labels (new plot.network arguments: edge.label, edge.label.cex, edge.label.col)
     - added valid.eids function to return the ids of non-NULL edges in a network
     - added a loading.attributes man page with more examples of attaching vertex and edge attributes
@@ -28,7 +31,7 @@ v1.8 Fixes & Features
     - permute.vertexIDs was triggering a protection stack overflow on large graphs.
     - fixes for the undirected network subtraction operator and ! operator bug. resolution involved forcing a i<j ordering for comparisons of undirected networks.
     - fixed network.edgelist and as.network.matrix so that it is possible to construct networks using a matrix or dataframe in which the first 2 cols give tail and head ids, and remaining cols define attributes as docs state.
-    - fixed network.bipartite constructor so that it can correctly handle edge weights when building network from bipartite matrix. Also added automatric cast to matrix so it will work with data.frame argument.
+    - fixed network.bipartite constructor so that it can correctly handle edge weights when building network from bipartite matrix. Also added automatic cast to matrix so it will work with data.frame argument.
     - fixed  bug in how is.color() processed NA values that mangled colors in plots in some situations.
 
 v1.7.2 New Features/Changes/Bug Fixes
@@ -41,7 +44,7 @@ v1.7.2 New Features/Changes/Bug Fixes
     - original JStatSoftware article included as package vignette
     - package now requires the sna package, to provide some functions needed for network layouts
   Bug Fixes
-    - fixed bug in add vertices when adding to second mode of biparite network
+    - fixed bug in add vertices when adding to second mode of bipartite network
     - fixed deprecation warning for R v2.15.3
     - Fixed bug where replacement operator can add multiple edges to pair of vertices
 
