@@ -54,7 +54,7 @@ as.matrix.network<-function(x,matrix.type=NULL,attrname=NULL,...){
 # provided, attrname is used to identify an attribute to use for edge
 # values.
 #
-as.matrix.network.adjacency<-function(x,attrname=NULL,expand.bipartite=FALSE,...){
+as.matrix.network.adjacency.orig<-function(x,attrname=NULL,expand.bipartite=FALSE,...){
   #Check to make sure this is a supported network type
   if(is.hyper(x))
     stop("Hypergraphs not currently supported in as.matrix.network.adjacency.  Exiting.\n")
@@ -97,6 +97,64 @@ as.matrix.network.adjacency<-function(x,attrname=NULL,expand.bipartite=FALSE,...
   if(is.bipartite(x)&(!expand.bipartite)){
     nactors <- get.network.attribute(x, "bipartite")
     nevents <- network.size(x) - nactors
+    m <- m[0:nactors, nactors+(1:nevents)]
+  }
+  #Return the result
+  m
+}
+
+as.matrix.network.adjacency<-function(x,attrname=NULL,expand.bipartite=FALSE,...){
+  #Check to make sure this is a supported network type
+  if(is.hyper(x))
+    stop("Hypergraphs not currently supported in as.matrix.network.adjacency.  Exiting.\n")
+  if(is.multiplex(x))
+    stop("Multigraphs not currently supported in as.matrix.network.adjacency.  Exiting.\n")
+  #Generate the adjacency matrix 
+  #m<-matrix(0L,nrow=network.size(x),ncol=network.size(x))
+  ns <- network.size(x)
+  if(ns==0)
+    return(m)
+  tl<-unlist(sapply(x$mel,"[[","outl")) #Can unlist b/c no hyperedges
+  hl<-unlist(sapply(x$mel,"[[","inl"))
+  nal<-as.logical(get.edge.attribute(x$mel,"na",unlist=TRUE))
+  if(!is.null(attrname)){
+    val<-unlist(get.edge.attribute(x$mel,attrname))
+    if(is.null(val)){
+     warning(paste("There is no edge attribute named", attrname))
+     val<-rep(1L,length(tl))
+    }
+  }else{
+    val<-rep(1L,length(tl))
+  }
+
+  m <- switch(EXPR=typeof(val),
+        character=matrix('0',ns,ns),
+        vector(typeof(val),ns*ns)
+      )
+  dim(m) <- c(ns,ns)
+
+  if(length(hl[!nal])>0){
+    m[tl[!nal]+(hl[!nal]-1)*ns]<-val[!nal]
+  }
+  if(length(hl[ nal])>0){
+   m[tl[ nal]+(hl[ nal]-1)*ns]<-NA
+  }
+  #If undirected, symmetrize
+  if(!is.directed(x)){
+# changed by MSH to allow non binary values
+#   m<-pmax(m,t(m))
+    sel<-m
+    sel[is.na(m)]<-1
+    zero_sel <- sel==0
+    m[zero_sel] <- t(m)[zero_sel]
+  }
+  #Set row/colnames to vertex names
+  xnames <- network.vertex.names(x)
+  dimnames(m) <- list(xnames, xnames)
+  #If bipartite and !expand.bipartite, return in two-mode form
+  if(is.bipartite(x)&(!expand.bipartite)){
+    nactors <- get.network.attribute(x, "bipartite")
+    nevents <- ns - nactors
     m <- m[0:nactors, nactors+(1:nevents)]
   }
   #Return the result
