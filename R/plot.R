@@ -419,6 +419,8 @@ layout.par=NULL,
    if(new){  #If new==FALSE, we add to the existing plot; else create a new one
      plot(0,0,xlim=xlim,ylim=ylim,type="n",xlab=xlab,ylab=ylab,asp=1, axes=!suppress.axes,...)
    }
+   # force lazy evaluation of display labels arg before we change value of labels
+   displaylabels<-displaylabels
    #Fill out vertex vectors; assume we're using attributes if chars used
    if(is.character(label)&(length(label)==1)){
      temp<-label
