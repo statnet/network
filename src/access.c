@@ -94,6 +94,10 @@ SEXP getEdgeIDs(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
 {
   SEXP eids,newids,mel,ilist,olist,eplist;
   int i,j,k,pc=0,ecount,*keep,dir;
+  /* set ilist and olist to null to avoid compiler uninitialization warning
+     in the cases that they are needed, code will set them */
+  ilist=NULL;
+  olist=NULL;
   
   /*Enforce "combined" behavior unless x is directed*/
   dir=isDirected(x);
@@ -136,7 +140,7 @@ SEXP getEdgeIDs(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
       /*Check to see if any endpoint matches alter*/
       /*Rprintf("\t\tchecking endpoints of EID %d\n",INTEGER(eids)[i]);*/
       keep[i]=0;
-      if (dir | v!=alter){
+      if (dir | (v!=alter)){
         /* does this still work in hypergraphic case?*/
         for(j=0;(j<length(eplist))&&(!keep[i]);j++){
           /*Rprintf("\t\t\tendpoint %d\n",INTEGER(eplist)[j]);*/
