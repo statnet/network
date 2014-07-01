@@ -125,29 +125,40 @@ network.adjacency<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   #Build head/tail lists; note that these cannot be hypergraphic or
   #multiplex, since our data is drawn from an adjacency matrix
   if(!is.directed(g)){
-    missing <- is.na(x) | is.na(t(x))
-    x[missing] <- 1
+    missingE <- is.na(x) | is.na(t(x))
+    x[missingE] <- 1
     #Be sure to pick up nonzero entries for which x[i,j]=-x[j,i].
     x[x==-t(x)]<-abs(x)[x==-t(x)]  
     x<-(x+t(x))/2                  #Symmetrize matrix.
     x[row(x)<col(x)]<-0            #Clear above-diagonal entries.
   }else{
-    missing <- is.na(x)
-    x[missing] <- 1
+    missingE <- is.na(x)
+    x[missingE] <- 1
   }
-  if(!has.loops(g)){
+  
+  # if the na.rm value is specified and TRUE, don't include those missing edges after all
+  # some ugliness to pull names from ...
+  dotNames<-as.list(substitute(list(...)))[-1L]
+  if('na.rm'%in%dotNames){
+    na.rm<-list(...)[[match('na.rm',dotNames)]]
+    if (na.rm){
+      x[missingE]<-0
+    }
+  }
+  
+  if(!has.loops(g)){ # if it doesn't have loops, replace the diagonal
     diag(x)<-0
   }
   x<-as.vector(x)
   n<-network.size(g)
   e<-(0:(n*n-1))[x!=0] 
   if(ignore.eval){
-    ev<-as.list(as.logical(missing[x!=0]))
+    ev<-as.list(as.logical(missingE[x!=0]))
     en<-replicate(length(ev),list("na"))
   }else{
     xv<-x
-    xv[missing]<-NA
-    ev<-apply(cbind(as.list(as.logical(missing[x!=0])),as.list(xv[x!=0])),1, as.list)
+    xv[missingE]<-NA
+    ev<-apply(cbind(as.list(as.logical(missingE[x!=0])),as.list(xv[x!=0])),1, as.list)
     en<-replicate(length(ev),list(c("na",names.eval)))
   }
   # Add names if available

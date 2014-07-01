@@ -100,6 +100,18 @@ check[43]<-all(as.sociomatrix(temp,"value")==g*matrix(1:100,10,10))
 temp<-as.network.matrix(as.matrix.network.incidence(temp,"value"),matrix.type="incidence",names.eval="value",ignore.eval=FALSE)
 check[44]<-all(as.sociomatrix(temp,"value")==g*matrix(1:100,10,10))
 
+# check functioning of na.rm argument #922
+plain<-as.network.matrix(matrix(c(0,1,NA,NA),ncol=2),na.rm=TRUE)
+if (network.naedgecount(plain) != 0){
+  stop('problem with na values in adjacency matrix coericon')
+}
+plain<-as.network.matrix(matrix(c(0,1,NA,NA),ncol=2),na.rm=FALSE)
+if (network.naedgecount(plain) != 1){
+  stop('problem with na values in adjacnecy matrix coericon')
+}
+
+
+
 # check creating of network using dataframe with named cols
 edata <-data.frame(
   tails=c(1,2,3),
