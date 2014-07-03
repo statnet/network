@@ -1,4 +1,7 @@
 CHANGELOG:
+v1.11 Fixes & Features
+   - get.inducedSubgraph() now has an optional 'eid' argument for inducing a network including specified edges and their incident vertices
+   - fixed bug in as.network.matrix that caused it to ignore the na.rm argument.
 v1.10 Fixes
    - fixed vertex label plotting bug when vertices have the same positions
    - added dimension checks and more informative error for as.network.matrix for case when it assumes a square edgelist is an adjacency matrix

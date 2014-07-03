@@ -362,48 +362,83 @@ get.edges<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.
 # return the edge cut (along with the associated vertices and meta-data) as
 # a bipartite network.
 #
-get.inducedSubgraph<-function(x, v, alters=NULL){
+get.inducedSubgraph<-function(x, v, alters=NULL, eid=NULL){
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("get.inducedSubgraph requires an argument of class network.")
   #Do some reality checking
   n<-network.size(x)
-  if((length(v)<1)||any(is.na(v))||any(v<1)||any(v>n))
-    stop("Illegal vertex selection in get.inducedSubgraph")
-  if(!is.null(alters)){
-    if((length(alters)<1)||any(is.na(alters))||any(alters<1)||any(alters>n)|| any(alters%in%v))
-      stop("Illegal vertex selection (alters) in get.inducedSubgraph")
+  
+  # are we doing this via eids, or v and alters
+  if (is.null(eid)){  # do checks for v and alters
+    if((length(v)<1)||any(is.na(v))||any(v<1)||any(v>n))
+      stop("Illegal vertex selection in get.inducedSubgraph")
+    if(!is.null(alters)){
+      if((length(alters)<1)||any(is.na(alters))||any(alters<1)||any(alters>n)|| any(alters%in%v))
+        stop("Illegal vertex selection (alters) in get.inducedSubgraph")
+    }
+    if (!is.null(eid)){
+      warning('eid argument to get.inducedSubgraph ignored when using v or alter argument')
+    }
+  } else { # do checks for eids
+    if (!is.numeric(eid)){
+      stop('eid must be a numeric vector of edge ids')
+    }
+    if (!missing(v)){
+      warning('v argument to get.inducedSubgraph ignored when using eid argument')
+    }
+    if (!is.null(alters)){
+      warning('alters argument to get.inducedSubgraph ignored when using eid argument')
+    }
+    # check that eids are valid
+    if (any(!eid%in%valid.eids(x))){
+      stop('eid argument contains non-valid edge ids')
+    }
+    
   }
+  
   #Start by making a copy of our target network (yes, this can be wasteful)
-  new<-network.copy(x)
-  #Now, strip out what is needed, and/or permute in the two-mode case
-  if(is.null(alters)){                    #Simple case
-    delete.vertices(new,(1:n)[-v])           #Get rid of everyone else
-  }else{                                  #Really an edge cut, but w/vertices
-    nv<-length(v)
-    na<-length(alters)
-    newids<-sort(c(v,alters))
-    newv<-match(v,newids)
-    newalt<-match(alters,newids)
-    delete.vertices(new,(1:n)[-c(v,alters)])  #Get rid of everyone else
-    permute.vertexIDs(new,c(newv,newalt))    #Put the new vertices first
-    #Remove within-group edges
-    for(i in 1:nv)
-      for(j in (i:nv)[-1]){
-        torem<-get.edgeIDs(new,i,alter=j,neighborhood="combined",na.omit=FALSE)
-        if(length(torem)>0)
-          delete.edges(new,torem)
-      }
-    for(i in (nv+1):(nv+na))
-      for(j in (i:(nv+na))[-1]){
-        torem<-get.edgeIDs(new,i,alter=j,neighborhood="combined",na.omit=FALSE)
-        if(length(torem)>0)
-          delete.edges(new,torem)
-      }
-    new%n%"bipartite"<-nv   #Set bipartite attribute
+  #TODO: in most cases, probably faster to create a new network and only copy over what is needed
+  newNet<-network.copy(x)
+  
+  if (is.null(eid)){  # using v and alter
+    #Now, strip out what is needed, and/or permute in the two-mode case
+    if(is.null(alters)){                    #Simple case
+      delete.vertices(newNet,(1:n)[-v])           #Get rid of everyone else
+    }else{                                  #Really an edge cut, but w/vertices
+      nv<-length(v)
+      na<-length(alters)
+      newids<-sort(c(v,alters))
+      newv<-match(v,newids)
+      newalt<-match(alters,newids)
+      delete.vertices(newNet,(1:n)[-c(v,alters)])  #Get rid of everyone else
+      permute.vertexIDs(newNet,c(newv,newalt))    #Put the new vertices first
+      #Remove within-group edges
+      for(i in 1:nv)
+        for(j in (i:nv)[-1]){
+          torem<-get.edgeIDs(newNet,i,alter=j,neighborhood="combined",na.omit=FALSE)
+          if(length(torem)>0)
+            delete.edges(newNet,torem)
+        }
+      for(i in (nv+1):(nv+na))
+        for(j in (i:(nv+na))[-1]){
+          torem<-get.edgeIDs(newNet,i,alter=j,neighborhood="combined",na.omit=FALSE)
+          if(length(torem)>0)
+            delete.edges(newNet,torem)
+        }
+      newNet%n%"bipartite"<-nv   #Set bipartite attribute
+    }
+  } else {  # using eids instead of v and alters
+    # delete all the edges not in eid
+    removeEid<-setdiff(valid.eids(newNet),eid)
+    delete.edges(newNet,removeEid)
+    # find the set of vertices incident on the remaining edges
+    v<-unique(c(unlist(sapply(newNet$mel, "[[", "outl")),unlist(sapply(newNet$mel, "[[", "inl"))))
+    removeV<-setdiff(seq_len(network.size(newNet)),v)
+    delete.vertices(newNet,removeV)
   }
   #Return the updated object
-  new
+  newNet
 }
 
 
