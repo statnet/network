@@ -122,6 +122,24 @@ if(length(get.edgeIDs(net,v=2,alter=2))>0){
   stop("problem with get.edgeIDs on undirected network with loops")
 }
 
+# --- tests for get induces subgraph additions
+data(emon)
+# extract the network of responders in MtStHelens network with interaction Frequency of 4
+subG4<-get.inducedSubgraph(emon$MtStHelens,eid=which(emon$MtStHelens%e%'Frequency'==4))
+if(network.size(subG4)!=24){
+  stop('wrong size eid induced subgraph')
+}
+
+if (any(subG4%e%'Frequency'!=4)){
+  stop('bad edges in eid induced subgraph')
+}
+
+# checks for error conditions
+# can't specify eid with v or alter
+# get.inducedSubgraph(v=1:2,emon$MtStHelens,eid=which(emon$MtStHelens%e%'Frequency'==4))
+# get.inducedSubgraph(alter=1:2,emon$MtStHelens,eid=which(emon$MtStHelens%e%'Frequency'==4))
+# get.inducedSubgraph(emon$MtStHelens,eid=200:300)
+
 
 # ---- tests for specific bugs/edgecases -----
 
