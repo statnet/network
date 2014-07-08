@@ -212,9 +212,9 @@ which.matrix.type<-function(x)
             out<-NA
         else if (diff(dim(x))==0)  
             out<-"adjacency"
-        else if (max(abs(x))==1 && max(abs(x-as.integer(x)))==0)
+        else if (max(abs(x),na.rm=TRUE)==1 && max(abs(x-as.integer(x)),na.rm=TRUE)==0)
             out<-"bipartite"
-        else if (max(abs(x-as.integer(x))[,1:2])==0 && min(x[,1:2])>0)
+        else if (max(abs(x-as.integer(x))[,1:2],na.rm=TRUE)==0 && min(x[,1:2],na.rm=TRUE)>0)
             out<-"edgelist"
         else
             out<-NA

@@ -150,12 +150,15 @@ set.edge.attribute(network.initialize(3),"test","a")
 set.vertex.attribute(network.initialize(0),'foo','bar')
 
 
-
-
-
 # check for is.na.network problems #619
 x2<-network.initialize(3)
 x2[1,2]<-NA
 if(is.na.network(x2)[1,2]!=1){
   stop('problem iwth is.na.netowrk')
 }
+
+# check for na problems in which.matrix.type #926
+mat <- matrix(rbinom(200, 1, 0.2), nrow = 20)
+naIndices <- sample(1:200, 20)
+mat[naIndices] <- NA
+nw <- network(mat)
