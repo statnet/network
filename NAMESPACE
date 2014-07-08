@@ -1,8 +1,8 @@
 #Set up our dynamic library
-useDynLib("network")
+useDynLib(network, .registration = TRUE)
 
 #Import some required symbols
 import(utils)
 
-#Export everything, 'cuz that's how we roll
-exportPattern("^[^\\.]") 
+#Export everything except symbols that start with '.' or end with '_R'.
+exportPattern("^[^\\.].*[^_][^R]$") 
