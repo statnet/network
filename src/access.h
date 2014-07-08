@@ -107,10 +107,14 @@ SEXP permuteVertexIDs_R(SEXP x, SEXP vids);
 
 SEXP setEdgeAttribute_R(SEXP x, SEXP attrname, SEXP value, SEXP e);
 
+SEXP setEdgeAttributes_R(SEXP x, SEXP attrname, SEXP value, SEXP e);
+
 SEXP setEdgeValue_R(SEXP x, SEXP attrname, SEXP value, SEXP e);
 
 SEXP setNetworkAttribute_R(SEXP x, SEXP attrname, SEXP value);
 
 SEXP setVertexAttribute_R(SEXP x, SEXP attrname, SEXP value, SEXP v);
+
+SEXP setVertexAttributes_R(SEXP x, SEXP attrname, SEXP value, SEXP v);
 
 #endif

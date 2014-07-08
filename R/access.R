@@ -77,7 +77,7 @@ add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
   }
-  x<-.Call("addEdge_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network")
+  x<-.Call(addEdge_R,x,tail,head,names.eval,vals.eval,edge.check)
   invisible(x)
 }
 
@@ -119,7 +119,7 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
     edge.check<-FALSE
   #Pass the inputs to the C side
   xn<-substitute(x)
-  x<-.Call("addEdges_R",x,tail,head,names.eval,vals.eval,edge.check, PACKAGE="network")
+  x<-.Call(addEdges_R,x,tail,head,names.eval,vals.eval,edge.check)
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
   }
@@ -159,7 +159,7 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
       on.exit(eval.parent(call('<-',xn,x)))
     }
     if(last.mode||(!is.bipartite(x))){
-      x<-.Call("addVertices_R",x,nv,vattr, PACKAGE="network")
+      x<-.Call(addVertices_R,x,nv,vattr)
     }else{
       
       nr<-nv
@@ -167,7 +167,7 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
       nnew<-nr+nc
       nold<-network.size(x)
       bip<-x%n%"bipartite"
-      x<-.Call("addVertices_R", x, nv, vattr, PACKAGE = "network")
+      x<-.Call(addVertices_R, x, nv, vattr)
       
       if(nr>0){
         if(bip>0)
@@ -199,7 +199,7 @@ delete.edge.attribute<-function(x,attrname){
     stop("delete.edge.attribute requires an argument of class network.")
   #Remove the edges
   xn<-substitute(x)
-  x<-.Call("deleteEdgeAttribute_R",x,attrname, PACKAGE="network")
+  x<-.Call(deleteEdgeAttribute_R,x,attrname)
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
   }
@@ -219,7 +219,7 @@ delete.edges<-function(x,eid){
     if((min(eid)<1)|(max(eid)>length(x$mel)))
       stop("Illegal edge in delete.edges.\n")
     #Remove the edges
-    x<-.Call("deleteEdges_R",x,eid, PACKAGE="network")
+    x<-.Call(deleteEdges_R,x,eid)
     if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
       on.exit(eval.parent(call('<-',xn,x)))
     }
@@ -235,7 +235,7 @@ delete.network.attribute<-function(x,attrname){
     stop("delete.network.attribute requires an argument of class network.")
   #Remove the edges
   xn<-substitute(x)
-  x<-.Call("deleteNetworkAttribute_R",x,attrname, PACKAGE="network")
+  x<-.Call(deleteNetworkAttribute_R,x,attrname)
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
   }
@@ -252,7 +252,7 @@ delete.vertex.attribute<-function(x,attrname){
   #Remove the attribute (or do nothing, if there are no vertices)
   if(network.size(x)>0){
     xn<-substitute(x)
-    x<-.Call("deleteVertexAttribute_R",x,attrname, PACKAGE="network")
+    x<-.Call(deleteVertexAttribute_R,x,attrname)
     if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
       on.exit(eval.parent(call('<-',xn,x)))
     }
@@ -276,7 +276,7 @@ delete.vertices<-function(x,vid){
       m1v<-get.network.attribute(x,"bipartite")  #How many mode 1 verts?
       set.network.attribute(x,"bipartite",m1v-sum(vid<=m1v))
     }
-    x<-.Call("deleteVertices_R",x,vid, PACKAGE="network")
+    x<-.Call(deleteVertices_R,x,vid)
     if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
       on.exit(eval.parent(call('<-',xn,x)))
     }
@@ -328,7 +328,7 @@ get.edgeIDs<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), n
   else
     neighborhood=match.arg(neighborhood)
   #Do the deed
-  .Call("getEdgeIDs_R",x,v,alter,neighborhood,na.omit, PACKAGE="network")
+  .Call(getEdgeIDs_R,x,v,alter,neighborhood,na.omit)
 }
 
 
@@ -353,7 +353,7 @@ get.edges<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.
   else
     neighborhood=match.arg(neighborhood)
   #Do the deed
-  .Call("getEdges_R",x,v,alter,neighborhood,na.omit, PACKAGE="network")
+  .Call(getEdges_R,x,v,alter,neighborhood,na.omit)
 }
 
 
@@ -469,7 +469,7 @@ get.neighborhood<-function(x, v, type=c("out","in","combined"), na.omit=TRUE){
   else
     type=match.arg(type)
   #Do the deed
-  .Call("getNeighborhood_R",x,v,type,na.omit, PACKAGE="network")
+  .Call(getNeighborhood_R,x,v,type,na.omit)
 }
 
 
@@ -529,7 +529,7 @@ is.adjacent<-function(x,vi,vj,na.omit=FALSE){
     vj<-rep(vj,length=max(length(vi),length(vj)))
   }
   #Do the deed
- .Call("isAdjacent_R",x,vi,vj,na.omit, PACKAGE="network")
+ .Call(isAdjacent_R,x,vi,vj,na.omit)
 }
 
 
@@ -586,7 +586,7 @@ is.na.network<-function(x){
   #Create an empty network with the same properties as x
   y<-network.initialize(network.size(x),directed=is.directed(x), hyper=is.hyper(x),loops=has.loops(x),multiple=is.multiplex(x), bipartite=x%n%"bipartite")
   #Add the missing edges of x to y
-  y<-.Call("isNANetwork_R",x,y,PACKAGE="network")
+  y<-.Call(isNANetwork_R,x,y)
   #Return the updated network 
   y
 }
@@ -686,7 +686,7 @@ network.edgecount<-function(x,na.omit=TRUE){
   if(!is.network(x))
     stop("network.edgecount requires an argument of class network.\n")
   #Return the edge count
-  .Call("networkEdgecount_R",x,na.omit, PACKAGE="network")
+  .Call(networkEdgecount_R,x,na.omit)
 }
 
 
@@ -752,7 +752,7 @@ permute.vertexIDs<-function(x,vids){
   }
   #Return the permuted graph
   xn<-substitute(x)
-  x<-.Call("permuteVertexIDs_R",x,vids, PACKAGE="network")
+  x<-.Call(permuteVertexIDs_R,x,vids)
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
   }
@@ -815,7 +815,7 @@ set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
         }
       }
       #Do the deed, call the set single value version
-      x<-.Call("setEdgeAttribute_R",x,attrname,value,e, PACKAGE="network")
+      x<-.Call(setEdgeAttribute_R,x,attrname,value,e)
     } else { # we will be setting multiple values
       if (length(attrname)!=length(value)){
         stop("the 'value' attribute must have an element corresponding to each attribute name in 'attrname' in set.edge.attribute")
@@ -846,7 +846,7 @@ set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
         
       }
       #Do the deed, call the set multiple version
-      x<-.Call("setEdgeAttributes_R",x,attrname,value,e, PACKAGE="network")
+      x<-.Call(setEdgeAttributes_R,x,attrname,value,e)
     }
     if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
       on.exit(eval.parent(call('<-',xn,x)))
@@ -881,7 +881,7 @@ set.edge.value<-function(x,attrname,value,e=seq_along(x$mel)){
   }
   #Do the deed
   xn<-substitute(x)
-  x<-.Call("setEdgeValue_R",x,attrname,value,e, PACKAGE="network")
+  x<-.Call(setEdgeValue_R,x,attrname,value,e)
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
   }
@@ -908,7 +908,7 @@ set.network.attribute<-function(x,attrname,value){
   }
   #Do the deed
   xn<-substitute(x)
-  x<-.Call("setNetworkAttribute_R",x,attrname,value,PACKAGE="network")
+  x<-.Call(setNetworkAttribute_R,x,attrname,value)
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
   }
@@ -977,7 +977,7 @@ set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
       }
     }
     # call older singular value version
-    x<-.Call("setVertexAttribute_R",x,attrname,value,v, PACKAGE="network")
+    x<-.Call(setVertexAttribute_R,x,attrname,value,v)
   } else { # setting multiple values
     if (length(value)!=length(attrname)){
       stop("the 'value' attribute must have an element corresponding to each attribute name in 'attrnames' in set.vertex.attribute")
@@ -1007,7 +1007,7 @@ set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
       })
     }
     # call multiple value version
-    x<-.Call("setVertexAttributes_R",x,attrname,value,v, PACKAGE="network")
+    x<-.Call(setVertexAttributes_R,x,attrname,value,v)
   } # end setting multiple values
   #Do the deed
   
