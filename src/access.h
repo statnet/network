@@ -117,4 +117,6 @@ SEXP setVertexAttribute_R(SEXP x, SEXP attrname, SEXP value, SEXP v);
 
 SEXP setVertexAttributes_R(SEXP x, SEXP attrname, SEXP value, SEXP v);
 
+SEXP nonEmptyEdges_R(SEXP el);
+
 #endif

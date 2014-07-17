@@ -46,6 +46,7 @@ static R_CallMethodDef CallEntries[] = {
   CALLDEF(setNetworkAttribute_R,3),
   CALLDEF(setVertexAttribute_R,4),
   CALLDEF(setVertexAttributes_R,4),
+  CALLDEF(nonEmptyEdges_R,1),
   {NULL,NULL,0}
 };
 
