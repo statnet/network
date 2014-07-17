@@ -1637,3 +1637,28 @@ SEXP setVertexAttributes_R(SEXP x, SEXP attrnames, SEXP values, SEXP v)
   UNPROTECT(pc);
   return x;
 }
+
+SEXP nonEmptyEdges_R(SEXP el)
+/* retrun all edges which are non NULL */
+{
+  int i, elen, n=0;
+  SEXP ans;
+
+  elen = length(el);
+  
+  for(i=0; i<elen; i++){
+    if (VECTOR_ELT(el,i) != R_NilValue) n++;
+  }
+
+  PROTECT(ans = allocVector(VECSXP,n));
+
+  n=0;
+  for(i=0; i<elen; i++){
+    if (VECTOR_ELT(el,i) != R_NilValue){
+      SET_VECTOR_ELT(ans,n++, duplicate(VECTOR_ELT(el,i)));
+    }
+  }
+  UNPROTECT(1);
+
+  return ans;
+}

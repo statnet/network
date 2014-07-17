@@ -286,26 +286,35 @@ delete.vertices<-function(x,vid){
 
 
 # Retrieve a specified edge attribute from edge list el.  The attribute
-# is returned as a list, regardless of type.
+# is returned as a list, unless unlist is TRUE. If na.omit is TRUE, then NA values (which
+# represent edges for which the attribute name was never set) are ommited.
+# if deleted.edges.omit is TRUE, then only attribute values on true edges will be returned.
 #
-get.edge.attribute<-function(el, attrname, unlist=TRUE){
-  if (is.network(el)){
-    # call get.edge.value instead
-    return(get.edge.value(el,attrname=attrname,unlist=unlist))
-  } 
-  x <- lapply(lapply(el,"[[","atl"),"[[",attrname)
-  if(unlist){unlist(x)}else{x}
+get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=TRUE,deleted.edges.omit=FALSE){
+  if (is.network(el)) el <- el$mel
+
+  if (deleted.edges.omit)
+    edges <- lapply(.Call(nonEmptyEdges_R,el),"[[","atl")
+  else
+    edges <- lapply(el,"[[","atl")
+    
+  x <- lapply(edges,"[[",attrname)
+  if(unlist){
+    if (na.omit)
+      unlist(x)
+    else
+      unlist(lapply(x,function(i) if(is.null(i)) NA else i))
+  } else {
+    x
+  }
 }
 
 
-# Retrieve a specified edge attribute from all edges in x.  The attribute
-# is returned as a list, regardless of type.
+# Retrieve a specified edge attribute from all edges in x.
 #
-get.edge.value<-function(x, attrname, unlist=TRUE){
-  y <- lapply(lapply(x$mel,"[[","atl"),"[[",attrname)
-  if(unlist){unlist(y)}else{y}
+get.edge.value<-function(x, attrname, unlist=TRUE, na.omit=TRUE, deleted.edges.omit=FALSE){
+  get.edge.attribute(x,attrname,unlist,na.omit,deleted.edges.omit)
 }
-
 
 # Retrieve the ID numbers for all edges incident on v, in network x.  
 # Outgoing or incoming edges are specified by neighborhood, while na.omit 

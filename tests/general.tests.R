@@ -103,6 +103,24 @@ add.edges(net,c(1,2,3),c(2,3,1))
 set.edge.attribute(net,'test',"a")
 if(!all(get.edge.attribute(net,'test')==c("a","a","a"))){stop("overloading of get.edge.attribute to get.edge.value not working correctly ")}
 
+# check list output of get.edge.attribute with deleted.edges.omit
+delete.edges(net,2)
+set.edge.attribute(net,'foo','bar',1)
+if(!all.equal(list('bar',NULL,NULL),get.edge.attribute(net,'foo',unlist=FALSE))){
+  stop("deleted.edges.omit argument causing bad return values in get.edge.attribute ")
+}
+if(!all.equal(list('bar',NULL),get.edge.attribute(net,'foo',unlist=FALSE,deleted.edges.omit=TRUE))){
+  stop("deleted.edges.omit argument causing bad return values in get.edge.attribute ")
+}
+
+# check unlisted output of get.edge.attribute with na.omit and deleted.edges.omit
+if(!all.equal(c('bar',NA,NA),get.edge.attribute(net,'foo',unlist=TRUE,na.omit=FALSE))){
+  stop("na.omit argument causing bad return values in get.edge.attribute")
+}
+if(!all.equal(c('bar',NA),get.edge.attribute(net,'foo',unlist=TRUE,na.omit=FALSE,deleted.edges.omit=TRUE))){
+  stop("na.omit argument causing bad return values in get.edge.attribute")
+}
+
 
 # check for undirected loops getID cases #327 #609
 net<-network.initialize(2,loops=TRUE,directed=FALSE)
