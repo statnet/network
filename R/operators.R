@@ -691,8 +691,16 @@
 }
 
 
+# --------------------------- %c% -------------------------------
+# conditionally create this method, as it may allready have 
+# been created and loaded by sna package
+
+if (!exists('%c%')){
+
 "%c%"<-function(e1,e2){
   UseMethod("%c%",e1)
+}
+
 }
 
 
