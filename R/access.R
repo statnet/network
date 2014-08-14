@@ -288,7 +288,7 @@ delete.vertices<-function(x,vid){
 # Retrieve a specified edge attribute from edge list el.  The attribute
 # is returned as a list, unless unlist is TRUE. If na.omit is TRUE, then NA values (which
 # represent edges for which the attribute name was never set) are ommited.
-# if deleted.edges.omit is TRUE, then only attribute values on true edges will be returned.
+# if deleted.edges.omit is TRUE, then only attribute values on existing (non-null) edges will be returned.
 #
 get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=TRUE,deleted.edges.omit=FALSE){
   if (is.network(el)) el <- el$mel

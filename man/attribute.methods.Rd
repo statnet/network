@@ -26,8 +26,10 @@ delete.edge.attribute(x, attrname)
 delete.network.attribute(x, attrname)
 delete.vertex.attribute(x, attrname)
 
-get.edge.attribute(el, attrname, unlist = TRUE, na.omit = TRUE, deleted.edges.omit = FALSE)
-get.edge.value(x, attrname, unlist = TRUE, na.omit = TRUE, deleted.edges.omit = FALSE)
+get.edge.attribute(el, attrname, unlist = TRUE, na.omit = TRUE, 
+                                    deleted.edges.omit = FALSE)
+get.edge.value(x, attrname, unlist = TRUE, na.omit = TRUE, 
+                               deleted.edges.omit = FALSE)
 get.network.attribute(x, attrname, unlist = FALSE)
 get.vertex.attribute(x, attrname, na.omit = FALSE, null.na = TRUE,
     unlist = TRUE)
