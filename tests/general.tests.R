@@ -114,10 +114,10 @@ if(!all.equal(list('bar',NULL),get.edge.attribute(net,'foo',unlist=FALSE,deleted
 }
 
 # check unlisted output of get.edge.attribute with na.omit and deleted.edges.omit
-if(!all.equal(c('bar',NA,NA),get.edge.attribute(net,'foo',unlist=TRUE,na.omit=FALSE))){
+if(!all.equal(c('bar',NA,NA),get.edge.attribute(net,'foo',unlist=TRUE,na.omit=FALSE,attr.na.omit=FALSE))){
   stop("na.omit argument causing bad return values in get.edge.attribute")
 }
-if(!all.equal(c('bar',NA),get.edge.attribute(net,'foo',unlist=TRUE,na.omit=FALSE,deleted.edges.omit=TRUE))){
+if(!all.equal(c('bar',NA),get.edge.attribute(net,'foo',unlist=TRUE,na.omit=FALSE,attr.na.omit=FALSE,deleted.edges.omit=TRUE))){
   stop("na.omit argument causing bad return values in get.edge.attribute")
 }
 

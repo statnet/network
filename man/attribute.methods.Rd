@@ -26,9 +26,9 @@ delete.edge.attribute(x, attrname)
 delete.network.attribute(x, attrname)
 delete.vertex.attribute(x, attrname)
 
-get.edge.attribute(el, attrname, unlist = TRUE, na.omit = TRUE, 
+get.edge.attribute(el, attrname, unlist = TRUE, na.omit = TRUE, attr.na.omit = TRUE,
                                     deleted.edges.omit = FALSE)
-get.edge.value(x, attrname, unlist = TRUE, na.omit = TRUE, 
+get.edge.value(x, attrname, unlist = TRUE, na.omit = TRUE, attr.na.omit = TRUE,
                                deleted.edges.omit = FALSE)
 get.network.attribute(x, attrname, unlist = FALSE)
 get.vertex.attribute(x, attrname, na.omit = FALSE, null.na = TRUE,
@@ -51,7 +51,8 @@ network.vertex.names(x) <- value
   \item{x}{ an object of class \code{network}. }
   \item{attrname}{ the name of the attribute to get or set. }
   \item{unlist}{ logical; should retrieved attributes be \code{\link{unlist}}ed prior to being returned? }
-  \item{na.omit}{ logical; should values from missing vertices/edges be removed? }
+  \item{na.omit}{ logical; should values from vertices/edges with attribute 'na' set to TRUE be removed? }
+  \item{attr.na.omit}{ logical; should values from missing vertices/edges be removed? }
   \item{deleted.edges.omit}{ logical: should the values from deleted edges be removed? }
   \item{null.na}{ logical; should \code{NULL} values (corresponding to vertices with no attribute values set) be replaced with \code{NA}s in output? }
   \item{value}{ values of the attribute to be set; these should be in \code{vector} or \code{list} form for the \code{edge} and \code{vertex} cases, or \code{matrix} form for \code{set.edge.value}.}
