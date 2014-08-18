@@ -290,7 +290,10 @@ delete.vertices<-function(x,vid){
 # represent edges for which the attribute name was never set) are ommited.
 # if deleted.edges.omit is TRUE, then only attribute values on existing (non-null) edges will be returned.
 #
-get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=TRUE,deleted.edges.omit=FALSE){
+# TODO: implement na.omit to work from the  'na' attribute value 
+# and  change the current na.omit feature to attr.na.omit
+#
+get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=TRUE,attr.na.omit=TRUE,deleted.edges.omit=FALSE){
   if (is.network(el)) el <- el$mel
 
   if (deleted.edges.omit)
@@ -298,9 +301,17 @@ get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=TRUE,deleted.edge
   else
     edges <- lapply(el,"[[","atl")
     
-  x <- lapply(edges,"[[",attrname)
+  x <- lapply(
+        edges,
+        function(i){ 
+          if (attrname %in% names(i) && i$na==FALSE || attrname=='na') 
+            i[[attrname]]
+          else
+            NULL
+        })
+
   if(unlist){
-    if (na.omit)
+    if (na.omit || attr.na.omit)
       unlist(x)
     else
       unlist(lapply(x,function(i) if(is.null(i)) NA else i))
@@ -312,8 +323,8 @@ get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=TRUE,deleted.edge
 
 # Retrieve a specified edge attribute from all edges in x.
 #
-get.edge.value<-function(x, attrname, unlist=TRUE, na.omit=TRUE, deleted.edges.omit=FALSE){
-  get.edge.attribute(x,attrname,unlist,na.omit,deleted.edges.omit)
+get.edge.value<-function(x, attrname, unlist=TRUE, na.omit=TRUE, attr.na.omit=TRUE, deleted.edges.omit=FALSE){
+  get.edge.attribute(x,attrname,unlist,na.omit,attr.na.omit,deleted.edges.omit)
 }
 
 # Retrieve the ID numbers for all edges incident on v, in network x.  

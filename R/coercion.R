@@ -119,7 +119,7 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,...){
   m<-cbind(unlist(sapply(x$mel,"[[","outl")), unlist(sapply(x$mel,"[[","inl")))
   #Add edge values, if needed
   if(!is.null(attrname))
-    m<-cbind(m,get.edge.attribute(x$mel,attrname,na.omit=FALSE,deleted.edges.omit=TRUE))
+    m<-cbind(m,get.edge.attribute(x$mel,attrname,na.omit=FALSE,attr.na.omit=FALSE,deleted.edges.omit=TRUE))
   else if(as.sna.edgelist)
     m<-cbind(m,rep(1,NROW(m)))
   #Set additional attributes and return the result
