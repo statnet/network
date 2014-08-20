@@ -136,6 +136,14 @@ if(!all(list.edge.attributes(temp)==c('goodbye','hello','na'))){
 if(!all(temp%e%'goodbye'==c(3,0,2))){
     stop("problem with network edgelist coercion from data frame")
 }   
+# test for as.matrix.network edgelist bug #935
+x <- network.initialize(10)
+add.edge(x,1,2)
+add.edge(x,2,3)
+set.edge.attribute(x,'foo','bar',e=2) # i.e. the edge from 2 to 3
+if (!identical(as.matrix.network.edgelist(x,'foo'),structure(c("1", "2", "2", "3", NA, "bar"), .Dim = 2:3, n = 10, vnames = 1:10))){
+  stop("problem with as.matrix.network.edgelist with attribute and deleted edge")
+}
 
    
 
