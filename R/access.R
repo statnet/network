@@ -286,35 +286,45 @@ delete.vertices<-function(x,vid){
 
 
 # Retrieve a specified edge attribute from edge list el.  The attribute
-# is returned as a list, unless unlist is TRUE. If na.omit is TRUE, then NA values (which
-# represent edges for which the attribute name was never set) are ommited.
+# is returned as a list, unless unlist is TRUE. 
 # if deleted.edges.omit is TRUE, then only attribute values on existing (non-null) edges will be returned.
+# if na.omit is TRUE, than values corresponding to 'missing' edges (edges with attribute 'na' set to TRUE) should be ommited. (NULL edgs count as not-missing)
+# If null.na is TRUE, then values corresponding to  edges for which the attribute name was never set will be set to NA.  Otherwise, they will be NULL, which means they will be included when unlist=TRUE 
 #
-# TODO: implement na.omit to work from the  'na' attribute value 
-# and  change the current na.omit feature to attr.na.omit
 #
-get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=TRUE,attr.na.omit=TRUE,deleted.edges.omit=FALSE){
+get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=FALSE,null.na=TRUE,deleted.edges.omit=FALSE){
   if (is.network(el)) el <- el$mel
 
-  if (deleted.edges.omit)
-    edges <- lapply(.Call(nonEmptyEdges_R,el),"[[","atl")
+  if (deleted.edges.omit) 
+    edges <- lapply(.Call(nonEmptyEdges_R,el),"[[","atl") # only include non-null elements from $mel
   else
-    edges <- lapply(el,"[[","atl")
+    edges <- lapply(el,"[[","atl")  # include all of $mel, including null
+  
+  
+  # extract all of the attrvalues (any NULL edges will return NULL and so will edges without attr set)
+  x<-lapply(edges,'[[',attrname)
+  
+  # hack to preserve return value of NULL for cases in which no attribute named attrname exists:
+  # if all the values of x are NULL, just return NULL and skip the recoding
+  if(!all(sapply(x,is.null))){
     
-  x <- lapply(
-        edges,
-        function(i){ 
-          if (attrname %in% names(i) && i$na==FALSE || attrname=='na') 
-            i[[attrname]]
-          else
-            NULL
-        })
+    # if null.na, set values of the non-null edges that don't have the attribute value set to NA
+    if (null.na & length(edges) > 0){
+      have.attr<-sapply(edges,function(e){is.null(e) || attrname %in% names(e)})
+      x[!have.attr]<-NA
+    }
+  }
+  
+  # if na.omit,   compute vector of explicitly marked as missing, and remove
+  # count NULL edges as non-missing
+  # (note that it is possible to remove missing values when reporting missing values using the attribute 'na')
+  if (na.omit  & length(edges) > 0 ){
+    missing<-sapply(edges,function(e){!is.null(e) && e[['na']]}) 
+    x<-x[!missing]
+  }
 
   if(unlist){
-    if (na.omit || attr.na.omit)
-      unlist(x)
-    else
-      unlist(lapply(x,function(i) if(is.null(i)) NA else i))
+    unlist(x)
   } else {
     x
   }
@@ -323,8 +333,8 @@ get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=TRUE,attr.na.omit
 
 # Retrieve a specified edge attribute from all edges in x.
 #
-get.edge.value<-function(x, attrname, unlist=TRUE, na.omit=TRUE, attr.na.omit=TRUE, deleted.edges.omit=FALSE){
-  get.edge.attribute(x,attrname,unlist,na.omit,attr.na.omit,deleted.edges.omit)
+get.edge.value<-function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=TRUE, deleted.edges.omit=FALSE){
+  get.edge.attribute(x,attrname,unlist,na.omit,null.na,deleted.edges.omit)
 }
 
 # Retrieve the ID numbers for all edges incident on v, in network x.  

@@ -1,10 +1,14 @@
 CHANGELOG:
 v1.11 Fixes & Features
+   - get.edge.attribute and get.edge.value now have arguments to avoid returning attribute values from 'missing' edges (na.omit) and unset/deleted edges (deleted.edges.omit) and edges with no value assigned for the attribute (attr.na.omit). 
    - network now includes an explicit list of exported functions in NAMESPACE
    - the following 'internal' functions have been removed from NAMESPACE: networkOperatorSetup, switchArcDirection, readAndVectorizeLine, read.paj.simplify
    - network now follows R conventions for exporting some of its C-level API functions for use by other packages
    - get.inducedSubgraph() now has an optional 'eid' argument for inducing a network including specified edges and their incident vertices
    - fixed bug in as.network.matrix that caused it to ignore the na.rm argument.
+   - added patch to which.matrix. type to handle NAs submitted by Philip Leifeld
+   - fixed na.rm argument to as.network.matrix
+   - changed plot function to force lazy evaluation of displaylabels=!missing(label) argument before value of label is changed
 v1.10 Fixes
    - fixed vertex label plotting bug when vertices have the same positions
    - added dimension checks and more informative error for as.network.matrix for case when it assumes a square edgelist is an adjacency matrix

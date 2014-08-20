@@ -68,7 +68,7 @@ as.matrix.network.adjacency<-function(x,attrname=NULL,expand.bipartite=FALSE,...
   hl<-unlist(sapply(x$mel,"[[","inl"))
   nal<-as.logical(get.edge.attribute(x$mel,"na",unlist=TRUE))
   if(!is.null(attrname)){
-    val<-unlist(get.edge.attribute(x$mel,attrname))
+    val<-unlist(get.edge.attribute(x$mel,attrname,unlist=FALSE))
     if(is.null(val)){
      warning(paste("There is no edge attribute named", attrname))
      val<-rep(1,length(tl))
@@ -119,7 +119,7 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,...){
   m<-cbind(unlist(sapply(x$mel,"[[","outl")), unlist(sapply(x$mel,"[[","inl")))
   #Add edge values, if needed
   if(!is.null(attrname))
-    m<-cbind(m,get.edge.attribute(x$mel,attrname,na.omit=FALSE,attr.na.omit=FALSE,deleted.edges.omit=TRUE))
+    m<-cbind(m,get.edge.attribute(x$mel,attrname,na.omit=FALSE,null.na=TRUE,deleted.edges.omit=TRUE))
   else if(as.sna.edgelist)
     m<-cbind(m,rep(1,NROW(m)))
   #Set additional attributes and return the result
