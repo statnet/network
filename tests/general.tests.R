@@ -106,18 +106,18 @@ if(!all(get.edge.attribute(net,'test')==c("a","a","a"))){stop("overloading of ge
 # check list output of get.edge.attribute with deleted.edges.omit
 delete.edges(net,2)
 set.edge.attribute(net,'foo','bar',1)
-if(!identical(list('bar',NULL,NA),get.edge.attribute(net,'foo',unlist=FALSE,  deleted.edges.omit = FALSE))){
+if(!identical(list('bar',NULL,NULL),get.edge.attribute(net,'foo',unlist=FALSE,  deleted.edges.omit = FALSE))){
   stop("deleted.edges.omit argument causing bad return values in get.edge.attribute ")
 }
-if(!identical(list('bar',NA),get.edge.attribute(net,'foo',unlist=FALSE,  deleted.edges.omit = TRUE))){
+if(!identical(list('bar',NULL),get.edge.attribute(net,'foo',unlist=FALSE,  deleted.edges.omit = TRUE))){
   stop("deleted.edges.omit argument causing bad return values in get.edge.attribute ")
 }
 
 # check unlisted output of get.edge.attribute with na.omit and deleted.edges.omit
-if(!identical(c('bar',NA),get.edge.attribute(net,'foo',unlist=TRUE,deleted.edges.omit=TRUE))){
+if(!identical(c('bar'),get.edge.attribute(net,'foo',unlist=TRUE,deleted.edges.omit=TRUE))){
   stop("omission argument causing bad return values in get.edge.attribute")
 }
-if(!identical(c('bar',NA),get.edge.attribute(net,'foo',unlist=TRUE,deleted.edges.omit=TRUE))){
+if(!identical(c('bar'),get.edge.attribute(net,'foo',unlist=TRUE,deleted.edges.omit=TRUE))){
   stop("omission  arguments causing bad return values in get.edge.attribute")
 }
 
@@ -125,25 +125,33 @@ if(!identical(c('bar',NA),get.edge.attribute(net,'foo',unlist=TRUE,deleted.edges
 if(!identical(c('bar'),get.edge.attribute(net,'foo',unlist=TRUE,null.na=FALSE))){
   stop("null.na  arguments causing bad return values in get.edge.attribute")
 }
+if(!identical(c('bar',NA),get.edge.attribute(net,'foo',unlist=TRUE,null.na=TRUE))){
+  stop("null.na  arguments causing bad return values in get.edge.attribute")
+}
 if(!identical(list('bar',NULL,NULL),get.edge.attribute(net,'foo',unlist=FALSE,null.na=FALSE))){
   stop("null.na  arguments causing bad return values in get.edge.attribute")
 }
+if(!identical(list('bar',NULL,NA),get.edge.attribute(net,'foo',unlist=FALSE,null.na=TRUE))){
+  stop("null.na  arguments causing bad return values in get.edge.attribute")
+}
+
+
 
 #mark an edge as missing to test na.omit
 set.edge.attribute(net,'na',TRUE,e=1)
 
 # check that values corresponding to missing edges are ommited
-if(!identical(list('bar',NULL,NA),get.edge.attribute(net,'foo',unlist=FALSE,na.omit=FALSE))){
+if(!identical(list('bar',NULL,NULL),get.edge.attribute(net,'foo',unlist=FALSE,na.omit=FALSE))){
   stop("na.omit argument causing bad return values in get.edge.attribute")
 }
-if(!identical(list(NULL,NA),get.edge.attribute(net,'foo',unlist=FALSE,na.omit=TRUE))){
+if(!identical(list(NULL,NULL),get.edge.attribute(net,'foo',unlist=FALSE,na.omit=TRUE))){
   stop("na.omit argument causing bad return values in get.edge.attribute")
 }
 
-if(!identical(c('bar',NA),get.edge.attribute(net,'foo',unlist=TRUE,na.omit=FALSE))){
+if(!identical(c('bar'),get.edge.attribute(net,'foo',unlist=TRUE,na.omit=FALSE))){
   stop("na.omit argument causing bad return values in get.edge.attribute")
 }
-if(!identical(NA,get.edge.attribute(net,'foo',unlist=TRUE,na.omit=TRUE))){
+if(!identical(NULL,get.edge.attribute(net,'foo',unlist=TRUE,na.omit=TRUE))){
   stop("na.omit argument causing bad return values in get.edge.attribute")
 }
 # check for behavior when querying the 'na' attribute
