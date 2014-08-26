@@ -292,7 +292,7 @@ delete.vertices<-function(x,vid){
 # If null.na is TRUE, then values corresponding to  edges for which the attribute name was never set will be set to NA.  Otherwise, they will be NULL, which means they will be included when unlist=TRUE 
 #
 #
-get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=FALSE,null.na=TRUE,deleted.edges.omit=FALSE){
+get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=FALSE,null.na=FALSE,deleted.edges.omit=FALSE){
   if (is.network(el)) el <- el$mel
 
   if (deleted.edges.omit) 
@@ -333,7 +333,7 @@ get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=FALSE,null.na=TRU
 
 # Retrieve a specified edge attribute from all edges in x.
 #
-get.edge.value<-function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=TRUE, deleted.edges.omit=FALSE){
+get.edge.value<-function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=FALSE, deleted.edges.omit=FALSE){
   get.edge.attribute(x,attrname,unlist,na.omit,null.na,deleted.edges.omit)
 }
 
