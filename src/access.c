@@ -1163,9 +1163,13 @@ SEXP getEdgeAttribute_R(SEXP el,SEXP attrname,SEXP naomit,SEXP nullna,SEXP delet
     SET_VECTOR_ELT(tmpans,k++,attrVal);
   }
   
-  ans = allocVector(VECSXP,k);
-  for(i=0;i<k;i++)
-    SET_VECTOR_ELT(ans,i,VECTOR_ELT(tmpans,i));
+  if (k == iLen){
+    ans = tmpans;
+  } else if (k < iLen){
+    PROTECT(ans = allocVector(VECSXP,k)); pc++;
+    for(i=0;i<k;i++)
+      SET_VECTOR_ELT(ans,i,VECTOR_ELT(tmpans,i));
+  }
 
   UNPROTECT(pc);
 
