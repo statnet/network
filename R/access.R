@@ -291,43 +291,25 @@ delete.vertices<-function(x,vid){
 # if na.omit is TRUE, than values corresponding to 'missing' edges (edges with attribute 'na' set to TRUE) should be ommited. (NULL edgs count as not-missing)
 # If null.na is TRUE, then values corresponding to  edges for which the attribute name was never set will be set to NA.  Otherwise, they will be NULL, which means they will be included when unlist=TRUE 
 #
-#
 get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=FALSE,null.na=FALSE,deleted.edges.omit=FALSE){
   if (is.network(el)) el <- el$mel
 
-  if (deleted.edges.omit) 
-    edges <- lapply(.Call(nonEmptyEdges_R,el),"[[","atl") # only include non-null elements from $mel
-  else
-    edges <- lapply(el,"[[","atl")  # include all of $mel, including null
-  
-  
-  # extract all of the attrvalues (any NULL edges will return NULL and so will edges without attr set)
-  x<-lapply(edges,'[[',attrname)
-  
-  # hack to preserve return value of NULL for cases in which no attribute named attrname exists:
-  # if all the values of x are NULL, just return NULL and skip the recoding
-  if(!all(sapply(x,is.null))){
-    
-    # if null.na, set values of the non-null edges that don't have the attribute value set to NA
-    if (null.na & length(edges) > 0){
-      have.attr<-sapply(edges,function(e){is.null(e) || attrname %in% names(e)})
-      x[!have.attr]<-NA
-    }
-  }
-  
-  # if na.omit,   compute vector of explicitly marked as missing, and remove
-  # count NULL edges as non-missing
-  # (note that it is possible to remove missing values when reporting missing values using the attribute 'na')
-  if (na.omit  & length(edges) > 0 ){
-    missing<-sapply(edges,function(e){!is.null(e) && e[['na']]}) 
-    x<-x[!missing]
-  }
+  if (!is.list(el))
+    stop("el must be a network object or a list.")
 
-  if(unlist){
-    unlist(x)
-  } else {
-    x
-  }
+  if (!is.character(attrname))
+    stop("attrname must be a character vector.")
+
+  if (!is.logical(unlist) || !is.logical(na.omit) || !is.logical(null.na) ||
+      !is.logical(deleted.edges.omit))
+    stop("na.omit, null.na, deleted.edges.omit must be a logical vector.")
+
+  edges <- .Call(getEdgeAttribute_R,el,attrname,na.omit,null.na,deleted.edges.omit)
+
+  if(unlist)
+    unlist(edges)
+  else
+    edges
 }
 
 

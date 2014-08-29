@@ -1105,6 +1105,73 @@ SEXP deleteEdgeAttribute_R(SEXP x, SEXP attrname)
   return x;
 }
 
+SEXP getEdgeAttribute_R(SEXP el,SEXP attrname,SEXP naomit,SEXP nullna,SEXP deletededgesomit){
+  Rboolean naom, naomVal, nuna, deo, attrFound;
+  const char *attr;
+  int i,j,k, iLen, jLen, pc;
+  SEXP iList, iNames, attrVal, ans, tmpans, tmp;
+
+  attr = CHAR(STRING_ELT(attrname,0));
+  naom = LOGICAL(naomit)[0];
+  nuna = LOGICAL(nullna)[0];
+  deo = LOGICAL(deletededgesomit)[0];
+
+  iLen = length(el);
+  k = 0;
+  pc = 0;
+
+  PROTECT(tmpans = allocVector(VECSXP,iLen)); pc++;
+
+  for(i=0; i < iLen; i++){
+    iList = VECTOR_ELT(el,i);
+    if (iList == R_NilValue){
+      if (deo==FALSE){
+        /* allocate return list element of NULL */
+        SET_VECTOR_ELT(tmpans,k++,R_NilValue);
+      }
+      continue;
+    }
+    iList = getListElement(iList,"atl");
+    iNames = getAttrib(iList, R_NamesSymbol);
+    jLen = length(iList);
+    naomVal = FALSE;
+    attrVal = R_NilValue;
+    attrFound = FALSE;
+    for (j = 0; j < jLen; j++){
+
+      if (strcmp(attr,CHAR(STRING_ELT(iNames,j))) == 0){
+        attrVal = VECTOR_ELT(iList,j);
+        attrFound = TRUE;
+      }
+
+      if (naom && strcmp("na",CHAR(STRING_ELT(iNames,j))) == 0){
+        tmp = VECTOR_ELT(iList,0);
+        if (TYPEOF(tmp) == LGLSXP)
+          naomVal = LOGICAL(tmp)[0];
+        else
+          warning("attribute na is not a logical vector: %d.",TYPEOF(tmp));
+      }
+    }
+    if (naomVal) continue;
+    if (nuna && !attrFound){
+      /* allocate return list element of NA */
+      SET_VECTOR_ELT(tmpans,k++,PROTECT(ScalarLogical(NA_LOGICAL))); pc++;
+      continue;
+    }
+    
+    /* allocate return list element from attrVal. may be NULL */
+    SET_VECTOR_ELT(tmpans,k++,attrVal);
+  }
+  
+  ans = allocVector(VECSXP,k);
+  for(i=0;i<k;i++)
+    SET_VECTOR_ELT(ans,i,VECTOR_ELT(tmpans,i));
+
+  UNPROTECT(pc);
+
+  return ans;
+}
+
 
 
 SEXP deleteEdges_R(SEXP x, SEXP eid)
