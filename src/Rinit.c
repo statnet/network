@@ -30,6 +30,7 @@ static R_CallMethodDef CallEntries[] = {
   CALLDEF(copyNetwork_R,1),
   CALLDEF(deleteEdgeAttribute_R,2),
   CALLDEF(deleteEdges_R,2),
+  CALLDEF(getEdgeAttribute_R,5),
   CALLDEF(deleteNetworkAttribute_R,2),
   CALLDEF(deleteVertexAttribute_R,2),
   CALLDEF(deleteVertices_R,2),

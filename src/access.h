@@ -83,6 +83,8 @@ SEXP addVertices_R(SEXP x, SEXP nv, SEXP vattr);
 
 SEXP deleteEdgeAttribute_R(SEXP x, SEXP attrname);
 
+SEXP getEdgeAttribute_R(SEXP el,SEXP attrname, SEXP naomit,SEXP nullna,SEXP deletededgesomit);
+
 SEXP deleteEdges_R(SEXP x, SEXP eid);
 
 SEXP deleteNetworkAttribute_R(SEXP x, SEXP attrname);
