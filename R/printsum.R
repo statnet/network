@@ -66,7 +66,7 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
                cat(" ",attributeName,"=",attributeValue,"\n")
              }else{
                # don't print summary for net obs period or active attributes
-               if (attributeName=='net.obs.period' | grepl('.active$',attributeName) ){
+               if (attributeName=='net.obs.period' || attributeName=='lasttoggle' || grepl('.active$',attributeName) ){
                  cat("  ",attributeName,": (not shown)\n", sep="")
                } else {
                  cat("  ",attributeName,":\n", sep="")
