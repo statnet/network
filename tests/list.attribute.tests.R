@@ -50,3 +50,12 @@ set.network.attribute(net,'letter',"a")
    if(!all(list.network.attributes(net)==c("bipartite", "directed",  "hyper","letter","loops","mnext",     "multiple","n" ))){
      stop("list.network.attributes returned unexpected values for network with attribute added")
    } 
+
+# ----- tests for printing function for edges cases ------
+net<-network.initialize(100)
+net%n%'a_matrix'<-matrix(1:100,nrow=10,ncol=10)
+net%n%'a_null'<-NULL
+net%n%'a_list'<-list(part1=list(c("A","B")),part2=list("c"))
+net%n%'a_desc_vec'<-numeric(rep(100,1))
+net%n%'a_net'<-network.initialize(5)
+print.network(net)
