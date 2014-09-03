@@ -59,16 +59,28 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
       }else{
         if(attributeName!="mnext"){
            if(is.discrete(attributeValue)){
-             assign(paste(" ",attributeName),attributeValue)
-             print(table(get(paste(" ",attributeName))))
+             #assign(paste(" ",attributeName),attributeValue)
+             #print(table(get(paste(" ",attributeName))))
+             print(table(attributeValue,dnn=paste('  ',attributeName,':',sep='')))
           }else{
-             if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double"))&&(length(attributeValue) < 10)){
-               cat(" ",attributeName,"=",attributeValue,"\n")
-             }else{
-               # don't print summary for net obs period or active attributes
-               if (attributeName=='net.obs.period' || attributeName=='lasttoggle' || grepl('.active$',attributeName) ){
-                 cat("  ",attributeName,": (not shown)\n", sep="")
+             # for short attributes, just print out the values
+             if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double","NULL"))&&(length(attributeValue) < 10)){
+               # handle NULL case because cat won't print NULL
+               if (is.null(attributeValue)){
+                 cat(" ",attributeName,"= NULL\n")
                } else {
+                 cat(" ",attributeName,"=",attributeValue,"\n")
+               }
+             } else{
+               # special handling for classes where summary would give messy or non-useful output
+               # don't print summary for net obs period or active attributes
+               if (attributeName=='net.obs.period' || grepl('.active$',attributeName) ){
+                 cat("  ",attributeName,": (not shown)\n", sep="")
+               } else if (class(attributeValue)%in%c("matrix")){
+                 cat("  ",attributeName,": ",nrow(attributeValue),"x",ncol(attributeValue)," matrix\n", sep="")
+                 
+               } else {
+               # default to printing out the summary for the attribute   
                  cat("  ",attributeName,":\n", sep="")
                  print(summary(attributeValue))
                }
@@ -239,38 +251,6 @@ print.summary.network<-function(x, ...){
       }
     }
   }
-#Older code here -- will remove in version 1.5, but kept now for reference
-#    if(length(vna)==0){
-#      cat("\n","No vertex attributes","\n",sep="")
-#    }else{
-#      cat("\nVertex attributes:\n")
-#      for (i in (1:length(vna))){ 
-#        attributeValue <- unlist(get.vertex.attribute(x, vna[i]))
-#        if(vna[i]=="respondent"){
-#          cat("\n      total missing =",sum(!attributeValue),"\n")
-#          cat("    percent missing =",mean(!attributeValue),"\n")
-#        }else if(vna[i]=="vertex.names"){
-#          cat(" vertex.names:\n")
-#          cat("   ",sum(!is.na(network.vertex.names(x)))," valid vertex names\n",sep="")
-#        }else{
-#          cat("\n ",vna[i],":\n",sep="")
-#          if(is.discrete(attributeValue)){
-#            assign(paste("  ",vna[i]),attributeValue)
-#            print(table(get(paste("  ",vna[i]))))
-#            if(mixingmatrices){
-#              cat("\n"," mixing matrix for ",vna[i],":\n",sep="")
-#              print(mixingmatrix(x,vna[i]))
-#            }
-#          }else{
-#            if(length(attributeValue) < 10){
-#              cat("  ",attributeValue,"\n")
-#            }else{
-#              print(summary(attributeValue))
-#            }
-#          }
-#        }
-#      }
-#    }
 
     #Print the edge-level attributes
     ean <- list.edge.attributes(x)
