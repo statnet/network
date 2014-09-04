@@ -1120,7 +1120,7 @@ SEXP getEdgeAttribute_R(SEXP el,SEXP attrname,SEXP naomit,SEXP nullna,SEXP delet
   k = 0;
   pc = 0;
 
-  PROTECT(tmpans = allocVector(VECSXP,iLen)); pc++;
+  tmpans = PROTECT(allocVector(VECSXP,iLen)); pc++;
 
   for(i=0; i < iLen; i++){
     iList = VECTOR_ELT(el,i);
@@ -1166,7 +1166,7 @@ SEXP getEdgeAttribute_R(SEXP el,SEXP attrname,SEXP naomit,SEXP nullna,SEXP delet
   if (k == iLen){
     ans = tmpans;
   } else if (k < iLen){
-    PROTECT(ans = allocVector(VECSXP,k)); pc++;
+    ans = PROTECT(allocVector(VECSXP,k)); pc++;
     for(i=0;i<k;i++)
       SET_VECTOR_ELT(ans,i,VECTOR_ELT(tmpans,i));
   }
