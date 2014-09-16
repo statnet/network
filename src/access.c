@@ -1163,6 +1163,7 @@ SEXP getEdgeAttribute_R(SEXP el,SEXP attrname,SEXP naomit,SEXP nullna,SEXP delet
     SET_VECTOR_ELT(tmpans,k++,attrVal);
   }
   
+  ans = R_NilValue;
   if (k == iLen){
     ans = tmpans;
   } else if (k < iLen){
