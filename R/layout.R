@@ -118,8 +118,8 @@ network.layout.kamadakawai<-function(nw,layout.par){
   }else
     kkconst<-layout.par$kkconst
   if(is.null(layout.par$elen)){
-    require(sna)
-    elen<-geodist(symmetrize(d),inf.replace=sqrt(n))$gdist
+    # these functions require that the SNA package be installed
+    elen<-sna::geodist(sna::symmetrize(d),inf.replace=sqrt(n),count.paths = FALSE,predecessors = FALSE)$gdist
   }else
     elen<-layout.par$elen
   if(is.null(layout.par$seed.coord)){

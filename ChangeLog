@@ -1,6 +1,8 @@
 CHANGELOG:
 v1.11 Fixes & Features
-   - get.edge.attribute and get.edge.value now have arguments to avoid returning attribute values from 'missing' edges (na.omit) and unset/deleted edges (deleted.edges.omit) and edges with no value assigned for the attribute (attr.na.omit). 
+   - minor changes to print.network to give more informative info about some network attributes
+   - get.edge.attribute now has C-level backend
+   - get.edge.attribute and get.edge.value now have arguments to avoid returning attribute values from 'missing' edges (na.omit) and unset/deleted edges (deleted.edges.omit) and edges with no value assigned for the attribute (null.na). 
    - network now includes an explicit list of exported functions in NAMESPACE
    - the following 'internal' functions have been removed from NAMESPACE: networkOperatorSetup, switchArcDirection, readAndVectorizeLine, read.paj.simplify
    - network now follows R conventions for exporting some of its C-level API functions for use by other packages
