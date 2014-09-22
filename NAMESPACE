@@ -124,7 +124,6 @@ valid.eids,
 "%vattr%",
 "%vattr%<-",
 which.matrix.type
-
 )
 
 #S3method("%c%",'network')
