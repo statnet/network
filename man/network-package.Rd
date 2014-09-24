@@ -17,7 +17,7 @@ Basic information on the creation of \code{network} objects can be found by typi
 \tabular{ll}{
 Package: \tab network\cr
 Version: \tab 1.11\cr
-Date: \tab Aug 19, 2014\cr
+Date: \tab Sept 23, 2014\cr
 Depends: \tab R (>= 2.10), utils\cr
 Suggests: \tab sna, statnet.common (>= 3.1-0)\cr
 License: \tab GPL (>=2)\cr
