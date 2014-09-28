@@ -44,6 +44,8 @@ is.network(x)
 }
 \details{
   \code{network} constructs a \code{network} class object from a matrix representation. It is strongly recommended that you specify the \code{matrix.type} parameter, to avoid ambiguity in the type of input matrix. See the documentation of \code{edgeset.constructors} for the format of these input matrices.
+  
+  If the \code{ergm} package is loaded, \code{network} can function as a shorthand for \code{as.network.numeric} if \code{x} is an integer specifying the number of nodes. See the help page for \code{\link[ergm]{as.network.numeric}} in \code{ergm} package for details.
 
   \code{network.copy} creates a new \code{network} object which duplicates its supplied argument.  (Direct assignment with \code{<-} should be used rather than \code{network.copy} in most cases.)
 
