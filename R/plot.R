@@ -24,61 +24,63 @@
 ######################################################################
 
 
+#Introduce a function to make coordinates for a single polygon
+make.arrow.poly.coords<-function(x0,y0,x1,y1,ahangle,ahlen,swid,toff,hoff,ahead, curve,csteps){ 
+  slen<-sqrt((x0-x1)^2+(y0-y1)^2)  #Find the total length
+  if(curve==0){         #Straight edges
+    if(ahead){    
+      coord<-rbind(                    #Produce a "generic" version w/head
+        c(-swid/2,toff),
+        c(-swid/2,slen-0.5*ahlen-hoff),
+        c(-ahlen*sin(ahangle),slen-ahlen*cos(ahangle)-hoff),
+        c(0,slen-hoff),
+        c(ahlen*sin(ahangle),slen-ahlen*cos(ahangle)-hoff),
+        c(swid/2,slen-0.5*ahlen-hoff),
+        c(swid/2,toff),
+        c(NA,NA)
+      )
+    }else{
+      coord<-rbind(                    #Produce a "generic" version w/out head
+        c(-swid/2,toff),
+        c(-swid/2,slen-hoff),
+        c(swid/2,slen-hoff),
+        c(swid/2,toff),
+        c(NA,NA)
+      )
+    }
+  }else{             #Curved edges
+    if(ahead){    
+      inc<-(0:csteps)/csteps
+      coord<-rbind(
+        cbind(-curve*(1-(2*(inc-0.5))^2)-swid/2-sqrt(2)/2*(toff+inc*(hoff-toff)), inc*(slen-sqrt(2)/2*(hoff+toff)-ahlen*0.5)+sqrt(2)/2*toff),
+        c(ahlen*sin(-ahangle-pi/16)-sqrt(2)/2*hoff, slen-ahlen*cos(-ahangle-pi/16)-sqrt(2)/2*hoff),
+        c(-sqrt(2)/2*hoff,slen-sqrt(2)/2*hoff),
+        c(ahlen*sin(ahangle-pi/16)-sqrt(2)/2*hoff, slen-ahlen*cos(ahangle-pi/16)-sqrt(2)/2*hoff),
+        cbind(-curve*(1-(2*(rev(inc)-0.5))^2)+swid/2-sqrt(2)/2*(toff+rev(inc)*(hoff-toff)), rev(inc)*(slen-sqrt(2)/2*(hoff+toff)-ahlen*0.5)+sqrt(2)/2*toff),
+        c(NA,NA)
+      )
+    }else{
+      inc<-(0:csteps)/csteps
+      coord<-rbind(
+        cbind(-curve*(1-(2*(inc-0.5))^2)-swid/2-sqrt(2)/2*(toff+inc*(hoff-toff)), inc*(slen-sqrt(2)/2*(hoff+toff))+sqrt(2)/2*toff),
+        cbind(-curve*(1-(2*(rev(inc)-0.5))^2)+swid/2-sqrt(2)/2*(toff+rev(inc)*(hoff-toff)), rev(inc)*(slen-sqrt(2)/2*(hoff+toff))+sqrt(2)/2*toff),
+        c(NA,NA)
+      )
+    }
+  }
+  theta<-atan2(y1-y0,x1-x0)-pi/2     #Rotate about origin
+  rmat<-rbind(c(cos(theta),sin(theta)),c(-sin(theta),cos(theta)))
+  coord<-coord%*%rmat
+  coord[,1]<-coord[,1]+x0            #Translate to (x0,y0)
+  coord[,2]<-coord[,2]+y0
+  coord
+}
+
 #Custom arrow-drawing method for plot.network
 network.arrow<-function(x0,y0,x1,y1,length=0.1,angle=20,width=0.01,col=1,border=1,lty=1,offset.head=0,offset.tail=0,arrowhead=TRUE,curve=0,edge.steps=50,...){
   if(length(x0)==0)   #Leave if there's nothing to do
     return;
-  #Introduce a function to make coordinates for a single polygon
-  make.coords<-function(x0,y0,x1,y1,ahangle,ahlen,swid,toff,hoff,ahead, curve,csteps){ 
-    slen<-sqrt((x0-x1)^2+(y0-y1)^2)  #Find the total length
-    if(curve==0){         #Straight edges
-      if(ahead){    
-        coord<-rbind(                    #Produce a "generic" version w/head
-          c(-swid/2,toff),
-          c(-swid/2,slen-0.5*ahlen-hoff),
-          c(-ahlen*sin(ahangle),slen-ahlen*cos(ahangle)-hoff),
-          c(0,slen-hoff),
-          c(ahlen*sin(ahangle),slen-ahlen*cos(ahangle)-hoff),
-          c(swid/2,slen-0.5*ahlen-hoff),
-          c(swid/2,toff),
-          c(NA,NA)
-        )
-      }else{
-        coord<-rbind(                    #Produce a "generic" version w/out head
-          c(-swid/2,toff),
-          c(-swid/2,slen-hoff),
-          c(swid/2,slen-hoff),
-          c(swid/2,toff),
-          c(NA,NA)
-        )
-      }
-    }else{             #Curved edges
-      if(ahead){    
-        inc<-(0:csteps)/csteps
-        coord<-rbind(
-          cbind(-curve*(1-(2*(inc-0.5))^2)-swid/2-sqrt(2)/2*(toff+inc*(hoff-toff)), inc*(slen-sqrt(2)/2*(hoff+toff)-ahlen*0.5)+sqrt(2)/2*toff),
-          c(ahlen*sin(-ahangle-pi/16)-sqrt(2)/2*hoff, slen-ahlen*cos(-ahangle-pi/16)-sqrt(2)/2*hoff),
-          c(-sqrt(2)/2*hoff,slen-sqrt(2)/2*hoff),
-          c(ahlen*sin(ahangle-pi/16)-sqrt(2)/2*hoff, slen-ahlen*cos(ahangle-pi/16)-sqrt(2)/2*hoff),
-          cbind(-curve*(1-(2*(rev(inc)-0.5))^2)+swid/2-sqrt(2)/2*(toff+rev(inc)*(hoff-toff)), rev(inc)*(slen-sqrt(2)/2*(hoff+toff)-ahlen*0.5)+sqrt(2)/2*toff),
-          c(NA,NA)
-        )
-      }else{
-        inc<-(0:csteps)/csteps
-        coord<-rbind(
-          cbind(-curve*(1-(2*(inc-0.5))^2)-swid/2-sqrt(2)/2*(toff+inc*(hoff-toff)), inc*(slen-sqrt(2)/2*(hoff+toff))+sqrt(2)/2*toff),
-          cbind(-curve*(1-(2*(rev(inc)-0.5))^2)+swid/2-sqrt(2)/2*(toff+rev(inc)*(hoff-toff)), rev(inc)*(slen-sqrt(2)/2*(hoff+toff))+sqrt(2)/2*toff),
-          c(NA,NA)
-        )
-      }
-    }
-    theta<-atan2(y1-y0,x1-x0)-pi/2     #Rotate about origin
-    rmat<-rbind(c(cos(theta),sin(theta)),c(-sin(theta),cos(theta)))
-    coord<-coord%*%rmat
-    coord[,1]<-coord[,1]+x0            #Translate to (x0,y0)
-    coord[,2]<-coord[,2]+y0
-    coord
-  }
+
   #"Stretch" the arguments
   n<-length(x0)
   angle<-rep(angle,length=n)/360*2*pi
@@ -95,59 +97,61 @@ network.arrow<-function(x0,y0,x1,y1,length=0.1,angle=20,width=0.01,col=1,border=
   #Obtain coordinates
   coord<-vector()
   for(i in 1:n)  
-    coord<-rbind(coord,make.coords(x0[i],y0[i],x1[i],y1[i],angle[i],length[i], width[i],offset.tail[i],offset.head[i],arrowhead[i],curve[i],edge.steps[i]))
+    coord<-rbind(coord,make.arrow.poly.coords(x0[i],y0[i],x1[i],y1[i],angle[i],length[i], width[i],offset.tail[i],offset.head[i],arrowhead[i],curve[i],edge.steps[i]))
   coord<-coord[-NROW(coord),]
-  #Draw polygons
+  #Draw polygons.  
+  # the coord matrix has some NA rows, which will break it into multiple polygons
   polygon(coord,col=col,border=border,lty=lty,...)
 }
 
+#Introduce a function to make coordinates for a single polygon
+make.loop.poly.coords<-function(x0,y0,xctr,yctr,ahangle,ahlen,swid,off,rad,ahead,edge.steps){
+  #Determine the center of the plot
+  xoff <- x0-xctr
+  yoff <- y0-yctr
+  roff <- sqrt(xoff^2+yoff^2)
+  x0hat <- xoff/roff
+  y0hat <- yoff/roff
+  r0.vertex <- off
+  r0.loop <- rad
+  x0.loop <- x0hat*r0.loop
+  y0.loop <- y0hat*r0.loop
+  ang <- (((0:edge.steps)/edge.steps)*(1-(2*r0.vertex+0.5*ahlen*ahead)/ (2*pi*r0.loop))+r0.vertex/(2*pi*r0.loop))*2*pi+atan2(-yoff,-xoff)
+  ang2 <- ((1-(2*r0.vertex)/(2*pi*r0.loop))+r0.vertex/(2*pi*r0.loop))*2*pi+ atan2(-yoff,-xoff)
+  if(ahead){
+    x0.arrow <- x0.loop+(r0.loop+swid/2)*cos(ang2)
+    y0.arrow <- y0.loop+(r0.loop+swid/2)*sin(ang2)
+    coord<-rbind(
+      cbind(x0.loop+(r0.loop+swid/2)*cos(ang), 
+            y0.loop+(r0.loop+swid/2)*sin(ang)),
+      cbind(x0.arrow+ahlen*cos(ang2-pi/2),
+            y0.arrow+ahlen*sin(ang2-pi/2)),
+      cbind(x0.arrow,y0.arrow),
+      cbind(x0.arrow+ahlen*cos(-2*ahangle+ang2-pi/2),
+            y0.arrow+ahlen*sin(-2*ahangle+ang2-pi/2)),
+      cbind(x0.loop+(r0.loop-swid/2)*cos(rev(ang)),
+            y0.loop+(r0.loop-swid/2)*sin(rev(ang))),
+      c(NA,NA)
+    )
+  }else{
+    coord<-rbind(
+      cbind(x0.loop+(r0.loop+swid/2)*cos(ang),
+            y0.loop+(r0.loop+swid/2)*sin(ang)),
+      cbind(x0.loop+(r0.loop-swid/2)*cos(rev(ang)),
+            y0.loop+(r0.loop-swid/2)*sin(rev(ang))),
+      c(NA,NA)
+    )
+  }
+  coord[,1]<-coord[,1]+x0            #Translate to (x0,y0)
+  coord[,2]<-coord[,2]+y0
+  coord
+}
 
 #Custom loop-drawing method for plot.network
 network.loop<-function(x0,y0,length=0.1,angle=10,width=0.01,col=1,border=1,lty=1,offset=0,edge.steps=10,radius=1,arrowhead=TRUE,xctr=0,yctr=0,...){
   if(length(x0)==0)   #Leave if there's nothing to do
     return;
-  #Introduce a function to make coordinates for a single polygon
-  make.coords<-function(x0,y0,xctr,yctr,ahangle,ahlen,swid,off,rad,ahead){
-    #Determine the center of the plot
-    xoff <- x0-xctr
-    yoff <- y0-yctr
-    roff <- sqrt(xoff^2+yoff^2)
-    x0hat <- xoff/roff
-    y0hat <- yoff/roff
-    r0.vertex <- off
-    r0.loop <- rad
-    x0.loop <- x0hat*r0.loop
-    y0.loop <- y0hat*r0.loop
-    ang <- (((0:edge.steps)/edge.steps)*(1-(2*r0.vertex+0.5*ahlen*ahead)/ (2*pi*r0.loop))+r0.vertex/(2*pi*r0.loop))*2*pi+atan2(-yoff,-xoff)
-    ang2 <- ((1-(2*r0.vertex)/(2*pi*r0.loop))+r0.vertex/(2*pi*r0.loop))*2*pi+ atan2(-yoff,-xoff)
-    if(ahead){
-      x0.arrow <- x0.loop+(r0.loop+swid/2)*cos(ang2)
-      y0.arrow <- y0.loop+(r0.loop+swid/2)*sin(ang2)
-      coord<-rbind(
-        cbind(x0.loop+(r0.loop+swid/2)*cos(ang), 
-          y0.loop+(r0.loop+swid/2)*sin(ang)),
-        cbind(x0.arrow+ahlen*cos(ang2-pi/2),
-          y0.arrow+ahlen*sin(ang2-pi/2)),
-        cbind(x0.arrow,y0.arrow),
-        cbind(x0.arrow+ahlen*cos(-2*ahangle+ang2-pi/2),
-          y0.arrow+ahlen*sin(-2*ahangle+ang2-pi/2)),
-        cbind(x0.loop+(r0.loop-swid/2)*cos(rev(ang)),
-          y0.loop+(r0.loop-swid/2)*sin(rev(ang))),
-        c(NA,NA)
-      )
-    }else{
-      coord<-rbind(
-        cbind(x0.loop+(r0.loop+swid/2)*cos(ang),
-          y0.loop+(r0.loop+swid/2)*sin(ang)),
-        cbind(x0.loop+(r0.loop-swid/2)*cos(rev(ang)),
-          y0.loop+(r0.loop-swid/2)*sin(rev(ang))),
-        c(NA,NA)
-      )
-    }
-    coord[,1]<-coord[,1]+x0            #Translate to (x0,y0)
-    coord[,2]<-coord[,2]+y0
-    coord
-  }
+
   #"Stretch" the arguments
   n<-length(x0)
   angle<-rep(angle,length=n)/360*2*pi
@@ -162,20 +166,21 @@ network.loop<-function(x0,y0,length=0.1,angle=10,width=0.01,col=1,border=1,lty=1
   #Obtain coordinates
   coord<-vector()
   for(i in 1:n)  
-    coord<-rbind(coord,make.coords(x0[i],y0[i],xctr,yctr,angle[i],length[i], width[i],offset[i],rad[i],arrowhead[i]))
+    coord<-rbind(coord,make.loop.poly.coords(x0[i],y0[i],xctr,yctr,angle[i],length[i], width[i],offset[i],rad[i],arrowhead[i],edge.steps))
   coord<-coord[-NROW(coord),]
   #Draw polygons
   polygon(coord,col=col,border=border,lty=lty,...)
 }
 
+#Introduce a function to make coordinates for a single vertex polygon
+make.vertex.poly.coords<-function(x,y,r,s,rot){
+  ang<-(1:s)/s*2*pi+rot*2*pi/360
+  rbind(cbind(x+r*cos(ang),y+r*sin(ang)),c(NA,NA))  
+}
 
 #Routine to plot vertices, using polygons
 network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=1,...){
-  #Introduce a function to make coordinates for a single polygon
-  make.coords<-function(x,y,r,s,rot){
-    ang<-(1:s)/s*2*pi+rot*2*pi/360
-    rbind(cbind(x+r*cos(ang),y+r*sin(ang)),c(NA,NA))  
-  }
+  
   #Prep the vars
   n<-length(x)
   radius<-rep(radius,length=n)
@@ -188,7 +193,7 @@ network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=
   #Obtain the coordinates
   coord<-vector()
   for(i in 1:length(x)) {
-    coord<-make.coords(x[i],y[i],radius[i],sides[i],rot[i])
+    coord<-make.vertex.poly.coords(x[i],y[i],radius[i],sides[i],rot[i])
     polygon(coord,border=border[i],col=col[i],lty=lty[i],lwd=lwd[i], ...)
   }
   #Plot the polygons
@@ -440,61 +445,31 @@ layout.par=NULL,
    if(!vertices.last)
      network.vertex(cx[use],cy[use],radius=vertex.radius[use], sides=vertex.sides[use],col=vertex.col[use],border=vertex.border[use],lty=vertex.lty[use],rot=vertex.rot[use], lwd=vertex.lwd[use])
    #Generate the edges and their attributes
-   px0<-vector()   #Create position vectors (tail, head)
-   py0<-vector()
-   px1<-vector()
-   py1<-vector()
-   e.lwd<-vector() #Create edge attribute vectors
-   e.curv<-vector()
-   e.type<-vector()
-   e.col<-vector()
-   e.hoff<-vector() #Offset radii for heads
-   e.toff<-vector() #Offset radii for tails
-   e.diag<-vector() #Indicator for self-ties
-   e.rad<-vector()  #Edge radius (only used for loops)
+   # TODO: initialize to full length, or sapply code below
+   # don't append in loop, no wonder is slow. 
+   nDrawEdges<-NROW(d)
+   px0<-numeric(nDrawEdges)   #Create position vectors (tail, head)
+   py0<-numeric(nDrawEdges)
+   px1<-numeric(nDrawEdges)
+   py1<-numeric(nDrawEdges)
+   e.lwd<-numeric(nDrawEdges) #Create edge attribute vectors
+   e.curv<-numeric(nDrawEdges)
+   e.type<-numeric(nDrawEdges)
+   e.col<-character(nDrawEdges)
+   e.hoff<-numeric(nDrawEdges) #Offset radii for heads
+   e.toff<-numeric(nDrawEdges) #Offset radii for tails
+   e.diag<-logical(nDrawEdges) #Indicator for self-ties
+   e.rad<-numeric(nDrawEdges)  #Edge radius (only used for loops)
    if(NROW(d)>0){
      #Edge color
-     if(length(dim(edge.col))==2)   #Coerce edge.col/edge.lty to vector form
-       edge.col<-edge.col[d[,1:2]]
-     else if(is.character(edge.col)&&(length(edge.col)==1)){
-       temp<-edge.col
-       edge.col<-x%e%edge.col
-       if(!is.null(edge.col)){
-         edge.col<-edge.col[edgetouse]
-         if(!all(is.color(edge.col),na.rm=TRUE))
-           edge.col<-as.color(edge.col)
-       }else
-         edge.col<-rep(temp,length=NROW(d))  #Assume it was a color word
-     }else
-       edge.col<-rep(edge.col,length=NROW(d))
+     edge.col<-.preparePlotArguments(x,'edge.col',edge.col,d=d)
      #Edge line type
-     if(length(dim(edge.lty))==2)
-       edge.lty<-edge.lty[d[,1:2]]
-     else if(is.character(edge.lty)&&(length(edge.lty)==1)){
-       temp<-edge.lty
-       edge.lty<-(x%e%edge.lty)[edgetouse]
-       if(all(is.na(edge.lty)))
-         stop("Attribute '",temp,"' had illegal missing values for edge.lty or was not present in plot.network.default.")
-     }else
-       edge.lty<-rep(edge.lty,length=NROW(d))
+     edge.lty<-.preparePlotArguments(x,'edge.lty',edge.lty,d=d)
      #Edge line width
-     if(length(dim(edge.lwd))==2){
-       edge.lwd<-edge.lwd[d[,1:2]]
-       e.lwd.as.mult<-FALSE
-     }else if(is.character(edge.lwd)&&(length(edge.lwd)==1)){
-       temp<-edge.lwd
-       edge.lwd<-(x%e%edge.lwd)[edgetouse]
-       if(all(is.na(edge.lwd)))
-         stop("Attribute '",temp,"' had illegal missing values for edge.lwd or was not present in plot.network.default.")
-       e.lwd.as.mult<-FALSE
-     }else{ 
-       if(length(edge.lwd)==1)
-         e.lwd.as.mult<-TRUE
-       else
-         e.lwd.as.mult<-FALSE
-       edge.lwd<-rep(edge.lwd,length=NROW(d))
-     }
+     edge.lwd<-.preparePlotArguments(x,'edge.lwd',edge.lwd,d=d)
      #Edge curve
+     # TODO: can't move this into prepare plot args becaue it also sets the e.curve.as.mult
+     #       but I think it could be refactored to use the d[] array as the other edge functions do
      if(!is.null(edge.curve)){
        if(length(dim(edge.curve))==2){
          edge.curve<-edge.curve[d[,1:2]]
@@ -519,92 +494,47 @@ layout.par=NULL,
      # only evaluate edge label stuff if we will draw label
      if(!is.null(edge.label)){
        #Edge label
-       if(length(dim(edge.label))==2){   #Coerce edge.label to vector form
-         edge.label<-edge.label[d[,1:2]]
-       }else if(is.character(edge.label)&&(length(edge.label)==1)){
-         temp<-edge.label
-         edge.label<-x%e%edge.label
-         if(!is.null(edge.label)){
-           edge.label<-edge.label[edgetouse]
-         }else
-           edge.label<-rep(temp,length=NROW(d))  #Assume it was a value to replicate
-       }else if(is.logical(edge.label)&&(length(edge.label)==1)) {
-         if (edge.label){
-           # default to edge ids.
-           edge.label<-valid.eids(x)[edgetouse]
-         } else {
-           # don't draw edge labels if set to FALSE
-           edge.label<-NULL
-         }
-       }else{   
-         
-         # do nothing and hope for the best!
-         edge.label<-rep(edge.label,length=NROW(d))
-       }
+        edge.label<-.preparePlotArguments(x,'edge.label',edge.label,d=d)
+       
        #Edge label color
-       if(length(dim(edge.col))==2)   #Coerce edge.label.col
-         edge.label.col<-edge.label.col[d[,1:2]]
-       else if(is.character(edge.label.col)&&(length(edge.label.col)==1)){
-         temp<-edge.label.col
-         edge.label.col<-x%e%edge.label.col
-         if(!is.null(edge.label.col)){
-           edge.label.col<-edge.label.col[edgetouse]
-           if(!all(is.color(edge.label.col),na.rm=TRUE))
-             edge.label.col<-as.color(edge.label.col)
-         }else
-           edge.label.col<-rep(temp,length=NROW(d))  #Assume it was a color word
-       }else
-         edge.label.col<-rep(edge.label.col,length=NROW(d))
+       edge.label.col<-.preparePlotArguments(x,'edge.label.col',edge.label.col,d=d)
        #Edge label cex
-       if(length(dim(edge.label.cex))==2)
-         edge.label.cex<-edge.label.cex[d[,1:2]]
-       else if(is.character(edge.label.cex)&&(length(edge.label.cex)==1)){
-         temp<-edge.label.cex
-         edge.label.cex<-(x%e%edge.label.cex)[edgetouse]
-         if(all(is.na(edge.label.cex)))
-           stop("Attribute '",temp,"' had illegal missing values for edge.label.cex or was not present in plot.network.default.")
-       }else
-         edge.label.cex<-rep(edge.label.cex,length=NROW(d))
+       edge.label.cex<-.preparePlotArguments(x,'edge.label.cex',edge.label.cex,d=d)
      } # end edge label setup block
      
      #Proceed with edge setup
      dist<-((cx[d[,1]]-cx[d[,2]])^2+(cy[d[,1]]-cy[d[,2]])^2)^0.5  #Get the inter-point distances for curves
      tl<-d.raw*dist   #Get rescaled edge lengths
      tl.max<-max(tl)  #Get maximum edge length
-     for(i in 1:NROW(d))
-       if(use[d[i,1]]&&use[d[i,2]]){  #Plot edges for displayed vertices
-         px0<-c(px0,as.double(cx[d[i,1]]))  #Store endpoint coordinates
-         py0<-c(py0,as.double(cy[d[i,1]]))
-         px1<-c(px1,as.double(cx[d[i,2]]))
-         py1<-c(py1,as.double(cy[d[i,2]]))
-         e.toff<-c(e.toff,vertex.radius[d[i,1]]) #Store endpoint offsets
-         e.hoff<-c(e.hoff,vertex.radius[d[i,2]])
-         e.col<-c(e.col,edge.col[i])    #Store other edge attributes
-         e.type<-c(e.type,edge.lty[i])
-         if(edge.lwd[i]>0){
-           if(e.lwd.as.mult)
-             e.lwd<-c(e.lwd,edge.lwd[i]*d.raw[i,3])
-           else
-             e.lwd<-c(e.lwd,edge.lwd[i])
-         }else
-           e.lwd<-c(e.lwd,1)
-         e.diag<-c(e.diag,d[i,1]==d[i,2])  #Is this a loop?
-         e.rad<-c(e.rad,vertex.radius[d[i,1]]*loop.cex[d[i,1]])
+     for(i in 1:NROW(d)){
+       if(use[d[i,1]]&&use[d[i,2]]){  #Plot edges for displayed vertices (wait,doesn't 'use' track isolates, which don't have edges anyway?)
+         px0[i]<-as.double(cx[d[i,1]])  #Store endpoint coordinates
+         py0[i]<-as.double(cy[d[i,1]])
+         px1[i]<-as.double(cx[d[i,2]])
+         py1[i]<-as.double(cy[d[i,2]])
+         e.toff[i]<-vertex.radius[d[i,1]] #Store endpoint offsets
+         e.hoff[i]<-vertex.radius[d[i,2]]
+         e.col[i]<-edge.col[i]   #Store other edge attributes
+         e.type[i]<-edge.lty[i]
+         e.lwd[i]<-edge.lwd[i]
+         e.diag[i]<-d[i,1]==d[i,2]  #Is this a loop?
+         e.rad[i]<-vertex.radius[d[i,1]]*loop.cex[d[i,1]]
          if(uselen){   #Should we base curvature on interpoint distances?
            if(tl[i]>0){ 
              e.len<-dist[i]*tl.max/tl[i]
-             e.curv<-c(e.curv,edge.len*sqrt((e.len/2)^2-(dist[i]/2)^2))
+             e.curv[i]<-edge.len*sqrt((e.len/2)^2-(dist[i]/2)^2)
            }else{
-             e.curv<-c(e.curv,0)   
+             e.curv[i]<-0
            }
          }else{        #Otherwise, use prespecified edge.curve
            if(e.curv.as.mult)    #If it's a scalar, multiply by edge str
-             e.curv<-c(e.curv,edge.curve[i]*d.raw[i])
+             e.curv[i]<-edge.curve[i]*d.raw[i]
            else
-             e.curv<-c(e.curv,edge.curve[i])
+             e.curv[i]<-edge.curve[i]
          }
        }
-     } # end edges block
+     } 
+   }# end edges block
    #Plot loops for the diagonals, if diag==TRUE, rotating wrt center of mass
    if(diag&&(length(px0)>0)&&sum(e.diag>0)){  #Are there any loops present?
      network.loop(as.vector(px0)[e.diag],as.vector(py0)[e.diag], length=1.5*baserad*arrowhead.cex,angle=25,width=e.lwd[e.diag]*baserad/10,col=e.col[e.diag],border=e.col[e.diag],lty=e.type[e.diag],offset=e.hoff[e.diag],edge.steps=loop.steps,radius=e.rad[e.diag],arrowhead=usearrows,xctr=mean(cx[use]),yctr=mean(cy[use]))
@@ -778,11 +708,29 @@ layout.par=NULL,
 }
 
 # moving all of the plot argument checking and expansion into a single function
-# so that it will be acessible from other plot-related tools
+# so that it will be acessible from other plot-related tools (like ndtv)
 # argName = character named of argument to be checked/expaneded
+# argValue = value passed in by user, to be processed/expanded
+# d is an edgelist matrix of edge values optionally used by some edge attribute functions
+# edgetouse the set of edge ids to be used (in case some edges are not being shown)
 
-.preparePlotArguments<-function(x,argName, argValue){
+.preparePlotArguments<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
   n<-network.size(x)
+  # count the number of edges 
+  # not sure if nrow d is every differnt, than network edgecount, but just being safe
+  if(!is.null(d)){
+    nE<-NROW(d)
+  } else {
+    nE<-network.edgecount(x)
+  }
+  if(is.null(edgetouse)){
+    edgetouse<-seq_len(nE) # use all the edges
+  }
+  # if d exists, it may need to be subset to the number of edges
+  if (!is.null(d)){
+    d<-d[edgetouse,]
+  }
+  
   # assign the value to a local variable with the appropriate name
   assign(argName,argValue)
   #Fill out vertex vectors; assume we're using attributes if chars used
@@ -922,6 +870,138 @@ layout.par=NULL,
         }
       }else{
         label.bg <- rep(label.bg,length=n)
+      }
+      ,
+      # ------ Edge color---------
+      edge.col=if(length(dim(edge.col))==2)   #Coerce edge.col/edge.lty to vector form
+        edge.col<-edge.col[d[,1:2]]
+      else if(is.character(edge.col)&&(length(edge.col)==1)){
+        temp<-edge.col
+        edge.col<-x%e%edge.col
+        if(!is.null(edge.col)){
+          edge.col<-edge.col[edgetouse]
+          if(!all(is.color(edge.col),na.rm=TRUE))
+            edge.col<-as.color(edge.col)
+        }else{
+          edge.col<-rep(temp,length=nE)  #Assume it was a color word
+        }
+      }else{
+        edge.col<-rep(edge.col,length=nE)
+      }
+      ,
+      # ----------- Edge line type ------------------
+      edge.lty=if(length(dim(edge.lty))==2){
+        edge.lty<-edge.lty[d[,1:2]]
+      }else if(is.character(edge.lty)&&(length(edge.lty)==1)){
+        temp<-edge.lty
+        edge.lty<-(x%e%edge.lty)[edgetouse]
+        if(all(is.na(edge.lty)))
+          stop("Attribute '",temp,"' had illegal missing values for edge.lty or was not present in plot.network.default.")
+      }else{
+        edge.lty<-rep(edge.lty,length=nE)
+      }
+      , 
+      # ----------- Edge line width ------
+      edge.lwd=if(length(dim(edge.lwd))==2){
+        edge.lwd<-edge.lwd[d[,1:2]]  # what is going on here? aren't these the incident vertices? # for later matrix lookup?
+      }else if(is.character(edge.lwd)&&(length(edge.lwd)==1)){
+        temp<-edge.lwd
+        edge.lwd<-(x%e%edge.lwd)[edgetouse]
+        if(all(is.na(edge.lwd))){
+          stop("Attribute '",temp,"' had illegal missing values for edge.lwd or was not present in plot.network.default.")
+        }
+      }else{ 
+        if(length(edge.lwd)==1){ # if lwd has only one element..
+          if(edge.lwd>0){  # ... and that element > 0 ,use it as a scale factor for the edge values in d
+                           # .. unless d is missing
+            if (!is.null(d)){
+              edge.lwd<-edge.lwd*d[,3]
+            } 
+          }else{  # edge is zero or less, so set it to 1
+            edge.lwd<-rep(1,length=nE)
+          }
+        } else { # just replacte for the number of edges
+          edge.lwd<-rep(edge.lwd,length=nE)
+        }
+      }
+      ,
+      
+      # ----------- Edge curve---------------
+      edge.curve=if(!is.null(edge.curve)){
+        if(length(dim(edge.curve))==2){
+          edge.curve<-edge.curve[d[,1:2]]
+          e.curv.as.mult<-FALSE
+        }else{ 
+          if(length(edge.curve)==1){
+            e.curv.as.mult<-TRUE
+          }else{
+            e.curv.as.mult<-FALSE
+          }
+          edge.curve<-rep(edge.curve,length=nE)
+        }
+      }else if(is.character(edge.curve)&&(length(edge.curve)==1)){
+        temp<-edge.curve
+        edge.curve<-(x%e%edge.curve)[edgetouse]
+        if(all(is.na(edge.curve))){
+          stop("Attribute '",temp,"' had illegal missing values for edge.curve or was not present in plot.network.default.")
+        }
+        e.curv.as.mult<-FALSE
+      }else{
+        edge.curve<-rep(0,length=nE)
+        e.curv.as.mult<-FALSE
+      }
+      ,
+      # -------- edge label  ----------------------
+      edge.label=if(length(dim(edge.label))==2){   #Coerce edge.label to vector form
+        edge.label<-edge.label[d[,1:2]]
+      }else if(is.character(edge.label)&&(length(edge.label)==1)){
+        temp<-edge.label
+        edge.label<-x%e%edge.label
+        if(!is.null(edge.label)){
+          edge.label<-edge.label[edgetouse]
+        }else
+          edge.label<-rep(temp,length=nE)  #Assume it was a value to replicate
+      }else if(is.logical(edge.label)&&(length(edge.label)==1)) {
+        if (edge.label){
+          # default to edge ids.
+          edge.label<-valid.eids(x)[edgetouse]
+        } else {
+          # don't draw edge labels if set to FALSE
+          edge.label<-NULL
+        }
+      }else{   
+        # do nothing and hope for the best!
+        edge.label<-rep(edge.label,length=nE)
+      }
+      ,
+      # ------ edge label color --------------------
+      #Edge  label color
+      edge.label.col=if(length(dim(edge.label.col))==2){   #Coerce edge.label.col
+        edge.label.col<-edge.label.col[d[,1:2]]
+      } else if(is.character(edge.label.col)&&(length(edge.label.col)==1)){
+        temp<-edge.label.col
+        edge.label.col<-x%e%edge.label.col
+        if(!is.null(edge.label.col)){
+          edge.label.col<-edge.label.col[edgetouse]
+          if(!all(is.color(edge.label.col),na.rm=TRUE))
+            edge.label.col<-as.color(edge.label.col)
+        }else
+          edge.label.col<-rep(temp,length=nE)  #Assume it was a color word
+      }else{
+        edge.label.col<-rep(edge.label.col,length=nE)
+      }
+      ,
+      # ------- edge.label.cex  --------------------
+      #Edge label cex
+      edge.label.cex=if(length(dim(edge.label.cex))==2)
+        edge.label.cex<-edge.label.cex[d[,1:2]]
+      else if(is.character(edge.label.cex)&&(length(edge.label.cex)==1)){
+        temp<-edge.label.cex
+        edge.label.cex<-(x%e%edge.label.cex)[edgetouse]
+        if(all(is.na(edge.label.cex)))
+          stop("Attribute '",temp,"' had illegal missing values for edge.label.cex or was not present in plot.network.default.")
+      }else{
+        edge.label.cex<-rep(edge.label.cex,length=nE)
       }
       # case in which none of the argument names match up
       # stop('argument "',argName,'"" does not match with any of the plot.network arguments')
