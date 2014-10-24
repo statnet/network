@@ -728,7 +728,7 @@ layout.par=NULL,
   }
   # if d exists, it may need to be subset to the number of edges
   if (!is.null(d)){
-    d<-d[edgetouse,]
+    d<-d[edgetouse,,drop=FALSE]
   }
   
   # assign the value to a local variable with the appropriate name
