@@ -45,6 +45,9 @@ prior to calling this routine.
   
   /*Define various things*/
   n=(long int)*pn;
+
+  if (n <= 1) return; /* quick return when too few nodes to layout */
+
   m=(long int)*pm;
   niter=*pniter;
   maxdelta=*pmaxdelta;
