@@ -2,7 +2,7 @@
 # mostly recent functionality added by skyebend
 require(network)
 # -----  test edge labels ------
-ymat<-matrix(c(0,1,2,3, 0,0,0,0, 0,0,0,0, 0,0,0,0),ncol=4)
+ymat<-matrix(c(0,1,2,3, 0,0,0,0, 1,0,0,0, 0,0,0,0),ncol=4)
 ynet<-network(ymat,ignore.eval=FALSE,names.eval='weight')
 # don't do anything if no value given
 plot(ynet,edge.label.col='blue',edge.label.cex='weight')
@@ -10,6 +10,10 @@ plot(ynet,edge.label.col='blue',edge.label.cex='weight')
 plot(ynet,edge.label=TRUE)
 
 plot(ynet,edge.label='weight',edge.label.col='blue',edge.label.cex='weight')
+
+# labels for curved edges
+plot(ynet,edge.label='weight',edge.label.col='blue',edge.label.cex='weight',usecurve=TRUE)
+plot(ynet,edge.label='weight',edge.label.col='blue',edge.label.cex='weight',usecurve=TRUE,edge.curve=0.5)
 
 data(emon)
 par(mar=c(0,0,0,0))

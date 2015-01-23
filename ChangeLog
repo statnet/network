@@ -1,5 +1,8 @@
 CHANGELOG:
+v1.12 Fixes & Features
+   - plot network can now plot labels on curved edges
 v1.11 Fixes & Features
+   - minor change to layout.c to fix UBSAN warning flagged by CRAN
    - minor changes to print.network to give more informative info about some network attributes
    - get.edge.attribute now has C-level backend
    - get.edge.attribute and get.edge.value now have arguments to avoid returning attribute values from 'missing' edges (na.omit) and unset/deleted edges (deleted.edges.omit) and edges with no value assigned for the attribute (null.na). 

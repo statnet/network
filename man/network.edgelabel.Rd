@@ -8,7 +8,7 @@ Plots a label corresponding to an edge in a network plot.
 Draws a text labels on (or adjacent to) the line segments connecting vertices on a network plot.  
 }
 \usage{
-network.edgelabel(px0, py0, px1, py1, label, directed, loops = FALSE, cex, ...)
+network.edgelabel(px0, py0, px1, py1, label, directed, loops = FALSE, cex, curve = 0...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,12 +36,16 @@ logical: if true, assuming the labels to be drawn belong to loop-type edges and 
   \item{cex}{
 numeric vector giving the text expansion factor for each label
 }
+
+  \item{curve}{
+numeric vector controling the extent of edge curvature (0 = straight line edges)
+}
   \item{\dots}{
 additional arguments to be passed to \code{\link{text}}
 }
 }
 \details{
-Called internally by \code{\link{plot.network}} when \code{edge.label} parameter is used. (currently only for straight edges). Makes a crude attempt to shift labels to either side of line, and to draw the edge labels for self-loops near the vertex. No attempt is made to avoid overlap between vertex and edge labels.
+Called internally by \code{\link{plot.network}} when \code{edge.label} parameter is used. For directed, non-curved edges, the labels are shifted towards the tail of the edge. Labels for curved edges are not shifted because opposite-direction edges curve the opposite way.  Makes a crude attempt to shift labels to either side of line, and to draw the edge labels for self-loops near the vertex. No attempt is made to avoid overlap between vertex and edge labels.
 }
 \value{
 no value is returned but text will be rendered on the active plot
