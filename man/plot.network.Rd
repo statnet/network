@@ -48,7 +48,7 @@
   \item{boxed.labels}{ boolean; place vertex labels within boxes? }
   \item{label.pos}{ position at which labels should be placed, relative to vertices.  \code{0} results in labels which are placed away from the center of the plotting region; \code{1}, \code{2}, \code{3}, and \code{4} result in labels being placed below, to the left of, above, and to the right of vertices (respectively); and \code{label.pos>=5} results in labels which are plotted with no offset (i.e., at the vertex positions). }
   \item{label.bg}{ background color for label boxes (if \code{boxed.labels==TRUE}); may be a vector, if boxes are to be of different colors.}
-  \item{vertex.sides}{ number of polygon sides for vertices; may be given as a vector or a vertex attribute name, if vertices are to be of different types. }
+  \item{vertex.sides}{ number of polygon sides for vertices; may be given as a vector or a vertex attribute name, if vertices are to be of different types. As of v1.12, radius of polygons are scaled so that all shapes have equal area}
   \item{vertex.rot}{ angle of rotation for vertices (in degrees); may be given as a vector or a vertex attribute name, if vertices are to be rotated differently. }
   \item{vertex.lwd}{ line width of vertex borders; may be given as a vector or a vertex attribute name, if vertex borders are to have different line widths. }
   \item{arrowhead.cex}{ expansion factor for edge arrowheads.}

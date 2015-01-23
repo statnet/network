@@ -61,3 +61,9 @@ plot(test,coord=cbind(c(1,1),c(1,1)),jitter=FALSE,displaylabels=TRUE)
 test<-network.initialize(3)
 test[1,2:3]<-1
 plot(test,coord=cbind(c(1,1,2),c(1,1,2)),jitter=FALSE,displaylabels=TRUE)
+
+# tests for polygon sizes/sides
+plot(network.initialize(7),vertex.sides=c(50,4,3,2,1,0,NA),vertex.cex=40,coord=matrix(0,ncol=7,nrow=7),jitter=F,vertex.col='#CCCCCC00',vertex.border =c('red','green','blue','orange'))
+plot(network.initialize(7),vertex.sides=c(50,4,3,2,1,0,NA),vertex.cex=0)
+plot(network.initialize(7),vertex.sides=c(50,4,3,2,1,0,NA),vertex.cex=NA)
+

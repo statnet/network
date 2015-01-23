@@ -173,9 +173,26 @@ network.loop<-function(x0,y0,length=0.1,angle=10,width=0.01,col=1,border=1,lty=1
 }
 
 #Introduce a function to make coordinates for a single vertex polygon
-make.vertex.poly.coords<-function(x,y,r,s,rot){
+# this version just uses the raw radius, so triangles appear half the size of circles
+old.make.vertex.poly.coords<-function(x,y,r,s,rot){
   ang<-(1:s)/s*2*pi+rot*2*pi/360
   rbind(cbind(x+r*cos(ang),y+r*sin(ang)),c(NA,NA))  
+}
+
+#Introduce a function to make coordinates for a single vertex polygon
+# all polygons produced will have equal area
+make.vertex.poly.coords<-function(x,y,r,s,rot){
+  # trap some edge cases
+  if(is.na(s) || s<2){
+    return(rbind(c(x,y),c(NA,NA))) # return a single point
+  } else {
+    #scale r (circumradius) to make area equal
+    area<-pi*r^2  # target area based desired r as radius of circle
+    # solve for new r as polygon radius that would match the area of the circle
+    r<-sqrt(2*area / (s*sin(2*pi/s)))
+    ang<-(1:s)/s*2*pi+rot*2*pi/360
+    return(rbind(cbind(x+r*cos(ang),y+r*sin(ang)),c(NA,NA)))
+  }
 }
 
 #Routine to plot vertices, using polygons
