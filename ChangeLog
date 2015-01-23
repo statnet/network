@@ -1,6 +1,7 @@
 CHANGELOG:
 v1.12 Fixes & Features
-   - plot network can now plot labels on curved edges
+   - changing the vertex.sides argument to plot.network now produces polygons of equal area instead of equal radius.
+   - plot.network can now plot labels on curved edges
 v1.11 Fixes & Features
    - minor change to layout.c to fix UBSAN warning flagged by CRAN
    - minor changes to print.network to give more informative info about some network attributes
