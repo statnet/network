@@ -201,10 +201,11 @@ network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=
 }
 
 # draw a label for a network edge
-network.edgelabel<-function(px0,py0,px1,py1,label,directed,loops=FALSE,cex,...){
+network.edgelabel<-function(px0,py0,px1,py1,label,directed,loops=FALSE,cex,curve=0,...){
+  curve<-rep(curve,length(label))
   posl<-rep(0,length(label))
   offsets<-rep(0.1,length(label))
-    if (loops){
+    if (loops){  # loops version 
       # assume coordinates are the first pair
       # math is hard.  For now just draw label near the vertex
       lpx<-px0
@@ -218,25 +219,36 @@ network.edgelabel<-function(px0,py0,px1,py1,label,directed,loops=FALSE,cex,...){
       posl[(px0<=px1) & (py0>py1)]<-3
       offsets<-rep(0.5,length(label))
       
-    } else {
-      if (directed){
-        # draw labels off center of line so won't overlap
-        lpx<-px0+((px1-px0)/3)
-        lpy<-py0+((py1-py0)/3)
-      } else {
-        # draw labels on center of line
-        lpx<-px0+((px1-px0)/2)
-        lpy<-py0+((py1-py0)/2)
-        # assumes that line is straight
-      }
-      # compute crude offset so that label doesn't land on line
-      # todo, this doesn't work well on all edge orientations
-      posl[(px0>px1) & (py0>py1)]<-1
-      posl[(px0<=px1) & (py0<=py1)]<-3
-      posl[(px0>px1) & (py0<=py1)]<-2
-      posl[(px0<=px1) & (py0>py1)]<-4
-      
-  } # end non-loop case. 
+    } else {  # either curved or straight line
+      if (all(curve==0)){  # straight line non-curved version
+        if (directed){
+          # draw labels off center of line so won't overlap
+          lpx<-px0+((px1-px0)/3)
+          lpy<-py0+((py1-py0)/3)
+        } else {
+          # draw labels on center of line
+          lpx<-px0+((px1-px0)/2)
+          lpy<-py0+((py1-py0)/2)
+          # assumes that line is straight
+        }
+        
+    } else { # curved edge case
+      coords<-sapply(seq_len(length(label)),function(p){
+        make.arrow.poly.coords(px0[p],py0[p],px1[p],py1[p],ahangle = 0,ahlen=0,swid = 0,toff = 0,hoff=0,ahead = 0,curve=curve[p],csteps=2)[2,] # pick a point returned from the middle of the curve
+      })
+      lpx<-coords[1,]
+      lpy<-coords[2,]
+      # this should 
+    }
+    # compute crude offset so that label doesn't land on line
+    # todo, this doesn't work well on all edge orientations
+    posl[(px0>px1) & (py0>py1)]<-1
+    posl[(px0<=px1) & (py0<=py1)]<-3
+    posl[(px0>px1) & (py0<=py1)]<-2
+    posl[(px0<=px1) & (py0>py1)]<-4
+    
+  }
+   # debug coord location
     text(lpx,lpy,labels=label,cex=cex,pos=posl,offset=offsets,...)
 }
 
@@ -567,6 +579,9 @@ layout.par=NULL,
    }else{   #Curved edge case
      if(length(px0)>0){
        network.arrow(as.vector(px0),as.vector(py0),as.vector(px1), as.vector(py1),length=2*baserad*arrowhead.cex,angle=20,col=e.col,border=e.col,lty=e.type,width=e.lwd*baserad/10,offset.head=e.hoff,offset.tail=e.toff,arrowhead=usearrows,curve=e.curv,edge.steps=edge.steps)
+       if(!is.null(edge.label)){
+         network.edgelabel(px0,py0,px1,py1,edge.label[!e.diag],directed=is.directed(x),cex=edge.label.cex[!e.diag],col=edge.label.col[!e.diag],curve=e.curv)
+       }
      }
    }
    
