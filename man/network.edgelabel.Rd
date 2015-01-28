@@ -8,7 +8,7 @@ Plots a label corresponding to an edge in a network plot.
 Draws a text labels on (or adjacent to) the line segments connecting vertices on a network plot.  
 }
 \usage{
-network.edgelabel(px0, py0, px1, py1, label, directed, loops = FALSE, cex, curve = 0...)
+network.edgelabel(px0, py0, px1, py1, label, directed, loops = FALSE, cex, curve = 0, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
