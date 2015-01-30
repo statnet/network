@@ -1,23 +1,75 @@
-desc <- packageDescription("network")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
-vers <- paste("R package version", desc$Version)
+# ---- BEGIN STATNET CITATION FUNCTIONS ----
+# A header function for ensuring that all the statnet packages provide consistent messaging
+statnet.cite.head <- function(pkg){
+  citHeader(
+    paste("`",pkg,"` is part of the Statnet suite of packages.  ",
+          "If you are using the `",pkg,"` package for research that will be published, ",
+          "we request that you acknowledge this by citing the following.\n\n",
+          'For BibTeX format, use toBibtex(citation("',pkg,'")).',
+          sep="")
+    )
+}
 
-citHeader("'network' is a package providing classes for relational data, and is part of the 'statnet' suite of packages for the statistical modeling of network data.  (See http://statnet.org for more information.)\n\nThis version of 'network' is currently licensed under the GNU Public License, v2 or later.\n\nIf you are using 'network' for research that will be published, we request that you acknowledge this with the following citation:\n\n")
+# A footer function for ensuring that all the statnet packages provide consistent messaging
+statnet.cite.foot <- function(pkg){
+  # the 'meta' variable should be provided by R's CITATION processing script
+  # instead of using packageDescription().  But if this code is called in another context
+  # use packageDescription() to assign meta
+  if(!exists("meta") || is.null(meta)){
+    meta <- packageDescription(pkg) 
+  }
+  citFooter("We have invested a lot of time and effort in creating the",
+            "Statnet suite of packages for use by other researchers.",
+            "Please cite it in all papers where it is used. The package",pkg," is made distributed under the terms of the license:",meta$License )
+}
 
-citEntry(entry="Manual",
-              title = "network: Classes for Relational Data",
-              author = personList(as.person("Carter T. Butts"),
-                                  as.person("Mark S. Handcock"),
-                                  as.person("David R. Hunter")),
-              year = year,
-              address = "Irvine, CA",
-              url = "http://statnet.org/",
-              note = vers,
-     
-              textVersion =
-              paste("Carter T. Butts, Mark S. Handcock, and David R. Hunter. (",
-                    year,
-                    "). network: Classes for Relational Data. ",
-                    vers, ".  Irvine, CA.  http://statnet.org/", sep=""))
+# generates a consistent bibentry citation for the software manual of the package
+statnet.cite.pkg <- function(pkg){
+  
+  # the 'meta' variable should be provided by R's CITATION processing script
+  # instead of using packageDescription().  But if this code is called in another context
+  # use packageDescription() to assign meta
+  if(!exists("meta") || is.null(meta)){
+      meta <- packageDescription(pkg) 
+  }
 
-citFooter("To cite other 'statnet' packages use citation(\"<name>\") ,where <name> is the package name.\n\nYou may also find the following paper to be of use in working with the network package:\n\n  Butts, Carter T.  (2008).  ``network: a Package for Managing Relational Data in R.''  Journal of Statistical Software, 24(2).\n\nFinally, some additional information regarding the C-level network API can be found in the README file within the network.api subdirectory under the package \"inst\" directory -- check your installed library tree.\n\n'network' and 'statnet' are volunteer efforts.  You can help the 'statnet' project by citing relevant packages in all papers where they are used.  Your support is greatly appreciated!")
+  projhomepage <- "http://www.statnet.org"
+  # compute the list of authors  
+  auts <- eval(parse(text=meta$`Authors@R`))
+  auts <- auts[sapply(auts, function(aut) "aut" %in% aut$role)]
+  # create a citation entry for a "software manual" for this version of the software
+  # it will be appended with any specific articles defineded inthe package citation file
+  bibentry("Manual",
+           author = auts,
+           title = paste(meta$Package,": ", meta$Title, sep=""),
+           organization = paste("The Statnet Project (\\url{", projhomepage, "})",sep=""),
+           year         = substr(meta$Date,1,4),
+           note         = paste("R package version ", meta$Version, sep=""),
+           url          = paste("CRAN.R-project.org/package=",meta$Package,sep="")
+           )
+}
+# ---- END STATNET CITATION FUNCTIONS ----
+
+# ---- begin citation formatting specific to the 'network package ----
+
+# use the generic statnet header text
+statnet.cite.head('network')
+
+# generate the standard statnet-style package software manual citation
+statnet.cite.pkg('network')
+
+# generate an additional citation for Carter's original paper
+bibentry("Article",
+         title = "network: a Package for Managing Relational Data in R.",
+         author = person("Carter T.", "Butts", email = "buttsc@uci.edu"),
+         journal = "Journal of Statistical Software",
+         year = 2008,
+         volume = 24,
+         number = 2,
+         url ="http://www.jstatsoft.org/v24/i02/paper")
+
+# add a network-specific footer
+citFooter("Some additional information regarding the C-level network API can be found in the README file within the network.api subdirectory under the package \"inst\" directory -- check your installed library tree.")
+
+# add the general statnet footer
+statnet.cite.foot('network')
