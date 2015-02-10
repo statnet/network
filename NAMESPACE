@@ -128,5 +128,37 @@ which.matrix.type
 
 )
 
-#S3method("%c%",'network')
+# register S3 methods
+
+S3method('%c%',network)
+S3method(add.edge, network)
+S3method(add.edges, network) 
+S3method(add.vertices, network)
+S3method(as.network, default)
+S3method(as.network, matrix)
+S3method(as.network, network)
+S3method(as.matrix, network)
+S3method(print,mixingmatrix)
+S3method(print,network)
+S3method(summary,character)
+S3method(summary,network)
+S3method(plot,network)
+S3method(plot.network,default)
+S3method(is.na,network)
+S3method('+',network)
+S3method('-',network) 
+S3method('*',network)
+S3method('&',network)
+S3method('|',network)
+S3method('!',network)
+
+# these are flagged by checks as S3 methods, but not actually S3 methods 
+# either no corresponding class or no stub method
+#as.matrix.network.adjacency
+#as.matrix.network.edgelist 
+#as.matrix.network.incidence
+#sum.network) 
+#prod.network
+#print.summary.character
+#print.summary.network
 
