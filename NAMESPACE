@@ -140,6 +140,8 @@ S3method(as.network, network)
 S3method(as.matrix, network)
 S3method(print,mixingmatrix)
 S3method(print,network)
+S3method(print,summary.network)
+S3method(print,summary.character)
 S3method(summary,character)
 S3method(summary,network)
 S3method(plot,network)
@@ -151,6 +153,8 @@ S3method('*',network)
 S3method('&',network)
 S3method('|',network)
 S3method('!',network)
+S3method(prod,network)
+S3method(sum,network)
 
 # these are flagged by checks as S3 methods, but not actually S3 methods 
 # either no corresponding class or no stub method
