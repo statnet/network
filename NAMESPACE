@@ -156,13 +156,9 @@ S3method('!',network)
 S3method(prod,network)
 S3method(sum,network)
 
-# these are flagged by checks as S3 methods, but not actually S3 methods 
-# either no corresponding class or no stub method
-#as.matrix.network.adjacency
-#as.matrix.network.edgelist 
-#as.matrix.network.incidence
-#sum.network) 
-#prod.network
-#print.summary.character
-#print.summary.network
+# These are not 'real' S3 methods, as there is no corresponding class
+# but they are dispatched by as.matrix.network and are flagged by check
+S3method(as.matrix.network,adjacency)
+S3method(as.matrix.network,edgelist)
+S3method(as.matrix.network,incidence)
 
