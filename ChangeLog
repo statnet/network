@@ -5,7 +5,7 @@ v1.12 Fixes & Features
    - NAMESPACE file updated to explicitly register S3 methods (and some pseduo S3 methods as requested by CRAN check)
    - changing the vertex.sides argument to plot.network now produces polygons of equal area instead of equal radius.
    - plot.network can now plot labels on curved edges
-   - refactored plot.network so that much of the argument expansion is handled by a public method preparePlotArgs so that it can be accessed by depending packages
+   - refactored plot.network so that much of the argument expansion is handled by a public method plotArgs.network so that it can be accessed by depending packages
 v1.11 Fixes & Features
    - minor change to layout.c to fix UBSAN warning flagged by CRAN
    - minor changes to print.network to give more informative info about some network attributes
