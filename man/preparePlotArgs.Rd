@@ -1,5 +1,5 @@
-\name{preparePlotArgs}
-\alias{preparePlotArgs}
+\name{plotArgs.network}
+\alias{plotArgs.network}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Expand and transform attributes of networks to values appropriate for aguments to plot.network
@@ -8,7 +8,7 @@ Expand and transform attributes of networks to values appropriate for aguments t
 This is primairly an internal function called by \code{plot.network} or by external packages such as \code{ndtv} that want to prepare \code{plot.network} graphic arguments in a standardized way.  
 }
 \usage{
-preparePlotArgs(x, argName, argValue, d = NULL, edgetouse = NULL)
+plotArgs.network(x, argName, argValue, d = NULL, edgetouse = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,11 +45,11 @@ See also \code{\link{plot.network}}
   set.vertex.attribute(net,'color',c('red','green','blue'))
   set.vertex.attribute(net,'charm',1:3)
   # replicate a single colorname value
-  preparePlotArgs(net,'vertex.col','purple')
+  plotArgs.network(net,'vertex.col','purple')
   # map the 'color' attribute to color
-  preparePlotArgs(net,'vertex.col','color')
+  plotArgs.network(net,'vertex.col','color')
   # similarly for a numeric attribute ...
-  preparePlotArgs(net,'vertex.cex',12)
-  preparePlotArgs(net,'vertex.cex','charm')
+  plotArgs.network(net,'vertex.cex',12)
+  plotArgs.network(net,'vertex.cex','charm')
 }
 

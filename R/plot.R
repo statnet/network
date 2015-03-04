@@ -456,20 +456,20 @@ layout.par=NULL,
    # force lazy evaluation of display labels arg before we change value of labels
    displaylabels<-displaylabels
    #Fill out vertex vectors; assume we're using attributes if chars used
-   # this is done with the preparePlotArgs so we can standarize it
-   label <-preparePlotArgs(x,'label',label)
-   vertex.cex <- preparePlotArgs(x,'vertex.cex',vertex.cex)
+   # this is done with the plotArgs.network so we can standarize it
+   label <-plotArgs.network(x,'label',label)
+   vertex.cex <- plotArgs.network(x,'vertex.cex',vertex.cex)
    vertex.radius <-rep(baserad*vertex.cex,length=n)   #Create vertex radii
-   vertex.sides <- preparePlotArgs(x,'vertex.sides',vertex.sides)
-   vertex.border <- preparePlotArgs(x,'vertex.border',vertex.border)
-   vertex.col <- preparePlotArgs(x,'vertex.col',vertex.col)
-   vertex.lty <- preparePlotArgs(x,'vertex.lty',vertex.lty)
-   vertex.rot <- preparePlotArgs(x,'vertex.rot',vertex.rot)
-   vertex.lwd <- preparePlotArgs(x,'vertex.lwd',vertex.lwd)
-   loop.cex <- preparePlotArgs(x,'loop.cex',loop.cex)
-   label.col <- preparePlotArgs(x,'label.col',label.col)
-   label.border<-preparePlotArgs(x,'label.border',label.border)
-   label.bg <- preparePlotArgs(x,'label.bg',label.bg)
+   vertex.sides <- plotArgs.network(x,'vertex.sides',vertex.sides)
+   vertex.border <- plotArgs.network(x,'vertex.border',vertex.border)
+   vertex.col <- plotArgs.network(x,'vertex.col',vertex.col)
+   vertex.lty <- plotArgs.network(x,'vertex.lty',vertex.lty)
+   vertex.rot <- plotArgs.network(x,'vertex.rot',vertex.rot)
+   vertex.lwd <- plotArgs.network(x,'vertex.lwd',vertex.lwd)
+   loop.cex <- plotArgs.network(x,'loop.cex',loop.cex)
+   label.col <- plotArgs.network(x,'label.col',label.col)
+   label.border<-plotArgs.network(x,'label.border',label.border)
+   label.bg <- plotArgs.network(x,'label.bg',label.bg)
    #Plot vertices now, if desired
    if(!vertices.last)
      network.vertex(cx[use],cy[use],radius=vertex.radius[use], sides=vertex.sides[use],col=vertex.col[use],border=vertex.border[use],lty=vertex.lty[use],rot=vertex.rot[use], lwd=vertex.lwd[use])
@@ -491,11 +491,11 @@ layout.par=NULL,
    e.rad<-numeric(nDrawEdges)  #Edge radius (only used for loops)
    if(NROW(d)>0){
      #Edge color
-     edge.col<-preparePlotArgs(x,'edge.col',edge.col,d=d)
+     edge.col<-plotArgs.network(x,'edge.col',edge.col,d=d)
      #Edge line type
-     edge.lty<-preparePlotArgs(x,'edge.lty',edge.lty,d=d)
+     edge.lty<-plotArgs.network(x,'edge.lty',edge.lty,d=d)
      #Edge line width
-     edge.lwd<-preparePlotArgs(x,'edge.lwd',edge.lwd,d=d)
+     edge.lwd<-plotArgs.network(x,'edge.lwd',edge.lwd,d=d)
      #Edge curve
      # TODO: can't move this into prepare plot args becaue it also sets the e.curve.as.mult
      #       but I think it could be refactored to use the d[] array as the other edge functions do
@@ -523,12 +523,12 @@ layout.par=NULL,
      # only evaluate edge label stuff if we will draw label
      if(!is.null(edge.label)){
        #Edge label
-        edge.label<-preparePlotArgs(x,'edge.label',edge.label,d=d)
+        edge.label<-plotArgs.network(x,'edge.label',edge.label,d=d)
        
        #Edge label color
-       edge.label.col<-preparePlotArgs(x,'edge.label.col',edge.label.col,d=d)
+       edge.label.col<-plotArgs.network(x,'edge.label.col',edge.label.col,d=d)
        #Edge label cex
-       edge.label.cex<-preparePlotArgs(x,'edge.label.cex',edge.label.cex,d=d)
+       edge.label.cex<-plotArgs.network(x,'edge.label.cex',edge.label.cex,d=d)
      } # end edge label setup block
      
      #Proceed with edge setup
@@ -746,7 +746,7 @@ layout.par=NULL,
 # d is an edgelist matrix of edge values optionally used by some edge attribute functions
 # edgetouse the set of edge ids to be used (in case some edges are not being shown)
 
-preparePlotArgs<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
+plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
   n<-network.size(x)
   # count the number of edges 
   # not sure if nrow d is every differnt, than network edgecount, but just being safe
