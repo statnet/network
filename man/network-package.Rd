@@ -16,8 +16,8 @@ Basic information on the creation of \code{network} objects can be found by typi
 
 \tabular{ll}{
 Package: \tab network\cr
-Version: \tab 1.11\cr
-Date: \tab Aug 19, 2014\cr
+Version: \tab 1.12\cr
+Date: \tab March 03, 2015\cr
 Depends: \tab R (>= 2.10), utils\cr
 Suggests: \tab sna, statnet.common (>= 3.1-0)\cr
 License: \tab GPL (>=2)\cr
@@ -65,6 +65,8 @@ network-package         Classes for Relational Data
 network.size            Return the Size of a Network
 network.vertex          Add Vertices to a Plot
 permute.vertexIDs       Permute (Relabel) the Vertices Within a Network
+plotArgs.network        Expand and transform attributes of networks to
+                        values appropriate for aguments to plot.network
 plot.network.default    Two-Dimensional Visualization for Network
                         Objects
 prod.network            Combine Networks by Edge Value Multiplication
