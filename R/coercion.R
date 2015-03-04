@@ -123,7 +123,7 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,...){
   else if(as.sna.edgelist)
     m<-cbind(m,rep(1,NROW(m)))
   #Set additional attributes and return the result
-  if(as.sna.edgelist)
+  if(as.sna.edgelist && nrow(m) > 0) # check that there are actually edges
     m[nal,3]<-NA
   else
     m<-m[!nal,,drop=FALSE]

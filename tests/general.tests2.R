@@ -64,3 +64,26 @@ net[1,2]<-1
 if(length(get.edgeIDs(net,v=2,alter=2))>0){
   stop("problem with get.edgeIDs on undirected network with loops")
 }
+
+# check for problem with as.network.edgelist with zero edges #1138
+result <- as.matrix.network.edgelist(network.initialize(5),as.sna.edgelist = TRUE)
+if (nrow(result) != 0){
+  stop('as.matrix.network.edgelist did not return correct value for net with zero edges')
+}
+as.matrix.network.edgelist(network.initialize(0),as.sna.edgelist = TRUE)
+result2<-as.matrix.network.adjacency(network.initialize(5))
+if(nrow(result2) != 5 & ncol(result2) != 5){
+  stop('as.matrix.network.adjacency did not return matrix with correct dimensions')
+}
+result3<-as.matrix.network.adjacency(network.initialize(0))
+if(nrow(result3) != 0 & ncol(result3) != 0){
+  stop('as.matrix.network.adjacency did not return matrix with correct dimensions')
+}
+result4<-as.matrix.network.incidence(network.initialize(5))
+if(nrow(result4) != 5 & ncol(result4) != 0){
+  stop('as.matrix.network.incidence did not return matrix with correct dimensions')
+}
+result5<-as.matrix.network.incidence(network.initialize(0))
+if(nrow(result5) != 0 & ncol(result5) != 0){
+  stop('as.matrix.network.incidence did not return matrix with correct dimensions')
+}
