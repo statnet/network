@@ -662,7 +662,7 @@ layout.par=NULL,
        xhat <- 0
        yhat <- 0
      }
-     os<-par()$cxy*label.cex
+     os<-par()$cxy*mean(label.cex,na.rm = TRUE) # don't think this is actually used?
      lw<-strwidth(label[use],cex=label.cex)/2
      lh<-strheight(label[use],cex=label.cex)/2
      if(boxed.labels){

@@ -562,9 +562,9 @@ As this example illustrates, most properties of the visualization can be adjuste
 <<>>=
 plot(MtSHbyloc, displaylabels = TRUE, label = 
     c(network.vertex.names(MtSHbyloc), "Local", "Non-Local"), 
-    boxed.labels = FALSE, label.cex = rep(c(0.5, 1), each = c(27, 2)),
-    label.col = rep(c(3, 4), each = c(27, 2)), vertex.col = rep(c(2, 5),
-    each = c(27, 2)))
+    boxed.labels = FALSE, label.cex = rep(c(0.5, 1), times = c(27, 2)),
+    label.col = rep(c(3, 4), times = c(27, 2)), vertex.col = rep(c(2, 5),
+    times = c(27, 2)))
 @
 
 Note that the \code{plot} method automatically recognizes that the network being passed is hypergraphic, an employs a two-mode representation for visualization purposes (see Figure~\ref{f_mtsthelens_twomode}).  Supplying custom labeling and vertex coloring helps clarify the interpretation.  For instance, here we can immediately see the division between organizations who maintained headquarters exclusively at local or remote locations during the Mount St. Helens search and rescue operation, as well as those organizations (e.g. the Salvation Army and Red Cross) which bridged the two.  Though simple, examples such as this demonstrate how the default \emph{plot} settings can be adjusted to produce effective visualizations of even complex relational data.
