@@ -503,7 +503,7 @@ accordingly.  For instance, compare the above with the Mt.\ Si communication net
 %\rotatebox{270}{\resizebox{3in}{6in}{\includegraphics{nflo.layouts.ps}}}
 %\rotatebox{270}{\resizebox{3in}{6in}{\includegraphics{Figures/nflo_layouts.pdf}}}
 <<fig=TRUE,echo=FALSE>>=
-op<-par() # cache the plot params
+op<-par(no.readonly=TRUE) # cache the plot params
 par(mfcol=c(1,2),mar=c(1,1,1,1),cex=0.5) # adjust margins and text size to fit two panels
 plot(nflo, displaylabels = TRUE,boxed.labels = TRUE)
 plot(nflo, displaylabels = TRUE, mode = "circle")
@@ -576,9 +576,9 @@ Note that the \code{plot} method automatically recognizes that the network being
 <<fig=TRUE,echo=FALSE>>=
 plot(MtSHbyloc, displaylabels = TRUE, label = 
     c(network.vertex.names(MtSHbyloc), "Local", "Non-Local"), 
-    boxed.labels = FALSE, label.cex = rep(c(0.5, 1), each = c(27, 2)),
-    label.col = rep(c(3, 4), each = c(27, 2)), vertex.col = rep(c(2, 5),
-    each = c(27, 2)))
+    boxed.labels = FALSE, label.cex = rep(c(0.5, 1), times = c(27, 2)),
+    label.col = rep(c(3, 4), times = c(27, 2)), vertex.col = rep(c(2, 5),
+    times = c(27, 2)))
 @
 \caption{\label{f_mtsthelens_twomode} Sample display of the Mt.\ St.\ Helens location hypergraph, showing division between locally, non-locally, and dual headquartered organizations.}
 \end{center}
