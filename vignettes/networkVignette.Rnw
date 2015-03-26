@@ -5,9 +5,6 @@
 %\usepackage{hyperref} %for url links
 %\usepackage{comment} 
 %\usepackage{color} 
-%This package is recommended
-\usepackage{thumbpdf}
-
 
 %\VignetteIndexEntry{network Vignette}
 
