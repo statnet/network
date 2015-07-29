@@ -25,6 +25,18 @@
 
 
 #Read an input file in Pajek format
+# some details at http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf p. 73
+
+# generally this steps through the file until it finds markers for specific sub sections
+# when it sees one ('*Vertices*') it drops into a sub-loop that keeps advancing the file read
+# however, note that the overall loop may run multiple times in order to correctly detect all of the pieces in the file
+
+# things are made more complicated becaue there can be multiple *Edges or *Arcs definitions in a network
+# when it is a "mutliple network" (multiplex) http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf slide 21
+# TODO: not sure if multiplex is set appropriately for this case
+
+# Also, attributes can be have 'default' values (the previous record) if not explicitly set on each row
+
 read.paj <- function(file,verbose=FALSE,debug=FALSE,
                     edge.name=NULL, simplify=FALSE)
  {
@@ -74,13 +86,15 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
    nevents <- 0   #for two-mode data
    nactors <- 0   #for two-mode data
 
-#
+# begin file parsing
   while(!inherits(line,"try-error")){
    while(any(grep("^%", line)) | nextline){
      if(debug) print("nextline called... new loop started")
      options(show.error.messages=FALSE)
+     # read the next line with error messages disabled
      line <- try(readLines(file, 1, ok = FALSE))
      options(show.error.messages=TRUE)
+     # If the line was not an error, tokenize using space as seperator
      if(!inherits(line,"try-error") & length(line)>0){
       line <- strsplit(line, " ")[[1]]
       line <- line[line!=""]
@@ -93,8 +107,9 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 
 #
 #   Network specification
-#
+#   Search for lines begining with *Network within the .paj file
    if(any(grep("\\*Network", line, ignore.case = TRUE))){
+     if (verbose) print('parsing *Network block')
 
      network.title <- paste(line[-1],collapse=" ")
      previousDyads <- NULL  #used for arc+edge specified networks...   reset to null for every new network.. not really necessary here
@@ -122,6 +137,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        temp <- get(network.names[i])
        if(!is.null(vertex)){   #Changed "vector" to "vertex"
           ##Start new addition from Alex Montgomery (Thanks AHM!)
+          ## TODO: is this part redundant with the other vertex parsing part?
           if (nrow(as.data.frame(vertex)) == network.size(temp)) {
               temp <- set.vertex.attribute(temp, "vertex.names",
                 as.character(vertex[as.numeric(vertex[,1]),2]))
@@ -151,16 +167,6 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
              if (debug)
                 print("set vertex names to matrix")
           }
-          ##End AHM addition
-##Original code from Dave Schruth:
-##          if(nrow(as.data.frame(vector))== network.size(temp)) {#should i be doing this? why don't these numbers match all time
-##            temp <- set.vertex.attribute(temp, vector.name , value=as.matrix(vector))
-##                   #set.vertex.attribute(x   , attrname    , value,      v=1:network.size(x))
-##            if(debug) print("set vector to network")
-##          }else{
-##            warning(paste("vectorLength (",nrow(as.data.frame(vector)),") != number of nodes (",temp$gal$n,"), vertex attribute not set",sep=""))
-##           #dschruth added... crashing on Scotland.paj vector length != numOfEdges (http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.htm)
-##          }
        }
        if(!is.null(network.title)){
          temp <- set.network.attribute(temp, "title", network.title)
@@ -179,10 +185,10 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      if(nnetworks > 1){
        networks <- list(formula = ~1, networks = networks,
                       stats = numeric(0),coef=0)
-       class(networks) <- "network.series"
+       class(networks) <- c("network.series",class(networks))
      }else{
        networks  <- networks[[1]]
-       class(networks) <- "network"
+       class(networks) <- "network"  # TODO: setting the class directly seems scary
 #        networks <- set.network.attribute(networks, "title",)
      }
      names.projects <- c(names.projects, network.title)
@@ -198,15 +204,19 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      vector <- NULL
      colnames.vector <- NULL
      nextline <- TRUE
-   }
+   }  # END NETWORK PARSING BLCOK
 
 #
 #   vertices specification
-#
+#   search for lines beignning with * Vertices
    if(any(grep("\\*Vertices", line, ignore.case = TRUE))){
-
+     if (verbose) print('parsing *Vertices block')
      previousDyads <- NULL  #used for arc+edge specified networks.... reset to null for every new network.. might be sufficient here
      nvertex <- as.numeric(line[2])
+     nnetworks <- nnetworks + 1
+     # give the network a default name (may be overwritten later)
+     network.name <- paste(network.title,sep="")
+     network.names <- c(network.names, network.name)
 
      if(!is.na(line[3])){                                        #dschruth added for two-mode
        is2mode <- TRUE                    #used in matrix below  #dschruth added for two-mode
@@ -219,7 +229,9 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 #     if(network.title =="SanJuanSur_deathmessage.net")  #read.third paragraph in details of documentation of read table about how it determines the number of columns in the first 5 lines...
 #       vertex <- read.table(file,skip=-1,nrows=nvertex,col.names=1:8,comment.char="%",fill=TRUE,as.is=FALSE)  #dschruth added 'comment.char="%"' and 'fill=TRUE'
 #     else
-       vertex <- read.table(file,skip=-1,nrows=nvertex,              comment.char="%",fill=TRUE,as.is=FALSE)  #dschruth added 'comment.char="%"' and 'fill=TRUE'
+       # read it as table
+       # NOTE: rows may omit values ()
+       vertex <- read.table(file,skip=-1,nrows=nvertex,              comment.char="%",fill=TRUE,as.is=FALSE)  
        if(ncol(vertex)==1){ vertex <- cbind(1:nrow(vertex),vertex)}
 
 
@@ -235,17 +247,28 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        if(ncol(vertex)==1){ vertex <- cbind(1:nrow(vertex),vertex)}
      }
      if(nvertex!=nrow(vertex)){
-      if(verbose) print(paste("vertex list (length=",nrow(vertex),") is being re-sized to conform with specified network size (n=",nvertex,")",sep=""))
+      if(verbose){ 
+        cat(paste("vertex list (length=",nrow(vertex),") is being re-sized to conform with specified network size (n=",nvertex,")",sep=""))
+      }
       colnames(vertex)[1:2] <- c("vn","name")
        vertex <- merge(data.frame(vn=1:nvertex),vertex,all.x=TRUE,all.y=FALSE,by.y="vn") #fill in the holes with NA names
      }
+
+     # Todo: detect and label coordinates, fill in any "default" rows where values are omited and should be filled in from row above
+
      if(verbose) print("vertex list set")
+     # need to initialize a network here to deal with the case where no arcs/edge in the file
+     # in most cases this object will be clobbered later
+     # Note that without the arcs/edge, we have no way to know if network was supposed to be directed
+     temp <- network.initialize(n=nvertex, bipartite=nactors)
+     assign(network.names[nnetworks], temp)
 
    }
 #
-#   partition specification
+#   partition specification  (vertex level attribute)
 #
    if(any(grep("\\*Partition", line, ignore.case = TRUE))){
+     if (verbose) print('parsing *Partition block')
 
     partition.name <- as.character(paste(line[-1],collapse="."))
     names.partition <- c(names.partition,partition.name)
@@ -266,10 +289,10 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 
    }
 #
-#   Vector specification
+#   Vector specification  (vetex-level attribute)
 #
    if(any(grep("\\*Vector", line, ignore.case = TRUE))){
-
+     if (verbose) print('parsing *Vector block')
     vector.name <- as.character(paste(line[-1],collapse="."))
     colnames.vector <- c(colnames.vector,vector.name)
     line <- readAndVectorizeLine(file)
@@ -299,10 +322,10 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
    # print(network.name)
 
    if(arcsLinePresent | edgesLinePresent){
-     if(debug) print(paste("arc or edge lines present"))#,line)
+     if(debug) print(paste("parsing arc or edge lines"))#,line)
 
      if(missing(edge.name)){
-      if(length(line)>1){
+      if(length(line)>1){  # this *Arcs / *Edges block is definding a named 'network' of relationships
        network.name <- strsplit(paste(line[3:length(line)],collapse="."),'\"')[[1]][2]  #dschruth added collapse to allow for multi work network names
       }else{
        network.name <- paste(network.title,nnetworks+1,sep="")
@@ -318,7 +341,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      line <- readAndVectorizeLine(file)
 
      while(any(grep("^%", line))){
-       line <- readAndVectorizeLine(file)
+       line <- readAndVectorizeLine(file)  # skip blank lines?
      }
      while(!any(grep("\\*[a-zA-Z]", line)) & length(line)>0){  #dschruth changed \\*  to \\*[a-zA-Z] to allow for time asterisks
        dyadList[[listIndex]] <- as.numeric(gsub("Newline","",line))        # dyads <- rbind(dyads, as.numeric(line[1:3]))  # this is the old way
@@ -327,9 +350,9 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 
      }     
      if(verbose) print(paste("length of dyad list",length(dyadList)))
-     nextline <- FALSE                                            #dschruth added
-     if(length(dyadList)>0){                                   #dschruth added
-
+     nextline <- FALSE    
+     # check if we found any dyads
+     if(length(dyadList)>0){  
       ###    deal with the possible Ragged Array [RA] dyad list .. see  Lederberg.net  ###
 
        RAlengths <- unlist(lapply(dyadList,length))
@@ -337,7 +360,9 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 
 
        dyadsHaveAttributes <- any(is.na(unlist(dyadList))) #  handling  edge attributes (NAs introduced by coersion)
-       if(dyadsHaveAttributes) warning(paste("don't worry about these",length(dyadList),"warnings,the dyads have attributes and were NA'ed during as.numeric() call. \n the actual dyad matrix width is only 2 "))
+       if(dyadsHaveAttributes){
+        warning(paste("don't worry about these",length(dyadList),"warnings,the dyads have attributes and were NA'ed during as.numeric() call. \n the actual dyad matrix width is only 2 "))
+       }
 
        if(maxRAwidth > 4 & !dyadsHaveAttributes){# #needs to be 4 because of normal edgelist can have sender reciever weight and time
          if(verbose)print("stacking ragged dyad array")
@@ -363,8 +388,8 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        if(debug) print(paste("isnull previous dyads?: ",is.null(previousDyads)))
 
        if(is.null(previousDyads)){ #first time through (always an arc list?)
-         nnetworks <- nnetworks + 1
-         network.names <- c(network.names, network.name)
+         #nnetworks <- nnetworks + 1
+         #network.names <- c(network.names, network.name)
          previousDyads <- dyads
          directed <- arcsLinePresent
        }else{ #second time through (always an edge list?)
@@ -381,7 +406,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        }
 
        if((max(dyads[,1:2]) > nvertex) | nrow(dyads)==1){  # nrow(dyads)==1 is for C95.net
-         if(verbose) print("edge end out of range, skipping network creation")
+         if(verbose) print("vertex id in edge definition is  out of range, skipping network creation")
          if(verbose) print("first dyad list (arcs?), is too short to be a full network, skipping to next dyad list (edges?)")
        }else{
          if(is2mode){
@@ -402,17 +427,19 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
          rm(temp)
          if(verbose) print("network created from edge/arc list")
 #        if(arcsLinePresent) nextline <- TRUE    #{ print(" 'arcs' line followed by dyads present... skip past the current 'edges' line");}
-       }                                                           #dschruth added
-     }
+       }   
+# end of edge/arc adding
+     }  
 
 
-   }
+
+   } 
 
 #
 #   matrix specification
 #
    if(any(grep("\\*Matrix", line, ignore.case = TRUE))){
-     if(verbose) print("found matrix")
+     if(verbose) print('parsing *Matrix block')
 
      if(length(line)>1){
        network.name <- strsplit(line[3],'\"')[[1]][2]
@@ -438,7 +465,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      assign(network.names[nnetworks], temp)
      rm(temp)
    }
- }#end while loop
+ }# end file-parsing while loop
 
 
  if(is.null(network.title)) network.title <- network.name
@@ -469,6 +496,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                 as.character(vertex[as.numeric(vertex[,1]),2]))
               if (ncol(vertex)>2) { # number of columns > 2 -> vertex has attributes
                 vert.attr.nam <- c("na","vertex.names","x","y","z") #assume first three are coords (true?)
+                # TODO: x y and z may be omitted, check if exist and numeric
                 if (ncol(vertex)>5) vert.attr.nam <- c(vert.attr.nam,6:ncol(vertex)) #temp names for rest
                 for (vert.attr.i in 3:ncol(vertex)){
                   v <- vertex[,vert.attr.i]
@@ -562,6 +590,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
  } #end read.paj
 
 
+# reads a single line of a file, splits it into tokens on ' ' and returns as string vector
 readAndVectorizeLine <- function(file){
   line <- readLines(file, 1, ok = TRUE)
   if(!inherits(line,"try-error") & length(line)>0){
@@ -571,44 +600,7 @@ readAndVectorizeLine <- function(file){
   line
 }
 
-########## but multirelational ############ only ~200  nodes 
-#GulfLDays.net 
-#GulfLMonths.net
-#GulfLDow.net 
-#gulfAllDays.net     #GulfADays.zip
-#gulfAllMonths.net   #GulfAMonths.zip
-#LevantDays.net 
-#LevantMonths.net
-#BalkanDays.net 
-#BalkanMonths.net 
 
-#arcs and edges both present   search for " #these have both arc and edge lines " or "URL has a net file"
-#Graph drawing competition page (GD)
-#C95,C95,B98,A99,C99,A99m
-
-
-#things to do:
-#handle ragged array .net files like "CSphd.net"     DONE!!
-#handel two mode networks                            DONE!!
-#handle mix of edges and arcs                        DONE!!
-#handle multirelational pajek files
-
-#issue with read.table and number.cols and fill...SanJuanSur_deathmessage.net has one row with 8 all the rest (including the first 5 have 5)
-
-
-
-
-
-
-
-
-
-#read.paj() test links
-#../test/Scotland.paj  ../test/Scotland.net  from http://vlado.fmf.uni-lj.si/pub/networks/data/esna/
-#
-#http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd95/A95.net
-#http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd96/A96.net
-#http://vlado.fmf.uni-lj.si/pub/networks/data/ucinet/bkfrat.paj
 
 
 read.paj.simplify <- function(x,file,verbose=FALSE) 
