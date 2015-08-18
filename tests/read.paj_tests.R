@@ -141,13 +141,20 @@ expect_error(read.paj(tmptest),regexp = 'contains non-integer values')
 
 
 #dschruth added... crashing on Scotland.paj vector length != numOfEdges (http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.htm)
-# appears that this file has charaterset encoding problems
 
-#scotland<-tempfile('scotland',fileext='.zip')
-#download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.zip',scotland)
-#read.paj(unz(scotland,'Scotland.paj'))
-#tools::showNonASCIIfile(scotland)
 
+# this file will give warning due to character encoding issues
+
+scotland<-tempfile('scotland',fileext='.zip')
+download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.zip',scotland)
+scotpaj<-tempfile('Scotland',fileext='.paj')
+cat(readLines(unz(scotland,'Scotland.paj')),sep='\n',file = scotpaj)
+scotproj<-read.paj(scotpaj)
+
+# produces two element list, containing networks and partitions
+expect_equal(names(scotproj),c("networks","partitions"))
+expect_equal(network.size(scotproj[[1]][[1]]),244)
+expect_equal(names(scotproj$partitions),c("Affiliation.partition.of.N1.[108,136]","Industrial_categories.clu"))
 
 
 
@@ -186,15 +193,30 @@ expect_equal(bkfratProj[[2]]%n%'title',"UciNet\\BKFRAT.DAT : BKFRAC")
 
 #  ----- examples from http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf ---
 
-# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphSet.net
-# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaSet.net
+GraphSet<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphSet.net')
+expect_true(is.directed(GraphSet))
+expect_equal(network.edgecount(GraphSet),27)
+# network contains some repeated edges
+expect_true(is.multiplex(GraphSet))
+expect_equal(network.vertex.names(GraphSet),letters[1:12])
 
-# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphList.net  # arcslist
+Tina<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaSet.net')
+
+# arcslist
+GraphList<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphList.net')  
 # http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaList.net  # arcslist
 
-# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphMat.net  # matrix
+# matrix
+GraphMat <-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphMat.net') 
+expect_equal(network.vertex.names(GraphMat),letters[1:12])
+# check that edge attribute created and parsed correctly
+expect_equal((GraphMat%e%'GraphMat')[17],2)
 
-# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Tina.paj    # partition
+# partition
+TinaPaj<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Tina.paj')
+expect_equal(class(TinaPaj$partitions),'data.frame')
+expect_equal( TinaPaj$partitions[,1],c(2,1,2,2,2,2,2,2,3,3,3),use.names=FALSE)
+expect_true(is.network(TinaPaj$networks$Tina))
 
 # --- crude timing info --
 # not currently supported, but should not fail and should be added as attribute
@@ -202,7 +224,9 @@ timetest<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net')
 expect_equal(timetest%e%'pajekTiming',c("[7]","[6-8]"))
 
 
-# http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net  # multiple networks
+sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')  # multiple networks
+lapply(sampson,class)  # for some reason it is a formula?
+expect_equal(names(sampson$networks),c("SAMPLK1", "SAMPLK3", "SAMPES",  "SAMPIN",  "SAMPPR"))
 # http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/SampsonL.net # multiple networks
 
 # http://vlado.fmf.uni-lj.si/pub/networks/data/2mode/sandi/sandi.net  # two-mode

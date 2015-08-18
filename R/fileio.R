@@ -37,6 +37,9 @@
 
 # Also, attributes can be have 'default' values (the previous record) if not explicitly set on each row
 
+# TODO: need an argument to indicate if multiple sets of relations on the same vertex set should be returned
+# as a multiplex network or a list of networks.
+
 read.paj <- function(file,verbose=FALSE,debug=FALSE,
                     edge.name=NULL, simplify=FALSE)
  {
@@ -85,14 +88,13 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
    nprojects <- 0               # number of projects found
    names.projects <- NULL       # names of projects if found. 
 
-
    nextline <- TRUE             # control flag to indicate if should proceede to next line
-
    line <- " "                  # usually tokens corresponding to line being red
    is2mode <- FALSE             # flag indicating if currently processing biparite network  
    nevents <- 0                 # for two-mode data, size of first mode
    nactors <- 0                 # for two-mode data, size of second mode
    isDynamic<-FALSE             # flag indicating if currently processing dynamic network
+   multiplex<-FALSE             # flag indicating if currently processing multiplex network
 
 # begin file parsing
   while(!inherits(line,"try-error")){
@@ -136,7 +138,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
       if(verbose) print(paste("number of networks",nnetworks))  #dschruth added
        # we are about to start a new network, so need to run the post-processing
        # code on the previously parsed network (if there is one)
-     if(nnetworks > 0){
+     if(nnetworks > 0 ){
        if(debug) print("assembleing networks into 'project'")
        # grab all the named networks from the environment
          # and put 'em in a list
@@ -154,11 +156,28 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                                          projects,
                                          verbose
          )
+     } else { # networks have not been created, but need to check if only vertices have been found and empty network needed
+       if(!is.null(vertex)){
+         # need to initialize a network here to deal with the case where no arcs/edge in the file
+         # Note that without the arcs/edge, we have no way to know if network was supposed to be directed or multiplex
+         networksData<-list( network.initialize(n=nvertex, bipartite=nactors))
+         projects <- postProcessProject( network.title,
+                                         vector, 
+                                         colnames.vector, 
+                                         vertex,  # data for building vertices,
+                                         nnetworks, # number of networks found,
+                                         network.names=network.title,  # names of networks found
+                                         networksData,
+                                         projects,
+                                         verbose)
+       }
      }
 
    #  since we are starting a new network, reset all of the network level info, directed, 2mode, etc
      network.title <-NULL
      network.names <- NULL
+     vertex<-NULL
+     nvertex<-0
      nnetworks <- 0
      vector <- NULL
      colnames.vector <- NULL
@@ -167,6 +186,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      nevents <- 0   #for two-mode data
      nactors <- 0   #for two-mode data
      isDynamic<-FALSE
+     multiplex<-FALSE
 
      # now parse the new network title
      network.title <- paste(line[-1],collapse=" ")
@@ -188,10 +208,9 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      if (verbose) print(paste('parsing *Vertices block at line',lineNumber))
      previousDyads <- NULL  #used for arc+edge specified networks.... reset to null for every new network.. might be sufficient here
      nvertex <- as.numeric(line[2])  # parse the number of vertices
-     nnetworks <- nnetworks + 1  # if we found vertices, we must have a network
+     #nnetworks <- nnetworks + 1  # if we found vertices, we must have a network
      # give the network a default name (may be overwritten later)
      network.name <- paste(network.title,sep="")
-     network.names <- c(network.names, network.name)
 
      if(!is.na(line[3])){                                        #dschruth added for two-mode
        is2mode <- TRUE                    #used in matrix below  #dschruth added for two-mode
@@ -225,7 +244,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        if(isURL) stop("Resize of abbreviated vertex list via seek is not possible with URLs.  Try downloading file and loading locally")
       nVertexRows <- edgelistPosition-1
        dummyNotUsed <- seek(file,where=preReadTablePosition)  #reset the file position back to before the table was read
-       vertex <- read.table(file,skip=-1,nrows=nVertexRows,comment.char="%",fill=TRUE,as.is=FALSE)  #dschruth added 'comment.char="%"' and 'fill=TRUE'
+       vertex <- read.table(file,skip=-1,nrows=nVertexRows,comment.char="%",fill=TRUE,as.is=FALSE,)  #dschruth added 'comment.char="%"' and 'fill=TRUE'
        if(ncol(vertex)==1){ vertex <- cbind(1:nrow(vertex),vertex)}
      }
      if(nvertex!=nrow(vertex)){
@@ -238,14 +257,8 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      # increment the debugging line counter
      lineNumber<-lineNumber+nvertex
 
-     # Todo: should the post-processing be done here? detect and label coordinates, fill in any "default" rows where values are omited and should be filled in from row above
-
      if(verbose) print(paste("  found",nvertex,'vertices'))
-     # need to initialize a network here to deal with the case where no arcs/edge in the file
-     # in most cases this object will be clobbered later
-     # Note that without the arcs/edge, we have no way to know if network was supposed to be directed
-     temp <- network.initialize(n=nvertex, bipartite=nactors)
-     assign(network.names[nnetworks], temp)
+
 
    }  # end vertices parsing block
 #
@@ -325,9 +338,10 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      if(missing(edge.name)){
       if(length(line)>1){  # this *Arcs / *Edges block is definding a named 'network' of relationships
        network.name <- strsplit(paste(line[3:length(line)],collapse="."),'\"')[[1]][2]  #dschruth added collapse to allow for multi work network names
-       #TODO: need to increment the number of networks found?
+       #Note: don't increment the number of networks found until later, because this is executed for both arcs and edges block
       }else{
-       network.name <- paste(network.title,nnetworks,sep="")
+       # append an index to the network name (to be used as edge attribute) only if we've seen multiple networks
+       network.name <- paste(network.title,ifelse(nnetworks>0,nnetworks,''),sep="")
        #network.name <- network.title  #old way
       }
      }else{
@@ -353,8 +367,8 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        # check line length for parse problems
        # should be fromId,toId, weight
        # if there are not 3, matrix reform will go bad later on
-       if(length(line)<3){
-         stop("Arc/Edge record on line ",lineNumber," does not appear to have the required 3 elements:'",paste(line,collapse=' '),"'")
+       if(length(line)<2){
+         stop("Arc/Edge record on line ",lineNumber," does not appear to have the required 2 elements:'",paste(line,collapse=' '),"'")
        }
        dyadList[[listIndex]] <- gsub("Newline","",line)   # replace any newlines
        line <- readAndVectorizeLine(file)
@@ -407,24 +421,33 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
          dyads <- as.matrix(dyads2[!is.na(dyads2$receiver),c("sender","receiver")])
 
          if(verbose)print("finished stacking ragged dyad array")
-       }else{
+       }else{ # not a ragged array
          if(debug) print("    unlisting dyad list to matrix")
+         # check if weight was ommited
+         if (all(RAlengths==2)){
+           # assume default weight of 1
+           dyads <- matrix(unlist(lapply(dyadList,function(x){
+             c(as.numeric(x[1:2]),1)})),
+             nrow=length(dyadList),ncol=3,byrow=TRUE)
+           if(verbose) print('weights ommited from arcs/edges lines, assuming weight of 1')
+         } else {
          # create matrix of v1, v2, weight
          dyads <- matrix(unlist(lapply(dyadList,function(x){
                                 as.numeric(x[1:3])})),
                               nrow=length(dyadList),ncol=3,byrow=TRUE)
+         }
        }
       ### done dealing with RA possiblity ###  all written by dschruth
 
       # check for non-numeric ids (bad coercion)
-      if(any(is.na(dyads))){
-        badRows<-lineNumber-(which(is.na(dyads),arr.ind=TRUE)[,1])
+      if(any(is.na(dyads[,1:2,drop=FALSE]))){
+        badRows<-lineNumber-(which(is.na(dyads[,1:2,drop=FALSE]),arr.ind=TRUE)[,1])
         stop('vertex id columns in arcs/edges definition contains non-numeric or NA values on line(s) ',paste(badRows,collapse=' '))
       }
       
       # check for non-integer vertex ids
-      if(any(round(dyads)!=dyads)){
-        badRows<-lineNumber-(which(round(dyads)!=dyads,arr.ind=TRUE)[,1])
+      if(any(round(dyads[,1:2,drop=FALSE])!=dyads[,1:2,drop=FALSE])){
+        badRows<-lineNumber-(which(round(dyads[,1:2,drop=FALSE])!=dyads[,1:2,drop=FALSE],arr.ind=TRUE)[,1])
         stop('vertex id columns in arcs/edges definition contains non-integer values on line(s) ',paste(badRows,collapse=' '))
       }
       
@@ -440,8 +463,9 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        if(debug) print(paste("isnull previous dyads?: ",is.null(previousDyads)))
 
        if(is.null(previousDyads)){ #first time through (always an arc list?)
-         #nnetworks <- nnetworks + 1
-         #network.names <- c(network.names, network.name)
+         # definitly creating a network, so increment the counter and names
+         nnetworks <- nnetworks + 1
+         network.names <- c(network.names, network.name)
          previousDyads <- dyads
          directed <- arcsLinePresent
        }else{ #second time through (always an edge list?)
@@ -457,14 +481,19 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
          previousDyads <- NULL
        }
 
-       
+       # check for multiple ties
+       repeatLines<-anyDuplicated(dyads[,1:2,drop=FALSE])
+       if(repeatLines>0){
+         multiplex<-TRUE
+         message('network contains duplicated dyads so will be marked as multiplex')
+       }
 
        ## initialize the appropriate type of network
        if(is2mode){
          temp <- network.initialize(n=nvertex, directed=directed,
-                                    bipartite=nactors)
+                                    bipartite=nactors,multiple=multiplex)
        }else{
-         temp <- network.initialize(n=nvertex, directed=directed)
+         temp <- network.initialize(n=nvertex, directed=directed,multiple=multiplex)
        }
        # add in the edges
        add.edges(temp,tail=dyads[,1],head=dyads[,2])
@@ -493,11 +522,13 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 #
    if(any(grep("\\*Matrix", line, ignore.case = TRUE))){
      if(verbose) print(paste('parsing *Matrix block at line',lineNumber))
-
      if(length(line)>1){
+       # if a network name is given, use that
        network.name <- strsplit(line[3],'\"')[[1]][2]
      }else{
-       network.name <- paste("network",nnetworks+1,sep="")
+       # otherwise name it acoding to the file name, adding a digit if we've seen multiple nets
+       #network.name <- paste("network",nnetworks+1,sep="")
+       network.name <- paste(network.title,ifelse(nnetworks>0,nnetworks,''),sep="")
      }
      nnetworks <- nnetworks + 1
      network.names <- c(network.names, network.name)
@@ -508,11 +539,16 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        if(verbose) print("removing final marginal sum column of matrix")
        temp0 <- temp0[,-lastColNum]
      }
-     if(verbose) print(paste("dim1",dim(temp0)[1],"na",nactors,"dim2",dim(temp0)[2],"ne",nevents)) #checking
+     if(verbose) print(paste("  matrix dimensions: dim1",dim(temp0)[1],"na",nactors,"dim2",dim(temp0)[2],"ne",nevents)) #checking
      if(is2mode & (dim(temp0)[1]!=nactors | dim(temp0)[2]!=nevents)){
-       warning("error!, dimensions do not match bipartite specifications")
+       stop("dimensions do not match bipartite specifications")
      }else{
-       temp <- network(x=temp0,bipartite=is2mode)               #dschruth added "bipartate=is2mode" for two-mode
+       # convert the adjacency matrix to a network, using values as an edge attribute
+       temp <- as.network.matrix(x=temp0,
+                                 matrix.type='adjacency',
+                                 bipartite=is2mode,
+                                 ignore.eval=FALSE,
+                                 names.eval=network.name)               #dschruth added "bipartate=is2mode" for two-mode
 #       temp <- set.edge.attribute(temp,network.names[nnetworks],        dyads[,3])
                if(verbose) print("network created from matrix")
      }
@@ -527,7 +563,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
   }
 
   if(any(grep("\\*Edgeslist", line, ignore.case = TRUE))){
-    warning(paste('skipped *edgesslist block at line',lineNumber, ' read.paj does not yet know how to parse it '))
+    warning(paste('skipped *Edgeslist block at line',lineNumber, ' read.paj does not yet know how to parse it '))
     # TODO: see http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaList.net
   }
 
@@ -572,7 +608,22 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                                      projects,
                                      verbose
      )
-   }  # end network post-processing
+   }  else { # networks have not been created, but need to check if only vertices have been found
+     if(!is.null(vertex)){
+       # need to initialize a network here to deal with the case where no arcs/edge in the file
+       # Note that without the arcs/edge, we have no way to know if network was supposed to be directed or multiplex
+       networksData<-list( network.initialize(n=nvertex, bipartite=nactors))
+       projects <- postProcessProject( network.title,
+                                       vector, 
+                                       colnames.vector, 
+                                       vertex,  # data for building vertices,
+                                       nnetworks, # number of networks found,
+                                       network.names = network.title,  # names of networks found
+                                       networksData,
+                                       projects,
+                                       verbose)
+     }
+   }
  
 
 
@@ -665,7 +716,7 @@ postProcessProject<-function(
       }
     }
     if(!is.null(network.title)){
-      temp <- set.network.attribute(temp, "title", network.title)
+      temp <- set.network.attribute(temp, "title", network.title) # not sure if this should also be the edges relation?
     }else{
       warning("null network title")
     }
