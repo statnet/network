@@ -90,6 +90,8 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 
    nextline <- TRUE             # control flag to indicate if should proceede to next line
    line <- " "                  # usually tokens corresponding to line being red
+   previousArcs<-NULL
+   previousEdges<-NULL
    is2mode <- FALSE             # flag indicating if currently processing biparite network  
    nevents <- 0                 # for two-mode data, size of first mode
    nactors <- 0                 # for two-mode data, size of second mode
@@ -182,6 +184,10 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      vector <- NULL
      colnames.vector <- NULL
      nextline <- TRUE
+     arcsLinePresent<-FALSE
+     edgesLinePresent<-FALSE
+     previousArcs<-NULL
+     previousEdges<-NULL
      is2mode <- FALSE #for two-mode data
      nevents <- 0   #for two-mode data
      nactors <- 0   #for two-mode data
@@ -190,7 +196,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 
      # now parse the new network title
      network.title <- paste(line[-1],collapse=" ")
-     previousDyads <- NULL  #used for arc+edge specified networks...   reset to null for every new network.. not really necessary here
+
 
 
     if(is.null(network.title)){ 
@@ -206,7 +212,8 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 #   and then read in the number of lines equal to the expected number of vertices
    if(any(grep("\\*Vertices", line, ignore.case = TRUE))){
      if (verbose) print(paste('parsing *Vertices block at line',lineNumber))
-     previousDyads <- NULL  #used for arc+edge specified networks.... reset to null for every new network.. might be sufficient here
+     previousArcs <- NULL  #used for arc+edge specified networks.... reset to null for every new network.. might be sufficient here
+     previousEdges<-NULL
      nvertex <- as.numeric(line[2])  # parse the number of vertices
      #nnetworks <- nnetworks + 1  # if we found vertices, we must have a network
      # give the network a default name (may be overwritten later)
@@ -319,21 +326,30 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 
 
 #
-#   ----- arcs specification --------
+#   ----- arcs / edges specification --------
 #
-   arcsLinePresent <- edgesLinePresent <- FALSE
-   arcsLinePresent <- any(grep("\\*Arcs$", line, ignore.case = TRUE))#;print(paste("arcs?",arcsLinePresent))
-   edgesLinePresent <- any(grep("\\*Edges$", line, ignore.case = TRUE))#;print(paste("edges?",edgesLinePresent))
-   # print(network.name)
+
+   arcsLinePresent<-any(grep("\\*Arcs$", line, ignore.case = TRUE))
+   edgesLinePresent<-any(grep("\\*Edges$", line, ignore.case = TRUE))
+   
+  
 
    if(arcsLinePresent | edgesLinePresent){
-     if(verbose){
-       if(arcsLinePresent){
-        print(paste("parsing *Arcs block at line",lineNumber))
-       } else {
-         print(paste("parsing *Edges block at line",lineNumber))
+
+     if(arcsLinePresent){
+      if(verbose) print(paste("parsing *Arcs block at line",lineNumber))
+      # if we had already parsed an arcs block, and we just found another one, better clear the old
+      if(!is.null(previousArcs)){
+        previousArcs<-NULL
+      }
+     } else {
+       if(verbose) print(paste("parsing *Edges block at line",lineNumber))
+       # if we had already parsed an edges block, and we just found another one, better clear the old
+       if(!is.null(previousEdges)){
+         previousEdges<-NULL
        }
      }
+     
 
      if(missing(edge.name)){
       if(length(line)>1){  # this *Arcs / *Edges block is definding a named 'network' of relationships
@@ -459,26 +475,31 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
         #if(verbose) print("first dyad list (arcs?), is too short to be a full network, skipping to next dyad list (edges?)")
       }
 
-    #  dyads <- as.numeric(dyads)
-       if(debug) print(paste("isnull previous dyads?: ",is.null(previousDyads)))
-
-       if(is.null(previousDyads)){ #first time through (always an arc list?)
+       if(is.null(previousArcs) & is.null(previousEdges)){ #first time through (always an arc list?)
          # definitly creating a network, so increment the counter and names
          nnetworks <- nnetworks + 1
          network.names <- c(network.names, network.name)
          previousDyads <- dyads
-         directed <- arcsLinePresent
+         if(arcsLinePresent){
+          directed <- TRUE
+          previousArcs <- dyads
+         } else {
+           previousEdges <- dyads
+           # there must not be an arcs block, so assume undirected
+           directed <-FALSE
+         }
+
+        
        }else{ #second time through (always an edge list?)
          if(verbose) print(paste("previous dyads exist!!   symmetrizing edges and combining with arcs"))
-         if(arcsLinePresent){
-           previousDyads.flipped <- switchArcDirection(previousDyads)
-           dyads <- rbind(previousDyads,previousDyads.flipped,dyads) # TODO: previous dyads should not be flipped?
-         }else{
+         if(edgesLinePresent){
+           # should only be edges
            dyads.flipped <- switchArcDirection(dyads)
-           dyads <- rbind(dyads,dyads.flipped,previousDyads)
+           dyads <- rbind(previousArcs,dyads,dyads.flipped)
+         }else{ 
+           stop('reached sequence of multiple *Arcs blocks, parsing code must have bad logic')
          }
-         directed <- TRUE #arcsLinePresent <- TRUE
-         previousDyads <- NULL
+         previousArcs <- NULL # we've used 'em, so null it out
        }
 
        # check for multiple ties
@@ -489,6 +510,9 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        }
 
        ## initialize the appropriate type of network
+       # NOTE: network creation occurs TWICE for networks with both arcs and edges, but the first network
+       # is overwritten by the second. Needlessly slow on large nets, but difficult to avoid, since 
+       # we don't know if there is  a 2nd block on the first pass
        if(is2mode){
          temp <- network.initialize(n=nvertex, directed=directed,
                                     bipartite=nactors,multiple=multiplex)
@@ -681,8 +705,8 @@ postProcessProject<-function(
   colnames(vector) <- colnames.vector
   colnames(vertex) <- c("vertex.numbers","vertex.names","cen1","cen2")[1:ncol(vertex)]
   networks <- vector("list",length=nnetworks)
+  if(verbose) print(paste("working along network names",paste(network.names,collapse=', ')))
   for(i in seq(along=network.names)){
-    if(verbose) print(paste("working along network names",network.names))
     temp <- networksData[[i]]
     if(!is.null(vertex)){  #Changed "vector" to "vertex"
       ##Start new addition from Alex Montgomery (Thanks AHM!)
@@ -722,11 +746,10 @@ postProcessProject<-function(
     }
     if(nrow(as.data.frame(vertex))== network.size(temp)){ #should i be doing this? why don't these numbers match all time
       temp <- set.vertex.attribute(temp,"vertex.names",as.character(vertex[as.numeric(vertex[,1]),2]))
-      if(verbose) print("set vertex names to matrix")
     }
     
     networks[[i]] <- temp
-    if (verbose) print(paste("added network",network.names[i],"to list of networks"))
+    if (verbose) print(paste("processed and added",network.names[i],"to list of networks"))
   }
   names(networks) <- network.names
   if(nnetworks > 1){
