@@ -20,6 +20,16 @@ read.paj(file, verbose = FALSE, debug = FALSE, edge.name = NULL,
   \item{simplify}{Should the returned network be simplified as much as possible and saved? The values specifies the name of the file which the data are to be stored. If it does not contain an absolute path, the file name is relative to the current working directory (see \code{\link{getwd}}). If \code{specify} is TRUE the file name is the name \code{file}.}
 }
 
+\details{
+Edges weights are include in the network as an attribute with the same name as the network. Edge attributes other than the weight are currently ignored.
+}
+
+\references{
+Batageli, Vladimir (2008) "Network Analysis Description of Networks" \url{http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf}
+
+Pajek Manual \url{http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf}
+}
+
 \value{The structure of the object returned by \code{read.paj} depends on the contents of the file it parses.
 \itemize{
   \item if input file contains information about a single 'network' object (i.e .net input file) a single network object is returned with attribute data set appropriately if possible.

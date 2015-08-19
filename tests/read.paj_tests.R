@@ -223,17 +223,28 @@ expect_true(is.network(TinaPaj$networks$Tina))
 timetest<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net')
 expect_equal(timetest%e%'pajekTiming',c("[7]","[6-8]"))
 
-
-sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')  # multiple networks
+# multiple networks
+sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')  
 lapply(sampson,class)  # for some reason it is a formula?
-expect_equal(names(sampson$networks),c("SAMPLK1", "SAMPLK3", "SAMPES",  "SAMPIN",  "SAMPPR"))
-# http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/SampsonL.net # multiple networks
+expect_equal(names(sampson$networks),c("SAMPLK1", "SAMPLK2", "SAMPLK3",  "SAMPDLK",  "SAMPES","SAMPDES","SAMPIN","SAMPNIN","SAMPPR","SAMNPR"))
 
-# http://vlado.fmf.uni-lj.si/pub/networks/data/2mode/sandi/sandi.net  # two-mode
-# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Davis.paj         # two-mode
+# multiple networks in arcslist format
+# sampsonL<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/SampsonL.net') 
 
-#http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd96/A96.net
-#http://vlado.fmf.uni-lj.si/pub/networks/data/ucinet/bkfrat.paj
+# two-mode
+sandi<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/2mode/sandi/sandi.net')  
+expect_true(is.bipartite(sandi))
+expect_equal(sandi%n%'bipartite',314)
+Davis<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Davis.paj')         # two-mode
+expect_equal(Davis$networks[[1]]%n%'bipartite',18)
+
+# lots of edge and vertex attributes
+A96<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd96/A96.net')
+expect_equal(network.size(A96),1096)
+list.vertex.attributes(A96)  # incorrectly parses a Z attribute which is actually the shape
+A96%v%'z'
+list.edge.attributes(A96)  # does not parse edge attributes at all 
+
 
 
 # temporal versions http://vlado.fmf.uni-lj.si/pub/networks/data/KEDS/KEDS.htm
