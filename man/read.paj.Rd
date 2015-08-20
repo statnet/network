@@ -21,13 +21,23 @@ read.paj(file, verbose = FALSE, debug = FALSE, edge.name = NULL,
 }
 
 \details{
-Edges weights are include in the network as an attribute with the same name as the network. Edge attributes other than the weight are currently ignored.
+
+
+If the \code{*Vertices} block includes the optional graphic attributes (coordinates, shape, size, etc.) they will be read attached to the network as vertex attributes but values will not be interperted (i.e. Pajek's color names will not be translated to R color names).  Vertex attributes included in a \code{*Vector} block will be attached as vertex attributes.  
+
+Edges or Arc weights in the \code{*Arcs} or \code{*Edges} block are include in the network as an attribute with the same name as the network. If no weight is included, a default weight of 1 is used. Optional graphic attributes or labels will be attached as edge attributes.
+
+If the file contains an empty \code{Arcs} block, an undirected network will be returned. Otherwise the network will be directed, with two edges (one in each direction) added for every row in the \code{*Edges} block. 
+
+
 }
 
 \references{
+Batagelj, Vladimir and Mrvar, Andrej (2011) Pajek Reference Manual version 2.05 \url{http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf} Section 5.3 pp 73-79
+
 Batageli, Vladimir (2008) "Network Analysis Description of Networks" \url{http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf}
 
-Pajek Manual \url{http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf}
+Pajek Datasets \url{http://vlado.fmf.uni-lj.si/pub/networks/data/esna/}
 }
 
 \value{The structure of the object returned by \code{read.paj} depends on the contents of the file it parses.

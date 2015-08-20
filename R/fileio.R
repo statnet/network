@@ -92,11 +92,13 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
    line <- " "                  # usually tokens corresponding to line being red
    previousArcs<-NULL
    previousEdges<-NULL
+   edgeData<-NULL
    is2mode <- FALSE             # flag indicating if currently processing biparite network  
    nevents <- 0                 # for two-mode data, size of first mode
    nactors <- 0                 # for two-mode data, size of second mode
    isDynamic<-FALSE             # flag indicating if currently processing dynamic network
    multiplex<-FALSE             # flag indicating if currently processing multiplex network
+   loops<-FALSE
 
 # begin file parsing
   while(!inherits(line,"try-error")){
@@ -152,6 +154,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                                          vector, 
                                          colnames.vector, 
                                          vertex,  # data for building vertices,
+                                         edgeData,
                                          nnetworks, # number of networks found,
                                          network.names,  # names of networks found
                                          networksData,
@@ -167,6 +170,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                                          vector, 
                                          colnames.vector, 
                                          vertex,  # data for building vertices,
+                                         edgeData,
                                          nnetworks, # number of networks found,
                                          network.names=network.title,  # names of networks found
                                          networksData,
@@ -193,6 +197,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      nactors <- 0   #for two-mode data
      isDynamic<-FALSE
      multiplex<-FALSE
+     loops<-FALSE
 
      # now parse the new network title
      network.title <- paste(line[-1],collapse=" ")
@@ -332,8 +337,6 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
    arcsLinePresent<-any(grep("\\*Arcs$", line, ignore.case = TRUE))
    edgesLinePresent<-any(grep("\\*Edges$", line, ignore.case = TRUE))
    
-  
-
    if(arcsLinePresent | edgesLinePresent){
 
      if(arcsLinePresent){
@@ -412,79 +415,84 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
          }
          # TODO: implement dynamics as per issue #780
          if(isDynamic){
-           warning('arcs/edges include timing information. network dynamics not currently supported by this parser so will be added as plain edge attribute.')
+           warning('arcs/edges include timing information. network dynamics not currently supported by this read.paj so will be added as plain edge attribute.')
          }
        }
        
 
       # TODO: this is an ugly error-prone way to check if there are attributes, need to fix
-       dyadsHaveAttributes <- any(is.na(as.numeric(unlist(dyadList)))) #  handling  edge attributes (NAs introduced by coersion)
-       if(dyadsHaveAttributes){
-        warning(paste("don't worry about these",length(dyadList),"warnings,the dyads have attributes and were NA'ed during as.numeric() call. \n the actual dyad matrix width is only 2 "))
-       }
+#        dyadsHaveAttributes <- any(is.na(as.numeric(unlist(dyadList)))) #  handling  edge attributes (NAs introduced by coersion)
+#        if(dyadsHaveAttributes){
+#         warning(paste("don't worry about these",length(dyadList),"warnings,the dyads have attributes and were NA'ed during as.numeric() call. \n the actual dyad matrix width is only 2 "))
+#        }
+# 
+#        if(maxRAwidth > 4 & !dyadsHaveAttributes){# #needs to be 4 because of normal edgelist can have sender reciever weight and time
+#          if(verbose)print(" stacking ragged dyad array ")
+#          dyads0 <- unlist(lapply(dyadList, function(x)  c(x, rep(NA, maxRAwidth - length(x)))))
+#          dyads1 <- data.frame(matrix(dyads0,nrow=length(dyadList),ncol=maxRAwidth,byrow=TRUE))
+# 
+#          colnames(dyads1) <- c("sender","receiver",paste("r",seq(3,maxRAwidth),sep=""))
+# 
+#          dyads2 <- reshape(dyads1,idvar="senderNo",ids=row.names(dyads1),direction="long",
+#                            times=names(dyads1)[-1],timevar="receiverNo",
+#                            varying=list(names(dyads1)[-1]))
+# 
+#          dyads <- as.matrix(dyads2[!is.na(dyads2$receiver),c("sender","receiver")])
+# 
+#          if(verbose)print("finished stacking ragged dyad array")
+#        }else{ # not a ragged array
+### done dealing with RA possiblity ###  all written by dschruth
 
-       if(maxRAwidth > 4 & !dyadsHaveAttributes){# #needs to be 4 because of normal edgelist can have sender reciever weight and time
-         if(verbose)print(" stacking ragged dyad array ")
-         dyads0 <- unlist(lapply(dyadList, function(x)  c(x, rep(NA, maxRAwidth - length(x)))))
-         dyads1 <- data.frame(matrix(dyads0,nrow=length(dyadList),ncol=maxRAwidth,byrow=TRUE))
-
-         colnames(dyads1) <- c("sender","receiver",paste("r",seq(3,maxRAwidth),sep=""))
-
-         dyads2 <- reshape(dyads1,idvar="senderNo",ids=row.names(dyads1),direction="long",
-                           times=names(dyads1)[-1],timevar="receiverNo",
-                           varying=list(names(dyads1)[-1]))
-
-         dyads <- as.matrix(dyads2[!is.na(dyads2$receiver),c("sender","receiver")])
-
-         if(verbose)print("finished stacking ragged dyad array")
-       }else{ # not a ragged array
          if(debug) print("    unlisting dyad list to matrix")
          # check if weight was ommited
          if (all(RAlengths==2)){
            # assume default weight of 1
-           dyads <- matrix(unlist(lapply(dyadList,function(x){
+           # convert to data.frame by first unlisting and dumping into 3 col matrix
+           edgeData <- as.data.frame(matrix(unlist(lapply(dyadList,function(x){
              c(as.numeric(x[1:2]),1)})),
-             nrow=length(dyadList),ncol=3,byrow=TRUE)
+             nrow=length(dyadList),ncol=3,byrow=TRUE))
+
            if(verbose) print('weights ommited from arcs/edges lines, assuming weight of 1')
          } else {
-         # create matrix of v1, v2, weight
-         dyads <- matrix(unlist(lapply(dyadList,function(x){
-                                as.numeric(x[1:3])})),
-                              nrow=length(dyadList),ncol=3,byrow=TRUE)
+         # create a data frame from the (possibly ragged) rows of the dyadList
+         edgeData<-as.data.frame(fillMatrixFromListRows(dyadList))
+         # convert to appropriate class, have to convert to character first because it is a factor and NA will be recoded wrong
+         edgeData[,1]<-as.numeric(as.character(edgeData[,1])) 
+         edgeData[,2]<-as.numeric(as.character(edgeData[,2]))
+         edgeData[,3]<-as.numeric(as.character(edgeData[,3]))
          }
-       }
-      ### done dealing with RA possiblity ###  all written by dschruth
-
+     #  }
+      
+        # version with just first two columns to make checking easier
+        dyads<-cbind(edgeData[,1:2])
       # check for non-numeric ids (bad coercion)
-      if(any(is.na(dyads[,1:2,drop=FALSE]))){
-        badRows<-lineNumber-(which(is.na(dyads[,1:2,drop=FALSE]),arr.ind=TRUE)[,1])
+      if(any(is.na(dyads))){
+        badRows<-lineNumber-(which(is.na(dyads),arr.ind=TRUE)[,1])
         stop('vertex id columns in arcs/edges definition contains non-numeric or NA values on line(s) ',paste(badRows,collapse=' '))
       }
       
       # check for non-integer vertex ids
-      if(any(round(dyads[,1:2,drop=FALSE])!=dyads[,1:2,drop=FALSE])){
-        badRows<-lineNumber-(which(round(dyads[,1:2,drop=FALSE])!=dyads[,1:2,drop=FALSE],arr.ind=TRUE)[,1])
+      if(any(round(dyads)!=dyads)){
+        badRows<-lineNumber-(which(round(dyads)!=dyads,arr.ind=TRUE)[,1])
         stop('vertex id columns in arcs/edges definition contains non-integer values on line(s) ',paste(badRows,collapse=' '))
       }
       
       # check for out of range vertex ids
-      if((max(dyads[,1:2]) > nvertex)){  # nrow(dyads)==1 is for C95.net
+      if((max(dyads) > nvertex)){  # nrow(dyads)==1 is for C95.net
         # figure out which rows are bad
-        badRows<-1+lineNumber-(which(dyads[,1:2] > nvertex,arr.ind=TRUE)[,1])
+        badRows<-1+lineNumber-(which(dyads > nvertex,arr.ind=TRUE)[,1])
         stop("vertex id(s) in arcs/edge definition is  out of range on line(s) ",paste(badRows,collapse=' '))
         #if(verbose) print("first dyad list (arcs?), is too short to be a full network, skipping to next dyad list (edges?)")
       }
-
        if(is.null(previousArcs) & is.null(previousEdges)){ #first time through (always an arc list?)
          # definitly creating a network, so increment the counter and names
          nnetworks <- nnetworks + 1
          network.names <- c(network.names, network.name)
-         previousDyads <- dyads
          if(arcsLinePresent){
           directed <- TRUE
-          previousArcs <- dyads
+          previousArcs <- edgeData
          } else {
-           previousEdges <- dyads
+           previousEdges <- edgeData
            # there must not be an arcs block, so assume undirected
            directed <-FALSE
          }
@@ -494,8 +502,8 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
          if(verbose) print(paste("previous dyads exist!!   symmetrizing edges and combining with arcs"))
          if(edgesLinePresent){
            # should only be edges
-           dyads.flipped <- switchArcDirection(dyads)
-           dyads <- rbind(previousArcs,dyads,dyads.flipped)
+           edgeData.flipped <- switchArcDirection(edgeData)
+           edgeData <- rbind(previousArcs,edgeData,edgeData.flipped)  # TODO: what if arcs and edges don't have same number of cols
          }else{ 
            stop('reached sequence of multiple *Arcs blocks, parsing code must have bad logic')
          }
@@ -503,11 +511,18 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        }
 
        # check for multiple ties
-       repeatLines<-anyDuplicated(dyads[,1:2,drop=FALSE])
+       repeatLines<-anyDuplicated(dyads)
        if(repeatLines>0){
          multiplex<-TRUE
-         message('network contains duplicated dyads so will be marked as multiplex')
+         if(verbose) print('network contains duplicated dyads so will be marked as multiplex')
        }
+      
+      # check for self-loops
+      loopLines<-which(dyads[,1]==dyads[,2])
+      if (length(loopLines)>0){
+        loops<-TRUE
+        if(verbose) print('network contains self-loop edges so will be marked as such')
+      }
 
        ## initialize the appropriate type of network
        # NOTE: network creation occurs TWICE for networks with both arcs and edges, but the first network
@@ -515,15 +530,15 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        # we don't know if there is  a 2nd block on the first pass
        if(is2mode){
          temp <- network.initialize(n=nvertex, directed=directed,
-                                    bipartite=nactors,multiple=multiplex)
+                                    bipartite=nactors,multiple=multiplex,loops=loops)
        }else{
-         temp <- network.initialize(n=nvertex, directed=directed,multiple=multiplex)
+         temp <- network.initialize(n=nvertex, directed=directed,multiple=multiplex,loops=loops)
        }
        # add in the edges
-       add.edges(temp,tail=dyads[,1],head=dyads[,2])
+       add.edges(temp,tail=edgeData[,1],head=edgeData[,2])
 #          temp <- network(x=dyads[,1:2],directed=directed)#arcsLinePresent)#dschruth added
-       if(dim(dyads)[2]>2){  #only try to set the edge value if there is a third column (there always is?)
-         temp <- set.edge.attribute(temp,network.names[nnetworks], dyads[,3])
+       if(ncol(edgeData)>2){  #only try to set the edge value if there is a third column (there always is?)
+         temp <- set.edge.attribute(temp,network.names[nnetworks], edgeData[,3])
          if(verbose) print(paste("  edge weight attribute named",network.names[nnetworks],"created from edge/arc list"))
        }
        if(isDynamic){
@@ -567,13 +582,16 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      if(is2mode & (dim(temp0)[1]!=nactors | dim(temp0)[2]!=nevents)){
        stop("dimensions do not match bipartite specifications")
      }else{
+       # check for self-loops
+       loops<-
        # convert the adjacency matrix to a network, using values as an edge attribute
        temp <- as.network.matrix(x=temp0,
                                  matrix.type='adjacency',
-                                 bipartite=is2mode,
+                                 bipartite=is2mode, #dschruth added "bipartate=is2mode" for two-mode
                                  ignore.eval=FALSE,
-                                 names.eval=network.name)               #dschruth added "bipartate=is2mode" for two-mode
-#       temp <- set.edge.attribute(temp,network.names[nnetworks],        dyads[,3])
+                                 names.eval=network.name,
+                                 loops=any(diag(temp0)>0) # check for self-looops
+                                 )               
                if(verbose) print("network created from matrix")
      }
      assign(network.names[nnetworks], temp)
@@ -590,6 +608,11 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
     warning(paste('skipped *Edgeslist block at line',lineNumber, ' read.paj does not yet know how to parse it '))
     # TODO: see http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaList.net
   }
+
+if(any(grep("\\*Events", line, ignore.case = TRUE))){
+  stop(paste('found *Events block at line',lineNumber, ' read.paj does not yet know how to parse Event timing format '))
+  # TODO: see http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Friends.tim
+}
 
 
 
@@ -626,6 +649,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                                      vector, 
                                      colnames.vector, 
                                      vertex,  # data for building vertices,
+                                     edgeData,
                                      nnetworks, # number of networks found,
                                      network.names,  # names of networks found
                                      networksData,
@@ -641,6 +665,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                                        vector, 
                                        colnames.vector, 
                                        vertex,  # data for building vertices,
+                                       edgeData=NULL,
                                        nnetworks, # number of networks found,
                                        network.names = network.title,  # names of networks found
                                        networksData,
@@ -696,6 +721,7 @@ postProcessProject<-function(
                          vector, 
                          colnames.vector, 
                          vertex,  # data for building vertices,
+                         edgeData, # data for building edges
                          nnetworks, # number of networks found,
                          network.names,  # names of networks found
                          networksData, # list of basic networks created
@@ -708,18 +734,30 @@ postProcessProject<-function(
   if(verbose) print(paste("working along network names",paste(network.names,collapse=', ')))
   for(i in seq(along=network.names)){
     temp <- networksData[[i]]
-    if(!is.null(vertex)){  #Changed "vector" to "vertex"
-      ##Start new addition from Alex Montgomery (Thanks AHM!)
+    if(!is.null(vertex)){  
       if (nrow(as.data.frame(vertex)) == network.size(temp)) {
+        # set the vertex names to match names in file
         temp <- set.vertex.attribute(temp, "vertex.names",
                                      as.character(vertex[as.numeric(vertex[,1]),2]))
         if (ncol(vertex)>2) { # number of columns > 2 -> vertex has attributes
-          vert.attr.nam <- c("na","vertex.names","x","y","z") #assume first three are coords (true?)
-          # TODO: x y and z may be omitted, check if exist and numeric
+          vert.attr.nam <- c("na","vertex.names","x","y") #assume first three are coords (true?)
+          # verify that coordinates are numeric
+          if(!all(is.numeric(vertex[,3]))){
+            warning('found non-numeric values for "x" coordinates in 3rd column of *Vertices block of network ',network.names[i])
+          }
+          if(!all(is.numeric(vertex[,4]))){
+            warning('found non-numeric values for "y" coordinates in 4th column of *Vertices block of network ',network.names[i])
+          }
+          # check if z coordinate exists and add it if it does
+          if(ncol(vertex)>=5 && all(is.numeric(vertex[,5]))){
+            vert.attr.nam <- c(vert.attr.nam,'z')
+          }
+          
           if (ncol(vertex)>5) vert.attr.nam <- c(vert.attr.nam,6:ncol(vertex)) #temp names for rest
+          # loop over each column of vertex attributes
           for (vert.attr.i in 3:ncol(vertex)){
             v <- vertex[,vert.attr.i]
-            if (is.factor(v)){ # if it's a factor, then
+            if (is.factor(v)){ # if it's a factor (non-numeric), then
               vert.attr.nam.tmp <- levels(v)[1] # see if the first factor is an attribute name
               if (vert.attr.nam.tmp=="") vert.attr.nam.tmp <- levels(v)[2] # in case of missing data
               if (nlevels(v)<=2&!is.na(match(vert.attr.nam.tmp, # check for match if # factors <=2
@@ -728,8 +766,26 @@ postProcessProject<-function(
                                                "lphi","fos","font")))) { #from pajekman.pdf v1.2.3 p.69-70
                 vert.attr.nam[vert.attr.i+1] <- vert.attr.nam.tmp #if match, name the next column
               } else { #if not, set the attribute, converting to character (networks incompat w/factors)
-                temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i],
-                                             as.character(vertex[as.numeric(vertex[,1]),vert.attr.i]))
+                # if this is the 6th column, assume it is a shape name 
+                # but it could be the 5th column if z is missing (ugg, I hate this format!)
+                if('z'%in%vert.attr.nam){
+                  if(vert.attr.i==6 ){
+                    vert.attr.nam[6]<-'shape'
+                  }
+                } else {
+                  if(vert.attr.i==5 ){
+                    vert.attr.nam[5]<-'shape'
+                  }
+                }
+                # spec says missing values should be filled in by row above
+                values<-as.character(vertex[as.numeric(vertex[,1]),vert.attr.i])
+                missingVals<-which(values=='')
+                while(length(missingVals)>0){
+                  values[min(missingVals)]<-values[min(missingVals)-1]
+                  missingVals<-which(values=='')
+                }
+                
+                temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i], values)
               }
             } else { #not a factor, set the attribute and don't convert to character
               temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i],
@@ -737,8 +793,47 @@ postProcessProject<-function(
             }
           }
         }
+      } else {
+        stop('number of rows in vertex data does not match number of vertices')
       }
-    }
+    } # end vertex data processing
+    
+    # process edge data
+    if(!is.null(edgeData)){  
+        if (ncol(edgeData)>3) { # number of columns > 3 means dyads have attributes
+          edge.attr.nam <- c("from","to","weight",4:ncol(edgeData)) #temp names for rest
+          # loop over each column of edge attributes
+          for (edge.attr.i in 4:ncol(edgeData)){
+            e <- edgeData[,edge.attr.i]
+            if (is.factor(e)){ # if it's a factor (non-numeric), then
+              edge.attr.nam.tmp <- levels(e)[1] # see if the first factor is an attribute name
+              if (edge.attr.nam.tmp=="") edge.attr.nam.tmp <- levels(e)[2] # in case of missing data
+              if (nlevels(e)<=2&!is.na(match(edge.attr.nam.tmp, # check for match if # factors <=2
+                          c("w","c","p","s","a","ap","l","lp","lr","lphi","lc","la","fos","font",'h1','h2','a1','k1','k2','a2')))) { 
+                edge.attr.nam[edge.attr.i+1] <- edge.attr.nam.tmp #if match, name the next column
+              } else { #if not, set the attribute, converting to character (networks incompat w/factors)
+                # spec says missing values should be filled in by row above
+                values<-as.character(edgeData[,edge.attr.i])
+                missingVals<-which(values=='')
+                while(length(missingVals)>0){
+                  values[min(missingVals)]<-values[min(missingVals)-1]
+                  missingVals<-which(values=='')
+                }
+                # special processing:
+                # if name is 'l' (line label) it needs to have possible enclosing quotes removed
+                if(edge.attr.nam[edge.attr.i] == 'l'){
+                  values<-gsub('"','',values)
+                }
+                temp <- set.edge.attribute(temp,edge.attr.nam[edge.attr.i], values)
+              }
+            } else { #not a factor, set the attribute and don't convert to character
+              temp <- set.edge.attribute(temp,edge.attr.nam[vert.attr.i],
+                                           edgeData[,edge.attr.i])
+            }
+          }
+        }
+    } # end arc/edge data processing
+    
     if(!is.null(network.title)){
       temp <- set.network.attribute(temp, "title", network.title) # not sure if this should also be the edges relation?
     }else{
@@ -882,6 +977,20 @@ read.paj.simplify <- function(x,file,verbose=FALSE)
 switchArcDirection <- function(edgelist){
 edgelist[,1:2] <- edgelist[,2:1]
 edgelist
+}
+
+# return a character matrix with number of rows equal to length of list x
+# and ncol = longest element in x
+# assumes that list elements may not be all the same length
+# each row is filled in fro
+fillMatrixFromListRows<-function(x){
+  maxLen<-max(sapply(x,length))
+  paddedRows<-lapply(x,function(r){
+    row<-rep('',maxLen)
+    row[1:length(r)]<-unlist(r)
+    row
+  })
+  return(do.call(rbind,paddedRows))
 }
 
 

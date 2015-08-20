@@ -114,6 +114,21 @@ cat("*Vertices          2
 expect_error(read.paj(tmptest),regexp = 'contains non-integer values')
 
 
+# check vertex graphic attribute fill-in
+tmptest<-tempfile()
+cat("*Vertices          4
+1   'A' 0 0 0 box
+2   'B' 0 0 0
+3   'C' 0 0 0 
+4   'D' 0 0 0 ellipse
+*Arcs
+1 2 1
+1 3 1
+",file=tmptest)
+fillIn<-read.paj(tmptest)
+expect_equal(fillIn%v%'shape',c('box','box','box','ellipse'))
+
+
 # test stuff in file comments
 ########## but multirelational ############ only ~200  nodes 
 #GulfLDays.net 
@@ -140,11 +155,10 @@ expect_error(read.paj(tmptest),regexp = 'contains non-integer values')
 #issue with read.table and number.cols and fill...SanJuanSur_deathmessage.net has one row with 8 all the rest (including the first 5 have 5)
 
 
-#dschruth added... crashing on Scotland.paj vector length != numOfEdges (http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.htm)
 
 
-# this file will give warning due to character encoding issues
 
+# this file has character encoding issues
 scotland<-tempfile('scotland',fileext='.zip')
 download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.zip',scotland)
 scotpaj<-tempfile('Scotland',fileext='.paj')
@@ -157,14 +171,6 @@ expect_equal(network.size(scotproj[[1]][[1]]),244)
 expect_equal(names(scotproj$partitions),c("Affiliation.partition.of.N1.[108,136]","Industrial_categories.clu"))
 
 
-
-
-
-
-
-#read.paj() test links
-#../test/Scotland.paj  ../test/Scotland.net  from http://vlado.fmf.uni-lj.si/pub/networks/data/esna/
-#
 A95net<-read.paj("http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd95/A95.net")
 expect_equal(network.size(A95net),36)
 expect_equal(network.vertex.names(A95net)[1:5],c("MUX","INSTRUCTION BUFFER (4 x 16)", "RCV","DRV","ROM REG"))
@@ -190,6 +196,30 @@ expect_equal(list.vertex.attributes(bkfratProj[[1]]),c('na','vertex.names','x','
 expect_equal(bkfratProj[[1]]%n%'title',"UciNet\\BKFRAT.DAT : BKFRAB")
 expect_equal(bkfratProj[[2]]%n%'title',"UciNet\\BKFRAT.DAT : BKFRAC")
 
+# check loop flagging
+
+tmptest<-tempfile()
+cat("*Vertices          2
+1   'A' 
+2   'B' 
+*Arcs
+1 1 1
+",file=tmptest)
+loopTest<-read.paj(tmptest,verbose=TRUE)
+expect_true(has.loops(loopTest))
+
+# check edge.name argument
+
+tmptest<-tempfile()
+cat("*Vertices          2
+1   'A' 
+2   'B' 
+*Arcs
+1 1 1
+",file=tmptest)
+loopTest<-read.paj(tmptest,verbose=TRUE,edge.name='weight')
+expect_equal(list.edge.attributes(loopTest),c('na','weight'))
+
 
 #  ----- examples from http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf ---
 
@@ -210,7 +240,7 @@ GraphList<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphList.n
 GraphMat <-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphMat.net') 
 expect_equal(network.vertex.names(GraphMat),letters[1:12])
 # check that edge attribute created and parsed correctly
-expect_equal((GraphMat%e%'GraphMat')[17],2)
+expect_equal(as.matrix(GraphMat,attrname='GraphMat')[3,7],2)
 
 # partition
 TinaPaj<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Tina.paj')
@@ -241,10 +271,17 @@ expect_equal(Davis$networks[[1]]%n%'bipartite',18)
 # lots of edge and vertex attributes
 A96<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd96/A96.net')
 expect_equal(network.size(A96),1096)
-list.vertex.attributes(A96)  # incorrectly parses a Z attribute which is actually the shape
-A96%v%'z'
-list.edge.attributes(A96)  # does not parse edge attributes at all 
+expect_equal(list.vertex.attributes(A96),c("bw","fos","na","shape","vertex.names", "x","x_fact","y","y_fact"))   # note no z attribute
+expect_equal(head(A96%v%'shape'),c("box","ellipse", "ellipse", "ellipse", "ellipse", "ellipse"))
+# check edge attribute parsing
+expect_equal(list.edge.attributes(A96),c("A96", "fos", "l" ,  "lr",  "na",  "s",   "w"  ))
+# l is the only one with unique values
+expect_equal(head(A96%e%'l'),c("a", "s","n","r","s","t"))
 
 
 
 # temporal versions http://vlado.fmf.uni-lj.si/pub/networks/data/KEDS/KEDS.htm
+
+# temporal events data
+# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.tim
+# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Friends.tim
