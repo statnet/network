@@ -252,6 +252,16 @@ expect_true(is.network(TinaPaj$networks$Tina))
 # not currently supported, but should not fail and should be added as attribute
 timetest<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net')
 expect_equal(timetest%e%'pajekTiming',c("[7]","[6-8]"))
+expect_equal(timetest%v%'pajekTiming',c("[5-10,12-14]", "[1-3,7]", "[4-*]"))
+expect_true(setequal(list.vertex.attributes(timetest),c('na','pajekTiming','vertex.names'))) # no x or y
+expect_true(setequal(list.edge.attributes(timetest),c('na','pajekTiming','Time')))
+
+# test converting to networkDynamic format
+timetestNd<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net',time.format='networkDynamic')
+expect_equal(class(timetestNd),c('networkDynamic','network'))
+# check that activiy matrices are built as expected
+expect_equal(get.vertex.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(5, 12, 11, 15), .Dim = c(2L, 2L)), structure(c(1, 7, 4, 8), .Dim = c(2L, 2L)), structure(c(4, Inf), .Dim = 1:2)))
+expect_equal(get.edge.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(7, 8), .Dim = 1:2), structure(c(6, 9), .Dim = 1:2)))
 
 # multiple networks
 sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')  

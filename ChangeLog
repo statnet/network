@@ -1,4 +1,7 @@
 CHANGELOG:
+v1.13 Fixes & Features
+   - rewrote read.paj() parser for Pajek formatted files, now supports timing and edge attributes, fixes error for empty network
+   - added Suggests dependency for testthat for testing
 v1.12 Fixes & Features
    - fix error with as.matrix.network.edgelist when as.sna.edgelist=TRUE and network has 0 edges
    - updated citation generation code

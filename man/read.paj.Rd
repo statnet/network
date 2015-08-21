@@ -6,7 +6,7 @@
 \title{Read a Pajek Project or Network File and Convert to an R 'Network' Object}
 \usage{
 read.paj(file, verbose = FALSE, debug = FALSE, edge.name = NULL,
-    simplify = FALSE)
+    simplify = FALSE,time.format=c('pajekTiming','networkDynamic'))
 }
 \description{
   Return a (list of) \code{\link{network}} object(s) after reading a corresponding .net or .paj file.  The code accepts ragged array edgelists, but cannot currently handle 2-mode,  multirelational (e.g. KEDS), or networks with entries for both edges and arcs (e.g. GD-a99m).
@@ -18,6 +18,7 @@ read.paj(file, verbose = FALSE, debug = FALSE, edge.name = NULL,
   \item{debug}{logical: Should very detailed descriptions of the reading and coercion process be printed out? This is typically used to debug the reading of files that are corrupted on coercion.}
   \item{edge.name}{optional name for the edge variable read from the file. The default is to use the value in the project file if found.}
   \item{simplify}{Should the returned network be simplified as much as possible and saved? The values specifies the name of the file which the data are to be stored. If it does not contain an absolute path, the file name is relative to the current working directory (see \code{\link{getwd}}). If \code{specify} is TRUE the file name is the name \code{file}.}
+  \item{time.format}{if the network has timing information attached to edges/vertices, how should it be processed?  \code{'pajekTiming'} will attach the timing information unchanged in an attribute named \code{pajek.timing}. \code{'networkDynamic'} will translate it to a spell matrix format, attach it as an \code{'activity'} attribute and add the class \code{'networkDynamic'} -- formating it for use by the \code{networkDynamic} package.}
 }
 
 \details{
@@ -29,7 +30,11 @@ Edges or Arc weights in the \code{*Arcs} or \code{*Edges} block are include in t
 
 If the file contains an empty \code{Arcs} block, an undirected network will be returned. Otherwise the network will be directed, with two edges (one in each direction) added for every row in the \code{*Edges} block. 
 
+If the \code{*Vertices}, \code{*Arcs} or \code{*Edges} blocks having timing information included in the rows (indicated by '[...]' tokens), it will be attached to the vertices with behavior determined by the \code{time.format} option.  If the \code{'networkDynamic'} format is used, times will be translated to \code{networkDynamic}'s spell model with the assumtion that the original Pajek representation was indicating discrete time chunks.  For example \code{"[5-10]"} will become the spell \code{[5,11]}, \code{"[2-*]"} will become \code{[2,Inf]} and \code{"[7]"} will become \code{[7,8]}. See documentation for \code{networkDynamic}'s \code{?activity.attribute} for details.
 
+The \code{*Arcslist}, \code{*Edgelist} and \code{*Events} blocks are not yet supported. 
+
+As there is no known single complete specification for the file format, parsing behavior has been infered from references and examples below.
 }
 
 \references{

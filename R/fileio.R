@@ -41,8 +41,9 @@
 # as a multiplex network or a list of networks.
 
 read.paj <- function(file,verbose=FALSE,debug=FALSE,
-                    edge.name=NULL, simplify=FALSE)
+                    edge.name=NULL, simplify=FALSE,time.format=c('pajekTiming','networkDynamic'))
  {
+   time.format<-match.arg(time.format)
    # process filename
    fileNameParts0 <- strsplit(file,"/")[[1]]
    # split again to try to get file extension
@@ -96,7 +97,6 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
    is2mode <- FALSE             # flag indicating if currently processing biparite network  
    nevents <- 0                 # for two-mode data, size of first mode
    nactors <- 0                 # for two-mode data, size of second mode
-   isDynamic<-FALSE             # flag indicating if currently processing dynamic network
    multiplex<-FALSE             # flag indicating if currently processing multiplex network
    loops<-FALSE
 
@@ -159,6 +159,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                                          network.names,  # names of networks found
                                          networksData,
                                          projects,
+                                         time.format,
                                          verbose
          )
      } else { # networks have not been created, but need to check if only vertices have been found and empty network needed
@@ -175,6 +176,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
                                          network.names=network.title,  # names of networks found
                                          networksData,
                                          projects,
+                                         time.format,
                                          verbose)
        }
      }
@@ -195,7 +197,6 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      is2mode <- FALSE #for two-mode data
      nevents <- 0   #for two-mode data
      nactors <- 0   #for two-mode data
-     isDynamic<-FALSE
      multiplex<-FALSE
      loops<-FALSE
 
@@ -403,23 +404,6 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        RAlengths <- unlist(lapply(dyadList,length))
        maxRAwidth <- max(RAlengths)
        
-       # if there are 4 elements, the 4th should be time?
-       if (min(RAlengths) > 3){
-         # look for time info in the form of brackets
-         timesList<-lapply(dyadList,function(row){
-           grep('^\\[.+\\]$',row,value=TRUE)
-         })
-         # check if any of them have times
-         if(any(sapply(timesList,length)>0)){
-           isDynamic<-TRUE
-         }
-         # TODO: implement dynamics as per issue #780
-         if(isDynamic){
-           warning('arcs/edges include timing information. network dynamics not currently supported by this read.paj so will be added as plain edge attribute.')
-         }
-       }
-       
-
       # TODO: this is an ugly error-prone way to check if there are attributes, need to fix
 #        dyadsHaveAttributes <- any(is.na(as.numeric(unlist(dyadList)))) #  handling  edge attributes (NAs introduced by coersion)
 #        if(dyadsHaveAttributes){
@@ -541,12 +525,6 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
          temp <- set.edge.attribute(temp,network.names[nnetworks], edgeData[,3])
          if(verbose) print(paste("  edge weight attribute named",network.names[nnetworks],"created from edge/arc list"))
        }
-       if(isDynamic){
-         temp <- set.edge.attribute(temp,'pajekTiming', timesList)
-         if(verbose) print("  edge timing attribute created from edge/arc list")
-       }
-       #TODO: detect and process any additional edge attributes may be token based and can be ommited (duplicate previous line)
-
        assign(network.names[nnetworks], temp)
        rm(temp)
        if(verbose) print("network created from edge/arc list")
@@ -654,6 +632,7 @@ if(any(grep("\\*Events", line, ignore.case = TRUE))){
                                      network.names,  # names of networks found
                                      networksData,
                                      projects,
+                                     time.format,
                                      verbose
      )
    }  else { # networks have not been created, but need to check if only vertices have been found
@@ -670,6 +649,7 @@ if(any(grep("\\*Events", line, ignore.case = TRUE))){
                                        network.names = network.title,  # names of networks found
                                        networksData,
                                        projects,
+                                       time.format,
                                        verbose)
      }
    }
@@ -726,34 +706,36 @@ postProcessProject<-function(
                          network.names,  # names of networks found
                          networksData, # list of basic networks created
                          projects,
+                         time.format,
                          verbose
                          ){
   colnames(vector) <- colnames.vector
   colnames(vertex) <- c("vertex.numbers","vertex.names","cen1","cen2")[1:ncol(vertex)]
   networks <- vector("list",length=nnetworks)
-  if(verbose) print(paste("working along network names",paste(network.names,collapse=', ')))
+  if(verbose) print(paste("processing networks:",paste(network.names,collapse=', ')))
   for(i in seq(along=network.names)){
     temp <- networksData[[i]]
+    isDynamic<-FALSE
     if(!is.null(vertex)){  
       if (nrow(as.data.frame(vertex)) == network.size(temp)) {
         # set the vertex names to match names in file
         temp <- set.vertex.attribute(temp, "vertex.names",
                                      as.character(vertex[as.numeric(vertex[,1]),2]))
         if (ncol(vertex)>2) { # number of columns > 2 -> vertex has attributes
-          vert.attr.nam <- c("na","vertex.names","x","y") #assume first three are coords (true?)
+          #vert.attr.nam <- c("na","vertex.names","x","y") #assume first three are coords (true?)
+          vert.attr.nam <- c("na","vertex.names",seq_len(ncol(vertex))) #temp names for rest
           # verify that coordinates are numeric
-          if(!all(is.numeric(vertex[,3]))){
-            warning('found non-numeric values for "x" coordinates in 3rd column of *Vertices block of network ',network.names[i])
+          if(ncol(vertex)>=3 && all(is.numeric(vertex[,3]))){
+            vert.attr.nam[3] <- 'x'
           }
-          if(!all(is.numeric(vertex[,4]))){
-            warning('found non-numeric values for "y" coordinates in 4th column of *Vertices block of network ',network.names[i])
+          if(ncol(vertex)>=4 && all(is.numeric(vertex[,4]))){
+            vert.attr.nam[4] <- 'y'
           }
           # check if z coordinate exists and add it if it does
           if(ncol(vertex)>=5 && all(is.numeric(vertex[,5]))){
-            vert.attr.nam <- c(vert.attr.nam,'z')
+            vert.attr.nam[5] <- 'z'
           }
           
-          if (ncol(vertex)>5) vert.attr.nam <- c(vert.attr.nam,6:ncol(vertex)) #temp names for rest
           # loop over each column of vertex attributes
           for (vert.attr.i in 3:ncol(vertex)){
             v <- vertex[,vert.attr.i]
@@ -784,6 +766,19 @@ postProcessProject<-function(
                   values[min(missingVals)]<-values[min(missingVals)-1]
                   missingVals<-which(values=='')
                 }
+                # special processing:
+                # check if it has brackets for time info, if so added
+                if (length(grep('^\\[.+\\]$',values))>0) {
+                  isDynamic<-TRUE
+                  # if using pajeck time structure, just assign it
+                  if(time.format=='pajekTiming'){
+                    vert.attr.nam[vert.attr.i]<-'pajekTiming'
+                  } else if (time.format =='networkDynamic'){
+                    # if using nd, convert to spell matrix and assign as 'active' attribute
+                    vert.attr.nam[vert.attr.i]<-'active'
+                    values<-lapply(values,as.spells.pajek)
+                  }
+                }
                 
                 temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i], values)
               }
@@ -791,6 +786,7 @@ postProcessProject<-function(
               temp <- set.vertex.attribute(temp,vert.attr.nam[vert.attr.i],
                                            vertex[as.numeric(vertex[,1]),vert.attr.i])
             }
+            if (verbose) print(paste('  set vertex attribute',vert.attr.nam[vert.attr.i]))
           }
         }
       } else {
@@ -821,6 +817,19 @@ postProcessProject<-function(
                 }
                 # special processing:
                 # if name is 'l' (line label) it needs to have possible enclosing quotes removed
+                # check if it has brackets for time info, if so added
+                if (length(grep('^\\[.+\\]$',values))>0) {
+                  isDynamic<-TRUE
+                  # if using pajeck time structure, just assign it
+                  if(time.format=='pajekTiming'){
+                    edge.attr.nam[edge.attr.i]<-'pajekTiming'
+                  } else if (time.format =='networkDynamic'){
+                    # if using nd, convert to spell matrix and assign as 'active' attribute
+                    edge.attr.nam[edge.attr.i]<-'active'
+                    values<-lapply(values,as.spells.pajek)
+                  }
+                }
+                
                 if(edge.attr.nam[edge.attr.i] == 'l'){
                   values<-gsub('"','',values)
                 }
@@ -830,6 +839,7 @@ postProcessProject<-function(
               temp <- set.edge.attribute(temp,edge.attr.nam[vert.attr.i],
                                            edgeData[,edge.attr.i])
             }
+            if (verbose) print(paste('  set edge attribute',edge.attr.nam[edge.attr.i]))
           }
         }
     } # end arc/edge data processing
@@ -843,18 +853,28 @@ postProcessProject<-function(
       temp <- set.vertex.attribute(temp,"vertex.names",as.character(vertex[as.numeric(vertex[,1]),2]))
     }
     
+    # if it is a dynamic network and we are doing nD format, secretly give it the networkDynamic class
+    if(isDynamic){
+      if(time.format=='networkDynamic'){
+        if(verbose) print("   network has dynamics and is assigned 'networkDynamic' class")
+        # using this instead of the safer as.networkDynamic() to avoid adding Suggests dependency on networkDynamic
+        class(temp)<-c('networkDynamic',class(temp))
+      } else {
+        if(verbose) print('   network has dynamic info which was saved without interpretation. see argument "time.format" for details')
+      }
+    }
+    
     networks[[i]] <- temp
     if (verbose) print(paste("processed and added",network.names[i],"to list of networks"))
   }
+
   names(networks) <- network.names
   if(nnetworks > 1){
     networks <- list(formula = ~1, networks = networks,
                      stats = numeric(0),coef=0)
     class(networks) <- "network.series"
-  }else{
+  } else{
     networks  <- networks[[1]]
-    class(networks) <- "network"
-    #        networks <- set.network.attribute(networks, "title",)
   }
   projNames<-names(projects)
   projects <- c(projects,list(networks))
@@ -993,4 +1013,43 @@ fillMatrixFromListRows<-function(x){
   return(do.call(rbind,paddedRows))
 }
 
+# convert strings in pajek's timing notation into a spell matrix
+# example "[5-10,12-14]", "[1-3,7]", "[4-*]"
+# does not check spells for correctness of spell definitions
+as.spells.pajek <-function(pajekTiming,assume.discrete=TRUE){
+  # strip off brackets
+  p<-gsub('\\[','',pajekTiming)
+  p<-gsub('\\]','',p)
+  # split on comma
+  splStrings<-strsplit(p,',')
+  spls<-sapply(splStrings[[1]],function(s){
+    # default always active
+    spl<-c(-Inf,Inf)
+    elements<-strsplit(s,'-')[[1]]
+    if(length(elements)==2){
+      # replace Infs
+      if (elements[1]=='*'){
+        elements[1]<-'-Inf'
+      }
+      if (elements[2]=='*'){
+        elements[2]<-'Inf'
+      }
+      # convert to numeric and form spell
+      spl<-c(as.numeric(elements[1]),as.numeric(elements[2]))
+      
+    } else if (length(elements)==1){
+      # only one element, so duplicate
+      spl[1:2]<-as.numeric(elements[1])
+    } else {
+      stop('unable to parse token: ',s)
+    }
+    if (assume.discrete){
+      # add one time unit to the ending value to conform with networkDynamic's 'until' spell definition
+      spl[2]<-spl[2]+1
+    }
+    return(spl)
+  })
+  # reshape vector of spell data into a 2-column matrix
+  return(matrix(spls,ncol=2,byrow=TRUE))
+}
 
