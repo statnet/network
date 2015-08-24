@@ -153,6 +153,19 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   ec/pe
 }
 
+# is isolate  checks if any of the specified vertex ids are isolates
+is.isolate<-function(net,v=seq_len(network.size(net))){
+  if(network.size(net)==0){
+    return(logical(0))
+  }
+  if(any(v < 1) | any(v > network.size(net))){
+    stop("'v' argument must be a valid vertex id in is.isolate")
+  }
+  ins<-sapply(net$iel[v],length)
+  outs<-sapply(net$oel[v],length)
+  return(ins+outs == 0)
+}
+
 
 #Returns TRUE if x is a character in a known color format
 is.color<-function(x){
