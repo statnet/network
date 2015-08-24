@@ -1,6 +1,7 @@
 # various tests for network plotting functions
 # mostly recent functionality added by skyebend
 require(network)
+require(testthat)
 # -----  test edge labels ------
 ymat<-matrix(c(0,1,2,3, 0,0,0,0, 1,0,0,0, 0,0,0,0),ncol=4)
 ynet<-network(ymat,ignore.eval=FALSE,names.eval='weight')
@@ -35,6 +36,21 @@ col.list<-list('red','#800000','#80000505',NA)
 if(!all(is.color(col.list)[1:3] & is.na(is.color(col.list)[4]))){
   stop('is.color did not correctly recognize colors and NA values in a list')
 }
+
+# ------------ as.color --------
+
+expect_equal(as.color(c('a','b','c')),1:3)  # character
+expect_equal(as.color(1:3),1:3)  # numeric
+expect_equal(as.color(as.factor(c('a','b','c'))),1:3)  # factor
+expect_equal(as.color(c('red','green','blue')),c('red','green','blue'))  # color name
+expect_equal(as.color(c(1,0.5,0)),c("#FFFFFF", "#808080", "#000000"))# real valued  (gray)
+# transparency/ opacity
+expect_equal(as.color(c('red','green','blue'),0.5),c("#FF000080", "#00FF0080", "#0000FF80"))
+expect_equal(as.color(1:3,0.5),c("#00000080", "#FF000080", "#00CD0080"))
+expect_error(as.color(c('red','green','blue'),1.5),regexp = 'opacity parameter must be a numeric value in the range 0 to 1')
+
+
+# ----- plot fixes ----
 
 plot(network.initialize(5),vertex.lwd=c(1,2,3,5,10))
 

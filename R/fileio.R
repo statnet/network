@@ -45,7 +45,12 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
  {
    time.format<-match.arg(time.format)
    # process filename
-   fileNameParts0 <- strsplit(file,"/")[[1]]
+   if(inherits(file, "connection")){
+     fileNameParts0 <- strsplit(summary(file)$'description',"/")[[1]]
+   } else {
+     fileNameParts0<-strsplit(file,"/")[[1]]
+   }
+  
    # split again to try to get file extension
    fileNameParts1 <- strsplit(fileNameParts0[length(fileNameParts0)],"\\.")[[1]]
    # filename may not have extension
@@ -56,7 +61,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
      fileName<-fileNameParts1
      fileExt<-""
    }
-   isURL <- regexpr("http",file)>0
+   
    
   # open connection (if it is not one already)
    if (is.character(file)) {
@@ -69,6 +74,12 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        open(file, "rt")
        on.exit(close(file))
    }
+  
+  isSeekable <- regexpr("http",file)>0
+  # also disable seeking if a gz connection, as it will break
+  if(summary(file)$'class'=='unz'){
+    isSeekable<-FALSE
+  }
 
    # initialize state tracking variables
    lineNumber<-0              # input line number parsed for debugging
@@ -230,7 +241,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        nactors <- as.numeric(line[3])     #used for error check  #dschruth added for two-mode
        nevents <- nvertex-nactors         #used for error check  #dschruth added for two-mode
      }                                                           #dschruth added for two-mode
-     if(!isURL){
+     if(isSeekable){
        # cache the table position in the input file in case we need to jump pack here later
        preReadTablePosition <- seek(file,where=NA)
      }
@@ -254,7 +265,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
        } else {
          warning('vertex list has missing entries or n was mis-specified, re-reading it...')
        }
-       if(isURL) stop("Resize of abbreviated vertex list via seek is not possible with URLs.  Try downloading file and loading locally")
+       if(!isSeekable) stop("Resize of abbreviated vertex list via seek is not possible with URLs.  Try downloading file and loading locally")
       nVertexRows <- edgelistPosition-1
        dummyNotUsed <- seek(file,where=preReadTablePosition)  #reset the file position back to before the table was read
        vertex <- read.table(file,skip=-1,nrows=nVertexRows,comment.char="%",fill=TRUE,as.is=FALSE,)  #dschruth added 'comment.char="%"' and 'fill=TRUE'
