@@ -30,9 +30,9 @@ Behavior of \code{as.color} is as follows:
 \item character:  if values are valid colors (as determined by \code{is.color}) they will be returned as is.  Otherwise converted to factor and numeric value of factor returned.
 }
 
-The optional \code{opacity} parameter can be used to make colors partially transparent (as a shortcut for \code{\link{adjustcolor()}}.  If used, colors will be returned as hex rgb color string (i.e. \code{"#00FF0080"})
+The optional \code{opacity} parameter can be used to make colors partially transparent (as a shortcut for \code{\link{adjustcolor}}.  If used, colors will be returned as hex rgb color string (i.e. \code{"#00FF0080"})
 
-The \code{is.color} function checks if each character element of \code{x} appears to be a color name by comparing it to \code{\link{colors()}} and checking if it is an HTML-style hex color code.  Note that it will return FALSE for integer values.
+The \code{is.color} function checks if each character element of \code{x} appears to be a color name by comparing it to \code{\link{colors}} and checking if it is an HTML-style hex color code.  Note that it will return FALSE for integer values.
 
 These functions are used for the color parameters of \code{\link{plot.network}}.
 
