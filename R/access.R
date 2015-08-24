@@ -656,19 +656,34 @@ list.vertex.attributes<-function(x){
 # Retrieve the number of free dyads (i.e., number of non-missing) of network x.
 #
 network.dyadcount<-function(x,na.omit=TRUE){
- if(!is.network(x))
+ if(!is.network(x)){
    stop("network.dyadcount requires an argument of class network.")
+ }
 
  nodes <- network.size(x)
  if(is.directed(x)){
+   if(is.bipartite(x)){ # directed bipartite
+     nactor <- get.network.attribute(x,"bipartite")
+     nevent <- nodes - nactor
+     dyads <- nactor * nevent *2
+   }else{ # directed unipartite
     dyads <- nodes * (nodes-1)
- }else{
-  if(is.bipartite(x)){
+    if(has.loops(x)){
+      # add in the diagonal
+      dyads<-dyads+nodes
+    }
+   }
+ }else{ # undirected
+  if(is.bipartite(x)){ # undirected bipartite
    nactor <- get.network.attribute(x,"bipartite")
    nevent <- nodes - nactor
    dyads <- nactor * nevent
-  }else{
+  }else{ # undirected unipartite
    dyads <- nodes * (nodes-1)/2
+   if(has.loops(x)){
+     # add in the diagonal
+     dyads<-dyads+nodes
+   }
   }
  }
  if(na.omit){
