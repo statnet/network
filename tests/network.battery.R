@@ -231,3 +231,34 @@ check[81]<-network.edgecount(!nw2)==2 # Should have choose(3,2)-1=2, has 2.
 if(!all(check)){                                               #Should be TRUE
   stop(paste("network package test failed on test(s):",which(!check)))
 }
+
+# checks for network edgecount
+require(testthat)
+test<-network.initialize(4)
+# directed
+expect_equal(network.dyadcount(test),12)
+# undirected
+test%n%'directed'<-FALSE
+expect_equal(network.dyadcount(test),6)
+
+# loops allowed
+test%n%'loops'<-TRUE
+#undirected
+expect_equal(network.dyadcount(test),10)
+# directed
+test%n%'directed'<-TRUE
+expect_equal(network.dyadcount(test),16)
+
+# directed bipartite
+test%n%'loops'<-FALSE
+test%n%'bipartite'<-1
+expect_equal(network.dyadcount(test),6)
+
+# undirected bipartite
+test%n%'directed'<-FALSE
+expect_equal(network.dyadcount(test),3)
+
+# NA values
+test[1,2]<-NA
+expect_equal(network.dyadcount(test,na.omit = TRUE),2)
+
