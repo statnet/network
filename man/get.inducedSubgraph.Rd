@@ -5,7 +5,7 @@
 \title{Retrieve Induced Subgraphs and Cuts
 }
 \description{
-Given a set of vertex IDs, \code{get.inducedSubgraph} returns the subgraph induced by the specified vertices (i.e., the vertices and all associated edges).  Optionally, passing a second set of alters returns the cut from the first to the second set (i.e., all edges passing between the sets), along with the associated endpoints.  In both cases, the result is returned as a network object, with all attributes of the selected edges and/or vertices (and any network attributes) preserved.
+Given a set of vertex IDs, \code{get.inducedSubgraph} returns the subgraph induced by the specified vertices (i.e., the vertices and all associated edges).  Optionally, passing a second set of alters returns the cut from the first to the second set (i.e., all edges passing between the sets), along with the associated endpoints. Alternatively, passing in a vector of edge ids will induce a subgraph containing the specified edges and their incident vertices.  In all cases, the result is returned as a network object, with all attributes of the selected edges and/or vertices (and any network attributes) preserved.
 }
 \usage{
 get.inducedSubgraph(x, v, alters = NULL, eid = NULL)

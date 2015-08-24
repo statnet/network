@@ -1,5 +1,6 @@
 CHANGELOG:
 v1.13 Fixes & Features
+   - added optional opacity paramter to as.color, and new docs for as.color.
    - rewrote read.paj() parser for Pajek formatted files, now supports timing and edge attributes, fixes error for empty network
    - added Suggests dependency for testthat for testing
 v1.12 Fixes & Features

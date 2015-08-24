@@ -249,7 +249,7 @@ expect_equal( TinaPaj$partitions[,1],c(2,1,2,2,2,2,2,2,3,3,3),use.names=FALSE)
 expect_true(is.network(TinaPaj$networks$Tina))
 
 # --- crude timing info --
-# not currently supported, but should not fail and should be added as attribute
+# by default timing info should be added as attribute
 timetest<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net')
 expect_equal(timetest%e%'pajekTiming',c("[7]","[6-8]"))
 expect_equal(timetest%v%'pajekTiming',c("[5-10,12-14]", "[1-3,7]", "[4-*]"))
@@ -262,6 +262,14 @@ expect_equal(class(timetestNd),c('networkDynamic','network'))
 # check that activiy matrices are built as expected
 expect_equal(get.vertex.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(5, 12, 11, 15), .Dim = c(2L, 2L)), structure(c(1, 7, 4, 8), .Dim = c(2L, 2L)), structure(c(4, Inf), .Dim = 1:2)))
 expect_equal(get.edge.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(7, 8), .Dim = 1:2), structure(c(6, 9), .Dim = 1:2)))
+
+# read a *big* one http://vlado.fmf.uni-lj.si/pub/networks/data/CRA/Days.zip
+# 1.3 Mb, 13k vertices, 256K lines. 
+#  days<-tempfile('days',fileext='.zip')
+#  download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/CRA/Days.zip',days)
+#  terrorTerms<-read.paj(unz(days,'Days.net'),verbose=TRUE,time.format='networkDynamic',edge.name='count')
+
+
 
 # multiple networks
 sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')  
@@ -292,6 +300,6 @@ expect_equal(head(A96%e%'l'),c("a", "s","n","r","s","t"))
 
 # temporal versions http://vlado.fmf.uni-lj.si/pub/networks/data/KEDS/KEDS.htm
 
-# temporal events data
+# temporal events data (not supported)
 # http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.tim
 # http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Friends.tim

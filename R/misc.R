@@ -31,26 +31,35 @@
 
 #Given a vector of non-colors, try to coerce them into some reasonable
 #color format.  This may not work well, but what the hell....
-as.color<-function(x){
+as.color<-function(x,opacity=1.0){
+  if(opacity > 1 | opacity < 0){
+    stop('opacity parameter must be a numeric value in the range 0 to 1')
+  }
+  colors<-x
   #Numeric rule: if integer leave as-is, otherwise convert to grayscale
   if(is.numeric(x)){
     if(any(x!=round(x),na.rm=TRUE)){
-      return(gray((x-min(x))/(max(x)-min(x))))
+      colors<-gray((x-min(x))/(max(x)-min(x)))
     }else
-      return(x)
+      colors<-x
   }
   #Factor rule: categorical colorings
   if(is.factor(x)){
-    return(match(levels(x)[x],levels(x)))
+    colors<-match(levels(x)[x],levels(x))
   }
   #Character rule: if colors, retain as colors; else categorical
   if(is.character(x)){
     if(all(is.color(x)))
-      return(x)
+      colors<-x
     else{
-      return(match(x,sort(unique(x))))
+      colors<-match(x,sort(unique(x)))
     }
   }
+  # add transparency if not 1
+  if(opacity < 1){
+    colors<-grDevices::adjustcolor(colors,alpha.f=opacity)
+  }
+  return(colors)
 }
 
 

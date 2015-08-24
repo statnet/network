@@ -2,8 +2,6 @@
 \title{Internal Network Package Functions}
 
 %\alias{DistMatrix}
-\alias{as.color}
-\alias{is.color}
 \alias{is.discrete}
 \alias{is.discrete.character}
 \alias{is.discrete.numeric}
@@ -23,8 +21,6 @@
   Internal network functions.
 }
 \usage{
-as.color(x)
-is.color(x)
 is.discrete(x)
 is.discrete.character(x)
 is.discrete.numeric(x)
