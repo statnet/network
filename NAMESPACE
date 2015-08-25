@@ -29,6 +29,10 @@ as.network.default,
 as.network.matrix,
 as.network.network,
 as.sociomatrix,
+as.edgelist,
+as.edgelist.network,
+as.edgelist.matrix,
+is.edgelist,
 "%c%.network",
 delete.edge.attribute,
 delete.edges,
@@ -157,9 +161,11 @@ S3method('|',network)
 S3method('!',network)
 S3method(prod,network)
 S3method(sum,network)
+S3method(as.edgelist,network)
+S3method(as.edgelist,matrix)
 
 # These are not 'real' S3 methods, as there is no corresponding class
-# but they are dispatched by as.matrix.network and are flagged by check
+# but they are dispatched by as.matrix.network and are flagged by check if not marked here
 S3method(as.matrix.network,adjacency)
 S3method(as.matrix.network,edgelist)
 S3method(as.matrix.network,incidence)

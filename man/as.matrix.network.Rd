@@ -28,7 +28,9 @@
 \details{
   If no matrix type is specified, \code{\link{which.matrix.type}} will be used to make an educated guess based on the shape of \code{x}.  Where edge values are not specified, a dichotomous matrix will be assumed.
 
-  Edgelists returned by these methods are by default in a slightly different form from the \code{sna} edgelist standard, but do contain the \code{sna} extended matrix attributes (see \code{\link{as.network.matrix}}).  They should typically be compatible with \code{sna} library functions.  To ensure compatibility, the \code{as.sna.edgelist} argument can be set (which returns an exact \code{sna} edgelist).
+  Edgelists returned by these methods are by default in a slightly different form from the \code{sna} edgelist standard, but do contain the \code{sna} extended matrix attributes (see \code{\link{as.network.matrix}}).  They should typically be compatible with \code{sna} library functions.  To ensure compatibility, the \code{as.sna.edgelist} argument can be set (which returns an exact \code{sna} edgelist). The \code{\link{as.edgelist}} function also returns a similar edgelist matrix but with an enforced sorting. 
+  
+  If the \code{attrname} attribute is used to include a charcter attribute, the resulting edgelist matrix will be character rather than numeric.
   
   Note that adjacency matrices may also be obtained using the extraction operator.  See the relevant man page for details.
 }
@@ -42,7 +44,7 @@ An adjacency, incidence, or edgelist matrix
 %
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{ \code{\link{which.matrix.type}}, \code{\link{network}}, \code{\link{network.extraction}}}
+\seealso{ \code{\link{which.matrix.type}}, \code{\link{network}}, \code{\link{network.extraction}},\code{\link{as.edgelist}}}
 \examples{
 #Create a random network
 m <- matrix(rbinom(25,1,0.5),5,5)
