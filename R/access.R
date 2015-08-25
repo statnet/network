@@ -368,6 +368,29 @@ get.edges<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.
   .Call(getEdges_R,x,v,alter,neighborhood,na.omit)
 }
 
+# get the the edge ids associated with a set of dayds
+# as defined by a vector of tails and heads vertex ids
+get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")){
+  if(length(tails)!=length(heads)){
+    stop('heads and tails vectors must be the same length for get.dyads.eids')
+  }
+  if (any(heads>network.size(x) | heads<1) | any(tails>network.size(x) | tails<1)){
+    stop('invalid vertex id in heads or tails vector')
+  }
+  neighborhood<-match.arg(neighborhood)
+  if (!is.directed(x)){
+    neighborhood = "combined"
+  }
+  lapply(seq_along(tails),function(e){
+    eid<-get.edgeIDs(x,v = tails[e],alter=heads[e],neighborhood=neighborhood)
+    if(length(eid)>1){
+      eid<-NA
+      warning('get.dyads.eids found multiple edge ids for dyad ',tails[e],',',heads[e],' NA will be returned')
+    }
+    eid
+  })
+}
+
 
 # Given a network and a set of vertices, return the subgraph induced by those
 # vertices (preserving all associated metadata); if given two such sets, 

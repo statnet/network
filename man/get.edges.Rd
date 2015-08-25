@@ -1,6 +1,7 @@
 \name{get.edges}
 \alias{get.edges}
 \alias{get.edgeIDs}
+\alias{get.dyads.eids}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Retrieve Edges or Edge IDs Associated with a Given Vertex }
 \description{
@@ -11,20 +12,28 @@ get.edges(x, v, alter = NULL, neighborhood = c("out", "in",
     "combined"), na.omit = TRUE)
 get.edgeIDs(x, v, alter=NULL, neighborhood=c("out","in","combined"),
     na.omit=TRUE)
+get.dyads.eids(x, tails, heads, 
+         neighborhood = c("out", "in", "combined")) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an object of class \code{network} }
   \item{v}{ a vertex ID }
   \item{alter}{ optionally, the ID of another vertex }
-  \item{neighborhood}{ an indicator for whether we are interested in in-edges, out-edges, or both (relative to \code{v}) }
+  \item{neighborhood}{ an indicator for whether we are interested in in-edges, out-edges, or both (relative to \code{v}). defaults to \code{'combined'} for undirected networks }
   \item{na.omit}{ logical; should we omit missing edges? }
+  \item{tails}{ a vector of vertex ID for the 'tails' (v) side of the dyad}
+  \item{heads}{ a vector of vertex ID for the 'heads' (alter) side of the dyad}
 }
 \details{
-  By default, \code{get.edges} returns all out-, in-, or out- and in-edges containing \code{v}.  (\code{get.edgeIDs} is identical, save in its return value.)  Specifying a vertex in \code{alter} causes these edges to be further selected such that alter must also belong to the edge -- this can be used to extract edges between two particular vertices.  Omission of missing edges is accomplished via \code{na.omit}.
+  By default, \code{get.edges} returns all out-, in-, or out- and in-edges containing \code{v}.  \code{get.edgeIDs} is identical, save in its return value, as it returns only the ids of the edges.   Specifying a vertex in \code{alter} causes these edges to be further selected such that alter must also belong to the edge -- this can be used to extract edges between two particular vertices.  Omission of missing edges is accomplished via \code{na.omit}.  Note that for multiplex networks, multiple edges or edge ids can be returned. 
+  
+  The function \code{get.dyads.eids} simplifies the process of looking up the edge ids associated with a set of 'dyads' (tail and head vertex ids) for edges. It only is intended for working with non-multiplex networks and will return a warning and \code{NA} value for any dyads that correspond to multiple edges. The value \code{numeric(0)} will be returned for any dyads that do not have a corresponding edge. 
+  
+  
 }
 \value{
-  For \code{get.edges}, a list of edges.  For \code{get.edgeIDs}, a vector of edge ID numbers.
+  For \code{get.edges}, a list of edges.  For \code{get.edgeIDs}, a vector of edge ID numbers. For \code{get.edgeIDs}, a list of edge IDs corresponding to the dyads defined by the vertex ids in \code{tails} and \code{heads}
 }
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
@@ -33,7 +42,7 @@ get.edgeIDs(x, v, alter=NULL, neighborhood=c("out","in","combined"),
 %
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{ \code{\link{get.neighborhood}} }
+\seealso{ \code{\link{get.neighborhood}}, \code{\link{valid.eids}} }
 \examples{
 #Create a network with three edges
 m<-matrix(0,3,3)

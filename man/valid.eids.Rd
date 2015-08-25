@@ -2,10 +2,10 @@
 \alias{valid.eids}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
- Get the valid edge which are valid in a network
+ Get the ids of all the edges that are valid in a network
 }
 \description{
-  Returns a vector of valid edge ids (corresponding to non-NULL edges) for a network that may have some delete edges.
+  Returns a vector of valid edge ids (corresponding to non-NULL edges) for a network that may have some deleted edges.
 }
 \usage{
 valid.eids(x)
