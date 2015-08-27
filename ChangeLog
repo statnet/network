@@ -1,5 +1,6 @@
 CHANGELOG:
 v1.13 Fixes & Features
+   - copied as.edgelist functions from ergm, they serve as wrapper for as.matrix.edgelist.network that enforces sorting and adds an 'edgelist' class. 
    - updated network.dyadcount to account for loops and directed bipartite networks
    - added optional opacity paramter to as.color, and new docs for as.color.
    - rewrote read.paj() parser for Pajek formatted files, now supports timing and edge attributes, fixes error for empty network
