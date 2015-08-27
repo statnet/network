@@ -4,6 +4,11 @@ useDynLib(network, .registration = TRUE)
 #Import some required symbols
 import(utils)
 
+importFrom("grDevices", "colors", "gray")
+importFrom("graphics", "locator", "par", "plot", "polygon", "rect",
+             "strheight", "strwidth", "text")
+importFrom("stats", "rnorm")
+
 #Export everything except symbols that start with '.' or end with '_R'.
 #exportPattern("^[^\\.].*[^_][^R]$")
 
