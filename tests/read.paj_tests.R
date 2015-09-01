@@ -156,8 +156,6 @@ expect_equal(fillIn%v%'shape',c('box','box','box','ellipse'))
 
 
 
-
-
 # this file has character encoding issues
 scotland<-tempfile('scotland',fileext='.zip')
 download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.zip',scotland)
@@ -219,6 +217,10 @@ cat("*Vertices          2
 ",file=tmptest)
 loopTest<-read.paj(tmptest,verbose=TRUE,edge.name='weight')
 expect_equal(list.edge.attributes(loopTest),c('na','weight'))
+
+# the rest of these will take longer, so including in opttest block so won't run on CRAN
+require(statnet.common)
+opttest(testvar = "ENABLE_statnet_TESTS",{
 
 
 #  ----- examples from http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf ---
@@ -295,6 +297,8 @@ expect_equal(head(A96%v%'shape'),c("box","ellipse", "ellipse", "ellipse", "ellip
 expect_equal(list.edge.attributes(A96),c("A96", "fos", "l" ,  "lr",  "na",  "s",   "w"  ))
 # l is the only one with unique values
 expect_equal(head(A96%e%'l'),c("a", "s","n","r","s","t"))
+
+})  # end of non-cran tests
 
 
 
