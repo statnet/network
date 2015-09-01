@@ -153,8 +153,8 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   ec/pe
 }
 
-# is isolate  checks if any of the specified vertex ids are isolates
-is.isolate<-function(net,v=seq_len(network.size(net))){
+# has.edges  checks if any of the specified vertex ids have edges (are not isolates)
+has.edges<-function(net,v=seq_len(network.size(net))){
   if(network.size(net)==0){
     return(logical(0))
   }
@@ -163,7 +163,7 @@ is.isolate<-function(net,v=seq_len(network.size(net))){
   }
   ins<-sapply(net$iel[v],length)
   outs<-sapply(net$oel[v],length)
-  return(ins+outs == 0)
+  return(ins+outs != 0)
 }
 
 
