@@ -1,6 +1,9 @@
 CHANGELOG:
 v1.13 Fixes & Features
+   - added some CRAN requested imports to NAMESPACE 
+   - added get.dyads.eids function to return sets of edge ids for vectors of tails and heads vertex ids for non-multiplex networks
    - copied as.edgelist functions from ergm, they serve as wrapper for as.matrix.edgelist.network that enforces sorting and adds an 'edgelist' class. 
+   - added a has.edges() function to determine if a vertex has any edges (is not an isolate)
    - updated network.dyadcount to account for loops and directed bipartite networks
    - added optional opacity paramter to as.color, and new docs for as.color.
    - rewrote read.paj() parser for Pajek formatted files, now supports timing and edge attributes, fixes error for empty network
