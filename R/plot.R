@@ -948,6 +948,8 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
                            # .. unless d is missing
             if (!is.null(d)){
               edge.lwd<-edge.lwd*d[,3]
+            } else {
+              edge.lwd<-rep(edge.lwd,length=nE)
             } 
           }else{  # edge is zero or less, so set it to 1
             edge.lwd<-rep(1,length=nE)
