@@ -9,7 +9,7 @@
 #
 # Provides support for the R/network package API.
 #
-# This file is known to be compatible with network package version 1.3.  
+# This file is known to be compatible with network package version 1.14.  
 # It should be compatible with subsequent versions, but updates may be 
 # necessary in rare cases.
 #

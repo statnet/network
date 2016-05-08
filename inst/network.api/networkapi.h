@@ -9,7 +9,7 @@
 #
 # Provides support for the R/network package API.
 #
-# This file was written for network version 1.9.  If using a later
+# This file was written for network version 1.14.  If using a later
 # version of network, you may need to update it.
 #
 # This file contains headers for networkapi.c, as well as macros and
