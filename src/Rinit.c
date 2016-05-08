@@ -4,7 +4,7 @@
 # utils.c
 #
 # Written by Jeffrey Horner <jeffrey.horner@gmail.com>
-# Last Modified 7/08/2014
+# Last Modified 5/07/2016
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -62,7 +62,35 @@ void R_init_network(DllInfo *dll)
    R_registerRoutines(dll,CEntries,CallEntries, NULL, NULL);
    R_useDynamicSymbols(dll, FALSE);
 
-   /* Callable functions from other packages' C code */
+ 
+  /*Add back the various things required by the API.*/
+
+  /*Register access routines*/
+  R_RegisterCCallable("network", "getEdgeAttribute", (DL_FUNC) getEdgeAttribute);
+  R_RegisterCCallable("network", "getEdgeIDs", (DL_FUNC) getEdgeIDs);
+  R_RegisterCCallable("network", "getEdges", (DL_FUNC) getEdges);
+  R_RegisterCCallable("network", "getNeighborhood", (DL_FUNC) getNeighborhood);
+  R_RegisterCCallable("network", "getNetworkAttribute", (DL_FUNC) getNetworkAttribute);
+  R_RegisterCCallable("network", "hasLoops", (DL_FUNC) hasLoops);
+  R_RegisterCCallable("network", "isAdjacent", (DL_FUNC) isAdjacent);
+  R_RegisterCCallable("network", "isDirected", (DL_FUNC) isDirected);
+  R_RegisterCCallable("network", "isHyper", (DL_FUNC) isHyper);
+  R_RegisterCCallable("network", "isLoop", (DL_FUNC) isLoop);
+  R_RegisterCCallable("network", "isMultiplex", (DL_FUNC) isMultiplex);
+  R_RegisterCCallable("network", "isNetwork", (DL_FUNC) isNetwork);
+  R_RegisterCCallable("network", "networkEdgecount", (DL_FUNC) networkEdgecount);
+  R_RegisterCCallable("network", "networkSize", (DL_FUNC) networkSize);
+
+  /*Register modification routines*/
+  R_RegisterCCallable("network", "addEdge_R", (DL_FUNC) addEdge_R);
+  R_RegisterCCallable("network", "addEdges_R", (DL_FUNC) addEdges_R);
+  R_RegisterCCallable("network", "deleteEdgeAttribute", (DL_FUNC) deleteEdgeAttribute);
+  R_RegisterCCallable("network", "deleteNetworkAttribute", (DL_FUNC) deleteNetworkAttribute);
+  R_RegisterCCallable("network", "deleteVertexAttribute", (DL_FUNC) deleteVertexAttribute);
+  R_RegisterCCallable("network", "setNetworkAttribute", (DL_FUNC) setNetworkAttribute);
+  R_RegisterCCallable("network", "setVertexAttribute", (DL_FUNC) setVertexAttribute);
+
+  /* Callable functions from other packages' C code */
 #define RREGDEF(name) R_RegisterCCallable("network", #name, (DL_FUNC) name)
    RREGDEF(setListElement);
    RREGDEF(getListElement);

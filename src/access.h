@@ -4,7 +4,7 @@
 # access.h
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 3/25/08
+# Last Modified 7/07/16
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -58,6 +58,8 @@ int isHyper(SEXP x);
 int isLoop(SEXP outl, SEXP inl);
 
 int isMultiplex(SEXP x);
+
+int isNetwork(SEXP x);
 
 int networkEdgecount(SEXP x, int naOmit);
 
