@@ -949,6 +949,7 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
             if (!is.null(d)){
               edge.lwd<-edge.lwd*d[,3]
             } else {
+              # d is missing, so just replicate
               edge.lwd<-rep(edge.lwd,length=nE)
             } 
           }else{  # edge is zero or less, so set it to 1

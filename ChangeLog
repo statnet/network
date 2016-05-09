@@ -1,6 +1,7 @@
 CHANGELOG:
 v1.14 Fixes & Features
    - revamped the network C API, which had been broken by earlier regrestration changes.  Users making use of the C API will need to update their networkapi.c and networkapi.h files, but no other changes need to be made to existing code.
+  - Fixed an un-handled case for plot edge.lwd expansion when called from other contexts. It can now replicate a single numeric value even if scaling is not otherwise included.
 v1.13 Fixes & Features
    - added some CRAN requested imports to NAMESPACE 
    - added get.dyads.eids function to return sets of edge ids for vectors of tails and heads vertex ids for non-multiplex networks

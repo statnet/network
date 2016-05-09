@@ -33,7 +33,7 @@ get.dyads.eids(x, tails, heads,
   
 }
 \value{
-  For \code{get.edges}, a list of edges.  For \code{get.edgeIDs}, a vector of edge ID numbers. For \code{get.edgeIDs}, a list of edge IDs corresponding to the dyads defined by the vertex ids in \code{tails} and \code{heads}
+  For \code{get.edges}, a list of edges.  For \code{get.edgeIDs}, a vector of edge ID numbers. For \code{get.dyads.eids}, a list of edge IDs corresponding to the dyads defined by the vertex ids in \code{tails} and \code{heads}
 }
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
