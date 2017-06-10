@@ -67,10 +67,10 @@ as.color<-function(x,opacity=1.0){
 #is a relocated function from the ergm package; it probably belongs elsewhere,
 #but is needed for the summary.network method (and in that sense is basic
 #enough to include.
-mixingmatrix <- function(nw, attrname) {
-  if(!is.network(nw)){
-    stop("mixingmatrix() requires a network object")
-  }
+mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
+
+mixingmatrix.network <- function(object, attrname, ...) {
+  nw <- object
   if(missing(attrname)){
     stop("attrname argument is missing. mixingmatrix() requires an an attribute name")
   }

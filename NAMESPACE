@@ -168,6 +168,7 @@ S3method(prod,network)
 S3method(sum,network)
 S3method(as.edgelist,network)
 S3method(as.edgelist,matrix)
+S3method(mixingmatrix,network)
 
 # These are not 'real' S3 methods, as there is no corresponding class
 # but they are dispatched by as.matrix.network and are flagged by check if not marked here
