@@ -4,4 +4,3 @@ r:
 - devel
 sudo: false
 cache: packages
-- statnet/statnet.common-private
