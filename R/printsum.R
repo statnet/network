@@ -52,9 +52,9 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
               cat("\n","mixing matrix for ",attributeName,":\n",sep="")
               print(mixingmatrix(x,attributeName))
             }
-         }else{
+          }else{            
             print(summary(attributeValue))
-         }
+          }
         }
       }else{
         if(attributeName!="mnext"){
@@ -64,11 +64,12 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
              print(table(attributeValue,dnn=paste('  ',attributeName,':',sep='')))
           }else{
              # for short attributes, just print out the values
-             if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double","NULL"))&&(length(attributeValue) < 10)){
+             if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double","NULL","call","formula"))&&(length(attributeValue) < 10)){
                # handle NULL case because cat won't print NULL
                if (is.null(attributeValue)){
                  cat(" ",attributeName,"= NULL\n")
                } else {
+                 if(is.call(attributeValue)) attributeValue <- deparse(attributeValue)
                  cat(" ",attributeName,"=",attributeValue,"\n")
                }
              } else{
@@ -80,9 +81,14 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
                  cat("  ",attributeName,": ",nrow(attributeValue),"x",ncol(attributeValue)," matrix\n", sep="")
                  
                } else {
-               # default to printing out the summary for the attribute   
+               # default to printing out the summary for the attribute
                  cat("  ",attributeName,":\n", sep="")
-                 print(summary(attributeValue))
+                 if(is.call(attributeValue)){
+                   #  (unless it's a call like a formula)   
+                   print(attributeValue)
+                 }else{
+                   print(summary(attributeValue))
+                 }
                }
              }
           }
@@ -193,11 +199,16 @@ print.summary.network<-function(x, ...){
               print(mixingmatrix(x,attributeName))
             }
           }else{
-            if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double"))&& (length(attributeValue) < 10)){
+            if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double","call","formula"))&& (length(attributeValue) < 10)){
+              if(is.call(attributeValue)) attributeValue <- deparse(attributeValue)
               cat("  ",attributeName," = ",attributeValue,"\n",sep="")
             }else{
               cat("  ",attributeName,":\n", sep="")
-              print(summary(attributeValue))
+              if(is.call(attributeValue)){
+                print(attributeValue)
+              }else{
+                print(summary(attributeValue))
+              }
             }
           }
         }
