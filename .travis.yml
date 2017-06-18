@@ -2,5 +2,8 @@ language: r
 r:
 - release
 - devel
+os:
+- linux
+- osx
 sudo: false
 cache: packages
