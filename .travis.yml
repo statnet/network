@@ -9,5 +9,7 @@ matrix:
   exclude:
   - r: devel
     os: osx
+r_github_packages:
+- statnet/statnet.common
 sudo: false
 cache: packages
