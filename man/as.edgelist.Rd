@@ -11,11 +11,10 @@
   Constructs an edgelist in a sorted format with defined attributes.
 }
   \usage{
-  \method{as.edgelist}{network}(x, attrname = NULL, as.sna.edgelist = FALSE, 
-  inverted = NULL, ...)
+  \method{as.edgelist}{network}(x, attrname = NULL, as.sna.edgelist = FALSE, ...)
   
   \method{as.edgelist}{matrix}(x, n, directed = TRUE, bipartite = FALSE, 
-  loops = FALSE, inverted = FALSE, vnames = seq_len(n), ...)
+  loops = FALSE, vnames = seq_len(n), ...)
   
   is.edgelist(x)
   }
@@ -26,7 +25,6 @@
   }
   \item{attrname}{optionally, the name of an edge attribute to use for edge values}
   \item{as.sna.edgelist}{logical; should the edgelist be returned in edgelist form expected by the sna package?}
-  \item{inverted}{logical; value is passed to the 'inverted' flag on the edgelist returned}
   \item{n}{integer number of vertices in network, value passed to the 'n' flag on edgelist returned}
   \item{vnames}{vertex names (defaults to vertex ids) to be attached to edgelist for sna package compatibility}
   \item{directed}{logical; is network directed, value passed to the 'directed' flag on edgelist returned}
@@ -59,8 +57,6 @@
   \item \code{attr(,"bipartite")} was the original network bipartite
   
   \item \code{attr(,"loops")} does the original network contain self-loops
-  
-  \item \code{attr(,"inverted")}  indicates if the network has been inverted?
   }
   
   Note that if the \code{attrname} attribute is used the resulting edgelist matrix will have three columns.  And if \code{attrname} refers to a character attribute, the resulting edgelist matrix will be character rather than numeric.
