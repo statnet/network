@@ -212,7 +212,7 @@
         }
         epresent[k]<-TRUE
       }else
-        epresent[k]<-(val[k]==0)   #If zero, skip it; otherwise, add
+        epresent[k]<-!is.na(val[k]) && (val[k]==0)   #If zero, skip it; otherwise (including NA), add
     }
     if(sum(epresent)>0)               #Adjust attributes for extant edges
       x<-set.edge.attribute(x,names.eval,valsl,eid)
