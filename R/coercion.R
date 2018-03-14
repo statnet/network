@@ -128,7 +128,7 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,...){
   else
     m<-m[!nal,,drop=FALSE]
   if(length(m)==0)
-    m<-matrix(numeric(0),ncol=2+as.sna.edgelist)
+    m<-matrix(numeric(0),ncol=2+as.sna.edgelist+!is.null(attrname))
   else if((!is.directed(x))&&as.sna.edgelist){    #sna uses directed form
     m<-rbind(m,m[m[,2]!=m[,1],c(2:1,3)])
   }
