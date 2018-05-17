@@ -52,8 +52,8 @@ as.edgelist.matrix <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE
 
 as.edgelist.tbl_df <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE, vnames=seq_len(n),...){
   if(!directed){
-    x$.tail <- pmin(x$.tail, x$.head)
-    x$.head <- pmax(x$.tail, x$.head)
+    x$.tail <- pmin(t <- x$.tail, x$.head)
+    x$.head <- pmax(t, x$.head) # .tail has been clobbered.
   }
   if(!loops) x <- x[x$.tail!=x$.head,]
   if(bipartite) x <- x[(x$.tail<=bipartite)!=(x$.head<=bipartite),]
