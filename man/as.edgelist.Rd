@@ -2,6 +2,7 @@
 \alias{as.edgelist}
 \alias{as.edgelist.matrix}
 \alias{as.edgelist.network}
+\alias{as.edgelist.tbl_df}
 \alias{is.edgelist}
 \alias{edgelist}
 \title{
@@ -11,9 +12,12 @@
   Constructs an edgelist in a sorted format with defined attributes.
 }
   \usage{
-  \method{as.edgelist}{network}(x, attrname = NULL, as.sna.edgelist = FALSE, ...)
+  \method{as.edgelist}{network}(x, attrname = NULL, as.sna.edgelist = FALSE, output=c("matrix","tibble"),...)
   
   \method{as.edgelist}{matrix}(x, n, directed = TRUE, bipartite = FALSE, 
+  loops = FALSE, vnames = seq_len(n), ...)
+
+  \method{as.edgelist}{tbl_df}(x, n, directed = TRUE, bipartite = FALSE, 
   loops = FALSE, vnames = seq_len(n), ...)
   
   is.edgelist(x)
@@ -21,10 +25,11 @@
   
   \arguments{
   \item{x}{
-  a \code{network} object with additional class added indicating how it should be dispatched.
+    a \code{network} object with additional class added indicating how it should be dispatched.
   }
-  \item{attrname}{optionally, the name of an edge attribute to use for edge values}
-  \item{as.sna.edgelist}{logical; should the edgelist be returned in edgelist form expected by the sna package?}
+  \item{output}{return type: a \code{\link{matrix}} or a \code{\link{tibble}}; see \code{\link{as.matrix.network}} for the difference.}
+  \item{attrname}{optionally, the name of an edge attribute to use for edge values; may be a vector of names if \code{output="tibble"}}
+  \item{as.sna.edgelist}{logical; should the edgelist be returned in edgelist form expected by the sna package? Ignored if \code{output="tibble"}}
   \item{n}{integer number of vertices in network, value passed to the 'n' flag on edgelist returned}
   \item{vnames}{vertex names (defaults to vertex ids) to be attached to edgelist for sna package compatibility}
   \item{directed}{logical; is network directed, value passed to the 'directed' flag on edgelist returned}
@@ -35,7 +40,7 @@
   }
   }
   \details{
-  Constructs a edgelist matrix from a network, sorted tails-major order, with tails first, and, for undirected networks, tail < head.  This format is required by some reverse-depending packages (i.e. \code{ergm})
+  Constructs a edgelist matrix or tibble from a network, sorted tails-major order, with tails first, and, for undirected networks, tail < head.  This format is required by some reverse-depending packages (e.g. \code{ergm})
   
   The \code{\link{as.matrix.network.edgelist}} provides similar functionality but it does not enforce ordering or set the \code{edgelist} class and so should be slightly faster. 
   
@@ -59,7 +64,7 @@
   \item \code{attr(,"loops")} does the original network contain self-loops
   }
   
-  Note that if the \code{attrname} attribute is used the resulting edgelist matrix will have three columns.  And if \code{attrname} refers to a character attribute, the resulting edgelist matrix will be character rather than numeric.
+  Note that if the \code{attrname} attribute is used the resulting edgelist matrix will have three columns.  And if \code{attrname} refers to a character attribute, the resulting edgelist matrix will be character rather than numeric unless \code{output="tibble"}.
   
   }
   
@@ -76,6 +81,7 @@
   \examples{
    data(emon)
    as.edgelist(emon[[1]])
+   as.edgelist(emon[[1]],output="tibble")
    # contrast with unsorted columns of
    as.matrix.network.edgelist(emon[[1]])
   }

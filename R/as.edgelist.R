@@ -16,17 +16,24 @@ as.edgelist <- function(x, ...){
 
 # convert a network into an ergm-style sorted edgelist using
 # as.edgelist.matrix and as.matrix.network.edgelist
-as.edgelist.network <- function(x, attrname = NULL, as.sna.edgelist = FALSE, ...){
-  
-  as.edgelist(as.matrix.network.edgelist(x, attrname=attrname,
-                                         as.sna.edgelist=as.sna.edgelist,...), 
-                                         n=network.size(x), 
-                                         directed=is.directed(x), 
-                                         bipartite=ifelse(is.bipartite(x),x%n%"bipartite",FALSE), 
-                                         loops=has.loops(x), 
-                                         vnames=network.vertex.names(x))
+as.edgelist.network <- function(x, attrname = NULL, as.sna.edgelist = FALSE, output=c("matrix","tibble"), ...){
+  output <- match.arg(output)
+  switch(output,
+         matrix = as.edgelist(as.matrix.network.edgelist(x, attrname=attrname,
+                                                         as.sna.edgelist=as.sna.edgelist,...),
+                              n=network.size(x),
+                              directed=is.directed(x),
+                              bipartite=ifelse(is.bipartite(x),x%n%"bipartite",FALSE),
+                              loops=has.loops(x),
+                              vnames=network.vertex.names(x)),
+         tibble = as.edgelist(as_tibble(x, attrnames=attrname,...),
+                              n=network.size(x),
+                              directed=is.directed(x),
+                              bipartite=ifelse(is.bipartite(x),x%n%"bipartite",FALSE),
+                              loops=has.loops(x),
+                              vnames=network.vertex.names(x))
+         )
 }
-
 
 
 as.edgelist.matrix <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE, vnames=seq_len(n),...){
@@ -34,6 +41,23 @@ as.edgelist.matrix <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE
   if(!loops) x <- x[x[,1]!=x[,2],,drop=FALSE]
   if(bipartite) x <- x[(x[,1]<=bipartite)!=(x[,2]<=bipartite),,drop=FALSE]
   x <- unique(x[order(x[,1],x[,2]),,drop=FALSE])
+  attr(x,"n") <- n
+  attr(x,"vnames")<- vnames
+  attr(x,"directed") <- directed
+  attr(x,"bipartite") <- bipartite
+  attr(x,"loops") <- loops
+  class(x)<-c('edgelist',class(x))
+  x
+}
+
+as.edgelist.tbl_df <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE, vnames=seq_len(n),...){
+  if(!directed){
+    x$.head <- pmin(x$.head, x$.tail)
+    x$.tail <- pmax(x$.head, x$.tail)
+  }
+  if(!loops) x <- x[x$.head!=x$.tail,]
+  if(bipartite) x <- x[(x$.head<=bipartite)!=(x$.tail<=bipartite),]
+  x <- unique(x[order(x$.head, x$.tail),])
   attr(x,"n") <- n
   attr(x,"vnames")<- vnames
   attr(x,"directed") <- directed
