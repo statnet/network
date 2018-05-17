@@ -149,8 +149,11 @@ as_tibble.network<-as.tibble.network<-function(x,attrnames=NULL,na.rm=TRUE,...){
   #Find the missing edges
   nal<-as.logical(get.edge.attribute(x$mel,"na"))
   #Generate the edgelist matrix
-  m <- lst(.tail = as.integer(unlist(sapply(x$mel,"[[","outl"))),
-           .head = as.integer(unlist(sapply(x$mel,"[[","inl"))))
+  m <- lst(
+    .tail = as.integer(unlist(sapply(x$mel,"[[","outl"))),
+    .head = as.integer(unlist(sapply(x$mel,"[[","inl"))),
+    .eid = which(!sapply(sapply(x$mel,"[[","outl"), is.null))
+  )
   #Add edge values, if needed
   if(!is.null(attrnames)){
     a <- lapply(lapply(attrnames, get.edge.attribute, el=x$mel, unlist=FALSE, na.omit=FALSE,null.na=TRUE,deleted.edges.omit=TRUE),

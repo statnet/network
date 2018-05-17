@@ -41,7 +41,7 @@
   Note that adjacency matrices may also be obtained using the extraction operator.  See the relevant man page for details.
 }
 \value{
-For \code{as.matrix} methods, an adjacency, incidence, or edgelist matrix. For the \code{as_tibble} method, a \code{tibble} whose first two columns are \code{.head} and \code{.tail} and whose subsequent columns are the requested edge attributes.
+For \code{as.matrix} methods, an adjacency, incidence, or edgelist matrix. For the \code{as_tibble} method, a \code{tibble} whose first two columns are \code{.head} and \code{.tail}, whose third column \code{.eid} is the edge ID, and whose subsequent columns are the requested edge attributes.
 }
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
