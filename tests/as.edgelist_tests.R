@@ -23,9 +23,12 @@ expect_equal(as.matrix.network.edgelist(test,attrname='weight'),structure(c(5L, 
 expect_equal(as.matrix.network.edgelist(test,attrname='value'),structure(c('5', '1', '1', '5', 'a', 'b'), .Dim = 2:3, n = 5, vnames = 1:5))
 
 # character attribute with tibble output: does not make matrix character
-expect_equal(as.edgelist(test,attrname='value', output="tibble"),structure(list(.tail = c(5L, 1L), .head = c(1L, 5L), value = c("a", "b")),
-                                                                           row.names = c(NA, -2L), class = c("edgelist", "tbl_df", "tbl", "data.frame"),
-                                                                           n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE))
+expect_equal(as.edgelist(test,attrname='value', output="tibble"),
+             structure(list(.tail = c(1L, 5L), .head = c(5L, 1L), .eid = 2:1, 
+                            value = c("b", "a")), row.names = c(NA, -2L),
+                       class = c("edgelist", "tbl_df", "tbl", "data.frame"),
+                       n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE)
+)
 
 
 undir<-network.initialize(5,directed=FALSE)
