@@ -52,12 +52,12 @@ as.edgelist.matrix <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE
 
 as.edgelist.tbl_df <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE, vnames=seq_len(n),...){
   if(!directed){
-    x$.head <- pmin(x$.head, x$.tail)
-    x$.tail <- pmax(x$.head, x$.tail)
+    x$.tail <- pmin(x$.tail, x$.head)
+    x$.head <- pmax(x$.tail, x$.head)
   }
-  if(!loops) x <- x[x$.head!=x$.tail,]
-  if(bipartite) x <- x[(x$.head<=bipartite)!=(x$.tail<=bipartite),]
-  x <- unique(x[order(x$.head, x$.tail),])
+  if(!loops) x <- x[x$.tail!=x$.head,]
+  if(bipartite) x <- x[(x$.tail<=bipartite)!=(x$.head<=bipartite),]
+  x <- unique(x[order(x$.tail, x$.head),])
   attr(x,"n") <- n
   attr(x,"vnames")<- vnames
   attr(x,"directed") <- directed
