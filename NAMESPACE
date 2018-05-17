@@ -8,6 +8,7 @@ importFrom("grDevices", "colors", "gray")
 importFrom("graphics", "locator", "par", "plot", "polygon", "rect",
              "strheight", "strwidth", "text")
 importFrom("stats", "rnorm")
+importFrom("tibble", "tibble", "as.tibble", "as_tibble", "lst")
 
 #Export everything except symbols that start with '.' or end with '_R'.
 #exportPattern("^[^\\.].*[^_][^R]$")
@@ -169,6 +170,9 @@ S3method(sum,network)
 S3method(as.edgelist,network)
 S3method(as.edgelist,matrix)
 S3method(mixingmatrix,network)
+
+S3method(as.tibble,network)
+S3method(as_tibble,network)
 
 # These are not 'real' S3 methods, as there is no corresponding class
 # but they are dispatched by as.matrix.network and are flagged by check if not marked here

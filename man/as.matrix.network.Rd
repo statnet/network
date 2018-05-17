@@ -1,41 +1,47 @@
 \name{as.matrix.network}
 \alias{as.matrix.network}
+\alias{as.tibble.network}
+\alias{as_tibble.network}
 \alias{as.matrix.network.adjacency}
 \alias{as.matrix.network.incidence}
 \alias{as.matrix.network.edgelist}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Coerce a Network Object to Matrix Form }
+\title{ Coerce a Network Object to Matrix or Table Form }
 \description{
-  The \code{as.matrix} methods attempt to coerce their input to a matrix in adjacency, incidence, or edgelist form.  Edge values (from a stored attribute) may be used if present.
+  The \code{as.matrix} methods attempt to coerce their input to a matrix in adjacency, incidence, or edgelist form.  Edge values (from a stored attribute) may be used if present. \code{\link[tibble:as_tibble]{as_tibble}} coerces into an edgelist in \code{\link{tibble}} (a type of \code{\link{data.frame}}) form; this can be especially useful if extrecting a character-type edge attribute.
 }
 \usage{
 \method{as.matrix}{network}(x, matrix.type = NULL, attrname = NULL, ...)
 \method{as.matrix.network}{adjacency}(x, attrname=NULL, 
     expand.bipartite = FALSE, ...)
 \method{as.matrix.network}{edgelist}(x, attrname=NULL, 
-    as.sna.edgelist = FALSE, ...)
+    as.sna.edgelist = FALSE, na.rm = TRUE, ...)
 \method{as.matrix.network}{incidence}(x, attrname=NULL, ...)
+\method{as_tibble}{network}(x, attrnames = NULL, na.rm = TRUE, ...)
+\method{as.tibble}{network}(x, attrnames = NULL, na.rm = TRUE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an object of class \code{network} }
   \item{matrix.type}{ one of \code{"adjacency"}, \code{"incidence"}, \code{"edgelist"}, or \code{NULL} }
   \item{attrname}{ optionally, the name of an edge attribute to use for edge values }
+  \item{attrnames}{ optionally, a list of the names of edge attributes to use for edge values }
   \item{expand.bipartite}{ logical; if \code{x} is bipartite, should we return the full adjacency matrix (rather than the abbreviated, two-mode form)?}
   \item{as.sna.edgelist}{logical; should the edgelist be returned in sna edglist form?}
+  \item{na.rm}{logical; should missing edges be included in the edgelist formats? Ignored if \code{as.sna.edgelist=TRUE}.}
   \item{...}{ additional arguments. }
 }
 \details{
   If no matrix type is specified, \code{\link{which.matrix.type}} will be used to make an educated guess based on the shape of \code{x}.  Where edge values are not specified, a dichotomous matrix will be assumed.
 
-  Edgelists returned by these methods are by default in a slightly different form from the \code{sna} edgelist standard, but do contain the \code{sna} extended matrix attributes (see \code{\link{as.network.matrix}}).  They should typically be compatible with \code{sna} library functions.  To ensure compatibility, the \code{as.sna.edgelist} argument can be set (which returns an exact \code{sna} edgelist). The \code{\link{as.edgelist}} function also returns a similar edgelist matrix but with an enforced sorting. 
+  Edgelists returned by the \code{as.matrix} methods are by default in a slightly different form from the \code{sna} edgelist standard, but do contain the \code{sna} extended matrix attributes (see \code{\link{as.network.matrix}}).  They should typically be compatible with \code{sna} library functions.  To ensure compatibility, the \code{as.sna.edgelist} argument can be set (which returns an exact \code{sna} edgelist). The \code{\link{as.edgelist}} function also returns a similar edgelist matrix but with an enforced sorting.
   
-  If the \code{attrname} attribute is used to include a charcter attribute, the resulting edgelist matrix will be character rather than numeric.
+  For the \code{as.matrix} methods, if the \code{attrname} attribute is used to include a charcter attribute, the resulting edgelist matrix will be character rather than numeric. The \code{as_tibble} methods never coerces.
   
   Note that adjacency matrices may also be obtained using the extraction operator.  See the relevant man page for details.
 }
 \value{
-An adjacency, incidence, or edgelist matrix
+For \code{as.matrix} methods, an adjacency, incidence, or edgelist matrix. For the \code{as_tibble} method, a \code{tibble} whose first two columns are \code{.head} and \code{.tail} and whose subsequent columns are the requested edge attributes.
 }
 \references{ Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  \url{http://www.jstatsoft.org/v24/i02/}
 }
@@ -46,19 +52,38 @@ An adjacency, incidence, or edgelist matrix
 
 \seealso{ \code{\link{which.matrix.type}}, \code{\link{network}}, \code{\link{network.extraction}},\code{\link{as.edgelist}}}
 \examples{
-#Create a random network
-m <- matrix(rbinom(25,1,0.5),5,5)
+# Create a random network
+m <- matrix(rbinom(25,4,0.159),5,5) # 50\% density
 diag(m) <- 0
-g <- network(m)
+g <- network(m, ignore.eval=FALSE, names.eval="a") # With values
+g \%e\% "ac" <- letters[g \%e\% "a"]
 
-#Coerce to matrix form
-as.matrix.network(g,matrix.type="adjacency")
-as.matrix.network(g,matrix.type="incidence")
-as.matrix.network(g,matrix.type="edgelist")
+# Coerce to matrix form
+# No attributes:
+as.matrix(g,matrix.type="adjacency")
+as.matrix(g,matrix.type="incidence")
+as.matrix(g,matrix.type="edgelist")
+# Attributes:
+as.matrix(g,matrix.type="adjacency",attrname="a")
+as.matrix(g,matrix.type="incidence",attrname="a")
+as.matrix(g,matrix.type="edgelist",attrname="a")
+as.matrix(g,matrix.type="edgelist",attrname="ac")
 
-#Can also use the extraction operator
-g[,]                            #Get entire adjacency matrix
-g[1:5,6:10]                     #Obtain a submatrix
+# Coerce to a tibble:
+library(tibble)
+as_tibble(g)
+as_tibble(g, attrnames=c("a","ac"))
+
+# Missing data handling:
+g[1,2] <- NA
+as.matrix(g,matrix.type="adjacency") # NA in the corresponding cell
+as.matrix(g,matrix.type="edgelist", na.rm=TRUE) # (1,2) excluded
+as.matrix(g,matrix.type="edgelist", na.rm=FALSE) # (1,2) included
+as_tibble(g, attrnames="na", na.rm=FALSE) # Which edges are marked missing?
+
+# Can also use the extraction operator
+g[,]                            # Get entire adjacency matrix
+g[1:2,3:5]                      # Obtain a submatrix
 }
 \keyword{ classes }% at least one, from doc/KEYWORDS
 \keyword{ graphs }% __ONLY ONE__ keyword per line

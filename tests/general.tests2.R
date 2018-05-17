@@ -66,11 +66,14 @@ if(length(get.edgeIDs(net,v=2,alter=2))>0){
 }
 
 # check for problem with as.network.edgelist with zero edges #1138
-result <- as.matrix.network.edgelist(network.initialize(5),as.sna.edgelist = TRUE)
-if (nrow(result) != 0){
+result1 <- as.matrix.network.edgelist(network.initialize(5),as.sna.edgelist = TRUE)
+if (nrow(result1) != 0){
   stop('as.matrix.network.edgelist did not return correct value for net with zero edges')
 }
-as.matrix.network.edgelist(network.initialize(0),as.sna.edgelist = TRUE)
+result1a <- tibble::as_tibble(network.initialize(5))
+if (nrow(result1a) != 0){
+  stop('as.matrix.network.edgelist did not return correct value for net with zero edges')
+}
 result2<-as.matrix.network.adjacency(network.initialize(5))
 if(nrow(result2) != 5 & ncol(result2) != 5){
   stop('as.matrix.network.adjacency did not return matrix with correct dimensions')
