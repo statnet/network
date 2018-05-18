@@ -142,20 +142,22 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,na.rm
 # Coerce a network object to an edgelist tibble.  If provided, attrnames is 
 # used to identify a list of attributes to use for edge values.
 #
-as_tibble.network<-as.tibble.network<-function(x,attrnames=FALSE,na.rm=TRUE,...){
-  #Check to make sure this is a supported network type
-  if(is.hyper(x))
-    stop("Hypergraphs not currently supported in as.matrix.network.edgelist.  Exiting.\n")
-  #Find the missing edges
+as_tibble.network<-as.tibble.network<-function(x,attrnames=FALSE,na.rm=TRUE,...){#Find the missing edges
   nal<-as.logical(get.edge.attribute(x$mel,"na"))
+ 
   #Generate the edgelist matrix
+  tails <- lapply(x$mel,`[[`,"outl")
+  heads <- lapply(x$mel,`[[`,"inl")
   m <- lst(
-    .tail = as.integer(unlist(sapply(x$mel,"[[","outl"))),
-    .head = as.integer(unlist(sapply(x$mel,"[[","inl"))),
-    .eid = which(!sapply(sapply(x$mel,"[[","outl"), is.null))
+    .tail = if(is.hyper(x)) tails else as.integer(unlist(tails)),
+    .head = if(is.hyper(x)) heads else as.integer(unlist(heads)),
+    .eid = which(sapply(tails, length) | sapply(heads, length))
   )
+  
   #Add edge values, if needed
-  # If logical or numeric, use as index; na.omit() is needed to handle a pathological case where list.edge.attributes(x) is empty but attrnames=TRUE.
+  # If logical or numeric, use as index; na.omit() is needed to handle
+  # a pathological case where list.edge.attributes(x) is empty but
+  # attrnames=TRUE.
   if(is.logical(attrnames) || is.numeric(attrnames)) attrnames <- na.omit(list.edge.attributes(x)[attrnames])
   if(length(attrnames)){
     a <- lapply(lapply(attrnames, get.edge.attribute, el=x$mel, unlist=FALSE, na.omit=FALSE,null.na=TRUE,deleted.edges.omit=TRUE),
