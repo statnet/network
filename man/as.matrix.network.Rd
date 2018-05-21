@@ -28,8 +28,8 @@
   \item{attrnames}{ optionally, either a character vector of the names
     of edge attributes to use for edge values, or a numerical or logical
     vector to use as indices for selecting them from
-    \code{\link{list.edge.attributes}(x); passing \code{TRUE} therefore
-      returns all edge attributes as columns}}
+    \code{\link{list.edge.attributes}(x)}; passing \code{TRUE} therefore
+      returns all edge attributes as columns}
   \item{expand.bipartite}{ logical; if \code{x} is bipartite, should we return the full adjacency matrix (rather than the abbreviated, two-mode form)?}
   \item{as.sna.edgelist}{logical; should the edgelist be returned in sna edglist form?}
   \item{na.rm}{logical; should missing edges be included in the edgelist formats? Ignored if \code{as.sna.edgelist=TRUE}.}

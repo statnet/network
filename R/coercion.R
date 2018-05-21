@@ -151,7 +151,7 @@ as_tibble.network<-as.tibble.network<-function(x,attrnames=FALSE,na.rm=TRUE,...)
   m <- lst(
     .tail = if(is.hyper(x)) tails else as.integer(unlist(tails)),
     .head = if(is.hyper(x)) heads else as.integer(unlist(heads)),
-    .eid = which(sapply(tails, length) | sapply(heads, length))
+    .eid = which(as.logical(sapply(tails, length)) | as.logical(sapply(heads, length)))
   )
   
   #Add edge values, if needed
