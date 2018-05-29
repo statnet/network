@@ -36,6 +36,8 @@ as.network.matrix,
 as.network.network,
 as.sociomatrix,
 as.edgelist,
+# TODO: Don't export as.edgelist.matrix once no one depends on it.
+as.edgelist.matrix,
 is.edgelist,
 "%c%.network",
 delete.edge.attribute,
