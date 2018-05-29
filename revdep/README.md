@@ -2,12 +2,12 @@
 
 |field    |value                                              |
 |:--------|:--------------------------------------------------|
-|version  |R Under development (unstable) (2018-05-28 r74790) |
+|version  |R Under development (unstable) (2018-05-29 r74800) |
 |os       |Debian GNU/Linux buster/sid                        |
 |system   |x86_64, linux-gnu                                  |
 |ui       |X11                                                |
 |language |(EN)                                               |
-|collate  |en_AU.utf8                                         |
+|collate  |en_AU.UTF-8                                        |
 |tz       |Australia/Sydney                                   |
 |date     |2018-05-29                                         |
 
@@ -15,17 +15,15 @@
 
 |package |old      |new      |Δ  |
 |:-------|:--------|:--------|:--|
-|network |1.13.0.1 |1.14-347 |*  |
+|network |1.13.0.1 |1.14-349 |*  |
 
 # Revdeps
 
-## Couldn't check (3)
+## Couldn't check (1)
 
 |package |version |error |warning |note |
 |:-------|:-------|:-----|:-------|:----|
 |amen    |1.3     |      |        |     |
-|ergm    |3.8.0   |      |        |     |
-|fergm   |?       |      |        |     |
 
 ## All (80)
 
@@ -55,7 +53,7 @@
 |ergm.graphlets     |1.0.3    |      |        |     |
 |ergm.rank          |1.0.1    |      |        |     |
 |ergm.userterms     |3.1.1    |      |        |     |
-|fergm              |?        |      |        |     |
+|fergm              |0.2.1    |      |        |     |
 |genBaRcode         |1.0.0    |      |        |     |
 |geomnet            |0.2.0    |      |        |     |
 |GGally             |1.4.0    |      |        |     |
