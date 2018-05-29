@@ -4,3 +4,4 @@
 .RSession
 appveyor.yml
 ^codecov\.yml$
+^revdep$
