@@ -6,12 +6,13 @@
   \code{network.edgecount} returns the number of edges within a \code{network}, removing those flagged as missing if desired.
 }
 \usage{
-network.edgecount(x, na.omit = TRUE)
+network.edgecount(x, na.omit = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an object of class \code{network} }
   \item{na.omit}{ logical; omit edges with \code{na==TRUE} from the count? }
+  \item{\dots}{additional arguments, not used}
 }
 \details{
   The return value is the number of distinct edges within the network object, including multiplex edges as appropriate.  (So if there are 3 edges from vertex i to vertex j, each contributes to the total edge count.)

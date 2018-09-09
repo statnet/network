@@ -9,11 +9,12 @@
 }
 \usage{
 \method{is.na}{network}(x)
-network.naedgecount(x)
+network.naedgecount(x, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an object of class \code{network} }
+  \item{\dots}{additional arguments, not used}
 }
 \details{
   The missingness of an edge is controlled by its \code{na} attribute (which is mandatory for all edges); \code{network.naedgecount} returns the number of edges for which \code{na==TRUE}.  The \code{is.na} network method produces a new network object whose edges correspond to the missing (\code{na==TRUE}) edges of the original object, and is thus a covenient method of extracting detailed missingness information on the entire network.  The network returned by \code{is.na} is guaranteed to have the same base network attributes (directedness, loopness, hypergraphicity, multiplexity, and bipartite constraint) as the original network object, but no other information is copied; note too that edge IDs are \emph{not} preserved by this process (although adjacency obviously is).  Since the resulting object is a \code{\link{network}}, standard coercion, print/summary, and other methods can be applied to it in the usual fashion.

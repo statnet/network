@@ -678,7 +678,8 @@ list.vertex.attributes<-function(x){
 
 # Retrieve the number of free dyads (i.e., number of non-missing) of network x.
 #
-network.dyadcount<-function(x,na.omit=TRUE){
+network.dyadcount<-function(x, na.omit=TRUE, ...) UseMethod("network.dyadcount")
+network.dyadcount.network<-function(x,na.omit=TRUE,...){
  if(!is.network(x)){
    stop("network.dyadcount requires an argument of class network.")
  }
@@ -731,7 +732,8 @@ network.dyadcount<-function(x,na.omit=TRUE){
 
 #Retrieve the number of edges in network x.
 #
-network.edgecount<-function(x,na.omit=TRUE){
+network.edgecount<-function(x,na.omit=TRUE, ...) UseMethod("network.edgecount")
+network.edgecount.network<-function(x,na.omit=TRUE,...){
   #First, check to see that this is a graph object
   if(!is.network(x))
     stop("network.edgecount requires an argument of class network.\n")
@@ -742,7 +744,8 @@ network.edgecount<-function(x,na.omit=TRUE){
 
 #Retrieve the number of missing edges in network x
 #
-network.naedgecount<-function(x){
+network.naedgecount<-function(x, ...) UseMethod("network.naedgecount")
+network.naedgecount.network<-function(x, ...){
   na<-get.edge.attribute(x$mel,"na")
   if(is.null(na))
     0
@@ -753,7 +756,8 @@ network.naedgecount<-function(x){
 
 # Retrieve the size (i.e., number of vertices) of network x.
 #
-network.size<-function(x){
+network.size<-function(x, ...) UseMethod("network.size")
+network.size.network<-function(x, ...){
   if(!is.network(x))
     stop("network.size requires an argument of class network.\n")
   else

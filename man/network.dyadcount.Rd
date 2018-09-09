@@ -6,12 +6,13 @@
   \code{network.dyadcount} returns the number of possible dyads within a \code{network}, removing those flagged as missing if desired.  If the network is directed, directed dyads are counted accordingly.
 }
 \usage{
-network.dyadcount(x, na.omit = TRUE)
+network.dyadcount(x, na.omit = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an object of class \code{network} }
   \item{na.omit}{ logical; omit edges with \code{na==TRUE} from the count? }
+  \item{\dots}{additional arguments, not used}
 }
 \details{
   The return value \code{network.dyadcount} is equal to the number of dyads, minus the number of \code{NULL} edges (and missing edges, if \code{na.omit==TRUE}).  If \code{x} is directed, the number of directed dyads is returned. If the network allows loops, the number of possible entries on the diagnonal is added.   Allthough the function does not give an error on multiplex networks or hypergraphs, the results probably don't make sense.

@@ -6,11 +6,12 @@
   \code{network.size} returns the order of its argument (i.e., number of vertices). 
 }
 \usage{
-network.size(x)
+network.size(x, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an object of class \code{network} }
+  \item{\dots}{additional arguments, not used}
 }
 \details{
   \code{network.size(x)} is equivalent to \code{get.network.attribute(x,"n")}; the function exists as a convenience.
