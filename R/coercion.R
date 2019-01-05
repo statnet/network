@@ -142,33 +142,50 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,na.rm
 # Coerce a network object to an edgelist tibble.  If provided, attrnames is 
 # used to identify a list of attributes to use for edge values.
 #
-as_tibble.network<-as.tibble.network<-function(x,attrnames=FALSE,na.rm=TRUE,...){#Find the missing edges
-  nal<-as.logical(get.edge.attribute(x$mel,"na"))
- 
-  #Generate the edgelist matrix
-  tails <- lapply(x$mel,`[[`,"outl")
-  heads <- lapply(x$mel,`[[`,"inl")
-  m <- lst(
-    .tail = if(is.hyper(x)) tails else as.integer(unlist(tails)),
-    .head = if(is.hyper(x)) heads else as.integer(unlist(heads)),
-    .eid = which(as.logical(sapply(tails, length)) | as.logical(sapply(heads, length)))
-  )
-  
-  #Add edge values, if needed
-  # If logical or numeric, use as index; na.omit() is needed to handle
-  # a pathological case where list.edge.attributes(x) is empty but
-  # attrnames=TRUE.
-  if(is.logical(attrnames) || is.numeric(attrnames)) attrnames <- na.omit(list.edge.attributes(x)[attrnames])
-  if(length(attrnames)){
-    a <- lapply(lapply(attrnames, get.edge.attribute, el=x$mel, unlist=FALSE, na.omit=FALSE,null.na=TRUE,deleted.edges.omit=TRUE),
-                function(l) if(length(lens <- unique(lengths(l))) == 1L && lens==1L) unlist(l, recursive=FALSE) else l)
-    names(a) <- attrnames
-    m <- c(m, a)
-  }
-  m <- as_tibble(m)
+as_tibble.network<-as.tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE,..., unit=c("edges", "vertices")){
+  unit <- match.arg(unit)
+  if(unit=="edges"){
 
+    #Find the missing edges
+    nal<-as.logical(get.edge.attribute(x$mel,"na"))
+
+    #Generate the edgelist matrix
+    tails <- lapply(x$mel,`[[`,"outl")
+    heads <- lapply(x$mel,`[[`,"inl")
+    m <- list(
+      .tail = if(is.hyper(x)) tails else as.integer(unlist(tails)),
+      .head = if(is.hyper(x)) heads else as.integer(unlist(heads)),
+      .eid = which(as.logical(sapply(tails, length)) | as.logical(sapply(heads, length)))
+    )
+
+    #Add edge values, if needed
+    # If logical or numeric, use as index; na.omit() is needed to handle
+    # a pathological case where list.edge.attributes(x) is empty but
+    # attrnames=TRUE.
+    if(is.logical(attrnames) || is.numeric(attrnames)) attrnames <- na.omit(list.edge.attributes(x)[attrnames])
+    a <- attrnames %>%
+      map(get.edge.attribute, el=x$mel, unlist=FALSE, na.omit=FALSE,null.na=TRUE,deleted.edges.omit=TRUE) %>% # Obtain a list of edge attribute values.
+      map(function(l) if(length(lens <- unique(lengths(l))) == 1L && lens==1L) unlist(l, recursive=FALSE) else l) %>% # Iff all values of an edge attribut ehave the same length *and* that length is 1, convert to vector. (FIXME: why didn't I just compare all lengths to 1L?)
+      set_names(attrnames)
+    m <- c(m, a)
+
+  }else{ # "vertices" is the only other possibility at this time
+
+    #Find the missing vertices
+    nal<-as.logical(get.vertex.attribute(x,"na"))
+
+    if(is.logical(attrnames) || is.numeric(attrnames)) attrnames <- na.omit(list.vertex.attributes(x)[attrnames])
+    a <- attrnames %>%
+      map(get.vertex.attribute, x=x, unlist=FALSE, na.omit=FALSE,null.na=TRUE) %>% # Obtain a list of edge attribute values.
+      map(function(l) if(length(lens <- unique(lengths(l))) == 1L && lens==1L) unlist(l, recursive=FALSE) else l) %>% # Iff all values of a vertex attribut ehave the same length *and* that length is 1, convert to vector. (FIXME: why didn't I just compare all lengths to 1L?)
+      set_names(attrnames)
+    m <- a
+
+  }
+
+  m <- as_tibble(m)
   if(na.rm) m <- m[!nal,]
-  
+
   attr(m,"n")<-network.size(x)
   attr(m,"vnames")<-network.vertex.names(x)
   if(is.bipartite(x))

@@ -1,6 +1,6 @@
 Package: network
-Version: 1.14-355
-Date: 2018-09-09
+Version: 1.14-356
+Date: 2019-01-05
 Title: Classes for Relational Data
 Authors@R: c(
     person("Carter T.", "Butts", role=c("aut","cre"), email="buttsc@uci.edu"),
@@ -10,7 +10,7 @@ Authors@R: c(
     person("Jeffrey", "Horner", role=c("ctb"), email="jeffrey.horner@gmail.com"),
     person("Li", "Wang", role=c("ctb"), email="lxwang@uw.edu"))
 Depends: R (>= 2.10), utils
-Imports: tibble
+Imports: tibble, purrr
 Suggests: 
     sna,
     statnet.common,

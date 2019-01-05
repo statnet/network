@@ -72,7 +72,7 @@ if (nrow(result1) != 0){
 }
 result1a <- tibble::as_tibble(network.initialize(5))
 if (nrow(result1a) != 0){
-  stop('as.matrix.network.edgelist did not return correct value for net with zero edges')
+  stop('as_tibble.network did not return correct value for net with zero edges')
 }
 result2<-as.matrix.network.adjacency(network.initialize(5))
 if(nrow(result2) != 5 & ncol(result2) != 5){

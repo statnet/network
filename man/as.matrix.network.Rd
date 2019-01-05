@@ -17,8 +17,8 @@
 \method{as.matrix.network}{edgelist}(x, attrname=NULL, 
     as.sna.edgelist = FALSE, na.rm = TRUE, ...)
 \method{as.matrix.network}{incidence}(x, attrname=NULL, ...)
-\method{as_tibble}{network}(x, attrnames = FALSE, na.rm = TRUE, ...)
-\method{as.tibble}{network}(x, attrnames = FALSE, na.rm = TRUE,...)
+\method{as_tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE, ..., unit=c("edges","vertices"))
+\method{as.tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE,..., unit=c("edges","vertices"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,11 +28,15 @@
   \item{attrnames}{ optionally, either a character vector of the names
     of edge attributes to use for edge values, or a numerical or logical
     vector to use as indices for selecting them from
-    \code{\link{list.edge.attributes}(x)}; passing \code{TRUE} therefore
+    \code{\link{list.edge.attributes}(x)} or
+    \code{\link{list.vertex.attributes}(x)} (depending on \code{unit}); passing \code{TRUE} therefore
       returns all edge attributes as columns}
   \item{expand.bipartite}{ logical; if \code{x} is bipartite, should we return the full adjacency matrix (rather than the abbreviated, two-mode form)?}
   \item{as.sna.edgelist}{logical; should the edgelist be returned in sna edglist form?}
-  \item{na.rm}{logical; should missing edges be included in the edgelist formats? Ignored if \code{as.sna.edgelist=TRUE}.}
+  \item{na.rm}{logical; should missing edges/vertices be included in the
+    edgelist formats? Ignored if \code{as.sna.edgelist=TRUE}.}
+  \item{unit}{whether a \code{\link{tibble}} of edge or vertex
+    attributes should be returned.}
   \item{...}{ additional arguments. }
 }
 \details{
@@ -40,9 +44,9 @@
 
   Edgelists returned by the \code{as.matrix} methods are by default in a slightly different form from the \code{sna} edgelist standard, but do contain the \code{sna} extended matrix attributes (see \code{\link{as.network.matrix}}).  They should typically be compatible with \code{sna} library functions.  To ensure compatibility, the \code{as.sna.edgelist} argument can be set (which returns an exact \code{sna} edgelist). The \code{\link{as.edgelist}} function also returns a similar edgelist matrix but with an enforced sorting.
   
-  For the \code{as.matrix} methods, if the \code{attrname} attribute is used to include a charcter attribute, the resulting edgelist matrix will be character rather than numeric. The \code{as_tibble} methods never coerces.
-  
-  Note that adjacency matrices may also be obtained using the extraction operator.  See the relevant man page for details.
+  For the \code{as.matrix} methods, if the \code{attrname} attribute is used to include a charcter attribute, the resulting edgelist matrix will be character rather than numeric. The \code{as_tibble} methods never coerce.
+
+  Note that adjacency matrices may also be obtained using the extraction operator.  See the relevant man page for details. Also note that which attributes get returned by the \code{as_tibble} method by default depends on \code{unit}: by default no edge attributes are returned but all vertex attributes are.
 }
 \value{
 For \code{as.matrix} methods, an adjacency, incidence, or edgelist matrix. For the \code{as_tibble} method, a \code{tibble} whose first two columns are \code{.head} and \code{.tail}, whose third column \code{.eid} is the edge ID, and whose subsequent columns are the requested edge attributes.
@@ -78,6 +82,8 @@ library(tibble)
 as_tibble(g)
 as_tibble(g, attrnames=c("a","ac"))
 as_tibble(g, attrnames=TRUE)
+# Get vertex attributes instead:
+as_tibble(g, unit = "vertices")
 
 # Missing data handling:
 g[1,2] <- NA
