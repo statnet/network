@@ -164,8 +164,8 @@ as_tibble.network<-as.tibble.network<-function(x,attrnames=(match.arg(unit)=="ve
     # attrnames=TRUE.
     if(is.logical(attrnames) || is.numeric(attrnames)) attrnames <- na.omit(list.edge.attributes(x)[attrnames])
     a <- attrnames %>%
-      map(get.edge.attribute, el=x$mel, unlist=FALSE, na.omit=FALSE,null.na=TRUE,deleted.edges.omit=TRUE) %>% # Obtain a list of edge attribute values.
-      map(function(l) if(length(lens <- unique(lengths(l))) == 1L && lens==1L) unlist(l, recursive=FALSE) else l) %>% # Iff all values of an edge attribut ehave the same length *and* that length is 1, convert to vector. (FIXME: why didn't I just compare all lengths to 1L?)
+      lapply(get.edge.attribute, el=x$mel, unlist=FALSE, na.omit=FALSE,null.na=TRUE,deleted.edges.omit=TRUE) %>% # Obtain a list of edge attribute values.
+      lapply(function(l) if(length(lens <- unique(lengths(l))) == 1L && lens==1L) unlist(l, recursive=FALSE) else l) %>% # Iff all values of an edge attribut ehave the same length *and* that length is 1, convert to vector. (FIXME: why didn't I just compare all lengths to 1L?)
       set_names(attrnames)
     m <- c(m, a)
 
@@ -176,8 +176,8 @@ as_tibble.network<-as.tibble.network<-function(x,attrnames=(match.arg(unit)=="ve
 
     if(is.logical(attrnames) || is.numeric(attrnames)) attrnames <- na.omit(list.vertex.attributes(x)[attrnames])
     a <- attrnames %>%
-      map(get.vertex.attribute, x=x, unlist=FALSE, na.omit=FALSE,null.na=TRUE) %>% # Obtain a list of edge attribute values.
-      map(function(l) if(length(lens <- unique(lengths(l))) == 1L && lens==1L) unlist(l, recursive=FALSE) else l) %>% # Iff all values of a vertex attribut ehave the same length *and* that length is 1, convert to vector. (FIXME: why didn't I just compare all lengths to 1L?)
+      lapply(get.vertex.attribute, x=x, unlist=FALSE, na.omit=FALSE,null.na=TRUE) %>% # Obtain a list of edge attribute values.
+      lapply(function(l) if(length(lens <- unique(lengths(l))) == 1L && lens==1L) unlist(l, recursive=FALSE) else l) %>% # Iff all values of a vertex attribut ehave the same length *and* that length is 1, convert to vector. (FIXME: why didn't I just compare all lengths to 1L?)
       set_names(attrnames)
     m <- a
 
