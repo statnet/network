@@ -230,7 +230,8 @@
 
 
 "%e%<-"<-function(x,attrname,value){
-  set.edge.value(x,attrname=attrname,value=value)
+  if(is.matrix(value)) set.edge.value(x,attrname=attrname,value=value)
+  else set.edge.attribute(x,attrname=attrname,value=value)
 }
 
 
