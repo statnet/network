@@ -84,7 +84,7 @@ x \%vattr\% attrname <- value
   g \%e\% "hoo" <- "wah"
   g \%e\% "hoo"
   #Note that there are deleted edges in the network, and the arguments
-  will be aligned to them.
+  #will be aligned to them.
   g \%e\% "om" <- c("wow","whee")
   g \%e\% "om"
   #Assign edge values as a sociomatrix
