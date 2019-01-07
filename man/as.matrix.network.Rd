@@ -17,8 +17,10 @@
 \method{as.matrix.network}{edgelist}(x, attrname=NULL, 
     as.sna.edgelist = FALSE, na.rm = TRUE, ...)
 \method{as.matrix.network}{incidence}(x, attrname=NULL, ...)
-\method{as_tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE, ..., unit=c("edges","vertices"))
-\method{as.tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE,..., unit=c("edges","vertices"))
+\method{as_tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE, ...,
+    unit=c("edges","vertices"))
+\method{as.tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE, ...,
+    unit=c("edges","vertices"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
