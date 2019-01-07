@@ -69,10 +69,6 @@ add.edge<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FA
 } 
 
 add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){ 
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("add.edge requires an argument of class network.")
-  #Do the deed
   xn<-substitute(x)
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
@@ -96,9 +92,6 @@ add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
 # which is the tail set for a given edge (ditto for head).  If edge values
 # are provided, they must be given similarly as lists of lists.
 add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("add.edges requires an argument of class network.")
   #Ensure that the inputs are set up appropriately 
   if(!is.list(tail))
     tail<-as.list(tail)
@@ -680,10 +673,6 @@ list.vertex.attributes<-function(x){
 #
 network.dyadcount<-function(x, na.omit=TRUE, ...) UseMethod("network.dyadcount")
 network.dyadcount.network<-function(x,na.omit=TRUE,...){
- if(!is.network(x)){
-   stop("network.dyadcount requires an argument of class network.")
- }
-
  nodes <- network.size(x)
  if(is.directed(x)){
    if(is.bipartite(x)){ # directed bipartite
@@ -734,10 +723,6 @@ network.dyadcount.network<-function(x,na.omit=TRUE,...){
 #
 network.edgecount<-function(x,na.omit=TRUE, ...) UseMethod("network.edgecount")
 network.edgecount.network<-function(x,na.omit=TRUE,...){
-  #First, check to see that this is a graph object
-  if(!is.network(x))
-    stop("network.edgecount requires an argument of class network.\n")
-  #Return the edge count
   .Call(networkEdgecount_R,x,na.omit)
 }
 
@@ -758,10 +743,7 @@ network.naedgecount.network<-function(x, ...){
 #
 network.size<-function(x, ...) UseMethod("network.size")
 network.size.network<-function(x, ...){
-  if(!is.network(x))
-    stop("network.size requires an argument of class network.\n")
-  else
-    get.network.attribute(x,"n")
+  get.network.attribute(x,"n")
 }
 
 
