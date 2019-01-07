@@ -126,7 +126,7 @@
   #reconstructing new outedgelists, inedgelists, and edgelists,
   #leaving the old ones to the garbage collector.
   if(missing(i) && missing(j) && is.null(names.eval) && all(value==FALSE)){
-    if(network.edgecount(x)==0) return(x) # Nothing to do.
+    if(length(x$mel)==0 || network.edgecount(x)==0) return(x) # Nothing to do.
     x$oel <- rep(list(integer(0)), length(x$oel))
     x$iel <- rep(list(integer(0)), length(x$iel))
     x$mel <- list()
