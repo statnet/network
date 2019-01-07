@@ -242,7 +242,7 @@
 
 "%e%<-"<-function(x,attrname,value){
   if(is.matrix(value)) set.edge.value(x,attrname=attrname,value=value)
-  else set.edge.attribute(x,attrname=attrname,value=value,e=which(!vapply(x$mel, is.null, NA)))
+  else set.edge.attribute(x,attrname=attrname,value=value,e=valid.eids(x))
 }
 
 
