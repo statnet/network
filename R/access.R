@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 02/26/13
+# Last Modified 02/24/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -779,11 +779,11 @@ permute.vertexIDs<-function(x,vids){
     stop("permute.vertexIDs requires an argument of class network.\n")
   #Sanity check: is this a permutation vector?
   n<-network.size(x)
-  if((length(unique(vids))!=n)||(range(vids)!=c(1,n)))
+  if((length(unique(vids))!=n)||any(range(vids)!=c(1,n)))
     stop("Invalid permutation vector in permute.vertexIDs.")
   if(is.bipartite(x)){  #If bipartite, enforce partitioning
     bpc<-get.network.attribute(x,"bipartite")
-    if(any(vids[0:bpc]>bpc)||(vids[(bpc+1):n]<=bpc))
+    if(any(vids[0:bpc]>bpc)||any(vids[(bpc+1):n]<=bpc))
       warning("Performing a cross-mode permutation in permute.vertexIDs.  I hope you know what you're doing....")
   }
   #Return the permuted graph
