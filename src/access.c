@@ -4,7 +4,7 @@
 # access.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 08/01/13
+# Last Modified 03/04/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -195,7 +195,7 @@ SEXP getEdgeIDs(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
 SEXP getEdges(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
 /*Retrieve all edges incident on v, in network x.  Outgoing or incoming edges are specified by neighborhood, while na.omit indicates whether or not missing edges should be omitted.  If alter>0, only edges whose alternate endpoints contain alter are returned.  The return value is a list of edges.*/
 {
-  SEXP eids,el,mel,eplist;
+  SEXP eids,el,mel,eplist,aptr,bptr;
   int i,j,pc=0,ecount,*keep,dir;
   
   /*If x is undirected, enforce "combined" behavior*/
@@ -207,7 +207,9 @@ SEXP getEdges(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
   }else if(dir&&(strcmp(neighborhood,"in")==0)){
     PROTECT(eids=coerceVector(VECTOR_ELT(getListElement(x,"iel"),v-1),INTSXP)); pc++;
   }else{
-    PROTECT(eids=vecUnion(coerceVector(VECTOR_ELT(getListElement(x,"oel"),v-1), INTSXP), coerceVector(VECTOR_ELT(getListElement(x,"iel"),v-1),INTSXP))); pc++;
+    PROTECT(aptr=coerceVector(VECTOR_ELT(getListElement(x,"oel"),v-1), INTSXP)); pc++;
+    PROTECT(bptr=coerceVector(VECTOR_ELT(getListElement(x,"iel"),v-1),INTSXP)); pc++;
+    PROTECT(eids=vecUnion(aptr,bptr)); pc++;
   }
   
   /*Extract the edges associated with the eid list, removing any edges not
@@ -224,7 +226,9 @@ SEXP getEdges(SEXP x, int v, int alter, const char *neighborhood, int naOmit)
       }else if(dir&&(strcmp(neighborhood,"in")==0)){
         PROTECT(eplist=coerceVector(getListElement(VECTOR_ELT(mel, INTEGER(eids)[i]-1),"outl"),INTSXP)); pc++;
       }else{
-        PROTECT(eplist=vecAppend(coerceVector(getListElement(VECTOR_ELT(mel, INTEGER(eids)[i]-1),"inl"),INTSXP),coerceVector(getListElement(VECTOR_ELT(mel, INTEGER(eids)[i]-1),"outl"),INTSXP))); pc++;
+        PROTECT(aptr=coerceVector(getListElement(VECTOR_ELT(mel, INTEGER(eids)[i]-1),"inl"),INTSXP)); pc++;
+        PROTECT(bptr=coerceVector(getListElement(VECTOR_ELT(mel, INTEGER(eids)[i]-1),"outl"),INTSXP)); pc++;
+        PROTECT(eplist=vecAppend(aptr,bptr)); pc++;
       }
       /*Check to see if any endpoint matches alter*/
       keep[i]=0;
@@ -1274,7 +1278,7 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
       INTEGER(nord)[count++]=i+1;
   for(i=0;i<length(vid);i++)
     INTEGER(nord)[count+i]=INTEGER(vid)[i];
-  x=permuteVertexIDs(x,nord);
+  PROTECT(x=permuteVertexIDs(x,nord)); pc++;
   /*Rprintf("\tPermutation complete\n");*/
   
   /*Update the network size*/

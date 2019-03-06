@@ -4,7 +4,7 @@
 # constructors.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 4/7/06
+# Last Modified 03/04/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -39,10 +39,10 @@ SEXP copyEdges_R(SEXP x, SEXP y)
   
   mel=getListElement(x,"mel");
   PROTECT(mel2=duplicate(mel)); pc++;
-  y=setListElement(y,"mel",mel2);
+  PROTECT(y=setListElement(y,"mel",mel2)); pc++;
   iel=getListElement(x,"iel");
   PROTECT(iel2=duplicate(iel)); pc++;
-  y=setListElement(y,"iel",iel2);
+  PROTECT(y=setListElement(y,"iel",iel2)); pc++;
   oel=getListElement(x,"oel");
   PROTECT(oel2=duplicate(oel)); pc++;
   y=setListElement(y,"oel",oel2);
