@@ -671,7 +671,7 @@ list.vertex.attributes<-function(x){
 
 # Retrieve the number of free dyads (i.e., number of non-missing) of network x.
 #
-network.dyadcount<-function(x, na.omit=TRUE, ...) UseMethod("network.dyadcount")
+network.dyadcount<-function(x, ...) UseMethod("network.dyadcount")
 network.dyadcount.network<-function(x,na.omit=TRUE,...){
  nodes <- network.size(x)
  if(is.directed(x)){
@@ -721,7 +721,7 @@ network.dyadcount.network<-function(x,na.omit=TRUE,...){
 
 #Retrieve the number of edges in network x.
 #
-network.edgecount<-function(x,na.omit=TRUE, ...) UseMethod("network.edgecount")
+network.edgecount<-function(x, ...) UseMethod("network.edgecount")
 network.edgecount.network<-function(x,na.omit=TRUE,...){
   .Call(networkEdgecount_R,x,na.omit)
 }
