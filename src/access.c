@@ -1289,6 +1289,7 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
  
   /*Finally, get rid of the old vertices*/
   /*Rprintf("\tContracting vertex lists\n");*/
+  PROTECT(x); pc++;  /*Superfluous PROTECT to shut up rchk*/
   PROTECT(val=contractList(getListElement(x,"val"),INTEGER(newsize)[0])); pc++;
   PROTECT(iel=contractList(getListElement(x,"iel"),INTEGER(newsize)[0])); pc++;
   PROTECT(oel=contractList(getListElement(x,"oel"),INTEGER(newsize)[0])); pc++;

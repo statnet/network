@@ -57,7 +57,7 @@ Pajek Datasets \url{http://vlado.fmf.uni-lj.si/pub/networks/data/esna/}
 \author{ Dave Schruth \email{dschruth@u.washington.edu}, Mark S. Handcock \email{handcock@stat.washington.edu} (with additional input from Alex Montgomery \email{ahm@reed.edu}), Skye Bender-deMoll \email{skyebend@uw.edu}}
 \seealso{ \code{\link{network}}}
 \examples{
-
+\dontrun{
 require(network)
 
 par(mfrow=c(2,2))
@@ -75,6 +75,6 @@ plot(test.net.2,main=test.net.2\%n\%'title',
 # read .paj project file
 # notice output has $networks and $partitions
 read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Tina.paj')
-
+}
 }
 \keyword{datasets}
