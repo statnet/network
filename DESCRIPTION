@@ -1,5 +1,5 @@
 Package: network
-Version: 1.14-377
+Version: 1.16-377
 Date: 2019-03-04
 Title: Classes for Relational Data
 Authors@R: c(
