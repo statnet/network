@@ -17,6 +17,8 @@
 
 # RStudio files
 .Rproj.user/
+*.Rproj
+
 
 # produced vignettes
 vignettes/*.html
@@ -87,3 +89,4 @@ dkms.conf
 # Backup files
 *~
 *.bak
+.Rproj.user

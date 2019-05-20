@@ -8,7 +8,7 @@
 }
 
 \details{
-The \code{\link{attribute.methods}} documentation gives details about the use of the specific network attribute methods such as \code{get.vertex.attribute} and \code{set.edge.attribute}.  This document gives examples of how to load in and attach attribute data, drawing heavily on material from the Sunbelt statnet workshops \url{https://statnet.csde.washington.edu/trac/wiki/Resources}. 
+The \code{\link{attribute.methods}} documentation gives details about the use of the specific network attribute methods such as \code{get.vertex.attribute} and \code{set.edge.attribute}.  This document gives examples of how to load in and attach attribute data, drawing heavily on material from the Sunbelt statnet workshops \url{https://github.com/statnet/Workshops/wiki}. 
 
 The examples section below give a quick overview of:
 \itemize{
@@ -29,7 +29,6 @@ The \code{\link{read.table}} documentation provides more information about readi
 
 \references{ 
 Acton, R. M., Jasny, L (2012) \emph{An Introduction to Network Analysis with R and statnet} Sunbelt XXXII Workshop Series, March 13, 2012.
-\url{https://statnet.csde.washington.edu/trac/raw-attachment/wiki/Resources/introToSNAinR_sunbelt_2012_tutorial.pdf}
 
 Butts, C. T.  (2008).  \dQuote{network: a Package for Managing Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  
 \url{http://www.jstatsoft.org/v24/i02/}
