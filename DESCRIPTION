@@ -19,3 +19,18 @@ Suggests:
 Description: Tools to create and modify network objects.  The network class can represent a range of relational data types, and supports arbitrary vertex/edge/graph attributes.
 License: GPL (>=2)
 URL: http://statnet.org/
+RoxygenNote: 6.1.1
+Collate:
+    'access.R'
+    'as.edgelist.R'
+    'assignment.R'
+    'coercion.R'
+    'constructors.R'
+    'fileio.R'
+    'layout.R'
+    'misc.R'
+    'network-package.R'
+    'operators.R'
+    'plot.R'
+    'printsum.R'
+    'zzz.R'
