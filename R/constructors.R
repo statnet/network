@@ -33,6 +33,10 @@
 # MSH added bipartite
 #
 
+
+
+#' @rdname network
+#' @export network
 network<-function(x, vertex.attr=NULL, vertex.attrnames=NULL,
                 directed=TRUE, hyper=FALSE, loops=FALSE,
                 multiple=FALSE, bipartite=FALSE, ...)
@@ -63,6 +67,110 @@ network<-function(x, vertex.attr=NULL, vertex.attrnames=NULL,
 
 # Construct a network's edge set, using an a bipartite adjacency matrix as input.
 #
+#' @name edgeset.constructors
+#'
+#' @title Edgeset Constructors for Network Objects
+#'
+#' @description These functions convert relational data in matrix form to 
+#'   network edge sets.
+#'
+#' @details Each of the above functions takes a \code{network} and a matrix
+#'   as input, and modifies the supplied \code{network} object by adding the
+#'   appropriate edges.  \code{network.adjacency} takes \code{x} to be an 
+#'   adjacency matrix; \code{network.edgelist} takes \code{x} to be an edgelist
+#'   matrix; and \code{network.incidence} takes \code{x} to be an incidence
+#'   matrix.  \code{network.bipartite} takes \code{x} to be a two-mode 
+#'   adjacency matrix where rows and columns reflect each respective mode 
+#'   (conventionally, actors and events); If \code{ignore.eval==FALSE}, 
+#'   (non-zero) edge values are stored as edgewise attributes with name 
+#'   \code{names.eval}.  The \code{edge.check} argument can be added via 
+#'   \code{\dots} and will be passed to \code{\link{add.edges}}.
+#' 
+#' Edgelist matrices to be used with \code{network.edgelist} should have one 
+#'   row per edge, with the first two columns indicating the sender and 
+#'   receiver of each edge (respectively).  Edge values may be provided in 
+#'   additional columns. The edge attributes will be created with names 
+#'   corresponding to the column names unless alternate names are provided via 
+#'   \code{names.eval}. The vertices specified in the first two columns, which
+#'   can be characters, are added to the network in default sort order. The 
+#'   edges are added in the order specified by the edgelist matrix.
+#'   
+#' Incidence matrices should contain one row per vertex, with one column per 
+#'   edge. A non-zero entry in the matrix means that the edge with the id 
+#'   corresponding to the column index will have an incident vertex with an
+#'   id corresponding to the row index. In the directed case, negative cell
+#'   values are taken to indicate tail vertices, while positive values 
+#'   indicate head vertices. 
+#' 
+#' Results similar to \code{network.adjacency} can also be obtained by means 
+#'   of extraction/replacement operators.  See the associated man page for 
+#'   details.
+#'
+#' @param x a matrix containing edge information
+#' @param g an object of class \code{network}
+#' @param ignore.eval logical; ignore edge value information in x?
+#' @param names.eval a name for the edge attribute under which to store edge
+#'   values, if any
+#' @param \dots possible additional arguments (such as \code{edge.check})
+#'
+#' @return Invisibly, an object of class \code{network}; these functions modify
+#'   their argument in place.
+#' 
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing 
+#'   Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  
+#'   \url{http://www.jstatsoft.org/v24/i02/}
+#'
+#' @author Carter T. Butts \email{buttsc@uci.edu} and David Hunter 
+#'   \email{dhunter@stat.psu.edu}
+#' 
+#' 
+#' @seealso \code{\link{loading.attributes}}, \code{\link{network}}, 
+#'   \code{\link{network.initialize}}, \code{\link{add.edges}}, 
+#'   \code{\link{network.extraction}}
+#' @examples
+#' #Create an arbitrary adjacency matrix
+#' m<-matrix(rbinom(25,1,0.5),5,5)
+#' diag(m)<-0
+#' 
+#' g<-network.initialize(5)    #Initialize the network
+#' network.adjacency(m,g)      #Import the edge data
+#' 
+#' #Do the same thing, using replacement operators
+#' g<-network.initialize(5)
+#' g[,]<-m
+#' 
+#' # load edges from a data.frame via network.edgelist
+#' edata <-data.frame(
+#'   tails=c(1,2,3),
+#'   heads=c(2,3,1),
+#'   love=c('yes','no','maybe'),
+#'   hate=c(3,-5,2),
+#'   stringsAsFactors=FALSE
+#'   )
+#' 
+#' g<-network.edgelist(edata,network.initialize(4),ignore.eval=FALSE)
+#' as.sociomatrix(g,attrname='hate')
+#' g%e%'love'
+#' 
+#' # load edges from an incidence matrix
+#' inci<-matrix(c(1,1,0,0, 0,1,1,0, 1,0,1,0),ncol=3,byrow=FALSE)
+#' inci
+#' g<-network.incidence(inci,network.initialize(4,directed=FALSE))
+#' as.matrix(g)
+#' 
+#' # load in biparite dataframe with weights
+#' bipMat<-data.frame(
+#'         event1=c(1,2,1,0),
+#'         event2=c(0,0,3,0),
+#'         event3=c(1,1,0,4),
+#'         row.names=c("a","b","c","d"))
+#' net<-network(bipMat,matrix.type='bipartite',ignore.eval=FALSE,names.eval='pies')
+#' as.matrix(net,attername='pies')
+#' 
+#' 
+#' 
+#' @keywords classes graphs
+#' @export
 network.bipartite<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   #Set things up to edit g in place
   gn<-substitute(g)
@@ -111,6 +219,8 @@ network.bipartite<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
 
 # Construct a network's edge set, using an adjacency matrix as input.
 #
+#' @rdname edgeset.constructors
+#' @export
 network.adjacency<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   # check that dimension of g is appropriate for x
   if (nrow(x)!=ncol(x)){
@@ -182,6 +292,8 @@ network.adjacency<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
 
 # Construct and a return a network object which is a copy of x
 #
+#' @rdname network
+#' @export
 network.copy<-function(x){
   #Verify that this is a network object
   if(!is.network(x))
@@ -194,6 +306,8 @@ network.copy<-function(x){
 
 # Construct a network's edge set, using an edgelist matrix as input.
 #
+#' @rdname edgeset.constructors
+#' @export
 network.edgelist<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   #Set things up to edit g in place
   gn<-substitute(g)
@@ -227,6 +341,8 @@ network.edgelist<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
 
 # Construct a network's edge set, using an incidence matrix as input.
 #
+#' @rdname edgeset.constructors
+#' @export
 network.incidence<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   #Set things up to edit g in place
   gn<-substitute(g)
@@ -281,6 +397,38 @@ network.incidence<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
 # Initialize a new network object.
 # MSH added bipartite
 #
+
+
+#' Initialize a Network Class Object
+#' 
+#' Create and initialize a \code{network} object with \code{n} vertices.
+#' 
+#' Generally, \code{network.initialize} is called by other constructor
+#' functions as part of the process of creating a network.
+#' 
+#' @param n the number of vertices to initialize
+#' @param directed logical; should edges be interpreted as directed?
+#' @param hyper logical; are hyperedges allowed?
+#' @param loops logical; should loops be allowed?
+#' @param multiple logical; are multiplex edges allowed?
+#' @param bipartite count; should the network be interpreted as bipartite? If
+#' present (i.e., non-NULL) it is the count of the number of actors in the
+#' first mode of the bipartite network. In this case, the overall number of
+#' vertices is equal to the number of 'actors' (first mode) plus the number of
+#' `events' (second mode), with the vertex.ids of all actors preceeding all
+#' events. The edges are then interpreted as nondirected.
+#' @return An object of class \code{network}
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{network}}, \code{\link{as.network.matrix}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' @keywords classes graphs
+#' @examples
+#' 
+#' g<-network.initialize(5)  #Create an empty graph on 5 vertices
+#' 
+#' @export network.initialize
 network.initialize<-function(n,directed=TRUE,hyper=FALSE,loops=FALSE,multiple=FALSE,bipartite=FALSE){
   #If we have a negative number of vertices, we have a problem...
   n<-round(n)

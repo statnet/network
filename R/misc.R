@@ -31,6 +31,53 @@
 
 #Given a vector of non-colors, try to coerce them into some reasonable
 #color format.  This may not work well, but what the hell....
+
+
+#' Transform vector of values into color specification
+#' 
+#' Convenience function to convert a vector of values into a color
+#' specification.
+#' 
+#' Behavior of \code{as.color} is as follows: \itemize{ \item integer numeric
+#' values: unchanged, (assumed to corespond to values of R's active
+#' \code{\link{palette}}) \item integer real values: will be translated to into
+#' grayscale values ranging between the max and min \item factor: integer
+#' values corresponding to factor levels will be used \item character: if
+#' values are valid colors (as determined by \code{is.color}) they will be
+#' returned as is.  Otherwise converted to factor and numeric value of factor
+#' returned. }
+#' 
+#' The optional \code{opacity} parameter can be used to make colors partially
+#' transparent (as a shortcut for \code{\link{adjustcolor}}.  If used, colors
+#' will be returned as hex rgb color string (i.e. \code{"#00FF0080"})
+#' 
+#' The \code{is.color} function checks if each character element of \code{x}
+#' appears to be a color name by comparing it to \code{\link{colors}} and
+#' checking if it is an HTML-style hex color code.  Note that it will return
+#' FALSE for integer values.
+#' 
+#' These functions are used for the color parameters of
+#' \code{\link{plot.network}}.
+#' 
+#' @param x vector of numeric, character or factor values to be transformed
+#' @param opacity optional numeric value in the range 0.0 to 1.0 used to
+#' specify the opacity/transparency (alpha) of the colors to be returned. 0
+#' means fully opaque, 1 means fully transparent.
+#' @return For \code{as.color}, a vector integer values (corresponding to color
+#' palette values) or character color name. For \code{is.color}, a logical
+#' vector indicating if each element of x appears to be a color
+#' @examples
+#' 
+#' 
+#' as.color(1:3)
+#' as.color(c('a','b','c'))
+#' 
+#' # add some transparency
+#' as.color(c('red','green','blue'),0.5) # gives "#FF000080", "#00FF0080", "#0000FF80"
+#' 
+#' is.color(c('red',1,'foo',NA,'#FFFFFF55'))
+#' 
+#' @export as.color
 as.color<-function(x,opacity=1.0){
   if(opacity > 1 | opacity < 0){
     stop('opacity parameter must be a numeric value in the range 0 to 1')
@@ -67,8 +114,30 @@ as.color<-function(x,opacity=1.0){
 #is a relocated function from the ergm package; it probably belongs elsewhere,
 #but is needed for the summary.network method (and in that sense is basic
 #enough to include.
+#' Internal Network Package Functions
+#' 
+#' Internal network functions.
+#' 
+#' Most of these are not to be called by the user.
+#' 
+#' @name network-internal
+#' 
+#' @aliases + - * +.default -.default *.default summary.character
+#' print.summary.character print.mixingmatrix
+#' @param object a network or some other data structure for which a mixing
+#' matrix is meaningful.
+#' @param x an object to be designated either discrete or continuous, or a
+#' network.
+#' @param attrname a vertex attribute name.
+#' @param y a network or something coercible to one.
+#' @param \dots further arguments passed to or used by methods.
+#' @seealso network
+#' @keywords internal
+#' @export
 mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 
+#' @rdname network-internal
+#' @export
 mixingmatrix.network <- function(object, attrname, ...) {
   nw <- object
   if(missing(attrname)){
@@ -122,6 +191,47 @@ mixingmatrix.network <- function(object, attrname, ...) {
 # Return the density of the given network.  (This probably won't stay in
 # this package....
 #
+
+
+#' Compute the Density of a Network
+#' 
+#' \code{network.density} computes the density of its argument.
+#' 
+#' The density of a network is defined as the ratio of extant edges to
+#' potential edges. We do not currently consider edge values; missing edges are
+#' omitted from extent (but not potential) edge count when
+#' \code{na.omit==TRUE}.
+#' 
+#' @param x an object of class \code{network}
+#' @param na.omit logical; omit missing edges from extant edges when assessing
+#' density?
+#' @param discount.bipartite logical; if \code{x} is bipartite, should
+#' \dQuote{forbidden} edges be excluded from the count of potential edges?
+#' @return The network density.
+#' @section Warning : \code{network.density} relies on network attributes (see
+#' \link{network.indicators}) to determine the properties of the underlying
+#' network object.  If these are set incorrectly (e.g., multiple edges in a
+#' non-multiplex network, network coded with directed edges but set to
+#' \dQuote{undirected}, etc.), surprising results may ensue.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{network.edgecount}}, \code{\link{network.size}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' 
+#' Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods
+#' and Applications.} Cambridge: Cambridge University Press.
+#' @keywords graphs
+#' @examples
+#' 
+#' #Create an arbitrary adjacency matrix
+#' m<-matrix(rbinom(25,1,0.5),5,5)
+#' diag(m)<-0
+#' 
+#' g<-network.initialize(5)    #Initialize the network
+#' network.density(g)          #Calculate the density
+#' 
+#' @export network.density
 network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   if(!is.network(x))
     stop("network.density requires a network object.")
@@ -154,6 +264,29 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
 }
 
 # has.edges  checks if any of the specified vertex ids have edges (are not isolates)
+
+
+#' Determine if specified vertices of a network have any edges (are not
+#' isolates)
+#' 
+#' Returns a logical value for each specified vertex, indicating if it has any
+#' incident (in or out) edges.  Checks all vertices by default
+#' 
+#' 
+#' @aliases is.isolate
+#' @param net a \code{\link{network}} object to be queried
+#' @param v integer vector of vertex ids to check
+#' @return returns a logical vector with the same length as v, with TRUE if the
+#' vertex is involved in any edges, FALSE if it is an isolate.
+#' @author skyebend
+#' @examples
+#' 
+#' test<-network.initialize(5)
+#' test[1,2]<-1
+#' has.edges(test)
+#' has.edges(test,v=5)
+#' 
+#' @export has.edges
 has.edges<-function(net,v=seq_len(network.size(net))){
   if(network.size(net)==0){
     return(logical(0))
@@ -168,6 +301,8 @@ has.edges<-function(net,v=seq_len(network.size(net))){
 
 
 #Returns TRUE if x is a character in a known color format
+#' @rdname as.color
+#' @export
 is.color<-function(x){
   xic<-rep(FALSE,length(x))         #Assume not a color by default
   
@@ -179,23 +314,28 @@ is.color<-function(x){
   xic
 }
 
-
+#' @rdname network-internal
+#' @export
 is.discrete.numeric<-function(x){
  (is.numeric(x)|is.logical(x)) && mean(duplicated(x)) > 0.8
 }
 
-
+#' @rdname network-internal
+#' @export
 is.discrete.character<-function(x){
  (is.character(x)|is.logical(x)) && mean(duplicated(x)) > 0.8
 }
 
-
+#' @rdname network-internal
+#' @export
 is.discrete<-function(x){
  (is.numeric(x)|is.logical(x)|is.character(x)) && mean(duplicated(x)) > 0.8
 }
 
 
 #Print method for mixingmatrix objects
+#' @export print.mixingmatrix
+#' @export
 print.mixingmatrix <- function(x, ...) {
   m <- x$mat
   rn <- rownames(m)
@@ -220,6 +360,43 @@ print.mixingmatrix <- function(x, ...) {
 }
 
 
+
+
+#' Heuristic Determination of Matrix Types for Network Storage
+#' 
+#' \code{which.matrix.type} attempts to choose an appropriate matrix expression
+#' for a \code{network} object, or (if its argument is a matrix) attempts to
+#' determine whether the matrix is of type adjacency, incidence, or edgelist.
+#' 
+#' The heuristics used to determine matrix types are fairly arbitrary, and
+#' should be avoided where possible.  This function is intended to provide a
+#' modestly intelligent fallback option when explicit identification by the
+#' user is not possible.
+#' 
+#' @param x a matrix, or an object of class \code{network}
+#' @return One of \code{"adjacency"}, \code{"incidence"}, or \code{"edgelist"}
+#' @author David Hunter \email{dhunter@@stat.psu.edu}
+#' @seealso \code{\link{as.matrix.network}}, \code{\link{as.network.matrix}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' @keywords graphs
+#' @examples
+#' 
+#'   #Create an arbitrary adjacency matrix
+#'   m<-matrix(rbinom(25,1,0.5),5,5)
+#'   diag(m)<-0
+#' 
+#'   #Can we guess the type?
+#'   which.matrix.type(m)
+#' 
+#'   #Try the same thing with a network
+#'   g<-network(m)
+#'   which.matrix.type(g)
+#'   which.matrix.type(as.matrix.network(g,matrix.type="incidence"))
+#'   which.matrix.type(as.matrix.network(g,matrix.type="edgelist"))
+#' 
+#' @export which.matrix.type
 which.matrix.type<-function(x)
 {
     if (!is.network(x)) {

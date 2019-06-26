@@ -26,6 +26,9 @@
 
 # Printing for network class objects.
 #
+#' @rdname network
+#' @export print.network
+#' @export
 print.network<-function(x, matrix.type=which.matrix.type(x), 
                       mixingmatrices=FALSE, na.omit=TRUE, print.adj=FALSE, ...)
 {
@@ -147,6 +150,8 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
 
 
 #Print method for summary.character
+#' @export print.summary.character
+#' @export
 print.summary.character <- function(x, max.print=10, ...){
   x<-table(x)
   nam<-names(x)
@@ -164,6 +169,8 @@ print.summary.character <- function(x, max.print=10, ...){
 
 
 #Print method for summary.network
+#' @export print.summary.network
+#' @export
 print.summary.network<-function(x, ...){
     #Pull any extra goodies from summary.network (stored in gal)
     na.omit<-x%n%"summary.na.omit"
@@ -319,6 +326,8 @@ print.summary.network<-function(x, ...){
 
 
 #An internal routine to handle summaries of characters
+#' @export summary.character
+#' @export
 summary.character <- function(object, ...){
   class(object)<-c("summary.character",class(object))
   object
@@ -327,6 +336,9 @@ summary.character <- function(object, ...){
 
 # Summaries of network objects
 #
+#' @rdname network
+#' @export summary.network
+#' @export
 summary.network<-function(object, na.omit=TRUE, mixingmatrices=FALSE, print.adj=TRUE, ...){
   #Add printing parameters as network objects, and change the class
   object%n%"summary.na.omit"<-na.omit
