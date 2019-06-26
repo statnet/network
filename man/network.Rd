@@ -86,14 +86,14 @@ will make a guess as to the intended \code{edgeset.constructors} function to
 call based on the format of these input matrices. If the class of \code{x}
 is not a matrix, network construction can be dispatched to other methods.
 For example, If the \code{ergm} package is loaded, \code{network()} can
-function as a shorthand for \code{\link[ergm]{as.network.numeric}} with
+function as a shorthand for \code{as.network.numeric} with
 \code{x} as an integer specifying the number of nodes to be created in the
 random graph.
 
 If the \code{ergm} package is loaded, \code{network} can function as a
 shorthand for \code{as.network.numeric} if \code{x} is an integer specifying
 the number of nodes. See the help page for
-\code{\link[ergm]{as.network.numeric}} in \code{ergm} package for details.
+\code{as.network.numeric} in \code{ergm} package for details.
 
 \code{network.copy} creates a new \code{network} object which duplicates its
 supplied argument.  (Direct assignment with \code{<-} should be used rather
