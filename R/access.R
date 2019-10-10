@@ -506,7 +506,7 @@ get.neighborhood<-function(x, v, type=c("out","in","combined"), na.omit=TRUE){
 # null.na==TRUE, NULL values are converted to NAs.  The return value of this
 # function is a list.
 # 
-get.vertex.attribute<-function(x,attrname,...){
+get.vertex.attribute<-function(x,...){
   UseMethod("get.vertex.attribute")
 }
 
