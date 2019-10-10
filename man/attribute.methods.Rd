@@ -33,7 +33,7 @@ get.edge.attribute(el, attrname, unlist = TRUE, na.omit = FALSE, null.na = FALSE
 get.edge.value(x, attrname, unlist = TRUE, na.omit = FALSE, null.na = FALSE,
                                     deleted.edges.omit = FALSE)
 get.network.attribute(x, attrname, unlist = FALSE)
-get.vertex.attribute(x, attrname, ...)
+get.vertex.attribute(x, ...)
 \method{get.vertex.attribute}{network}(x, attrname, na.omit = FALSE, null.na = TRUE, unlist = TRUE, ...)
 network.vertex.names(x)
 
@@ -61,7 +61,7 @@ network.vertex.names(x) <- value
   \item{value}{ values of the attribute to be set; these should be in \code{vector} or \code{list} form for the \code{edge} and \code{vertex} cases, or \code{matrix} form for \code{set.edge.value}.}
   \item{e}{ IDs for the edges whose attributes are to be altered. }
   \item{v}{ IDs for the vertices whose attributes are to be altered. }
-  \item{...}{ additional arguments; not used by \code{network}, but may be used by extensions. }
+  \item{...}{ additional arguments. }
 }
 \details{
 The \code{list.attributes} functions return the names of all edge, network, or vertex attributes (respectively) in the network.  All attributes need not be defined for all elements; the union of all extant attributes for the respective element type is returned.  Note that \code{list.vertex.attributes} is generic in the argument \code{x}, with \code{x} of class \code{network} supported by this package; \code{list.vertex.attributes.network} is an S3method that should be accessed by calling \code{list.vertex.attributes}.
