@@ -183,6 +183,9 @@ S3method(network.edgecount,network)
 S3method(network.naedgecount,network)
 S3method(network.size,network)
 
+S3method(list.vertex.attributes,network)
+S3method(get.vertex.attribute,network)
+
 # These are not 'real' S3 methods, as there is no corresponding class
 # but they are dispatched by as.matrix.network and are flagged by check if not marked here
 S3method(as.matrix.network,adjacency)

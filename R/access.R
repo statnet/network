@@ -506,8 +506,12 @@ get.neighborhood<-function(x, v, type=c("out","in","combined"), na.omit=TRUE){
 # null.na==TRUE, NULL values are converted to NAs.  The return value of this
 # function is a list.
 # 
-get.vertex.attribute<-function(x,attrname,na.omit=FALSE,null.na=TRUE,
-                               unlist=TRUE){
+get.vertex.attribute<-function(x,...){
+  UseMethod("get.vertex.attribute")
+}
+
+get.vertex.attribute.network<-function(x,attrname,na.omit=FALSE,null.na=TRUE,
+                               unlist=TRUE,...){
   #Check to see if there's anything to be done
   if(!is.network(x))
     stop("get.vertex.attribute requires an argument of class network.")
@@ -655,7 +659,8 @@ list.network.attributes<-function(x){
 
 # List attributes present on any vertex
 #
-list.vertex.attributes<-function(x){
+list.vertex.attributes<-function(x,...) UseMethod("list.vertex.attributes")
+list.vertex.attributes.network<-function(x,...){
   #First, check to see that this is a graph object
   if(!is.network(x))
     stop("list.vertex.attributes requires an argument of class network.\n")
