@@ -9,9 +9,11 @@
 \alias{get.edge.value}
 \alias{get.network.attribute}
 \alias{get.vertex.attribute}
+\alias{get.vertex.attribute.network}
 \alias{list.edge.attributes}
 \alias{list.network.attributes}
 \alias{list.vertex.attributes}
+\alias{list.vertex.attributes.network}
 \alias{network.vertex.names}
 \alias{network.vertex.names<-}
 \alias{set.edge.attribute}
@@ -34,14 +36,17 @@ get.edge.value(x, attrname, unlist = TRUE, na.omit = FALSE,
 
 get.network.attribute(x, attrname, unlist = FALSE)
 
-get.vertex.attribute(x, attrname, na.omit = FALSE, null.na = TRUE,
-  unlist = TRUE)
+get.vertex.attribute(x, ...)
+  
+\method{get.vertex.attribute}{network}(x, attrname, na.omit = FALSE, null.na = TRUE, unlist = TRUE, ...)
 
 list.edge.attributes(x)
 
 list.network.attributes(x)
 
-list.vertex.attributes(x)
+list.vertex.attributes(x, ...)
+  
+\method{list.vertex.attributes}{network}(x, ...)
 
 network.vertex.names(x)
 
@@ -56,9 +61,23 @@ set.network.attribute(x, attrname, value)
 set.vertex.attribute(x, attrname, value, v = seq_len(network.size(x)))
 }
 \arguments{
-\item{x}{an object of class \code{network}.}
 
-\item{attrname}{the name of the attribute to get or set.}
+  \item{el}{ a list of edges (possibly \code{network$mel}), or an object of class \code{network} from which the full list of edges will be extracted}
+  \item{x}{ an object of class \code{network}. }
+  \item{attrname}{ the name of the attribute to get or set. }
+  \item{unlist}{ logical; should retrieved attribute values be \code{\link{unlist}}ed prior to being returned? }
+  \item{na.omit}{ logical; should retrieved attribute values corresponding to vertices/edges marked as 'missing' be removed?}
+  \item{deleted.edges.omit}{ logical: should the elements corresponding to deleted edges be removed? }
+  \item{null.na}{ logical; should \code{NULL} values (corresponding to vertices or edges with no values set for the attribute) be replaced with \code{NA}s in output? }
+  \item{value}{ values of the attribute to be set; these should be in \code{vector} or \code{list} form for the \code{edge} and \code{vertex} cases, or \code{matrix} form for \code{set.edge.value}.}
+  \item{e}{ IDs for the edges whose attributes are to be altered. }
+  \item{v}{ IDs for the vertices whose attributes are to be altered. }
+  \item{...}{ additional arguments. }
+}
+\details{
+The \code{list.attributes} functions return the names of all edge, network, or vertex attributes (respectively) in the network.  All attributes need not be defined for all elements; the union of all extant attributes for the respective element type is returned.  Note that \code{list.vertex.attributes} is generic in the argument \code{x}, with \code{x} of class \code{network} supported by this package; \code{list.vertex.attributes.network} is an S3method that should be accessed by calling \code{list.vertex.attributes}.
+
+The \code{get.attribute} functions look for an edge, network, or vertex attribute (respectively) with the name \code{attrname}, returning its values.  Note that, to retrieve an edge attribute from all edges within a network \code{x}, \code{x$mel} should be used as the first argument to \code{get.edge.attribute}; \code{get.edge.value} is a convenience function which does this automatically. As of v1.7.2, if a \code{network} object is passed to \code{get.edge.attribute} it will automatically call \code{get.edge.value} instead of returning NULL. When the parameters \code{na.omit},  or \code{deleted.edges.omit} are used, the position index of the attribute values returned will not correspond to the vertex/edge id.  To preserved backward compatibility, if the edge attribute \code{attrname} does not exist for any edge, \code{get.edge.attribute} will still return \code{NULL} even if \code{null.na=TRUE}.  Note that \code{get.vertex.attribute} is generic in the argument \code{x}, with \code{x} of class \code{network} supported by this package; \code{get.vertex.attribute.network} is an S3method that should be accessed by calling \code{get.vertex.attribute}.
 
 \item{el}{a list of edges (possibly \code{network$mel}), or an object of 
 class \code{network} from which the full list of edges will be extracted}

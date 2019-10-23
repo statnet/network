@@ -410,6 +410,7 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
 #'   cases, or \code{matrix} form for \code{set.edge.value}.
 #' @param e IDs for the edges whose attributes are to be altered.
 #' @param v IDs for the vertices whose attributes are to be altered.
+#' @param ... additional arguments
 #'
 #' @return For the \code{list.attributes} methods, a vector containing 
 #'   attribute names.  For the \code{get.attribute} methods, a list containing
@@ -1050,8 +1051,14 @@ get.neighborhood<-function(x, v, type=c("out","in","combined"), na.omit=TRUE){
 # 
 #' @rdname attribute.methods
 #' @export
-get.vertex.attribute<-function(x,attrname,na.omit=FALSE,null.na=TRUE,
-                               unlist=TRUE){
+get.vertex.attribute<-function(x,...){
+  UseMethod("get.vertex.attribute")
+}
+
+#' @rdname attribute.methods
+#' @export
+get.vertex.attribute.network<-function(x,attrname,na.omit=FALSE,null.na=TRUE,
+                               unlist=TRUE,...){
   #Check to see if there's anything to be done
   if(!is.network(x))
     stop("get.vertex.attribute requires an argument of class network.")
@@ -1495,7 +1502,11 @@ list.network.attributes<-function(x){
 #
 #' @rdname attribute.methods
 #' @export
-list.vertex.attributes<-function(x){
+list.vertex.attributes<-function(x,...) UseMethod("list.vertex.attributes")
+
+#' @rdname attribute.methods
+#' @export
+list.vertex.attributes.network<-function(x,...){
   #First, check to see that this is a graph object
   if(!is.network(x))
     stop("list.vertex.attributes requires an argument of class network.\n")
