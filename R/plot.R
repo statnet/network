@@ -77,6 +77,61 @@ make.arrow.poly.coords<-function(x0,y0,x1,y1,ahangle,ahlen,swid,toff,hoff,ahead,
 }
 
 #Custom arrow-drawing method for plot.network
+
+
+#' Add Arrows or Segments to a Plot
+#' 
+#' \code{network.arrow} draws a segment or arrow between two pairs of points;
+#' unlike \code{\link{arrows}} or \code{\link{segments}}, the new plot element
+#' is drawn as a polygon.
+#' 
+#' \code{network.arrow} provides a useful extension of \code{\link{segments}}
+#' and \code{\link{arrows}} when fine control is needed over the resulting
+#' display.  (The results also look better.)  Note that edge curvature is
+#' quadratic, with \code{curve} providing the maximum horizontal deviation of
+#' the edge (left-handed).  Head/tail offsets are used to adjust the end/start
+#' points of an edge, relative to the baseline coordinates; these are useful
+#' for functions like \code{\link{plot.network}}, which need to draw edges
+#' incident to vertices of varying radii.
+#' 
+#' @param x0 A vector of x coordinates for points of origin
+#' @param y0 A vector of y coordinates for points of origin
+#' @param x1 A vector of x coordinates for destination points
+#' @param y1 A vector of y coordinates for destination points
+#' @param length Arrowhead length, in current plotting units
+#' @param angle Arrowhead angle (in degrees)
+#' @param width Width for arrow body, in current plotting units (can be a
+#' vector)
+#' @param col Arrow body color (can be a vector)
+#' @param border Arrow border color (can be a vector)
+#' @param lty Arrow border line type (can be a vector)
+#' @param offset.head Offset for destination point (can be a vector)
+#' @param offset.tail Offset for origin point (can be a vector)
+#' @param arrowhead Boolean; should arrowheads be used?  (Can be a vector))
+#' @param curve Degree of edge curvature (if any), in current plotting units
+#' (can be a vector)
+#' @param edge.steps For curved edges, the number of steps to use in
+#' approximating the curve (can be a vector)
+#' @param \dots Additional arguments to \code{\link{polygon}}
+#' @return None.
+#' @note \code{network.arrow} is a direct adaptation of
+#' \code{\link[sna]{gplot.arrow}} from the \code{sna} package.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{plot.network}}, \code{\link{network.loop}},
+#' \code{\link{polygon}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' @keywords aplot graphs
+#' @examples
+#' 
+#'   #Plot two points
+#'   plot(1:2,1:2)
+#'   
+#'   #Add an edge
+#'   network.arrow(1,1,2,2,width=0.01,col="red",border="black")
+#' 
+#' @export network.arrow
 network.arrow<-function(x0,y0,x1,y1,length=0.1,angle=20,width=0.01,col=1,border=1,lty=1,offset.head=0,offset.tail=0,arrowhead=TRUE,curve=0,edge.steps=50,...){
   if(length(x0)==0)   #Leave if there's nothing to do
     return;
@@ -148,6 +203,58 @@ make.loop.poly.coords<-function(x0,y0,xctr,yctr,ahangle,ahlen,swid,off,rad,ahead
 }
 
 #Custom loop-drawing method for plot.network
+
+
+#' Add Loops to a Plot
+#' 
+#' \code{network.loop} draws a "loop" at a specified location; this is used to
+#' designate self-ties in \code{\link{plot.network}}.
+#' 
+#' \code{network.loop} is the companion to \code{\link{network.arrow}}; like
+#' the latter, plot elements produced by \code{network.loop} are drawn using
+#' \code{\link{polygon}}, and as such are scaled based on the current plotting
+#' device.  By default, loops are drawn so as to encompass a circular region of
+#' radius \code{radius}, whose center is \code{offset} units from \code{x0,y0}
+#' and at maximum distance from \code{xctr,yctr}.  This is useful for functions
+#' like \code{\link{plot.network}}, which need to draw loops incident to
+#' vertices of varying radii.
+#' 
+#' @param x0 a vector of x coordinates for points of origin.
+#' @param y0 a vector of y coordinates for points of origin.
+#' @param length arrowhead length, in current plotting units.
+#' @param angle arrowhead angle (in degrees).
+#' @param width width for loop body, in current plotting units (can be a
+#' vector).
+#' @param col loop body color (can be a vector).
+#' @param border loop border color (can be a vector).
+#' @param lty loop border line type (can be a vector).
+#' @param offset offset for origin point (can be a vector).
+#' @param edge.steps number of steps to use in approximating curves.
+#' @param radius loop radius (can be a vector).
+#' @param arrowhead boolean; should arrowheads be used?  (Can be a vector.)
+#' @param xctr x coordinate for the central location away from which loops
+#' should be oriented.
+#' @param yctr y coordinate for the central location away from which loops
+#' should be oriented.
+#' @param \dots additional arguments to \code{\link{polygon}}.
+#' @return None.
+#' @note \code{network.loop} is a direct adaptation of
+#' \code{\link[sna]{gplot.loop}}, from the \code{sna} package.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{network.arrow}}, \code{\link{plot.network}},
+#' \code{\link{polygon}}
+#' @keywords aplot graphs
+#' @examples
+#' 
+#' #Plot a few polygons with loops
+#' plot(0,0,type="n",xlim=c(-2,2),ylim=c(-2,2),asp=1)
+#' network.loop(c(0,0),c(1,-1),col=c(3,2),width=0.05,length=0.4,
+#'   offset=sqrt(2)/4,angle=20,radius=0.5,edge.steps=50,arrowhead=TRUE)
+#' polygon(c(0.25,-0.25,-0.25,0.25,NA,0.25,-0.25,-0.25,0.25), 
+#'     c(1.25,1.25,0.75,0.75,NA,-1.25,-1.25,-0.75,-0.75),col=c(2,3))
+#' 
+#' 
+#' @export network.loop
 network.loop<-function(x0,y0,length=0.1,angle=10,width=0.01,col=1,border=1,lty=1,offset=0,edge.steps=10,radius=1,arrowhead=TRUE,xctr=0,yctr=0,...){
   if(length(x0)==0)   #Leave if there's nothing to do
     return;
@@ -196,6 +303,47 @@ make.vertex.poly.coords<-function(x,y,r,s,rot){
 }
 
 #Routine to plot vertices, using polygons
+
+
+#' Add Vertices to a Plot
+#' 
+#' \code{network.vertex} adds one or more vertices (drawn using
+#' \code{\link{polygon}}) to a plot.
+#' 
+#' \code{network.vertex} draws regular polygons of specified radius and number
+#' of sides, at the given coordinates.  This is useful for routines such as
+#' \code{\link{plot.network}}, which use such shapes to depict vertices.
+#' 
+#' @param x a vector of x coordinates.
+#' @param y a vector of y coordinates.
+#' @param radius a vector of vertex radii.
+#' @param sides a vector containing the number of sides to draw for each
+#' vertex.
+#' @param border a vector of vertex border colors.
+#' @param col a vector of vertex interior colors.
+#' @param lty a vector of vertex border line types.
+#' @param rot a vector of vertex rotation angles (in degrees).
+#' @param lwd a vector of vertex border line widths.
+#' @param \dots Additional arguments to \code{\link{polygon}}
+#' @return None
+#' @note \code{network.vertex} is a direct adaptation of
+#' \code{\link[sna]{gplot.vertex}} from the \code{sna} package.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{plot.network}}, \code{\link{polygon}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' @keywords aplot graphs
+#' @examples
+#' 
+#' 
+#' #Open a plot window, and place some vertices
+#' plot(0,0,type="n",xlim=c(-1.5,1.5),ylim=c(-1.5,1.5),asp=1)
+#' network.vertex(cos((1:10)/10*2*pi),sin((1:10)/10*2*pi),col=1:10,
+#'     sides=3:12,radius=0.1)
+#' 
+#' 
+#' @export network.vertex
 network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=1,...){
   
   #Prep the vars
@@ -218,6 +366,39 @@ network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=
 }
 
 # draw a label for a network edge
+
+
+#' Plots a label corresponding to an edge in a network plot.
+#' 
+#' Draws a text labels on (or adjacent to) the line segments connecting
+#' vertices on a network plot.
+#' 
+#' Called internally by \code{\link{plot.network}} when \code{edge.label}
+#' parameter is used. For directed, non-curved edges, the labels are shifted
+#' towards the tail of the edge. Labels for curved edges are not shifted
+#' because opposite-direction edges curve the opposite way.  Makes a crude
+#' attempt to shift labels to either side of line, and to draw the edge labels
+#' for self-loops near the vertex. No attempt is made to avoid overlap between
+#' vertex and edge labels.
+#' 
+#' @param px0 vector of x coordinates of tail vertex of the edge
+#' @param py0 vector of y coordinates of tail vertex of the edge
+#' @param px1 vector of x coordinates of head vertex of the edge
+#' @param py1 vector of y coordinate of head vertex of the edge
+#' @param label vector strings giving labels to be drawn for edge edge
+#' @param directed logical: is the underlying network directed? If FALSE,
+#' labels will be drawn in the middle of the line segment, otherwise in the
+#' first 3rd so that the labels for edges pointing in the opposite direction
+#' will not overlap.
+#' @param loops logical: if true, assuming the labels to be drawn belong to
+#' loop-type edges and render appropriately
+#' @param cex numeric vector giving the text expansion factor for each label
+#' @param curve numeric vector controling the extent of edge curvature (0 =
+#' straight line edges)
+#' @param \dots additional arguments to be passed to \code{\link{text}}
+#' @return no value is returned but text will be rendered on the active plot
+#' @author skyebend
+#' @export network.edgelabel
 network.edgelabel<-function(px0,py0,px1,py1,label,directed,loops=FALSE,cex,curve=0,...){
   curve<-rep(curve,length(label))
   posl<-rep(0,length(label))
@@ -271,6 +452,177 @@ network.edgelabel<-function(px0,py0,px1,py1,label,directed,loops=FALSE,cex,curve
 
 
 #Generic plot.network method. 
+
+#' Two-Dimensional Visualization for Network Objects
+#' 
+#' \code{plot.network} produces a simple two-dimensional plot of network
+#' \code{x}, using optional attribute \code{attrname} to set edge values.  A
+#' variety of options are available to control vertex placement, display
+#' details, color, etc.
+#' 
+#' \code{plot.network} is the standard visualization tool for the
+#' \code{network} class.  By means of clever selection of display parameters, a
+#' fair amount of display flexibility can be obtained.  Vertex layout -- if not
+#' specified directly using \code{coord} -- is determined via one of the
+#' various available algorithms.  These should be specified via the \code{mode}
+#' argument; see \code{\link{network.layout}} for a full list.  User-supplied
+#' layout functions are also possible -- see the aforementioned man page for
+#' details.
+#' 
+#' Note that where \code{is.hyper(x)==TRUE}, the network is converted to
+#' bipartite adjacency form prior to computing coordinates.  If
+#' \code{interactive==TRUE}, then the user may modify the initial network
+#' layout by selecting an individual vertex and then clicking on the location
+#' to which this vertex is to be moved; this process may be repeated until the
+#' layout is satisfactory.
+#' 
+#' @rdname plot.network
+#' @name plot.network.default
+#'
+#' @param x an object of class \code{network}.
+#' @param attrname an optional edge attribute, to be used to set edge values.
+#' @param label a vector of vertex labels, if desired; defaults to the vertex
+#' labels returned by \code{\link{network.vertex.names}}. If \code{label} has
+#' one element and it matches with a vertex attribute name, the value of the
+#' attribute will be used. Note that labels may be set but hidden by the
+#' \code{displaylabels} argument.
+#' @param coord user-specified vertex coordinates, in an network.size(x)x2
+#' matrix.  Where this is specified, it will override the \code{mode} setting.
+#' @param jitter boolean; should the output be jittered?
+#' @param thresh real number indicating the lower threshold for tie values.
+#' Only ties of value >\code{thresh} are displayed.  By default,
+#' \code{thresh}=0.
+#' @param usearrows boolean; should arrows (rather than line segments) be used
+#' to indicate edges?
+#' @param mode the vertex placement algorithm; this must correspond to a
+#' \code{\link{network.layout}} function.
+#' @param displayisolates boolean; should isolates be displayed?
+#' @param interactive boolean; should interactive adjustment of vertex
+#' placement be attempted?
+#' @param xlab x axis label.
+#' @param ylab y axis label.
+#' @param xlim the x limits (min, max) of the plot.
+#' @param ylim the y limits of the plot.
+#' @param pad amount to pad the plotting range; useful if labels are being
+#' clipped.
+#' @param label.pad amount to pad label boxes (if \code{boxed.labels==TRUE}),
+#' in character size units.
+#' @param displaylabels boolean; should vertex labels be displayed?
+#' @param boxed.labels boolean; place vertex labels within boxes?
+#' @param label.pos position at which labels should be placed, relative to
+#' vertices.  \code{0} results in labels which are placed away from the center
+#' of the plotting region; \code{1}, \code{2}, \code{3}, and \code{4} result in
+#' labels being placed below, to the left of, above, and to the right of
+#' vertices (respectively); and \code{label.pos>=5} results in labels which are
+#' plotted with no offset (i.e., at the vertex positions).
+#' @param label.bg background color for label boxes (if
+#' \code{boxed.labels==TRUE}); may be a vector, if boxes are to be of different
+#' colors.
+#' @param vertex.sides number of polygon sides for vertices; may be given as a
+#' vector or a vertex attribute name, if vertices are to be of different types.
+#' As of v1.12, radius of polygons are scaled so that all shapes have equal
+#' area
+#' @param vertex.rot angle of rotation for vertices (in degrees); may be given
+#' as a vector or a vertex attribute name, if vertices are to be rotated
+#' differently.
+#' @param vertex.lwd line width of vertex borders; may be given as a vector or
+#' a vertex attribute name, if vertex borders are to have different line
+#' widths.
+#' @param arrowhead.cex expansion factor for edge arrowheads.
+#' @param label.cex character expansion factor for label text.
+#' @param loop.cex expansion factor for loops; may be given as a vector or a
+#' vertex attribute name, if loops are to be of different sizes.
+#' @param vertex.cex expansion factor for vertices; may be given as a vector or
+#' a vertex attribute name, if vertices are to be of different sizes.
+#' @param edge.col color for edges; may be given as a vector, adjacency matrix,
+#' or edge attribute name, if edges are to be of different colors.
+#' @param label.col color for vertex labels; may be given as a vector or a
+#' vertex attribute name, if labels are to be of different colors.
+#' @param vertex.col color for vertices; may be given as a vector or a vertex
+#' attribute name, if vertices are to be of different colors.
+#' @param label.border label border colors (if \code{boxed.labels==TRUE}); may
+#' be given as a vector, if label boxes are to have different colors.
+#' @param vertex.border border color for vertices; may be given as a vector or
+#' a vertex attribute name, if vertex borders are to be of different colors.
+#' @param edge.lty line type for edge borders; may be given as a vector,
+#' adjacency matrix, or edge attribute name, if edge borders are to have
+#' different line types.
+#' @param label.lty line type for label boxes (if \code{boxed.labels==TRUE});
+#' may be given as a vector, if label boxes are to have different line types.
+#' @param vertex.lty line type for vertex borders; may be given as a vector or
+#' a vertex attribute name, if vertex borders are to have different line types.
+#' @param edge.lwd line width scale for edges; if set greater than 0, edge
+#' widths are scaled by \code{edge.lwd*dat}.  May be given as a vector,
+#' adjacency matrix, or edge attribute name, if edges are to have different
+#' line widths.
+#' @param edge.label if non-\code{NULL}, labels for edges will be drawn. May be
+#' given as a vector, adjacency matrix, or edge attribute name, if edges are to
+#' have different labels. A single value of \code{TRUE} will use edge ids as
+#' labels. NOTE: currently doesn't work for curved edges.
+#' @param edge.label.cex character expansion factor for edge label text; may be
+#' given as a vector or a edge attribute name, if edge labels are to have
+#' different sizes.
+#' @param edge.label.col color for edge labels; may be given as a vector or a
+#' edge attribute name, if labels are to be of different colors.
+#' @param label.lwd line width for label boxes (if \code{boxed.labels==TRUE});
+#' may be given as a vector, if label boxes are to have different line widths.
+#' @param edge.len if \code{uselen==TRUE}, curved edge lengths are scaled by
+#' \code{edge.len}.
+#' @param edge.curve if \code{usecurve==TRUE}, the extent of edge curvature is
+#' controlled by \code{edge.curv}.  May be given as a fixed value, vector,
+#' adjacency matrix, or edge attribute name, if edges are to have different
+#' levels of curvature.
+#' @param edge.steps for curved edges (excluding loops), the number of line
+#' segments to use for the curve approximation.
+#' @param loop.steps for loops, the number of line segments to use for the
+#' curve approximation.
+#' @param object.scale base length for plotting objects, as a fraction of the
+#' linear scale of the plotting region. Defaults to 0.01.
+#' @param uselen boolean; should we use \code{edge.len} to rescale edge
+#' lengths?
+#' @param usecurve boolean; should we use \code{edge.curve}?
+#' @param suppress.axes boolean; suppress plotting of axes?
+#' @param vertices.last boolean; plot vertices after plotting edges?
+#' @param new boolean; create a new plot?  If \code{new==FALSE}, vertices and
+#' edges will be added to the existing plot.
+#' @param layout.par parameters to the \code{\link{network.layout}} function
+#' specified in \code{mode}.
+#' @param \dots additional arguments to \code{\link{plot}}.
+#' @return A two-column matrix containing the vertex positions as x,y
+#' coordinates
+#' @note \code{plot.network} is adapted (with minor modifications) from the
+#' \code{\link[sna]{gplot}} function of the \code{sna} library (authors: Carter
+#' T. Butts and Alex Montgomery); eventually, these two packages will be
+#' integrated.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{network}}, \code{\link{network.arrow}},
+#' \code{\link{network.loop}}, \code{\link{network.vertex}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' 
+#' Wasserman, S., and Faust, K.  (1994).  \emph{Social Network Analysis:
+#' Methods and Applications.} Cambridge: Cambridge University Press.
+#' @keywords hplot graphs
+#' @examples
+#' 
+#' #Construct a sparse graph
+#' m<-matrix(rbinom(100,1,1.5/9),10)
+#' diag(m)<-0
+#' g<-network(m)
+#' 
+#' #Plot the graph
+#' plot(g)
+#' 
+#' #Load Padgett's marriage data
+#' data(flo)
+#' nflo<-network(flo)
+#' #Display the network, indicating degree and flagging the Medicis
+#' plot(nflo, vertex.cex=apply(flo,2,sum)+1, usearrows=FALSE,
+#'     vertex.sides=3+apply(flo,2,sum),
+#'     vertex.col=2+(network.vertex.names(nflo)=="Medici"))
+#' @export plot.network
+#' @export
 plot.network <- function(x, ...){
   plot.network.default(x, ...)
 }
@@ -278,6 +630,27 @@ plot.network <- function(x, ...){
 
 #Two-dimensional network visualization; this was originally a direct port of the gplot
 #routine from sna (Carter T. Butts <buttsc@uci.edu>)
+
+
+#' @rdname plot.network
+#' @usage \method{plot.network}{default}(x, attrname = NULL, 
+#'    label = network.vertex.names(x), coord = NULL, jitter = TRUE,
+#'    thresh = 0, usearrows = TRUE, mode = "fruchtermanreingold", 
+#'    displayisolates = TRUE, interactive = FALSE, xlab = NULL, 
+#'    ylab = NULL, xlim = NULL, ylim = NULL, pad = 0.2, label.pad = 0.5,
+#'    displaylabels = !missing(label), boxed.labels = FALSE, label.pos = 0,
+#'    label.bg = "white", vertex.sides = 50, vertex.rot = 0, vertex.lwd=1,
+#'    arrowhead.cex = 1, label.cex = 1, loop.cex = 1, vertex.cex = 1,
+#'    edge.col = 1, label.col = 1, vertex.col = 2, label.border = 1,
+#'    vertex.border = 1, edge.lty = 1, label.lty = NULL, vertex.lty = 1,
+#'    edge.lwd = 0, edge.label = NULL, edge.label.cex = 1,
+#'    edge.label.col = 1, label.lwd = par("lwd"), edge.len = 0.5, 
+#'    edge.curve = 0.1, edge.steps = 50, loop.steps = 20, 
+#'    object.scale = 0.01, uselen = FALSE, usecurve = FALSE,
+#'    suppress.axes = TRUE, vertices.last = TRUE, new = TRUE, 
+#'    layout.par = NULL, \dots)
+#' @export plot.network.default
+#' @rawNamespace S3method(plot.network,default)
 plot.network.default<-function(x,
 attrname=NULL,
 label=network.vertex.names(x),
@@ -746,6 +1119,55 @@ layout.par=NULL,
 # d is an edgelist matrix of edge values optionally used by some edge attribute functions
 # edgetouse the set of edge ids to be used (in case some edges are not being shown)
 
+
+
+#' Expand and transform attributes of networks to values appropriate for
+#' aguments to plot.network
+#' 
+#' This is primairly an internal function called by \code{plot.network} or by
+#' external packages such as \code{ndtv} that want to prepare
+#' \code{plot.network} graphic arguments in a standardized way.
+#' 
+#' Given a network object, the name of graphic parameter argument to
+#' \code{plot.network} and value, it will if necessary transform the value, or
+#' extract it from the network, according to the description in
+#' \code{\link{plot.network}}. For some attributes, if the value is the name of
+#' a vertex or edge attribute, the appropriate values will be extracted from
+#' the network before transformation.
+#' 
+#' @rdname preparePlotArgs
+#' @name plotArgs.network
+#'
+#' @param x a \code{network} object which is going to be plotted
+#' @param argName character, the name of \code{plot.network} graphic parameter
+#' @param argValue value for the graphic paramter named in \code{argName} which
+#' to be transformed/prepared.  For many attributes, if this is a single
+#' character vector it will be assumed to be the name of a vertex or edge
+#' attribute to be extracted and transformed
+#' @param d is an edgelist matrix of edge values optionally used by some edge
+#' attribute functions
+#' @param edgetouse numeric vector giving set of edge ids to be used (in case
+#' some edges are not being shown) required by some attributes
+#' @return returns a vector with length corresponding to the number of vertices
+#' or edges (depending on the paramter type) giving the appropriately prepared
+#' values for the parameter type.  If the values or specified attribute can not
+#' be processed correctly, and Error may occur.
+#' @author skyebend@@uw.edu
+#' @seealso See also \code{\link{plot.network}}
+#' @examples
+#' 
+#'   net<-network.initialize(3)
+#'   set.vertex.attribute(net,'color',c('red','green','blue'))
+#'   set.vertex.attribute(net,'charm',1:3)
+#'   # replicate a single colorname value
+#'   plotArgs.network(net,'vertex.col','purple')
+#'   # map the 'color' attribute to color
+#'   plotArgs.network(net,'vertex.col','color')
+#'   # similarly for a numeric attribute ...
+#'   plotArgs.network(net,'vertex.cex',12)
+#'   plotArgs.network(net,'vertex.cex','charm')
+#' 
+#' @export plotArgs.network
 plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
   n<-network.size(x)
   # count the number of edges 

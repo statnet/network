@@ -53,6 +53,7 @@
 ######################################################################
 
 # removed this function because it appears that '<-' is no longer a generic in R, so it was never getting called and the copy was not being made. See ticket #550
+#' @export "<-.network"
 "<-.network"<-function(x,value){
   .Deprecated("network.copy or '<-' works just fine",msg="The network assignment S3 method '<-.network' has been deprecated because the operator '<-' is no longer an S3 generic in R so the .network version does not appear to be called. If you see this warning, please contact the maintainers to let us know you use this function")
   x<-network.copy(value)
@@ -70,7 +71,118 @@
 #  return(x)
 #}
 
-
+#' Extraction and Replacement Operators for Network Objects
+#' 
+#' Various operators which allow extraction or replacement of various
+#' components of a \code{network} object.
+#' 
+#' Indexing for edge extraction operates in a manner analogous to \code{matrix}
+#' objects.  Thus, \code{x[,]} selects all vertex pairs, \code{x[1,-5]} selects
+#' the pairing of vertex 1 with all vertices except for 5, etc.  Following
+#' this, it is acceptable for \code{i} and/or \code{j} to be logical vectors
+#' indicating which vertices are to be included.  During assignment, an attempt
+#' is made to match the elements of \code{value} to the extracted pairs in an
+#' intelligent way; in particular, elements of \code{value} will be replicated
+#' if too few are supplied (allowing expressions like \code{x[1,]<-1}).  Where
+#' \code{names.eval==NULL}, zero and non-zero values are taken to indicate the
+#' presence of absence of edges.  \code{x[2,4]<-6} thus adds a single (2,4)
+#' edge to \code{x}, and \code{x[2,4]<-0} removes such an edge (if present).
+#' If \code{x} is multiplex, assigning 0 to a vertex pair will eliminate
+#' \emph{all} edges on that pair.  Pairs are taken to be directed where
+#' \code{is.directed(x)==TRUE}, and undirected where
+#' \code{is.directed(x)==FALSE}.
+#' 
+#' If an edge attribute is specified using \code{names.eval}, then the provided
+#' values will be assigned to that attribute.  When assigning values, only
+#' extant edges are employed (unless \code{add.edges==TRUE}); in the latter
+#' case, any non-zero assignment results in the addition of an edge where
+#' currently absent.  If the attribute specified is not present on a given
+#' edge, it is added.  Otherwise, any existing value is overwritten.  The
+#' \code{\%e\%} operator can also be used to extract/assign edge values; in those
+#' roles, it is respectively equivalent to \code{get.edge.value(x,attrname)}
+#' and \code{set.edge.value(x,attrname=attrname,value=value)} (if \code{value}
+#' is a matrix) and \code{set.edge.attribute(x,attrname=attrname,value=value)}
+#' (if \code{value} is anything else). That is, if \code{value} is a matrix,
+#' the assignment operator treats it as an adjacency matrix; and if not, it
+#' treats it as a vector (recycled as needed) in the internal ordering of edges
+#' (i.e., edge IDs), skipping over deleted edges. In no case will attributes be
+#' assigned to nonexisted edges.
+#' 
+#' The \code{\%n\%} and \code{\%v\%} operators serve as front-ends to the network
+#' and vertex extraction/assignment functions (respectively).  In the
+#' extraction case, \code{x \%n\% attrname} is equivalent to
+#' \code{get.network.attribute(x,attrname)}, with \code{x \%v\% attrname}
+#' corresponding to \code{get.vertex.attribute(x,attrname)}.  In assignment,
+#' the respective equivalences are to
+#' \code{set.network.attribute(x,attrname,value)} and
+#' \code{set.vertex.attribute(x,attrname,value)}.  Note that the ``\%\%''
+#' assignment forms are generally slower than the named versions of the
+#' functions beause they will trigger an additional internal copy of the
+#' network object.
+#' 
+#' The \code{\%eattr\%}, \code{\%nattr\%}, and \code{\%vattr\%} operators are
+#' equivalent to \code{\%e\%}, \code{\%n\%}, and \code{\%v\%} (respectively).  The
+#' short forms are more succinct, but may produce less readable code.
+#' 
+#' @name network.extraction
+#'
+#' @param x an object of class \code{network}.
+#' @param i,j indices of the vertices with respect to which adjacency is to be
+#' tested.  Empty values indicate that all vertices should be employed (see
+#' below).
+#' @param na.omit logical; should missing edges be omitted (treated as
+#' no-adjacency), or should \code{NA}s be returned?  (Default: return \code{NA}
+#' on missing.)
+#' @param names.eval optionally, the name of an edge attribute to use for
+#' assigning edge values.
+#' @param add.edges logical; should new edges be added to \code{x} where edges
+#' are absent and the appropriate element of \code{value} is non-zero?
+#' @param value the value (or set thereof) to be assigned to the selected
+#' element of \code{x}.
+#' @param attrname the name of a network or vertex attribute (as appropriate).
+#' @return The extracted data, or none.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{is.adjacent}}, \code{\link{as.sociomatrix}},
+#' \code{\link{attribute.methods}}, \code{\link{add.edges}},
+#' \code{\link{network.operators}}, and \code{\link{get.inducedSubgraph}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' @keywords graphs manip
+#' @examples
+#' 
+#'   #Create a random graph (inefficiently)
+#'   g<-network.initialize(10)
+#'   g[,]<-matrix(rbinom(100,1,0.1),10,10)
+#'   plot(g)
+#'   
+#'   #Demonstrate edge addition/deletion
+#'   g[,]<-0
+#'   g[1,]<-1
+#'   g[2:3,6:7]<-1
+#'   g[,]
+#'   
+#'   #Set edge values
+#'   g[,,names.eval="boo"]<-5
+#'   as.sociomatrix(g,"boo")
+#'   #Assign edge values from a vector
+#'   g %e% "hoo" <- "wah"
+#'   g %e% "hoo"
+#'   g %e% "om" <- c("wow","whee")
+#'   g %e% "om"
+#'   #Assign edge values as a sociomatrix
+#'   g %e% "age" <- matrix(1:100, 10, 10)
+#'   g %e% "age"
+#'   as.sociomatrix(g,"age")
+#' 
+#'   #Set/retrieve network and vertex attributes
+#'   g %n% "blah" <- "Pork!"                 #The other white meat?
+#'   g %n% "blah" == "Pork!"                 #TRUE!
+#'   g %v% "foo" <- letters[10:1]            #Letter the vertices
+#'   g %v% "foo" == letters[10:1]            #All TRUE
+#' 
+#' @export "[.network"
+#' @export
 "[.network"<-function(x,i,j,na.omit=FALSE){
   narg<-nargs()+missing(na.omit)
   n<-network.size(x)
@@ -120,7 +232,9 @@
   out+0                       #Coerce to numeric
 }
 
-
+#' @rdname network.extraction
+#' @export "[<-.network"
+#' @export
 "[<-.network"<-function(x,i,j,names.eval=NULL,add.edges=FALSE,value){
   #For the common special case of x[,] <- 0, delete edges quickly by
   #reconstructing new outedgelists, inedgelists, and edgelists,
@@ -234,48 +348,62 @@
   x
 }
 
-
+#' @rdname network.extraction
+#' @export
 "%e%"<-function(x,attrname){
   get.edge.value(x,attrname=attrname)
 }
 
-
+#' @rdname network.extraction
+#' @usage x \%e\% attrname <- value
+#' @export
 "%e%<-"<-function(x,attrname,value){
   if(is.matrix(value)) set.edge.value(x,attrname=attrname,value=value)
   else set.edge.attribute(x,attrname=attrname,value=value,e=valid.eids(x))
 }
 
-
+#' @rdname network.extraction
+#' @export
 "%eattr%"<-function(x,attrname){
   x %e% attrname
 }
 
-
+#' @rdname network.extraction
+#' @usage x \%eattr\% attrname <- value
+#' @export
 "%eattr%<-"<-function(x,attrname,value){
   x %e% attrname <- value
 }
 
-
+#' @rdname network.extraction
+#' @export
 "%n%"<-function(x,attrname){
   get.network.attribute(x,attrname=attrname)
 }
 
-
+#' @rdname network.extraction
+#' @usage x \%n\% attrname <- value
+#' @export
 "%n%<-"<-function(x,attrname,value){
   set.network.attribute(x,attrname=attrname,value=value)
 }
 
-
+#' @rdname network.extraction
+#' @export
 "%nattr%"<-function(x,attrname){
   x %n% attrname
 }
 
-
+#' @rdname network.extraction
+#' @usage x \%nattr\% attrname <- value
+#' @export
 "%nattr%<-"<-function(x,attrname,value){
   x %n% attrname <- value
 }
 
-
+#' @rdname get.inducedSubgraph
+#' @usage x \%s\% v
+#' @export
 "%s%"<-function(x,v){
   if(is.list(v))
     get.inducedSubgraph(x,v=v[[1]],alters=v[[2]])
@@ -283,22 +411,28 @@
     get.inducedSubgraph(x,v=v)
 }
 
-
+#' @rdname network.extraction
+#' @export
 "%v%"<-function(x,attrname){
   get.vertex.attribute(x,attrname=attrname)
 }
 
-
+#' @rdname network.extraction
+#' @usage x \%v\% attrname <- value
+#' @export
 "%v%<-"<-function(x,attrname,value){
   set.vertex.attribute(x,attrname=attrname,value=value)
 }
 
-
+#' @rdname network.extraction
+#' @export
 "%vattr%"<-function(x,attrname){
   x %v% attrname
 }
 
-
+#' @rdname network.extraction
+#' @usage x \%vattr\% attrname <- value
+#' @export
 "%vattr%<-"<-function(x,attrname,value){
   x %v% attrname <- value
 }
@@ -312,6 +446,116 @@
 #  e2<-as.sociomatrix(e2,attrname=attrname)
 #  network(e1+e2,ignore.eval=is.null(attrname),names.eval=attrname)
 #}
+#' Network Operators
+#' 
+#' These operators allow for algebraic manipulation of relational structures.
+#' 
+#' In general, the binary network operators function by producing a new network
+#' object whose edge structure is based on that of the input networks.  The
+#' properties of the new structure depend upon the inputs as follows: \itemize{
+#' \item The size of the new network is equal to the size of the input networks
+#' (for all operators save \code{\%c\%}), which must themselves be of equal size.
+#' Likewise, the \code{bipartite} attributes of the inputs must match, and this
+#' is preserved in the output.  \item If either input network allows loops,
+#' multiplex edges, or hyperedges, the output acquires this property.  (If both
+#' input networks do not allow these features, then the features are disallowed
+#' in the output network.)  \item If either input network is directed, the
+#' output is directed; if exactly one input network is directed, the undirected
+#' input is treated as if it were a directed network in which all edges are
+#' reciprocated.  \item Supplemental attributes (including vertex names, but
+#' not edgwise missingness) are not transferred to the output.  } The unary
+#' operator acts per the above, but with a single input.  Thus, the output
+#' network has the same properties as the input, with the exception of
+#' supplemental attributes.
+#' 
+#' The behavior of the composition operator, \code{\%c\%}, is somewhat more
+#' complex than the others.  In particular, it will return a bipartite network
+#' whenever either input network is bipartite \emph{or} the vertex names of the
+#' two input networks do not match (or are missing).  If both inputs are
+#' non-bipartite and have identical vertex names, the return value will have
+#' the same structure (but with loops).  This behavior corresponds to the
+#' interpretation of the composition operator as counting walks on labeled sets
+#' of vertices.
+#' 
+#' Hypergraphs are not yet supported by these routines, but ultimately will be
+#' (as suggested by the above).
+#' 
+#' The specific operations carried out by these operators are generally
+#' self-explanatory in the non-multiplex case, but semantics in the latter
+#' circumstance bear elaboration.  The following summarizes the behavior of
+#' each operator:
+#' \describe{
+#'   \item{\code{+}}{An \eqn{(i,j)} edge is created in
+#' the return graph for every \eqn{(i,j)} edge in each of the input graphs.}
+#'   \item{\code{-}}{An \eqn{(i,j)} edge is created in the return graph for
+#' every \eqn{(i,j)} edge in the first input that is not matched by an
+#' \eqn{(i,j)} edge in the second input; if the second input has more
+#' \eqn{(i,j)} edges than the first, no \eqn{(i,j)} edges are created in the
+#' return graph.}
+#'   \item{\code{*}}{An \eqn{(i,j)} edge is created for every
+#' pairing of \eqn{(i,j)} edges in the respective input graphs.}
+#'   \item{\code{\%c\%}}{An \eqn{(i,j)} edge is created in the return graph for
+#' every edge pair \eqn{(i,k),(k,j)} with the first edge in the first input and
+#' the second edge in the second input.}
+#'   \item{\code{!}}{An \eqn{(i,j)} edge
+#' is created in the return graph for every \eqn{(i,j)} in the input not having
+#' an edge.}
+#'   \item{\code{|}}{An \eqn{(i,j)} edge is created in the return
+#' graph if either input contains an \eqn{(i,j)} edge.}
+#'   \item{\code{&}}{An
+#' \eqn{(i,j)} edge is created in the return graph if both inputs contain an
+#' \eqn{(i,j)} edge.}
+#' }
+#' Semantics for missing-edge cases follow from the above,
+#' under the interpretation that edges with \code{na==TRUE} are viewed as
+#' having an unknown state.  Thus, for instance, \code{x*y} with \code{x}
+#' having 2 \eqn{(i,j)} non-missing and 1 missing edge and \code{y} having 3
+#' respective non-missing and 2 missing edges will yield an output network with
+#' 6 non-missing and 9 missing \eqn{(i,j)} edges.
+#' 
+#' @rdname network-operators
+#' @name network.operators
+#'
+#' @aliases %c%
+#' @param e1 an object of class \code{network}.
+#' @param e2 another \code{network}.
+#' @return The resulting network.
+#' @note Currently, there is a naming conflict between the composition operator
+#' and the \code{\%c\%} operator in the \code{\link[sna]{sna}} package.  This
+#' will be resolved in future releases; for the time being, one can determine
+#' which version of \code{\%c\%} is in use by varying which package is loaded
+#' first.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{network.extraction}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' 
+#' Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods
+#' and Applications.} Cambridge: University of Cambridge Press.
+#' @keywords math graphs
+#' @examples
+#' 
+#' #Create an in-star
+#' m<-matrix(0,6,6)
+#' m[2:6,1]<-1
+#' g<-network(m)
+#' plot(g)
+#' 
+#' #Compose g with its transpose
+#' gcgt<-g %c% (network(t(m)))
+#' plot(gcgt)
+#' gcgt
+#' 
+#' #Show the complement of g
+#' !g
+#' 
+#' #Perform various arithmatic and logical operations
+#' (g+gcgt)[,] == (g|gcgt)[,]             #All TRUE
+#' (g-gcgt)[,] == (g&(!(gcgt)))[,]
+#' (g*gcgt)[,] == (g&gcgt)[,]
+#' @export "+.network"
+#' @export
 "+.network"<-function(e1,e2){
   #Set things up
   outinf<-networkOperatorSetup(x=e1,y=e2)
@@ -350,6 +594,9 @@
 #
 #"-.default"<-function(e1,e2,...) { (base::"-")(e1,e2) }
 #
+#' @rdname network-operators
+#' @export "-.network"
+#' @export
 "-.network"<-function(e1,e2){
   #Set things up
   outinf<-networkOperatorSetup(x=e1,y=e2)
@@ -446,6 +693,9 @@
 #
 #"*.default"<-function(e1,e2,...) { (base::"*")(e1,e2) }
 #
+#' @rdname network-operators
+#' @export "*.network"
+#' @export
 "*.network"<-function(e1,e2){
   #Set things up
   outinf<-networkOperatorSetup(x=e1,y=e2)
@@ -542,7 +792,9 @@
   out
 }
 
-
+#' @rdname network-operators
+#' @export "!.network"
+#' @export
 "!.network"<-function(e1){
   #Set things up
   outinf<-networkOperatorSetup(x=e1)
@@ -588,7 +840,9 @@
   out
 }
 
-
+#' @rdname network-operators
+#' @export "|.network"
+#' @export
 "|.network"<-function(e1,e2){
   #Set things up
   outinf<-networkOperatorSetup(x=e1,y=e2)
@@ -621,7 +875,9 @@
   out
 }
 
-
+#' @rdname network-operators
+#' @export "&.network"
+#' @export
 "&.network"<-function(e1,e2){
   #Set things up
   outinf<-networkOperatorSetup(x=e1,y=e2)
@@ -709,13 +965,16 @@
 
 if (!exists('%c%')){
 
+#' @export "%c%"
 "%c%"<-function(e1,e2){
   UseMethod("%c%",e1)
 }
 
 }
 
-
+#' @rdname network-operators
+#' @export "%c%.network"
+#' @export
 "%c%.network"<-function(e1,e2){
   #Set things up
   net1<-networkOperatorSetup(x=e1)
@@ -830,6 +1089,7 @@ if (!exists('%c%')){
 # elnax: the list of missing edges for the first network
 # ely: in the binary case, the edgelist for the second network (non-missing)
 # elnay: in the binary case, the list of missing edges for the second network
+#' @rdname network-internal
 networkOperatorSetup<-function(x,y=NULL){
   #Determine what attributes the output should have
   if(is.network(x)){
@@ -976,6 +1236,56 @@ networkOperatorSetup<-function(x,y=NULL){
 }
 
 
+
+
+#' Combine Networks by Edge Value Multiplication
+#' 
+#' Given a series of networks, \code{prod.network} attempts to form a new
+#' network by multiplication of edges.  If a non-null \code{attrname} is given,
+#' the corresponding edge attribute is used to determine and store edge values.
+#' 
+#' The network product method attempts to combine its arguments by edgewise
+#' multiplication (\emph{not} composition) of their respective adjacency
+#' matrices; thus, this method is only applicable for networks whose adjacency
+#' coercion is well-behaved.  Multiplication is effectively boolean unless
+#' \code{attrname} is specified, in which case this is used to assess edge
+#' values -- net values of 0 will result in removal of the underlying edge.
+#' 
+#' Other network attributes in the return value are carried over from the first
+#' element in the list, so some persistence is possible (unlike the
+#' multiplication operator).  Note that it is sometimes possible to
+#' \dQuote{multiply} networks and raw adjacency matrices using this routine (if
+#' all dimensions are correct), but more exotic combinations may result in
+#' regrettably exciting behavior.
+#' 
+#' @param \dots one or more \code{network} objects.
+#' @param attrname the name of an edge attribute to use when assessing edge
+#' values, if desired.
+#' @param na.rm logical; should edges with missing data be ignored?
+#' @return A \code{\link{network}} object.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{network.operators}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' @keywords arith graphs
+#' @examples
+#' 
+#' #Create some networks
+#' g<-network.initialize(5)
+#' h<-network.initialize(5)
+#' i<-network.initialize(5)
+#' g[1:3,,names.eval="marsupial",add.edges=TRUE]<-1
+#' h[1:2,,names.eval="marsupial",add.edges=TRUE]<-2
+#' i[1,,names.eval="marsupial",add.edges=TRUE]<-3
+#' 
+#' #Combine by addition
+#' pouch<-prod(g,h,i,attrname="marsupial")
+#' pouch[,]                                   #Edge values in the pouch?
+#' as.sociomatrix(pouch,attrname="marsupial")     #Recover the marsupial
+#' 
+#' @export prod.network
+#' @export
 prod.network<-function(..., attrname=NULL, na.rm=FALSE){
   inargs<-list(...)
   y<-inargs[[1]]
@@ -992,6 +1302,55 @@ prod.network<-function(..., attrname=NULL, na.rm=FALSE){
 }
 
 
+
+
+#' Combine Networks by Edge Value Addition
+#' 
+#' Given a series of networks, \code{sum.network} attempts to form a new
+#' network by accumulation of edges.  If a non-null \code{attrname} is given,
+#' the corresponding edge attribute is used to determine and store edge values.
+#' 
+#' The network summation method attempts to combine its arguments by addition
+#' of their respective adjacency matrices; thus, this method is only applicable
+#' for networks whose adjacency coercion is well-behaved.  Addition is
+#' effectively boolean unless \code{attrname} is specified, in which case this
+#' is used to assess edge values -- net values of 0 will result in removal of
+#' the underlying edge.
+#' 
+#' Other network attributes in the return value are carried over from the first
+#' element in the list, so some persistence is possible (unlike the addition
+#' operator).  Note that it is sometimes possible to \dQuote{add} networks and
+#' raw adjacency matrices using this routine (if all dimensions are correct),
+#' but more exotic combinations may result in regrettably exciting behavior.
+#' 
+#' @param \dots one or more \code{network} objects.
+#' @param attrname the name of an edge attribute to use when assessing edge
+#' values, if desired.
+#' @param na.rm logical; should edges with missing data be ignored?
+#' @return A \code{\link{network}} object.
+#' @author Carter T. Butts \email{buttsc@@uci.edu}
+#' @seealso \code{\link{network.operators}}
+#' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+#' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+#' \url{http://www.jstatsoft.org/v24/i02/}
+#' @keywords arith graphs
+#' @examples
+#' 
+#' #Create some networks
+#' g<-network.initialize(5)
+#' h<-network.initialize(5)
+#' i<-network.initialize(5)
+#' g[1,,names.eval="marsupial",add.edges=TRUE]<-1
+#' h[1:2,,names.eval="marsupial",add.edges=TRUE]<-2
+#' i[1:3,,names.eval="marsupial",add.edges=TRUE]<-3
+#' 
+#' #Combine by addition
+#' pouch<-sum(g,h,i,attrname="marsupial")
+#' pouch[,]                                   #Edge values in the pouch?
+#' as.sociomatrix(pouch,attrname="marsupial")     #Recover the marsupial
+#' 
+#' @export sum.network
+#' @export
 sum.network<-function(..., attrname=NULL, na.rm=FALSE){
   inargs<-list(...)
   y<-inargs[[1]]
