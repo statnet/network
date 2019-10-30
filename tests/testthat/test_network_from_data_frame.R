@@ -166,7 +166,7 @@ test_that("bad data frames are caught", {
   
   expect_error(
     network_from_data_frame(na.omit(edge_df_with_NAs), vertices = empty_vertex_df),
-    "`vertices` should contain more than one column and more than one row."
+    "`vertices` should contain at least one column and row."
   )
 })
 

@@ -588,10 +588,10 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
   
   if (!is.null(vertices)) {
     if (!is.data.frame(vertices)) {
-      stop("`vertices` should be a data frame with at least 1 column.")
+      stop("If provided, `vertices` should be a data frame.")
     }
     if (nrow(vertices) == 0L | ncol(vertices) == 0L) {
-      stop("`vertices` should contain more than one column and more than one row.")
+      stop("`vertices` should contain at least one column and row.")
     }
   }
   
