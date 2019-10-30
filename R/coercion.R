@@ -635,14 +635,14 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
            paste("\n\t-", vertices[[1L]][duplicate_vertex_index]))
     }
     
-    names_to_match <- vertices[[1L]]
+    vertex_names <- vertices[[1L]]
     
   } else {
-    names_to_match <- vertex_names_in_el
+    vertex_names <- vertex_names_in_el
   }
   
-  edges[[1L]] <- match(edges[[1L]], names_to_match)
-  edges[[2L]] <- match(edges[[2L]], names_to_match)
+  edges[[1L]] <- match(edges[[1L]], vertex_names)
+  edges[[2L]] <- match(edges[[2L]], vertex_names)
   
   
   if (ncol(edges) > 2L) {
@@ -662,7 +662,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
   }
   
   out <- network.initialize(
-    n = if (is.null(vertices)) length(vertex_names_in_el) else nrow(vertices),
+    n = length(vertex_names),
     directed = directed,
     hyper = FALSE,
     loops = loops,
