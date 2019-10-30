@@ -543,6 +543,155 @@ as.network.matrix<-function(x, matrix.type=NULL,
 }
 
 
+#' @name network_from_data_frame
+#'
+#' @title Coercion from Data Frames to Network Objects
+#' 
+#' @param edges data frame containing the from/to edge list in the first two columns, with
+#' additional columns treated as edge attributes.
+#' @param vertices optional data frame containing the vertex attributes. The first column 
+#' is assigned to the `"vertex.names"` attribute with additional columns using column
+#'  names.
+#' @param directed logical, default: `TRUE`; should edges be interpreted as directed?
+#' @param loops logical, default: `FALSE`; should loops be allowed?
+#' @param multiple logical; are multiplex edges allowed?
+#' @param ... additional arguments
+#' 
+#' @return An object of class \code{network}
+#' 
+#' @author Brendan Knapp \email{brendan.knapp@@nps.edu}
+#' @seealso \code{\link{edgeset.constructors}}, \code{\link{network}},
+#' 
+#' @keywords classes graphs
+#' 
+#' @examples
+#' vertex_df <- data.frame(name = letters[1:5],
+#'                         int_attr = seq_len(5),
+#'                         chr_attr = LETTERS[1:5],
+#'                         lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE),
+#'                         stringsAsFactors = FALSE)
+#' vertex_df[["df_list_attr"]] <- replicate(5, mtcars, simplify = FALSE)
+#' 
+#' edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
+#'                       to = c("a", "b", "a", "a", "b", "a"),
+#'                       int_attr = seq_len(6),
+#'                       chr_attr = LETTERS[1:6],
+#'                       lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
+#'                       stringsAsFactors = FALSE)
+#' edge_df[["df_list_attr"]] <- replicate(6, mtcars, simplify = FALSE)
+#' 
+#' g <- network_from_data_frame(edge_df, directed = TRUE, vertices = vertex_df)
+#' 
+#' @export
+network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
+                                    loops = FALSE, multiple = FALSE, ...) {
+  if (!is.data.frame(edges) | ncol(edges) < 2L) {
+    stop("`edges` should be a data frame with at least two columns.")
+  }
+  
+  if (!is.null(vertices)) {
+    if (!is.data.frame(vertices)) {
+      stop("`vertices` should be a data frame with at least 1 column.")
+    }
+    if (nrow(vertices) == 0L | ncol(vertices) == 0L) {
+      stop("`vertices` should contain more than one column and more than one row.")
+    }
+  }
+  
+  if (any(is.na(edges[, c(1L, 2L)]))) {
+    stop("`edges` contains `NA` elements in its first two columns.")
+  }
+  
+  if (!multiple) {
+    if (directed) {
+      parallel_edges_found <- anyDuplicated(edges[, c(1L, 2L)]) != 0L
+    } else {
+      parallel_edges_found <- anyDuplicated(apply(edges[, c(1L, 2L)], 1L, sort))
+    }
+    if (parallel_edges_found) {
+      stop("`multiple` is `FALSE`, but `edges` contains duplicates.")
+    }
+  }
+  
+  if (!loops) {
+    if (any(edges[[1L]] == edges[[2L]])) {
+      stop("`loops` is `FALSE`, but `edges` contains loops.")
+    }
+  }
+  
+  vertex_names <- unique(c(edges[[1L]], edges[[2L]]))
+  
+  if (!is.null(vertices)) {
+    missing_vertex_names <- setdiff(vertex_names, vertices[[1L]])
+    if (length(missing_vertex_names) > 0L) {
+      stop("The following vertices are in `edges`, but not in `vertices`:",
+           paste("\n\t-", missing_vertex_names))
+    }
+    
+    duplicate_vertex_index <- anyDuplicated(vertices[[1L]])
+    if (duplicate_vertex_index != 0L) {
+      stop("The following vertex names are duplicated in `vertices`:",
+           paste("\n\t-", vertices[[1L]][duplicate_vertex_index]))
+    }
+    
+    edges[, c(1L, 2L)] <- lapply(edges[, c(1L, 2L)], function(.x) {
+      as.integer(factor(.x, levels = vertices[[1L]]))
+    })
+    
+  } else {
+    edges[, c(1L, 2L)] <- lapply(edges[, c(1L, 2L)], function(.x) {
+      as.integer(factor(.x, levels = vertex_names))
+    })
+  }
+  
+  if (ncol(edges) > 2L) {
+    edge_attr_names <- names(edges)[3L:ncol(edges)]
+
+    names_eval <- rep(
+      list(as.list(edge_attr_names)),
+      times = nrow(edges)
+    )
+    
+    vals_eval <- unname(
+      lapply(
+        split(edges[, edge_attr_names, drop = FALSE],
+              f = seq_len(nrow(edges))),
+        as.list
+      )
+    )
+  } else {
+    names_eval <- NULL
+    vals_eval <- NULL
+  }
+  
+  out <- network.initialize(
+    n = length(vertex_names),
+    directed = directed,
+    hyper = FALSE,
+    loops = loops,
+    multiple = multiple,
+    bipartite = FALSE
+  )
+
+  add.edges(
+    x = out,
+    tail = edges[[1L]],
+    head = edges[[2L]],
+    names.eval = names_eval,
+    vals.eval = vals_eval
+  )
+  
+  names(vertices)[[1L]] <- "vertex.names"
+  
+  set.vertex.attribute(
+    x = out,
+    attrname = names(vertices),
+    value = vertices
+  )
+  
+  out
+}
+
 #Force the input into sociomatrix form.  This is a shortcut to 
 #as.matrix.network.adjacency, which ensures that a raw matrix is
 #passed through as-is.
