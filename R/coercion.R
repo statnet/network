@@ -617,10 +617,10 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     }
   }
   
-  vertex_names <- unique(c(edges[[1L]], edges[[2L]]))
+  vertex_names_in_el <- unique(c(edges[[1L]], edges[[2L]]))
   
   if (!is.null(vertices)) {
-    missing_vertex_names <- setdiff(vertex_names, vertices[[1L]])
+    missing_vertex_names <- setdiff(vertex_names_in_el, vertices[[1L]])
     if (length(missing_vertex_names) > 0L) {
       stop("The following vertices are in `edges`, but not in `vertices`:",
            paste("\n\t-", missing_vertex_names))
@@ -632,15 +632,15 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
            paste("\n\t-", vertices[[1L]][duplicate_vertex_index]))
     }
     
-    edges[, 1L:2L] <- lapply(edges[, 1L:2L], function(.x) {
-      as.integer(factor(.x, levels = vertices[[1L]]))
-    })
+    names_to_match <- vertices[[1L]]
     
   } else {
-    edges[, 1L:2L] <- lapply(edges[, 1L:2L], function(.x) {
-      as.integer(factor(.x, levels = vertex_names))
-    })
+    names_to_match <- vertex_names_in_el
   }
+  
+  edges[[1L]] <- match(edges[[1L]], names_to_match)
+  edges[[2L]] <- match(edges[[2L]], names_to_match)
+  
   
   if (ncol(edges) > 2L) {
     edge_attr_names <- names(edges)[3L:ncol(edges)]
@@ -659,7 +659,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
   }
   
   out <- network.initialize(
-    n = length(vertex_names),
+    n = if (is.null(vertices)) length(vertex_names_in_el) else nrow(vertices),
     directed = directed,
     hyper = FALSE,
     loops = loops,
