@@ -550,20 +550,17 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #' @param edges data frame containing the from/to edge list in the first two columns, with
 #' additional columns treated as edge attributes.
 #' @param vertices optional data frame containing the vertex attributes. The first column 
-#' is assigned to the `"vertex.names"` attribute with additional columns using column
-#'  names.
+#' is assigned to the `"vertex.names"` attribute with additional attributes using column
+#' names.
 #' @param directed logical, default: `TRUE`; should edges be interpreted as directed?
 #' @param loops logical, default: `FALSE`; should loops be allowed?
-#' @param multiple logical; are multiplex edges allowed?
-#' @param ... additional arguments
+#' @param multiple logical, default: `FALSE`; are multiplex edges allowed?
+#' @param ... Arguments passed to or from other methods.
 #' 
 #' @return An object of class \code{network}
 #' 
 #' @author Brendan Knapp \email{brendan.knapp@@nps.edu}
-#' @seealso \code{\link{edgeset.constructors}}, \code{\link{network}},
-#' 
-#' @keywords classes graphs
-#' 
+#'
 #' @examples
 #' vertex_df <- data.frame(name = letters[1:5],
 #'                         int_attr = seq_len(5),
@@ -598,24 +595,25 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     }
   }
   
-  if (any(is.na(edges[, c(1L, 2L)]))) {
+  if (any(is.na(edges[,1L:2L]))) {
     stop("`edges` contains `NA` elements in its first two columns.")
-  }
-  
-  if (!multiple) {
-    if (directed) {
-      parallel_edges_found <- anyDuplicated(edges[, c(1L, 2L)]) != 0L
-    } else {
-      parallel_edges_found <- anyDuplicated(apply(edges[, c(1L, 2L)], 1L, sort))
-    }
-    if (parallel_edges_found) {
-      stop("`multiple` is `FALSE`, but `edges` contains duplicates.")
-    }
   }
   
   if (!loops) {
     if (any(edges[[1L]] == edges[[2L]])) {
       stop("`loops` is `FALSE`, but `edges` contains loops.")
+    }
+  }
+  
+  if (!multiple) {
+    if (directed) {
+      parallel_edges_found <- anyDuplicated(edges[, 1L:2L]) != 0L
+    } else {
+      sorted_el <- t(apply(edges[, 1L:2L], 1L, sort))
+      parallel_edges_found <- anyDuplicated(sorted_el) != 0L
+    }
+    if (parallel_edges_found) {
+      stop("`multiple` is `FALSE`, but `edges` contains duplicates.")
     }
   }
   
@@ -634,12 +632,12 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
            paste("\n\t-", vertices[[1L]][duplicate_vertex_index]))
     }
     
-    edges[, c(1L, 2L)] <- lapply(edges[, c(1L, 2L)], function(.x) {
+    edges[, 1L:2L] <- lapply(edges[, 1L:2L], function(.x) {
       as.integer(factor(.x, levels = vertices[[1L]]))
     })
     
   } else {
-    edges[, c(1L, 2L)] <- lapply(edges[, c(1L, 2L)], function(.x) {
+    edges[, 1L:2L] <- lapply(edges[, 1L:2L], function(.x) {
       as.integer(factor(.x, levels = vertex_names))
     })
   }
@@ -652,13 +650,9 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
       times = nrow(edges)
     )
     
-    vals_eval <- unname(
-      lapply(
-        split(edges[, edge_attr_names, drop = FALSE],
-              f = seq_len(nrow(edges))),
-        as.list
-      )
-    )
+    vals_eval <- split(edges[, edge_attr_names, drop = FALSE],
+                       f = seq_len(nrow(edges)))
+    
   } else {
     names_eval <- NULL
     vals_eval <- NULL
@@ -681,13 +675,15 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     vals.eval = vals_eval
   )
   
-  names(vertices)[[1L]] <- "vertex.names"
-  
-  set.vertex.attribute(
-    x = out,
-    attrname = names(vertices),
-    value = vertices
-  )
+  if (!is.null(vertices)) {
+    names(vertices)[[1L]] <- "vertex.names"
+    
+    set.vertex.attribute(
+      x = out,
+      attrname = names(vertices),
+      value = vertices
+    )
+  }
   
   out
 }

@@ -14,14 +14,14 @@ additional columns treated as edge attributes.}
 \item{directed}{logical, default: `TRUE`; should edges be interpreted as directed?}
 
 \item{vertices}{optional data frame containing the vertex attributes. The first column 
-is assigned to the `"vertex.names"` attribute with additional columns using column
- names.}
+is assigned to the `"vertex.names"` attribute with additional attributes using column
+names.}
 
 \item{loops}{logical, default: `FALSE`; should loops be allowed?}
 
-\item{multiple}{logical; are multiplex edges allowed?}
+\item{multiple}{logical, default: `FALSE`; are multiplex edges allowed?}
 
-\item{...}{additional arguments}
+\item{...}{Arguments passed to or from other methods.}
 }
 \value{
 An object of class \code{network}
@@ -48,11 +48,6 @@ edge_df[["df_list_attr"]] <- replicate(6, mtcars, simplify = FALSE)
 g <- network_from_data_frame(edge_df, directed = TRUE, vertices = vertex_df)
 
 }
-\seealso{
-\code{\link{edgeset.constructors}}, \code{\link{network}},
-}
 \author{
 Brendan Knapp \email{brendan.knapp@nps.edu}
 }
-\keyword{classes}
-\keyword{graphs}
