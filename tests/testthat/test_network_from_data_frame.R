@@ -90,8 +90,7 @@ test_that("`multiple` arguments work", {
                                        stringsAsFactors = FALSE)
   expect_error(
     network_from_data_frame(df_with_parallel_edges),
-    "`multiple` is `FALSE`, but `edges` contains duplicates."
-  )
+    "`multiple` is `FALSE`, but `edges` contains duplicates.\n\t- Index of first duplicate row: 7"  )
   expect_s3_class(
     network_from_data_frame(df_with_parallel_edges, multiple = TRUE),
     "network"
@@ -102,8 +101,7 @@ test_that("`multiple` arguments work", {
                                        stringsAsFactors = FALSE)
   expect_error(
     network_from_data_frame(df_with_parallel_edges2, directed = FALSE),
-    "`multiple` is `FALSE`, but `edges` contains duplicates."
-  )
+    "`multiple` is `FALSE`, but `edges` contains duplicates.\n\t- Index of first duplicate row: 7"  )
   expect_s3_class(
     network_from_data_frame(df_with_parallel_edges2, directed = FALSE, multiple = TRUE),
     "network"

@@ -8,18 +8,19 @@ network_from_data_frame(edges, directed = TRUE, vertices = NULL,
   loops = FALSE, multiple = FALSE, ...)
 }
 \arguments{
-\item{edges}{data frame containing the from/to edge list in the first two columns, with
-additional columns treated as edge attributes.}
+\item{edges}{A data frame containing the from/to edge list in the first two columns
+(the values of which correspond to \code{"vertex.names"}). Additional columns are 
+assigned to edge attributes named after those columns.}
 
-\item{directed}{logical, default: `TRUE`; should edges be interpreted as directed?}
+\item{directed}{logical, default: \code{TRUE}; should edges be interpreted as directed?}
 
-\item{vertices}{optional data frame containing the vertex attributes. The first column 
-is assigned to the `"vertex.names"` attribute with additional attributes using column
-names.}
+\item{vertices}{An optional data frame containing the vertex attributes. The first
+column is assigned to the \code{"vertex.names"} with additional columns being assigned 
+to attributes named after those columns.}
 
-\item{loops}{logical, default: `FALSE`; should loops be allowed?}
+\item{loops}{logical, default: \code{FALSE}; should loops be allowed?}
 
-\item{multiple}{logical, default: `FALSE`; are multiplex edges allowed?}
+\item{multiple}{logical, default: \code{FALSE}; are multiplex edges allowed?}
 
 \item{...}{Arguments passed to or from other methods.}
 }

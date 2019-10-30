@@ -547,14 +547,15 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #'
 #' @title Coercion from Data Frames to Network Objects
 #' 
-#' @param edges data frame containing the from/to edge list in the first two columns, with
-#' additional columns treated as edge attributes.
-#' @param vertices optional data frame containing the vertex attributes. The first column 
-#' is assigned to the `"vertex.names"` attribute with additional attributes using column
-#' names.
-#' @param directed logical, default: `TRUE`; should edges be interpreted as directed?
-#' @param loops logical, default: `FALSE`; should loops be allowed?
-#' @param multiple logical, default: `FALSE`; are multiplex edges allowed?
+#' @param edges A data frame containing the from/to edge list in the first two columns
+#' (the values of which correspond to \code{"vertex.names"}). Additional columns are 
+#' assigned to edge attributes named after those columns.
+#' @param vertices An optional data frame containing the vertex attributes. The first
+#' column is assigned to the \code{"vertex.names"} with additional columns being assigned 
+#' to attributes named after those columns.
+#' @param directed logical, default: \code{TRUE}; should edges be interpreted as directed?
+#' @param loops logical, default: \code{FALSE}; should loops be allowed?
+#' @param multiple logical, default: \code{FALSE}; are multiplex edges allowed?
 #' @param ... Arguments passed to or from other methods.
 #' 
 #' @return An object of class \code{network}
@@ -595,7 +596,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     }
   }
   
-  if (any(is.na(edges[, 1L:2L]))) {
+  if (any(is.na(edges[[1L]]) | any(is.na(edges[[2L]])))) {
     stop("`edges` contains `NA` elements in its first two columns.")
   }
   
@@ -607,13 +608,15 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
   
   if (!multiple) {
     if (directed) {
-      parallel_edges_found <- anyDuplicated(edges[, 1L:2L]) != 0L
+      test_el <- edges[, 1L:2L]
     } else {
-      sorted_el <- t(apply(edges[, 1L:2L], 1L, sort))
-      parallel_edges_found <- anyDuplicated(sorted_el) != 0L
+      test_el <- t(apply(edges[, 1L:2L], 1L, sort))
     }
-    if (parallel_edges_found) {
-      stop("`multiple` is `FALSE`, but `edges` contains duplicates.")
+    parallel_row_index <- anyDuplicated(test_el)
+    
+    if (parallel_row_index != 0L) {
+      stop("`multiple` is `FALSE`, but `edges` contains duplicates.",
+           "\n\t- Index of first duplicate row: ", parallel_row_index)
     }
   }
   
