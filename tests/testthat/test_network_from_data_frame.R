@@ -154,7 +154,7 @@ test_that("duplicate vertex names are caught", {
 
 test_that("bad data frames are caught", {
   edge_df_with_NAs <- data.frame(from = c(letters, NA),
-                            to = c(NA, letters))
+                                 to = c(NA, letters))
   empty_vertex_df <- data.frame()
   
   expect_error(
