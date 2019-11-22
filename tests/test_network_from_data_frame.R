@@ -1,8 +1,8 @@
 library(testthat)
 
-context("network_from_data_frame")
+# context("network_from_data_frame")
 
-test_that("network_from_data_frame works", {
+# test_that("network_from_data_frame works", {
 # library(network, quietly = TRUE)
 # library(testthat)
 
@@ -99,9 +99,9 @@ test_that("network_from_data_frame works", {
     ),
     edge_df[["df_list_attr"]]
   )
-})
+# })
 
-test_that("`multiple` arguments work", {
+# test_that("`multiple` arguments work", {
   df_with_parallel_edges <- data.frame(from = c("b", "c", "c", "d", "d", "e", "e"),
                                        to = c("a", "b", "a", "a", "b", "a", "a"),
                                        stringsAsFactors = FALSE)
@@ -123,9 +123,9 @@ test_that("`multiple` arguments work", {
     network::network_from_data_frame(df_with_parallel_edges2, directed = FALSE, multiple = TRUE),
     "network"
   )
-})
+# })
 
-test_that("`loops` works", {
+# test_that("`loops` works", {
   df_with_loops <- data.frame(from = c("b", "c", "c", "d", "d", "e", "f"),
                               to = c("a", "b", "a", "a", "b", "a", "f"),
                               stringsAsFactors = FALSE)
@@ -137,9 +137,9 @@ test_that("`loops` works", {
     network::network_from_data_frame(df_with_loops, loops = TRUE),
     "network"
   )
-})
+# })
 
-test_that("missing vertex names are caught", {
+# test_that("missing vertex names are caught", {
   vertex_df <- data.frame(name = letters[1:5],
                           stringsAsFactors = FALSE)
 
@@ -152,9 +152,9 @@ test_that("missing vertex names are caught", {
     "The following vertices are in `edges`, but not in `vertices`:\n\t- f\n\t- g"
   )
 
-})
+# })
 
-test_that("duplicate vertex names are caught", {
+# test_that("duplicate vertex names are caught", {
   vertex_df <- data.frame(name = c("a", "a", "b", "c", "d", "e"),
                           stringsAsFactors = FALSE)
 
@@ -167,9 +167,9 @@ test_that("duplicate vertex names are caught", {
     "The following vertex names are duplicated in `vertices`:\n\t- a"
   )
 
-})
+# })
 
-test_that("bad data frames are caught", {
+# test_that("bad data frames are caught", {
   edge_df_with_NAs <- data.frame(from = c(letters, NA),
                                  to = c(NA, letters))
   empty_vertex_df <- data.frame()
@@ -184,5 +184,5 @@ test_that("bad data frames are caught", {
                                      vertices = empty_vertex_df),
     "`vertices` should contain at least one column and row."
   )
-})
+# })
 
