@@ -568,7 +568,8 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #'                         chr_attr = LETTERS[1:5],
 #'                         lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE),
 #'                         stringsAsFactors = FALSE)
-#' vertex_df[["df_list_attr"]] <- replicate(5, mtcars, simplify = FALSE)
+#' vertex_df                        
+#' 
 #' 
 #' edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
 #'                       to = c("a", "b", "a", "a", "b", "a"),
@@ -576,14 +577,15 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #'                       chr_attr = LETTERS[1:6],
 #'                       lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
 #'                       stringsAsFactors = FALSE)
-#' edge_df[["df_list_attr"]] <- replicate(6, mtcars, simplify = FALSE)
+#' edge_df
 #' 
 #' g <- network_from_data_frame(edge_df, directed = TRUE, vertices = vertex_df)
+#' g
 #' 
 #' @export
 network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
                                     loops = FALSE, multiple = FALSE, ...) {
-  if (!is.data.frame(edges) || ncol(edges) < 2L) {
+  if (!is.data.frame(edges) | ncol(edges) < 2L) {
     stop("`edges` should be a data frame with at least two columns.")
   }
   
@@ -591,12 +593,12 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     if (!is.data.frame(vertices)) {
       stop("If provided, `vertices` should be a data frame.")
     }
-    if (nrow(vertices) == 0L || ncol(vertices) == 0L) {
+    if (nrow(vertices) == 0L | ncol(vertices) == 0L) {
       stop("`vertices` should contain at least one column and row.")
     }
   }
   
-  if (any(is.na(edges[[1L]]) || any(is.na(edges[[2L]])))) {
+  if (any(is.na(edges[[1L]]) | any(is.na(edges[[2L]])))) {
     stop("`edges` contains `NA` elements in its first two columns.")
   }
   
@@ -670,7 +672,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     bipartite = FALSE
   )
 
-  add.edges(
+  out <- add.edges(
     x = out,
     tail = edges[[1L]],
     head = edges[[2L]],
@@ -681,7 +683,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
   if (!is.null(vertices)) {
     names(vertices)[[1L]] <- "vertex.names"
     
-    set.vertex.attribute(
+    out <- set.vertex.attribute(
       x = out,
       attrname = names(vertices),
       value = vertices

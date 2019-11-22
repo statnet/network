@@ -36,7 +36,8 @@ vertex_df <- data.frame(name = letters[1:5],
                         chr_attr = LETTERS[1:5],
                         lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE),
                         stringsAsFactors = FALSE)
-vertex_df[["df_list_attr"]] <- replicate(5, mtcars, simplify = FALSE)
+vertex_df                        
+
 
 edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
                       to = c("a", "b", "a", "a", "b", "a"),
@@ -44,9 +45,10 @@ edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
                       chr_attr = LETTERS[1:6],
                       lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
                       stringsAsFactors = FALSE)
-edge_df[["df_list_attr"]] <- replicate(6, mtcars, simplify = FALSE)
+edge_df
 
 g <- network_from_data_frame(edge_df, directed = TRUE, vertices = vertex_df)
+g
 
 }
 \author{

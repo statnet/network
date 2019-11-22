@@ -1,4 +1,4 @@
-library(network)
+library(network, quietly = TRUE)
 library(testthat)
 
 # context("network_from_data_frame")
