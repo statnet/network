@@ -185,5 +185,6 @@ library(testthat)
                                      vertices = empty_vertex_df),
     "`vertices` should contain at least one column and row."
   )
+
 # })
 
