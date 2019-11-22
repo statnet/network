@@ -16,6 +16,7 @@
 #' @useDynLib network, .registration = TRUE
 "_PACKAGE"
 
+
 .onAttach <- function(libname, pkgname){
   temp<-packageDescription("network")
   msg<-paste(temp$Package,": ",temp$Title,"\n",
