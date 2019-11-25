@@ -1,6 +1,7 @@
 CHANGELOG:
 v1.16-378
   - convert get.vertex.attribute and list.vertex.attributes to generics for greater extensibility
+  - updated tests to fix a color-related issue
 v1.15
   - made na.omit a non-required arguments S3 method generics for network.edgecount and network.dyadcount for exensibility by downstream packages
 v1.14 Fixes & Features
