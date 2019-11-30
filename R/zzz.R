@@ -13,9 +13,9 @@
 #
 ######################################################################
 
-.onLoad <-function(libname, pkgname){
-  library.dynam("network", package=pkgname, lib.loc=libname)
-}
+#' @useDynLib network, .registration = TRUE
+"_PACKAGE"
+
 
 .onAttach <- function(libname, pkgname){
   temp<-packageDescription("network")
