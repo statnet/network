@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 05/04/14
+# Last Modified 11/26/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -27,7 +27,7 @@
 # a valid subset expresssion, and return the name associated with the expression.
 #
 .findNameInSubsetExpr <- function(x){
-  if (class(x)=='call'){
+  if (inherits(x,'call')){
     # Ensure call is a subset function, one of $, [, or [[
     if(!(deparse(x[[1]]) %in% c('$','[','[['))) return(NA)
 
@@ -38,7 +38,7 @@
     # Possible name found
     return(xns[[1]])
   }
-  else if (class(x)=='name')
+  else if (inherits(x,'name'))
     return(deparse(x))
  
   NULL 
