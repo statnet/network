@@ -543,9 +543,7 @@ as.network.matrix<-function(x, matrix.type=NULL,
 }
 
 
-#' @name network_from_data_frame
-#'
-#' @title Coercion from Data Frames to Network Objects
+#' Coercion from Data Frames to Network Objects
 #' 
 #' @param edges A data frame containing the from/to edge list in the first two columns
 #' (the values of which correspond to \code{"vertex.names"}). Additional columns are 
@@ -585,7 +583,7 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #' @export
 network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
                                     loops = FALSE, multiple = FALSE, ...) {
-  if (!is.data.frame(edges) | ncol(edges) < 2L) {
+  if (!is.data.frame(edges) || ncol(edges) < 2L) {
     stop("`edges` should be a data frame with at least two columns.")
   }
   
@@ -593,7 +591,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     if (!is.data.frame(vertices)) {
       stop("If provided, `vertices` should be a data frame.")
     }
-    if (nrow(vertices) == 0L | ncol(vertices) == 0L) {
+    if (nrow(vertices) == 0L || ncol(vertices) == 0L) {
       stop("`vertices` should contain at least one column and row.")
     }
   }

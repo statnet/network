@@ -1,4 +1,4 @@
-library(network, quietly = TRUE)
+suppressPackageStartupMessages(library(network))
 library(testthat)
 
 # context("network_from_data_frame")
@@ -103,6 +103,7 @@ library(testthat)
 # })
 
 # test_that("`multiple` arguments work", {
+  
   df_with_parallel_edges <- data.frame(from = c("b", "c", "c", "d", "d", "e", "e"),
                                        to = c("a", "b", "a", "a", "b", "a", "a"),
                                        stringsAsFactors = FALSE)
@@ -124,9 +125,11 @@ library(testthat)
     network_from_data_frame(df_with_parallel_edges2, directed = FALSE, multiple = TRUE),
     "network"
   )
+  
 # })
 
 # test_that("`loops` works", {
+  
   df_with_loops <- data.frame(from = c("b", "c", "c", "d", "d", "e", "f"),
                               to = c("a", "b", "a", "a", "b", "a", "f"),
                               stringsAsFactors = FALSE)
@@ -138,9 +141,11 @@ library(testthat)
     network_from_data_frame(df_with_loops, loops = TRUE),
     "network"
   )
+  
 # })
 
 # test_that("missing vertex names are caught", {
+  
   vertex_df <- data.frame(name = letters[1:5],
                           stringsAsFactors = FALSE)
 
@@ -156,6 +161,7 @@ library(testthat)
 # })
 
 # test_that("duplicate vertex names are caught", {
+  
   vertex_df <- data.frame(name = c("a", "a", "b", "c", "d", "e"),
                           stringsAsFactors = FALSE)
 
@@ -171,6 +177,7 @@ library(testthat)
 # })
 
 # test_that("bad data frames are caught", {
+  
   edge_df_with_NAs <- data.frame(from = c(letters, NA),
                                  to = c(NA, letters))
   empty_vertex_df <- data.frame()
@@ -184,6 +191,19 @@ library(testthat)
     network_from_data_frame(na.omit(edge_df_with_NAs), 
                                      vertices = empty_vertex_df),
     "`vertices` should contain at least one column and row."
+  )
+  
+# })
+  
+# test_that("non data frames are caught", {
+  expect_error(
+    network_from_data_frame(as.list(edge_df)),
+    "`edges` should be a data frame with at least two columns."
+  )
+  
+  expect_error(
+    network_from_data_frame(edge_df, vertices = as.list(vertex_df)),
+    "If provided, `vertices` should be a data frame."
   )
 
 # })
