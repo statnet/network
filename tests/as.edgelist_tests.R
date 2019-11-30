@@ -12,7 +12,7 @@ set.edge.attribute(test,'weight',10:11)
 
 expect_equal(as.matrix.network.edgelist(test),structure(c(5L, 1L, 1L, 5L), .Dim = c(2L, 2L), n = 5, vnames = 1:5))
 # sort order should be different
-if(length(Sys.getenv("R_CLASS_MATRIX_ARRAY"))>0){
+if(Sys.getenv("_R_CLASS_MATRIX_ARRAY_")==""){
   expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist","matrix")))
 }else{
   expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist","matrix","array")))
@@ -47,4 +47,9 @@ as.edgelist(network.initialize(0))
 deledge<-network.initialize(5)
 add.edges(deledge,1:3,2:4)
 delete.edges(deledge,2)
-expect_equal(as.edgelist(deledge),structure(c(1L, 3L, 2L, 4L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist", "matrix")))
+if(Sys.getenv("_R_CLASS_MATRIX_ARRAY_")==""){
+  expect_equal(as.edgelist(deledge),structure(c(1L, 3L, 2L, 4L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist", "matrix")))
+}else{
+  expect_equal(as.edgelist(deledge),structure(c(1L, 3L, 2L, 4L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist", "matrix", "array")))
+}
+
