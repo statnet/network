@@ -4,8 +4,6 @@ library(testthat)
 # context("network_from_data_frame")
 
 # test_that("network_from_data_frame works", {
-# library(network, quietly = TRUE)
-# library(testthat)
 
   vertex_df <- data.frame(name = letters[1:5],
                           int_attr = seq_len(5),
@@ -178,17 +176,23 @@ library(testthat)
 
 # test_that("bad data frames are caught", {
   
-  edge_df_with_NAs <- data.frame(from = c(letters, NA),
-                                 to = c(NA, letters))
+  edge_df_with_NAs1 <- data.frame(from = c(letters, NA),
+                                  to = c("a", letters))
+  edge_df_with_NAs2 <- data.frame(from = c(letters, "a"),
+                                  to = c(NA, letters))
   empty_vertex_df <- data.frame()
 
   expect_error(
-    network_from_data_frame(edge_df_with_NAs),
+    network_from_data_frame(edge_df_with_NAs2),
+    "`edges` contains `NA` elements in its first two columns."
+  )
+  expect_error(
+    network_from_data_frame(edge_df_with_NAs2),
     "`edges` contains `NA` elements in its first two columns."
   )
 
   expect_error(
-    network_from_data_frame(na.omit(edge_df_with_NAs), 
+    network_from_data_frame(na.omit(edge_df_with_NAs1), 
                                      vertices = empty_vertex_df),
     "`vertices` should contain at least one column and row."
   )

@@ -28,7 +28,8 @@ to attributes named after those columns.}
 An object of class \code{network}
 }
 \description{
-Coercion from Data Frames to Network Objects
+Build a network object from a data frame of edges and their attributes, and an optional
+data frame of vertices and their attributes.
 }
 \examples{
 vertex_df <- data.frame(name = letters[1:5],
@@ -47,8 +48,11 @@ edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
                       stringsAsFactors = FALSE)
 edge_df
 
-g <- network_from_data_frame(edge_df, directed = TRUE, vertices = vertex_df)
-g
+network_from_data_frame(edge_df)
+
+network_from_data_frame(edge_df, vertices = vertex_df)
+
+network_from_data_frame(edge_df, directed = FALSE, vertices = vertex_df)
 
 }
 \author{
