@@ -4,8 +4,6 @@ library(testthat)
 # context("network_from_data_frame")
 
 # test_that("network_from_data_frame works", {
-# library(network, quietly = TRUE)
-# library(testthat)
 
   vertex_df <- data.frame(name = letters[1:5],
                           int_attr = seq_len(5),
