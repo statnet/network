@@ -602,7 +602,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     }
   }
   
-  if (any(is.na(edges[[1L]]) || any(is.na(edges[[2L]])))) {
+  if (any(is.na(edges[[1L]])) || any(is.na(edges[[2L]]))) {
     stop("`edges` contains `NA` elements in its first two columns.")
   }
   
