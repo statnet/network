@@ -12,7 +12,11 @@ set.edge.attribute(test,'weight',10:11)
 
 expect_equal(as.matrix.network.edgelist(test),structure(c(5L, 1L, 1L, 5L), .Dim = c(2L, 2L), n = 5, vnames = 1:5))
 # sort order should be different
-expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist","matrix")))
+if(length(Sys.getenv("R_CLASS_MATRIX_ARRAY"))>0){
+  expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist","matrix")))
+}else{
+  expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist","matrix","array")))
+}
 
 expect_true(is.edgelist(as.edgelist(test)))
 

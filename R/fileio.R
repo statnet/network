@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 10/04/10
+# Last Modified 11/26/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -1026,7 +1026,7 @@ readAndVectorizeLine <- function(file){
 read.paj.simplify <- function(x,file,verbose=FALSE) 
   {
    classx <- class(x)
-   if(classx=="network"){
+   if(inherits(x,"network")){
     cat(paste(file," is a single network object.\n",sep=""))
     assign(file,x)
     save(list=file,
@@ -1034,7 +1034,7 @@ read.paj.simplify <- function(x,file,verbose=FALSE)
     cat(paste("network saved as a 'network' object in ",file,".RData.\n",sep=""))
     return(x)
    }
-   if(classx=="network.series"){
+   if(inherits(x,"network.series")){
     nnets <- length(x$networks)
     cat(paste(file," is a set of ",nnets," networks on the same set of nodes.\n",sep=""))
     cat(paste("The network names are:\n  ",
@@ -1068,11 +1068,11 @@ read.paj.simplify <- function(x,file,verbose=FALSE)
      for(i in seq(along=cnames)){
       thisnet <- x$networks[[i]]
       classthisnet <- class(thisnet)
-      if(classthisnet=="network.series" & length(thisnet$networks)==1){
+      if(inherits(thisnet,"network.series") & length(thisnet$networks)==1){
        thisnet <- thisnet$networks[[1]]
        classthisnet <- class(thisnet)
       }
-      if(classthisnet=="network"){
+      if(inherits(thisnet,"network")){
        cat(paste("The collection ",cnames[i]," is a single network object.\n",
         sep=""))
       }else{
@@ -1088,7 +1088,7 @@ read.paj.simplify <- function(x,file,verbose=FALSE)
     }else{
      thisnet <- x$networks[[1]]
      classthisnet <- class(thisnet)
-     if(classthisnet=="network"){
+     if(inherits(thisnet,"network")){
       cat(paste(file," is a single network object called ", cnames,"\n",
        "as well as Pajek 'partiton' information.\n",sep=""))
        cat(paste("There are ",npart," partitions on the networks.\n",sep=""))
@@ -1107,7 +1107,7 @@ read.paj.simplify <- function(x,file,verbose=FALSE)
      assign(paste(cnames,"partitions",sep="."),x$partitions)
      save(list=c(cnames, paste(cnames,"partitions",sep=".")),
           file=paste(file,".RData",sep=""))
-     if(class(x$networks[[1]])=="network"){
+     if(inherits(x$networks[[1]],"network")){
       cat(paste("network simplified to a 'network' object plus partition.\n",sep=""))
       cat(paste("network saved as a 'network' object and a separate partition list in ",file,".RData.\n",sep=""))
      }else{

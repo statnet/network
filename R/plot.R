@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 02/26/13
+# Last Modified 11/24/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -790,7 +790,7 @@ layout.par=NULL,
      cy<-coord[,2]
    }else{   #Otherwise, use the specified layout function
      layout.fun<-try(match.fun(paste("network.layout.",mode,sep="")), silent=TRUE)
-     if(class(layout.fun)=="try-error")
+     if(inherits(layout.fun,"try-error"))
        stop("Error in plot.network.default: no layout function for mode ",mode)
      temp<-layout.fun(x,layout.par)
      cx<-temp[,1]
