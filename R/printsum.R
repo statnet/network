@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 7/05/11
+# Last Modified 11/26/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
 #
 # Part of the R/network package
@@ -67,7 +67,7 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
              print(table(attributeValue,dnn=paste('  ',attributeName,':',sep='')))
           }else{
              # for short attributes, just print out the values
-             if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double","NULL","call","formula"))&&(length(attributeValue) < 10)){
+             if(inherits(attributeValue,c("factor","character","numeric", "logical","integer","double","NULL","call","formula"))&&(length(attributeValue) < 10)){
                # handle NULL case because cat won't print NULL
                if (is.null(attributeValue)){
                  cat(" ",attributeName,"= NULL\n")
@@ -80,7 +80,7 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
                # don't print summary for net obs period or active attributes
                if (attributeName=='net.obs.period' || grepl('.active$',attributeName) ){
                  cat("  ",attributeName,": (not shown)\n", sep="")
-               } else if (class(attributeValue)%in%c("matrix")){
+               } else if (inherits(attributeValue,c("matrix"))){
                  cat("  ",attributeName,": ",nrow(attributeValue),"x",ncol(attributeValue)," matrix\n", sep="")
                  
                } else {
@@ -206,7 +206,7 @@ print.summary.network<-function(x, ...){
               print(mixingmatrix(x,attributeName))
             }
           }else{
-            if((class(attributeValue)%in%c("factor","character","numeric", "logical","integer","double","call","formula"))&& (length(attributeValue) < 10)){
+            if(inherits(attributeValue,c("factor","character","numeric", "logical","integer","double","call","formula"))&& (length(attributeValue) < 10)){
               if(is.call(attributeValue)) attributeValue <- deparse(attributeValue)
               cat("  ",attributeName," = ",attributeValue,"\n",sep="")
             }else{

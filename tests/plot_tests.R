@@ -46,7 +46,7 @@ expect_equal(as.color(c('red','green','blue')),c('red','green','blue'))  # color
 expect_equal(as.color(c(1,0.5,0)),c("#FFFFFF", "#808080", "#000000"))# real valued  (gray)
 # transparency/ opacity
 expect_equal(as.color(c('red','green','blue'),0.5),c("#FF000080", "#00FF0080", "#0000FF80"))
-expect_equal(as.color(1:3,0.5),c("#00000080", "#FF000080", "#00CD0080"))
+if(R.Version()$major <= 3) expect_equal(as.color(1:3,0.5),c("#00000080", "#FF000080", "#00CD0080")) else expect_equal(as.color(1:3,0.5),c("#00000080", "#DF536B80", "#61D04F80"))
 expect_error(as.color(c('red','green','blue'),1.5),regexp = 'opacity parameter must be a numeric value in the range 0 to 1')
 
 

@@ -146,10 +146,7 @@ as.edgelist.tbl_df <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE
 #' @rdname as.edgelist
 #' @export is.edgelist
 is.edgelist<-function(x){
-  if ('edgelist'%in%class(x)){
-    return(TRUE)
-  }
-  return(FALSE)
+  inherits(x,"edgelist")
 }
 
 
