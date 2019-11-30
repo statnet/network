@@ -545,6 +545,9 @@ as.network.matrix<-function(x, matrix.type=NULL,
 
 #' Coercion from Data Frames to Network Objects
 #' 
+#' Build a network object from a data frame of edges and their attributes, and an optional
+#' data frame of vertices and their attributes.
+#' 
 #' @param edges A data frame containing the from/to edge list in the first two columns
 #' (the values of which correspond to \code{"vertex.names"}). Additional columns are 
 #' assigned to edge attributes named after those columns.
@@ -577,8 +580,11 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #'                       stringsAsFactors = FALSE)
 #' edge_df
 #' 
-#' g <- network_from_data_frame(edge_df, directed = TRUE, vertices = vertex_df)
-#' g
+#' network_from_data_frame(edge_df)
+#' 
+#' network_from_data_frame(edge_df, vertices = vertex_df)
+#' 
+#' network_from_data_frame(edge_df, directed = FALSE, vertices = vertex_df)
 #' 
 #' @export
 network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
@@ -596,7 +602,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     }
   }
   
-  if (any(is.na(edges[[1L]]) | any(is.na(edges[[2L]])))) {
+  if (any(is.na(edges[[1L]]) || any(is.na(edges[[2L]])))) {
     stop("`edges` contains `NA` elements in its first two columns.")
   }
   

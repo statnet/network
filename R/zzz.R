@@ -9,7 +9,6 @@
 #
 # Part of the R/network package
 #
-#
 ######################################################################
 
 .onAttach <- function(libname, pkgname){
