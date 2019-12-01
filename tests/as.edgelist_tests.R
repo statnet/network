@@ -1,6 +1,5 @@
 
 # test comparing edgelist
-
 require(network)
 require(testthat)
 
