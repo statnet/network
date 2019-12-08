@@ -7,8 +7,15 @@
 \alias{add.edge.network}
 \title{Add Edges to a Network Object}
 \usage{
-add.edge(x, tail, head, names.eval = NULL, vals.eval = NULL,
-  edge.check = FALSE, ...)
+add.edge(
+  x,
+  tail,
+  head,
+  names.eval = NULL,
+  vals.eval = NULL,
+  edge.check = FALSE,
+  ...
+)
 
 add.edges(x, tail, head, names.eval = NULL, vals.eval = NULL, ...)
 }

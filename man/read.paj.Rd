@@ -7,8 +7,14 @@
 \alias{readAndVectorizeLine}
 \title{Read a Pajek Project or Network File and Convert to an R 'Network' Object}
 \usage{
-read.paj(file, verbose = FALSE, debug = FALSE, edge.name = NULL,
-  simplify = FALSE, time.format = c("pajekTiming", "networkDynamic"))
+read.paj(
+  file,
+  verbose = FALSE,
+  debug = FALSE,
+  edge.name = NULL,
+  simplify = FALSE,
+  time.format = c("pajekTiming", "networkDynamic")
+)
 }
 \arguments{
 \item{file}{the name of the file whence the data are to be read. If it does

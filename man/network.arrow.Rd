@@ -4,9 +4,24 @@
 \alias{network.arrow}
 \title{Add Arrows or Segments to a Plot}
 \usage{
-network.arrow(x0, y0, x1, y1, length = 0.1, angle = 20, width = 0.01,
-  col = 1, border = 1, lty = 1, offset.head = 0, offset.tail = 0,
-  arrowhead = TRUE, curve = 0, edge.steps = 50, ...)
+network.arrow(
+  x0,
+  y0,
+  x1,
+  y1,
+  length = 0.1,
+  angle = 20,
+  width = 0.01,
+  col = 1,
+  border = 1,
+  lty = 1,
+  offset.head = 0,
+  offset.tail = 0,
+  arrowhead = TRUE,
+  curve = 0,
+  edge.steps = 50,
+  ...
+)
 }
 \arguments{
 \item{x0}{A vector of x coordinates for points of origin}

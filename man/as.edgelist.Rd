@@ -9,14 +9,33 @@
 \alias{is.edgelist}
 \title{Convert a network object into a numeric edgelist matrix}
 \usage{
-\method{as.edgelist}{network}(x, attrname = NULL,
-  as.sna.edgelist = FALSE, output = c("matrix", "tibble"), ...)
+\method{as.edgelist}{network}(
+  x,
+  attrname = NULL,
+  as.sna.edgelist = FALSE,
+  output = c("matrix", "tibble"),
+  ...
+)
 
-\method{as.edgelist}{matrix}(x, n, directed = TRUE, bipartite = FALSE,
-  loops = FALSE, vnames = seq_len(n), ...)
+\method{as.edgelist}{matrix}(
+  x,
+  n,
+  directed = TRUE,
+  bipartite = FALSE,
+  loops = FALSE,
+  vnames = seq_len(n),
+  ...
+)
 
-\method{as.edgelist}{tbl_df}(x, n, directed = TRUE, bipartite = FALSE,
-  loops = FALSE, vnames = seq_len(n), ...)
+\method{as.edgelist}{tbl_df}(
+  x,
+  n,
+  directed = TRUE,
+  bipartite = FALSE,
+  loops = FALSE,
+  vnames = seq_len(n),
+  ...
+)
 
 is.edgelist(x)
 }
