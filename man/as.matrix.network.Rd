@@ -22,11 +22,18 @@
   attrnames = (match.arg(unit) == "vertices"),
   na.rm = TRUE,
   ...,
-  unit = c("edges", "vertices")
+  unit = c("edges", "vertices"),
+  store.eid = FALSE
 )
 
-\method{as.tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE, ...,
-   unit=c("edges","vertices"))
+as.tibble.network(
+  x,
+  attrnames = (match.arg(unit) == "vertices"),
+  na.rm = TRUE,
+  ...,
+  unit = c("edges", "vertices"),
+  store.eid = FALSE
+)
 
 \method{as.matrix.network}{incidence}(x, attrname=NULL, ...)
 }
@@ -58,6 +65,8 @@ as indices for selecting them from \code{\link{list.edge.attributes}(x)} or
 
 \item{unit}{whether a \code{\link{tibble}} of edge or vertex attributes
 should be returned.}
+
+\item{store.eid}{whether the edge ID should be stored in the third column (`.eid`).}
 }
 \value{
 For \code{as.matrix} methods, an adjacency, incidence, or edgelist

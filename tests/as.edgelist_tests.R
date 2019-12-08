@@ -27,7 +27,7 @@ expect_equal(as.matrix.network.edgelist(test,attrname='value'),structure(c('5', 
 
 # character attribute with tibble output: does not make matrix character
 expect_equal(as.edgelist(test,attrname='value', output="tibble"),
-             structure(list(.tail = c(1L, 5L), .head = c(5L, 1L), .eid = 2:1, 
+             structure(list(.tail = c(1L, 5L), .head = c(5L, 1L),
                             value = c("b", "a")), row.names = c(NA, -2L),
                        class = c("edgelist", "tbl_df", "tbl", "data.frame"),
                        n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE)

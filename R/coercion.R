@@ -258,8 +258,9 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,na.rm
 # used to identify a list of attributes to use for edge values.
 #
 #' @rdname as.matrix.network
+#' @param store.eid whether the edge ID should be stored in the third column (`.eid`).
 #' @export
-as_tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE,..., unit=c("edges", "vertices")){
+as_tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE,..., unit=c("edges", "vertices"), store.eid=FALSE){
   unit <- match.arg(unit)
   if(unit=="edges"){
 
@@ -271,9 +272,9 @@ as_tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE
     heads <- lapply(x$mel,`[[`,"inl")
     m <- list(
       .tail = if(is.hyper(x)) tails else as.integer(unlist(tails)),
-      .head = if(is.hyper(x)) heads else as.integer(unlist(heads)),
-      .eid = which(as.logical(sapply(tails, length)) | as.logical(sapply(heads, length)))
+      .head = if(is.hyper(x)) heads else as.integer(unlist(heads))
     )
+    if(store.eid) m$.eid <- which(as.logical(sapply(tails, length)) | as.logical(sapply(heads, length)))
 
     #Add edge values, if needed
     # If logical or numeric, use as index; na.omit() is needed to handle
@@ -311,8 +312,6 @@ as_tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE
 }
 
 #' @rdname as.matrix.network
-#' @usage \method{as.tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE, ...,
-#'    unit=c("edges","vertices"))
 #' @rawNamespace S3method(as.tibble,network)
 as.tibble.network <- as_tibble.network
 
