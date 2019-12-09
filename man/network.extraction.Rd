@@ -20,8 +20,7 @@
 \usage{
 \method{[}{network}(x, i, j, na.omit = FALSE)
 
-\method{[}{network}(x, i, j, names.eval = NULL,
-  add.edges = FALSE) <- value
+\method{[}{network}(x, i, j, names.eval = NULL, add.edges = FALSE) <- value
 
 x \%e\% attrname
 

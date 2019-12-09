@@ -4,8 +4,7 @@
 \alias{get.neighborhood}
 \title{Obtain the Neighborhood of a Given Vertex}
 \usage{
-get.neighborhood(x, v, type = c("out", "in", "combined"),
-  na.omit = TRUE)
+get.neighborhood(x, v, type = c("out", "in", "combined"), na.omit = TRUE)
 }
 \arguments{
 \item{x}{an object of class \code{network}}

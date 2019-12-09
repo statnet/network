@@ -4,8 +4,14 @@
 \alias{network.initialize}
 \title{Initialize a Network Class Object}
 \usage{
-network.initialize(n, directed = TRUE, hyper = FALSE, loops = FALSE,
-  multiple = FALSE, bipartite = FALSE)
+network.initialize(
+  n,
+  directed = TRUE,
+  hyper = FALSE,
+  loops = FALSE,
+  multiple = FALSE,
+  bipartite = FALSE
+)
 }
 \arguments{
 \item{n}{the number of vertices to initialize}
