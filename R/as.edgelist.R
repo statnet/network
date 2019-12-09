@@ -120,7 +120,7 @@ as.edgelist.matrix <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE
   attr(x,"directed") <- directed
   attr(x,"bipartite") <- bipartite
   attr(x,"loops") <- loops
-  class(x)<-c('edgelist',class(x))
+  class(x)<-c('matrix_edgelist','edgelist',class(x))
   x
 }
 
@@ -139,7 +139,7 @@ as.edgelist.tbl_df <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE
   attr(x,"directed") <- directed
   attr(x,"bipartite") <- bipartite
   attr(x,"loops") <- loops
-  class(x)<-c('edgelist',class(x))
+  class(x)<-c('tibble_edgelist','edgelist',class(x))
   x
 }
 
