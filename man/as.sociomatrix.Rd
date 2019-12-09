@@ -4,8 +4,13 @@
 \alias{as.sociomatrix}
 \title{Coerce One or More Networks to Sociomatrix Form}
 \usage{
-as.sociomatrix(x, attrname = NULL, simplify = TRUE,
-  expand.bipartite = FALSE, ...)
+as.sociomatrix(
+  x,
+  attrname = NULL,
+  simplify = TRUE,
+  expand.bipartite = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{an adjacency matrix, array, \code{\link{network}} object, or list

@@ -18,17 +18,30 @@ is.network(x)
 
 as.network(x, ...)
 
-network(x, vertex.attr = NULL, vertex.attrnames = NULL,
-  directed = TRUE, hyper = FALSE, loops = FALSE, multiple = FALSE,
-  bipartite = FALSE, ...)
+network(
+  x,
+  vertex.attr = NULL,
+  vertex.attrnames = NULL,
+  directed = TRUE,
+  hyper = FALSE,
+  loops = FALSE,
+  multiple = FALSE,
+  bipartite = FALSE,
+  ...
+)
 
 network.copy(x)
 
-\method{print}{network}(x, matrix.type = which.matrix.type(x),
-  mixingmatrices = FALSE, na.omit = TRUE, print.adj = FALSE, ...)
+\method{print}{network}(
+  x,
+  matrix.type = which.matrix.type(x),
+  mixingmatrices = FALSE,
+  na.omit = TRUE,
+  print.adj = FALSE,
+  ...
+)
 
-\method{summary}{network}(object, na.omit = TRUE,
-  mixingmatrices = FALSE, print.adj = TRUE, ...)
+\method{summary}{network}(object, na.omit = TRUE, mixingmatrices = FALSE, print.adj = TRUE, ...)
 }
 \arguments{
 \item{x}{for \code{network}, a matrix giving the network structure in

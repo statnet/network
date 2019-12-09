@@ -7,10 +7,20 @@
 \usage{
 \method{as.network}{default}(x, ...)
 
-\method{as.network}{matrix}(x, matrix.type = NULL, directed = TRUE,
-  hyper = FALSE, loops = FALSE, multiple = FALSE,
-  bipartite = FALSE, ignore.eval = TRUE, names.eval = NULL,
-  na.rm = FALSE, edge.check = FALSE, ...)
+\method{as.network}{matrix}(
+  x,
+  matrix.type = NULL,
+  directed = TRUE,
+  hyper = FALSE,
+  loops = FALSE,
+  multiple = FALSE,
+  bipartite = FALSE,
+  ignore.eval = TRUE,
+  names.eval = NULL,
+  na.rm = FALSE,
+  edge.check = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{a matrix containing an adjacency structure}
