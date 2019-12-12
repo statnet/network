@@ -4,23 +4,36 @@
 \alias{network_from_data_frame}
 \title{Coercion from Data Frames to Network Objects}
 \usage{
-network_from_data_frame(edges, directed = TRUE, vertices = NULL,
-  loops = FALSE, multiple = FALSE, ...)
+network_from_data_frame(
+  edges,
+  directed = TRUE,
+  vertices = NULL,
+  loops = FALSE,
+  multiple = FALSE,
+  bipartite = FALSE,
+  ...
+)
 }
 \arguments{
 \item{edges}{A data frame containing the from/to edge list in the first two columns
 (the values of which correspond to \code{"vertex.names"}). Additional columns are 
-assigned to edge attributes named after those columns.}
+added as edge attributes.}
 
 \item{directed}{logical, default: \code{TRUE}; should edges be interpreted as directed?}
 
 \item{vertices}{An optional data frame containing the vertex attributes. The first
-column is assigned to the \code{"vertex.names"} with additional columns being assigned 
-to attributes named after those columns.}
+column is assigned to the \code{"vertex.names"}.}
 
 \item{loops}{logical, default: \code{FALSE}; should loops be allowed?}
 
 \item{multiple}{logical, default: \code{FALSE}; are multiplex edges allowed?}
+
+\item{bipartite}{logical; should the network be interpreted as bipartite? If
+\code{TRUE}, vertices in the first column of `edges` are considered to be the "actors" 
+and edges are interpreted as undirected. Creating bipartite networks with isolates 
+(i.e. there are vertex names in `vertices` that are missing from `edges`) via this 
+method is not supported as it's ambiguous whether or not isolates should be considered
+as "actors".}
 
 \item{...}{Arguments passed to or from other methods.}
 }
@@ -53,6 +66,25 @@ network_from_data_frame(edge_df)
 network_from_data_frame(edge_df, vertices = vertex_df)
 
 network_from_data_frame(edge_df, directed = FALSE, vertices = vertex_df)
+
+# bipartite networks ==================================================================
+bip_edge_df <- data.frame(actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
+                          event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
+                          an_edge_attr = rep(c(TRUE, FALSE), 4),
+                          stringsAsFactors = FALSE)
+bip_edge_df
+
+bip_node_df <- data.frame(node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e"),
+                          node_type = c("person", "event", "person", "event", "person",
+                                        "event", "person", "person"),
+                          color = c("red", "blue", "red", "blue", "red", "blue",
+                                    "red", "red"),
+                          stringsAsFactors = FALSE)
+bip_node_df
+
+g <- network_from_data_frame(bip_edge_df, vertices = bip_node_df, bipartite = TRUE)
+g
+plot(g, vertex.col = g \%v\% "color")
 
 }
 \author{
