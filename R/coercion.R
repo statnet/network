@@ -549,13 +549,18 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #' 
 #' @param edges A data frame containing the from/to edge list in the first two columns
 #' (the values of which correspond to \code{"vertex.names"}). Additional columns are 
-#' assigned to edge attributes named after those columns.
-#' @param vertices An optional data frame containing the vertex attributes. The first
-#' column is assigned to the \code{"vertex.names"} with additional columns being assigned 
-#' to attributes named after those columns.
+#' added as edge attributes.
 #' @param directed logical, default: \code{TRUE}; should edges be interpreted as directed?
+#' @param vertices An optional data frame containing the vertex attributes. The first
+#' column is assigned to the \code{"vertex.names"}.
 #' @param loops logical, default: \code{FALSE}; should loops be allowed?
 #' @param multiple logical, default: \code{FALSE}; are multiplex edges allowed?
+#' @param bipartite logical; should the network be interpreted as bipartite? If
+#' \code{TRUE}, vertices in the first column of `edges` are considered to be the "actors" 
+#' and edges are interpreted as undirected. Creating bipartite networks with isolates 
+#' (i.e. there are vertex names in `vertices` that are missing from `edges`) via this 
+#' method is not supported as it's ambiguous whether or not isolates should be considered
+#' as "actors".
 #' @param ... Arguments passed to or from other methods.
 #' 
 #' @return An object of class \code{network}
@@ -585,9 +590,29 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #' 
 #' network_from_data_frame(edge_df, directed = FALSE, vertices = vertex_df)
 #' 
+#' # bipartite networks ==================================================================
+#' bip_edge_df <- data.frame(actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
+#'                           event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
+#'                           an_edge_attr = rep(c(TRUE, FALSE), 4),
+#'                           stringsAsFactors = FALSE)
+#' bip_edge_df
+#' 
+#' bip_node_df <- data.frame(node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e"),
+#'                           node_type = c("person", "event", "person", "event", "person",
+#'                                         "event", "person", "person"),
+#'                           color = c("red", "blue", "red", "blue", "red", "blue",
+#'                                     "red", "red"),
+#'                           stringsAsFactors = FALSE)
+#' bip_node_df
+#' 
+#' g <- network_from_data_frame(bip_edge_df, vertices = bip_node_df, bipartite = TRUE)
+#' g
+#' plot(g, vertex.col = g %v% "color")
+#' 
 #' @export
 network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
-                                    loops = FALSE, multiple = FALSE, ...) {
+                                    loops = FALSE, multiple = FALSE, bipartite = FALSE,
+                                    ...) {
   if (!is.data.frame(edges) || ncol(edges) < 2L) {
     stop("`edges` should be a data frame with at least two columns.")
   }
@@ -611,8 +636,18 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
     }
   }
   
+  if (bipartite) {
+    confused_nodes <- intersect(edges[[1L]], edges[[2L]])
+    if (length(confused_nodes) > 0L) {
+      stop("`bipartite` is `TRUE`, but there are vertex names that appear in both of the",
+           " first two columns of `edges`.\n",
+           "The following vertices appear in both columns:",
+           paste("\n\t-", confused_nodes))
+    }
+  }
+  
   if (!multiple) {
-    if (directed) {
+    if (directed || bipartite) {
       test_el <- edges[, 1L:2L]
     } else {
       test_el <- t(apply(edges[, 1L:2L], 1L, sort))
@@ -627,7 +662,10 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
   
   vertex_names_in_el <- unique(c(edges[[1L]], edges[[2L]]))
   
-  if (!is.null(vertices)) {
+  if (is.null(vertices)) {
+    vertex_names <- vertex_names_in_el
+
+  } else {
     missing_vertex_names <- setdiff(vertex_names_in_el, vertices[[1L]])
     if (length(missing_vertex_names) > 0L) {
       stop("The following vertices are in `edges`, but not in `vertices`:",
@@ -640,15 +678,24 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
            paste("\n\t-", vertices[[1L]][duplicate_vertex_index]))
     }
     
-    vertex_names <- vertices[[1L]]
+    if (bipartite) {
+      isolates <- setdiff(vertices[[1L]], vertex_names_in_el)
+      if (length(isolates) > 0L) {
+        stop("Bipartite networks with isolates are not supported via ",
+             "`network_from_data_frame()` because it's ambiguous whether those ",
+             "vertices should be considered as \"actors\".",
+             "\nThe following vertex names are in `vertices`, but not in `edges`:",
+             paste("\n\t-", isolates))
+      }
+      # reorder the vertex rows to match the actor/non-actor order of the final network
+      vertices <- vertices[match(vertex_names_in_el, vertices[[1L]]), , drop = FALSE]
+    } 
     
-  } else {
-    vertex_names <- vertex_names_in_el
+    vertex_names <- vertices[[1L]]
   }
-  
-  edges[[1L]] <- match(edges[[1L]], vertex_names)
-  edges[[2L]] <- match(edges[[2L]], vertex_names)
-  
+
+  sources <- match(edges[[1L]], vertex_names)
+  targets <- match(edges[[2L]], vertex_names)
   
   if (ncol(edges) > 2L) {
     edge_attr_names <- names(edges)[3L:ncol(edges)]
@@ -668,27 +715,27 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
   
   out <- network.initialize(
     n = length(vertex_names),
-    directed = directed,
+    directed = if (bipartite) FALSE else directed,
     hyper = FALSE,
-    loops = loops,
+    loops = if (bipartite) FALSE else loops,
     multiple = multiple,
-    bipartite = FALSE
+    bipartite = if (bipartite) length(unique(sources)) else FALSE
   )
 
   out <- add.edges(
     x = out,
-    tail = edges[[1L]],
-    head = edges[[2L]],
+    tail = sources,
+    head = targets,
     names.eval = names_eval,
     vals.eval = vals_eval
   )
   
-  if (!is.null(vertices)) {
-    names(vertices)[[1L]] <- "vertex.names"
-    
+  if (is.null(vertices)) {
+    out <- set.vertex.attribute(out, attrname = "vertex.names", value = vertex_names)
+  } else {
     out <- set.vertex.attribute(
       x = out,
-      attrname = names(vertices),
+      attrname = c("vertex.names", names(vertices)[-1L]),
       value = vertices
     )
   }

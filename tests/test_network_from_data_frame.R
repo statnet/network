@@ -41,6 +41,10 @@ library(testthat)
     network_from_data_frame(edge_df),
     "network"
   )
+  expect_identical(
+    get.vertex.attribute(network_from_data_frame(edge_df), "vertex.names"),
+    c("b", "c", "d", "e", "a")
+  )
   
   # check vertex and edge attributes =====================================================
   g <- network_from_data_frame(edge_df, vertices = vertex_df)
@@ -212,3 +216,81 @@ library(testthat)
 
 # })
 
+# test_that("bipartite networks work", {
+  bip_edge_df <- data.frame(actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
+                            event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
+                            an_edge_attr = letters[1:8],
+                            stringsAsFactors = FALSE)
+  bip_node_df <- data.frame(node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e"),
+                            node_type = c("person", "event", "person", "event", "person",
+                                          "event", "person", "person"),
+                            color = c("red", "blue", "red", "blue", "red", "blue",
+                                      "red", "red"),
+                            stringsAsFactors = FALSE)
+  
+  
+  bip_g <- network_from_data_frame(bip_edge_df, vertices = bip_node_df, 
+                                   loops = TRUE,
+                                   bipartite = TRUE)
+  
+  expect_s3_class(
+    bip_g,
+    "network"
+  )
+  
+  expect_true(
+    is.bipartite(bip_g)
+  )
+  expect_false(
+    has.loops(bip_g)
+  )
+  expect_false(
+    is.directed(bip_g)
+  )
+  
+  expect_identical(
+    get.network.attribute(bip_g, "bipartite"),
+    5L
+  )
+  
+  expect_identical(
+    get.vertex.attribute(bip_g, attrname = "node_type"),
+    c(rep("person", 5), rep("event", 3))
+  )
+  
+  expect_identical(
+    get.vertex.attribute(bip_g, attrname = "vertex.names"),
+    c("a", "b", "c", "d", "e", "e1", "e2", "e3")
+  )
+  
+  expect_identical(
+    get.edge.attribute(bip_g, attrname = "an_edge_attr"),
+    letters[1:8]
+  )
+  
+  # check if bipartite networks with isolates are caught 
+  bip_isolates_node_df <- data.frame(
+    node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e", "f", "g"),
+    stringsAsFactors = FALSE
+  )
+  
+  expect_error(
+    network_from_data_frame(edges = bip_edge_df, vertices = bip_isolates_node_df,
+                            bipartite = TRUE)
+    # TODO expect_error() isn't matching this error message
+    # "Bipartite networks with isolates are not supported via `network_from_data_frame()` because it's ambiguous whether those vertices should be considered as \"actors\".\nThe following vertex names are in `vertices`, but not in `edges`:\n\t- f\n\t- g"
+  )
+  
+  # check if nodes that appear in both of the first 2 `edge` columns are caught
+  bip_confused_edge_df <- data.frame(
+    actor = c("a", "a", "b", "b", "c", "d", "d", "e", "e1"),
+    event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1", "e2"),
+    stringsAsFactors = FALSE
+  )
+  
+  expect_error(
+    network_from_data_frame(edges = bip_confused_edge_df, bipartite = TRUE),
+    "`bipartite` is `TRUE`, but there are vertex names that appear in both of the first two columns of `edges`.\nThe following vertices appear in both columns:\n\t- e1"
+  )
+    
+# })
