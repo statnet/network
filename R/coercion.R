@@ -24,6 +24,7 @@
 #   as.network.default
 #   as.network.network
 #   as.network.matrix
+#   as.network.data.frame
 #   as.sociomatrix
 #
 ######################################################################
@@ -542,55 +543,66 @@ as.network.matrix<-function(x, matrix.type=NULL,
 }
 
 
-#' Coercion from Data Frames to Network Objects
-#' 
-#' Build a network object from a data frame of edges and their attributes, and an optional
-#' data frame of vertices and their attributes.
-#' 
-#' @param edges A data frame containing the from/to edge list in the first two columns
-#' (the values of which correspond to \code{"vertex.names"}). Additional columns are 
-#' added as edge attributes.
-#' @param directed logical, default: \code{TRUE}; should edges be interpreted as directed?
-#' @param vertices An optional data frame containing the vertex attributes. The first
-#' column is assigned to the \code{"vertex.names"}.
-#' @param loops logical, default: \code{FALSE}; should loops be allowed?
-#' @param multiple logical, default: \code{FALSE}; are multiplex edges allowed?
-#' @param bipartite logical; should the network be interpreted as bipartite? If
-#' \code{TRUE}, vertices in the first column of `edges` are considered to be the "actors" 
-#' and edges are interpreted as undirected. Creating bipartite networks with isolates 
-#' (i.e. there are vertex names in `vertices` that are missing from `edges`) via this 
-#' method is not supported as it's ambiguous whether or not isolates should be considered
-#' as "actors".
-#' @param ... Arguments passed to or from other methods.
-#' 
-#' @return An object of class \code{network}
-#' 
-#' @author Brendan Knapp \email{brendan.knapp@@nps.edu}
+# Coercion from Data Frames to Network Objects
+# 
+# Build a network object from a data frame of edges and their attributes, and an optional
+# data frame of vertices and their attributes.
+# 
+# @param edges A data frame containing the from/to edge list in the first two columns
+# (the values of which correspond to \code{"vertex.names"}). Additional columns are 
+# added as edge attributes.
+# @param directed logical, default: \code{TRUE}; should edges be interpreted as directed?
+# @param vertices An optional data frame containing the vertex attributes. The first
+# column is assigned to the \code{"vertex.names"}.
+# @param loops logical, default: \code{FALSE}; should loops be allowed?
+# @param multiple logical, default: \code{FALSE}; are multiplex edges allowed?
+# @param bipartite logical; should the network be interpreted as bipartite? If
+# \code{TRUE}, vertices in the first column of `edges` are considered to be the "actors" 
+# and edges are interpreted as undirected. Creating bipartite networks with isolates 
+# (i.e. there are vertex names in `vertices` that are missing from `edges`) via this 
+# method is not supported as it's ambiguous whether or not isolates should be considered
+# as "actors".
+# @param ... Arguments passed to or from other methods.
+# 
+# @return An object of class \code{network}
+# 
+# @author Brendan Knapp \email{brendan.knapp@@nps.edu}
+
+#' @rdname network
+#'
+#' @param vertices If \code{x} is a \code{data.frame}, \code{vertices} is an optional 
+#' \code{data.frame} containing the vertex attributes. The first column is assigned 
+#' to the \code{"vertex.names"}.
 #'
 #' @examples
-#' vertex_df <- data.frame(name = letters[1:5],
-#'                         int_attr = seq_len(5),
-#'                         chr_attr = LETTERS[1:5],
-#'                         lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE),
-#'                         stringsAsFactors = FALSE)
-#' vertex_df                        
-#' 
-#' 
+#' # networks from data frames ===========================================================
 #' edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
 #'                       to = c("a", "b", "a", "a", "b", "a"),
-#'                       int_attr = seq_len(6),
-#'                       chr_attr = LETTERS[1:6],
-#'                       lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
+#'                       weight = c(1, 1, 2, 2, 3, 3),
 #'                       stringsAsFactors = FALSE)
 #' edge_df
 #' 
-#' network_from_data_frame(edge_df)
+#' as.network(edge_df)
 #' 
-#' network_from_data_frame(edge_df, vertices = vertex_df)
+#' vertex_df <- data.frame(
+#'   name = letters[1:5],
+#'   residence = c("urban", "rural", "suburban", "suburban", "rural"),
+#'   stringsAsFactors = FALSE
+#' )
+#' vertex_df
 #' 
-#' network_from_data_frame(edge_df, directed = FALSE, vertices = vertex_df)
+#' as.network(edge_df, vertices = vertex_df)
 #' 
-#' # bipartite networks ==================================================================
+#' as.network(edge_df, directed = FALSE, vertices = vertex_df)
+#' 
+#' # splitting multiplex data frames into multiple networks ==============================
+#' edge_df$edge_type = c(rep("friends", 3), rep("colleagues", 3))
+#' edge_df
+#' 
+#' lapply(split(edge_df, f = edge_df$edge_type), 
+#'        as.network, vertices = vertex_df)
+#' 
+#' # bipartite networks from data frames =================================================
 #' bip_edge_df <- data.frame(actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
 #'                           event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
 #'                           an_edge_attr = rep(c(TRUE, FALSE), 4),
@@ -605,15 +617,16 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #'                           stringsAsFactors = FALSE)
 #' bip_node_df
 #' 
-#' g <- network_from_data_frame(bip_edge_df, vertices = bip_node_df, bipartite = TRUE)
-#' g
-#' plot(g, vertex.col = g %v% "color")
-#' 
+#' as.network(bip_edge_df, bipartite = TRUE)
+#' as.network(bip_edge_df, vertices = bip_node_df, bipartite = TRUE)
+#'
+#' @export as.network.data.frame
 #' @export
-network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
-                                    loops = FALSE, multiple = FALSE, bipartite = FALSE,
-                                    ...) {
-  if (!is.data.frame(edges) || ncol(edges) < 2L) {
+as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
+                                  loops = FALSE, multiple = FALSE, bipartite = FALSE,
+                                  ...) {
+  edges <- x
+  if (ncol(edges) < 2L) {
     stop("`edges` should be a data frame with at least two columns.")
   }
   
@@ -682,7 +695,7 @@ network_from_data_frame <- function(edges, directed = TRUE, vertices = NULL,
       isolates <- setdiff(vertices[[1L]], vertex_names_in_el)
       if (length(isolates) > 0L) {
         stop("Bipartite networks with isolates are not supported via ",
-             "`network_from_data_frame()` because it's ambiguous whether those ",
+             "`as.network()` because it's ambiguous whether those ",
              "vertices should be considered as \"actors\".",
              "\nThe following vertex names are in `vertices`, but not in `edges`:",
              paste("\n\t-", isolates))
