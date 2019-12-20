@@ -1,9 +1,9 @@
 suppressPackageStartupMessages(library(network))
 library(testthat)
 
-# context("network_from_data_frame")
+# context("as.network")
 
-# test_that("network_from_data_frame works", {
+# test_that("as.network works", {
 
   vertex_df <- data.frame(name = letters[1:5],
                           int_attr = seq_len(5),
@@ -25,29 +25,29 @@ library(testthat)
   
   expect_true(
     get.network.attribute(
-      network_from_data_frame(edge_df),
+      as.network(edge_df),
       "directed"
     )
   )
   expect_false(
     get.network.attribute(
-      network_from_data_frame(edge_df, directed = FALSE), 
+      as.network(edge_df, directed = FALSE), 
       "directed"
     )
   )
   
   # without vertices
   expect_s3_class(
-    network_from_data_frame(edge_df),
+    as.network(edge_df),
     "network"
   )
   expect_identical(
-    get.vertex.attribute(network_from_data_frame(edge_df), "vertex.names"),
+    get.vertex.attribute(as.network(edge_df), "vertex.names"),
     c("b", "c", "d", "e", "a")
   )
   
   # check vertex and edge attributes =====================================================
-  g <- network_from_data_frame(edge_df, vertices = vertex_df)
+  g <- as.network(edge_df, vertices = vertex_df)
   
   #* vertices ============================================================================
   expect_identical(
@@ -110,10 +110,10 @@ library(testthat)
                                        to = c("a", "b", "a", "a", "b", "a", "a"),
                                        stringsAsFactors = FALSE)
   expect_error(
-    network_from_data_frame(df_with_parallel_edges),
+    as.network(df_with_parallel_edges),
     "`multiple` is `FALSE`, but `edges` contains duplicates.\n\t- Index of first duplicate row: 7"  )
   expect_s3_class(
-    network_from_data_frame(df_with_parallel_edges, multiple = TRUE),
+    as.network(df_with_parallel_edges, multiple = TRUE),
     "network"
   )
 
@@ -121,10 +121,10 @@ library(testthat)
                                        to = c("a", "b", "a", "a", "b", "a", "e"),
                                        stringsAsFactors = FALSE)
   expect_error(
-    network_from_data_frame(df_with_parallel_edges2, directed = FALSE),
+    as.network(df_with_parallel_edges2, directed = FALSE),
     "`multiple` is `FALSE`, but `edges` contains duplicates.\n\t- Index of first duplicate row: 7"  )
   expect_s3_class(
-    network_from_data_frame(df_with_parallel_edges2, directed = FALSE, multiple = TRUE),
+    as.network(df_with_parallel_edges2, directed = FALSE, multiple = TRUE),
     "network"
   )
   
@@ -136,11 +136,11 @@ library(testthat)
                               to = c("a", "b", "a", "a", "b", "a", "f"),
                               stringsAsFactors = FALSE)
   expect_error(
-    network_from_data_frame(df_with_loops),
+    as.network(df_with_loops),
     "`loops` is `FALSE`, but `edges` contains loops."
   )
   expect_s3_class(
-    network_from_data_frame(df_with_loops, loops = TRUE),
+    as.network(df_with_loops, loops = TRUE),
     "network"
   )
   
@@ -156,7 +156,7 @@ library(testthat)
                         stringsAsFactors = FALSE)
 
   expect_error(
-    network_from_data_frame(edge_df, vertices = vertex_df),
+    as.network(edge_df, vertices = vertex_df),
     "The following vertices are in `edges`, but not in `vertices`:\n\t- f\n\t- g"
   )
 
@@ -172,7 +172,7 @@ library(testthat)
                         stringsAsFactors = FALSE)
 
   expect_error(
-    network_from_data_frame(edge_df, vertices = vertex_df),
+    as.network(edge_df, vertices = vertex_df),
     "The following vertex names are duplicated in `vertices`:\n\t- a"
   )
 
@@ -187,34 +187,22 @@ library(testthat)
   empty_vertex_df <- data.frame()
 
   expect_error(
-    network_from_data_frame(edge_df_with_NAs2),
+    as.network(edge_df_with_NAs2),
     "`edges` contains `NA` elements in its first two columns."
   )
   expect_error(
-    network_from_data_frame(edge_df_with_NAs2),
+    as.network(edge_df_with_NAs2),
     "`edges` contains `NA` elements in its first two columns."
   )
 
   expect_error(
-    network_from_data_frame(na.omit(edge_df_with_NAs1), 
+    as.network(na.omit(edge_df_with_NAs1), 
                                      vertices = empty_vertex_df),
     "`vertices` should contain at least one column and row."
   )
   
 # })
-  
-# test_that("non data frames are caught", {
-  expect_error(
-    network_from_data_frame(as.list(edge_df)),
-    "`edges` should be a data frame with at least two columns."
-  )
-  
-  expect_error(
-    network_from_data_frame(edge_df, vertices = as.list(vertex_df)),
-    "If provided, `vertices` should be a data frame."
-  )
 
-# })
 
 # test_that("bipartite networks work", {
   bip_edge_df <- data.frame(actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
@@ -229,7 +217,7 @@ library(testthat)
                             stringsAsFactors = FALSE)
   
   
-  bip_g <- network_from_data_frame(bip_edge_df, vertices = bip_node_df, 
+  bip_g <- as.network(bip_edge_df, vertices = bip_node_df, 
                                    loops = TRUE,
                                    bipartite = TRUE)
   
@@ -275,10 +263,10 @@ library(testthat)
   )
   
   expect_error(
-    network_from_data_frame(edges = bip_edge_df, vertices = bip_isolates_node_df,
+    as.network(x = bip_edge_df, vertices = bip_isolates_node_df,
                             bipartite = TRUE)
     # TODO expect_error() isn't matching this error message
-    # "Bipartite networks with isolates are not supported via `network_from_data_frame()` because it's ambiguous whether those vertices should be considered as \"actors\".\nThe following vertex names are in `vertices`, but not in `edges`:\n\t- f\n\t- g"
+    # "Bipartite networks with isolates are not supported via `as.network()` because it's ambiguous whether those vertices should be considered as \"actors\".\nThe following vertex names are in `vertices`, but not in `edges`:\n\t- f\n\t- g"
   )
   
   # check if nodes that appear in both of the first 2 `edge` columns are caught
@@ -289,7 +277,7 @@ library(testthat)
   )
   
   expect_error(
-    network_from_data_frame(edges = bip_confused_edge_df, bipartite = TRUE),
+    as.network(x = bip_confused_edge_df, bipartite = TRUE),
     "`bipartite` is `TRUE`, but there are vertex names that appear in both of the first two columns of `edges`.\nThe following vertices appear in both columns:\n\t- e1"
   )
     

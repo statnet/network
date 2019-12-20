@@ -9,6 +9,7 @@
 \alias{$<-.network}
 \alias{<-.network}
 \alias{as.network}
+\alias{as.network.data.frame}
 \alias{network.copy}
 \alias{print.network}
 \alias{summary.network}
@@ -17,6 +18,16 @@
 is.network(x)
 
 as.network(x, ...)
+
+\method{as.network}{data.frame}(
+  x,
+  directed = TRUE,
+  vertices = NULL,
+  loops = FALSE,
+  multiple = FALSE,
+  bipartite = FALSE,
+  ...
+)
 
 network(
   x,
@@ -50,14 +61,11 @@ adjacency, incidence, or edgelist form; otherwise, an object of class
 
 \item{...}{additional arguments.}
 
-\item{vertex.attr}{optionally, a list containing vertex attributes.}
-
-\item{vertex.attrnames}{optionally, a list containing vertex attribute
-names.}
-
 \item{directed}{logical; should edges be interpreted as directed?}
 
-\item{hyper}{logical; are hyperedges allowed?}
+\item{vertices}{If \code{x} is a \code{data.frame}, \code{vertices} is an optional 
+\code{data.frame} containing the vertex attributes. The first column is assigned 
+to as the \code{"vertex.names"}.}
 
 \item{loops}{logical; should loops be allowed?}
 
@@ -70,6 +78,13 @@ number of actors plus the number of events (with all actors preceeding all
 events). The edges are then interpreted as nondirected. Values of
 bipartite==0 are permited, indicating a bipartite network with zero-sized
 first partition.}
+
+\item{vertex.attr}{optionally, a list containing vertex attributes.}
+
+\item{vertex.attrnames}{optionally, a list containing vertex attribute
+names.}
+
+\item{hyper}{logical; are hyperedges allowed?}
 
 \item{matrix.type}{one of \code{"adjacency"}, \code{"edgelist"},
 \code{"incidence"}. See \code{\link{edgeset.constructors}} for details and
@@ -150,6 +165,51 @@ summary(g)
 
 h <- network.copy(g)       #Note: same as h<-g
 summary(h)
+
+# networks from data frames ===========================================================
+edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
+                      to = c("a", "b", "a", "a", "b", "a"),
+                      weight = c(1, 1, 2, 2, 3, 3),
+                      stringsAsFactors = FALSE)
+edge_df
+
+as.network(edge_df)
+
+vertex_df <- data.frame(
+  name = letters[1:5],
+  residence = c("urban", "rural", "suburban", "suburban", "rural"),
+  stringsAsFactors = FALSE
+)
+vertex_df
+
+as.network(edge_df, vertices = vertex_df)
+
+as.network(edge_df, directed = FALSE, vertices = vertex_df)
+
+# splitting multiplex data frames into multiple networks ==============================
+edge_df$edge_type = c(rep("friends", 3), rep("colleagues", 3))
+edge_df
+
+lapply(split(edge_df, f = edge_df$edge_type), 
+       as.network, vertices = vertex_df)
+
+# bipartite networks from data frames =================================================
+bip_edge_df <- data.frame(actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
+                          event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
+                          an_edge_attr = rep(c(TRUE, FALSE), 4),
+                          stringsAsFactors = FALSE)
+bip_edge_df
+
+bip_node_df <- data.frame(node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e"),
+                          node_type = c("person", "event", "person", "event", "person",
+                                        "event", "person", "person"),
+                          color = c("red", "blue", "red", "blue", "red", "blue",
+                                    "red", "red"),
+                          stringsAsFactors = FALSE)
+bip_node_df
+
+as.network(bip_edge_df, bipartite = TRUE)
+as.network(bip_edge_df, vertices = bip_node_df, bipartite = TRUE)
 
 }
 \references{
