@@ -543,31 +543,6 @@ as.network.matrix<-function(x, matrix.type=NULL,
 }
 
 
-# Coercion from Data Frames to Network Objects
-# 
-# Build a network object from a data frame of edges and their attributes, and an optional
-# data frame of vertices and their attributes.
-# 
-# @param edges A data frame containing the from/to edge list in the first two columns
-# (the values of which correspond to \code{"vertex.names"}). Additional columns are 
-# added as edge attributes.
-# @param directed logical, default: \code{TRUE}; should edges be interpreted as directed?
-# @param vertices An optional data frame containing the vertex attributes. The first
-# column is assigned to the \code{"vertex.names"}.
-# @param loops logical, default: \code{FALSE}; should loops be allowed?
-# @param multiple logical, default: \code{FALSE}; are multiplex edges allowed?
-# @param bipartite logical; should the network be interpreted as bipartite? If
-# \code{TRUE}, vertices in the first column of `edges` are considered to be the "actors" 
-# and edges are interpreted as undirected. Creating bipartite networks with isolates 
-# (i.e. there are vertex names in `vertices` that are missing from `edges`) via this 
-# method is not supported as it's ambiguous whether or not isolates should be considered
-# as "actors".
-# @param ... Arguments passed to or from other methods.
-# 
-# @return An object of class \code{network}
-# 
-# @author Brendan Knapp \email{brendan.knapp@@nps.edu}
-
 #' @rdname network
 #'
 #' @param vertices If \code{x} is a \code{data.frame}, \code{vertices} is an optional 
