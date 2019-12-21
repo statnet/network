@@ -25,6 +25,7 @@ Collate:
     'as.edgelist.R'
     'assignment.R'
     'coercion.R'
+    'coercion-dataframe.R'
     'constructors.R'
     'fileio.R'
     'layout.R'
