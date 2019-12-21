@@ -107,10 +107,10 @@ validate_edges <- function(edges, directed, hyper, loops, multiple, bipartite, .
     }
     
     if (anyDuplicated(test_el) != 0L) {
-      parallel_edges <- duplicated(test_el)
+      parallel_edges <- which(duplicated(test_el))
       stop("`multiple` is `FALSE`, but `x` contains parallel edges.\n",
            "The following rows in `x` are duplicated:",
-           paste("\n\t-", sprintf("`x[%d, ]`", which(parallel_edges))),
+           paste("\n\t-", sprintf("`x[%d, ]`", parallel_edges)),
            call. = FALSE)
     }
   }

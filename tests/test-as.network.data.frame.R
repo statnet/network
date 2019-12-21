@@ -291,6 +291,15 @@ library(testthat)
 # })
 
 
+  hyper_edge_df <- data.frame(
+    from = I(list(c("e", "a", "b"))),
+    to = I(list(c("c", "d")))
+  )
+  expect_s3_class(
+    as.network(hyper_edge_df, hyper = TRUE),
+    "network"
+  )
+
   hyper_edges_with_NA <- data.frame(
     from = I(list(c(NA, "a", "b"))),
     to = I(list(c("c", "d")))
