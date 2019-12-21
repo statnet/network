@@ -35,7 +35,7 @@ validate_edges <- function(edges, directed, hyper, loops, multiple, bipartite, .
     if (any(incompat_types)) {
       incompat_rows <- row(incompat_types)[incompat_types]
       incompat_cols <- col(incompat_types)[incompat_types]
-      stop("The values in the first two columns of `x` must be of the same type and cannot be `NULL`, `NA`, or recusive values.",
+      stop("The values in the first two columns of `x` must be of the same type and cannot be `NULL`, `NA`, or recursive values.",
            "\nThe following values are incompatible:",
            paste("\n\t-", sprintf("`x[%d, %d]`", incompat_rows, incompat_cols)),
            call. = FALSE)
