@@ -89,17 +89,11 @@ library(testthat)
   )
   # get.edge.attribute() returns list attributes nested one level...
   expect_identical(
-    unlist(
-      get.edge.attribute(g, "list_attr", unlist = FALSE),
-      recursive = FALSE
-    ),
+    get.edge.attribute(g, "list_attr", unlist = FALSE),
     edge_df[["list_attr"]]
   )
   expect_identical(
-    unlist(
-      get.edge.attribute(g, "df_list_attr", unlist = FALSE), 
-           recursive = FALSE
-    ),
+    get.edge.attribute(g, "df_list_attr", unlist = FALSE),
     edge_df[["df_list_attr"]]
   )
 # })
@@ -111,7 +105,8 @@ library(testthat)
                                        stringsAsFactors = FALSE)
   expect_error(
     as.network(df_with_parallel_edges),
-    "`multiple` is `FALSE`, but `edges` contains duplicates.\n\t- Index of first duplicate row: 7"  )
+    "`multiple` is `FALSE`"
+  )
   expect_s3_class(
     as.network(df_with_parallel_edges, multiple = TRUE),
     "network"
@@ -122,7 +117,8 @@ library(testthat)
                                        stringsAsFactors = FALSE)
   expect_error(
     as.network(df_with_parallel_edges2, directed = FALSE),
-    "`multiple` is `FALSE`, but `edges` contains duplicates.\n\t- Index of first duplicate row: 7"  )
+    "`multiple` is `FALSE`"
+  )
   expect_s3_class(
     as.network(df_with_parallel_edges2, directed = FALSE, multiple = TRUE),
     "network"
@@ -137,7 +133,7 @@ library(testthat)
                               stringsAsFactors = FALSE)
   expect_error(
     as.network(df_with_loops),
-    "`loops` is `FALSE`, but `edges` contains loops."
+    "`loops` is `FALSE`"
   )
   expect_s3_class(
     as.network(df_with_loops, loops = TRUE),
@@ -157,7 +153,7 @@ library(testthat)
 
   expect_error(
     as.network(edge_df, vertices = vertex_df),
-    "The following vertices are in `edges`, but not in `vertices`:\n\t- f\n\t- g"
+    "The following vertices are in `x`, but not in `vertices`:\n\t- f\n\t- g"
   )
 
 # })
@@ -173,7 +169,7 @@ library(testthat)
 
   expect_error(
     as.network(edge_df, vertices = vertex_df),
-    "The following vertex names are duplicated in `vertices`:\n\t- a"
+    "The following vertex names are duplicated in `vertices`:\n\t- a", fixed = TRUE
   )
 
 # })
@@ -181,24 +177,25 @@ library(testthat)
 # test_that("bad data frames are caught", {
   
   edge_df_with_NAs1 <- data.frame(from = c(letters, NA),
-                                  to = c("a", letters))
+                                  to = c("a", letters),
+                                  stringsAsFactors = FALSE)
   edge_df_with_NAs2 <- data.frame(from = c(letters, "a"),
-                                  to = c(NA, letters))
+                                  to = c(NA, letters),
+                                  stringsAsFactors = FALSE)
   empty_vertex_df <- data.frame()
 
   expect_error(
     as.network(edge_df_with_NAs2),
-    "`edges` contains `NA` elements in its first two columns."
+    "The first two columns of `x` cannot contain `NA` values.", fixed = TRUE
   )
   expect_error(
     as.network(edge_df_with_NAs2),
-    "`edges` contains `NA` elements in its first two columns."
+    "The first two columns of `x` cannot contain `NA` values.", fixed = TRUE
   )
 
   expect_error(
-    as.network(na.omit(edge_df_with_NAs1), 
-                                     vertices = empty_vertex_df),
-    "`vertices` should contain at least one column and row."
+    as.network(na.omit(edge_df_with_NAs1), vertices = empty_vertex_df, loops = TRUE),
+    "`vertices` should contain at least one column and row.", fixed = TRUE
   )
   
 # })
@@ -216,10 +213,21 @@ library(testthat)
                                       "red", "red"),
                             stringsAsFactors = FALSE)
   
+  expect_warning(
+    as.network(bip_edge_df, vertices = bip_node_df, 
+               bipartite = TRUE),
+    "If `bipartite` is `TRUE`, edges are interpreted as undirected.", fixed = TRUE
+  )
   
-  bip_g <- as.network(bip_edge_df, vertices = bip_node_df, 
-                                   loops = TRUE,
-                                   bipartite = TRUE)
+  expect_warning(
+    as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, 
+               bipartite = TRUE, loops = TRUE),
+    "If `bipartite` is `TRUE`, `loops` must be `FALSE`.", fixed = TRUE
+  )
+  
+  
+  bip_g <- as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, 
+                      loops = FALSE, bipartite = TRUE)
   
   expect_s3_class(
     bip_g,
@@ -263,10 +271,9 @@ library(testthat)
   )
   
   expect_error(
-    as.network(x = bip_edge_df, vertices = bip_isolates_node_df,
-                            bipartite = TRUE)
-    # TODO expect_error() isn't matching this error message
-    # "Bipartite networks with isolates are not supported via `as.network()` because it's ambiguous whether those vertices should be considered as \"actors\".\nThe following vertex names are in `vertices`, but not in `edges`:\n\t- f\n\t- g"
+    as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
+               bipartite = TRUE),
+    "`bipartite` is `TRUE`, but the `vertices` you provided contain names that are not present in `x`"
   )
   
   # check if nodes that appear in both of the first 2 `edge` columns are caught
@@ -277,8 +284,28 @@ library(testthat)
   )
   
   expect_error(
-    as.network(x = bip_confused_edge_df, bipartite = TRUE),
-    "`bipartite` is `TRUE`, but there are vertex names that appear in both of the first two columns of `edges`.\nThe following vertices appear in both columns:\n\t- e1"
+    as.network(x = bip_confused_edge_df, directed = FALSE, bipartite = TRUE),
+    "`bipartite` is `TRUE`, but there are vertices that appear in both of the first two columns of `x`."
   )
     
 # })
+
+
+  hyper_edge_df <- data.frame(
+    from = I(list(c("e", "a", "b"))),
+    to = I(list(c("c", "d")))
+  )
+  expect_s3_class(
+    as.network(hyper_edge_df, hyper = TRUE),
+    "network"
+  )
+
+  hyper_edges_with_NA <- data.frame(
+    from = I(list(c(NA, "a", "b"))),
+    to = I(list(c("c", "d")))
+  )
+  expect_error(
+    as.network(hyper_edges_with_NA, hyper = TRUE),
+    "`x`'s first two columns contain invalid values."
+  )
+  
