@@ -186,22 +186,56 @@ prep_bipartite_vertices <- function(vertices, el_vert_ids) {
   vertices[vertex_order, , drop = FALSE]
 }
 
+# prep_edge_attrs <- function(edges) {
+#   edge_attr_names <- names(edges)[-(1:2)]
+#   
+#   edge_attrs <- edges[, edge_attr_names, drop = FALSE]
+#   list(
+#     names_eval = rep(list(as.list(edge_attr_names)), times = nrow(edges)),
+#     vals_eval = do.call(mapply, c(FUN = "list", edge_attrs, 
+#                                   USE.NAMES = FALSE, SIMPLIFY = FALSE))
+#   )
+# }
+
 prep_edge_attrs <- function(edges) {
   edge_attr_names <- names(edges)[-(1:2)]
+
+  init_vals_eval <- lapply(
+    edges[, edge_attr_names, drop = FALSE], 
+    function(.x) {
+      if (is.atomic(.x)) lapply(.x, `attributes<-`, attributes(.x))
+      else .x
+    }
+  )
   
-  edge_attrs <- edges[, edge_attr_names, drop = FALSE]
   list(
     names_eval = rep(list(as.list(edge_attr_names)), times = nrow(edges)),
-    vals_eval = .mapply(list, edge_attrs, NULL)
+    vals_eval = .mapply(list, init_vals_eval, NULL)
   )
 }
 
+prep_vertex_attrs <- function(vertices) {
+  if (ncol(vertices) == 1L) {
+    return(vertices)
+  }
+
+  vertices[-1L] <- lapply(
+    vertices[-1L],
+    function(.x) {
+      if (is.atomic(.x)) lapply(.x, `attributes<-`, attributes(.x))
+      else .x
+    }
+  )
+
+  vertices
+}
 
 #' @rdname network
 #'
 #' @param vertices If \code{x} is a \code{data.frame}, \code{vertices} is an optional 
 #' \code{data.frame} containing the vertex attributes. The first column is assigned 
-#' to the \code{"vertex.names"}.
+#' to the \code{"vertex.names"} and additional columns are used to set vertex attributes
+#' using their column names.
 #'
 #' @examples
 #' # networks from data frames ===========================================================
@@ -369,18 +403,22 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
     tail = out_sources,
     head = out_targets,
     names.eval = edge_attrs$names_eval,
-    vals.eval = edge_attrs$vals_eval
+    vals.eval = edge_attrs$vals_eval,
+    ...
   )
 
   # set vertex attributes
   if (is.null(vertices)) {
     # if vertices aren't provided, set "vertex.names" as the values used in edges
     out <- set.vertex.attribute(out, attrname = "vertex.names", value = vertex_names)
+  } else if (ncol(vertices) == 1L) {
+    out <- set.vertex.attribute(out, attrname = "vertex.names", value = vertices[[1L]])
   } else {
     out <- set.vertex.attribute(
       x = out,
-      attrname = c("vertex.names", names(vertices)[-1L]), # first column is always "vertex.names"
-      value = vertices
+      attrname = c("vertex.names",        # first column is always "vertex.names"
+                   names(vertices)[-1L]), 
+      value = prep_vertex_attrs(vertices)
     )
   }
   

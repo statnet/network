@@ -66,7 +66,8 @@ adjacency, incidence, or edgelist form; otherwise, an object of class
 
 \item{vertices}{If \code{x} is a \code{data.frame}, \code{vertices} is an optional 
 \code{data.frame} containing the vertex attributes. The first column is assigned 
-to the \code{"vertex.names"}.}
+to the \code{"vertex.names"} and additional columns are used to set vertex attributes
+using their column names.}
 
 \item{hyper}{logical; are hyperedges allowed?}
 
