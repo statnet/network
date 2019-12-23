@@ -186,17 +186,6 @@ prep_bipartite_vertices <- function(vertices, el_vert_ids) {
   vertices[vertex_order, , drop = FALSE]
 }
 
-# prep_edge_attrs <- function(edges) {
-#   edge_attr_names <- names(edges)[-(1:2)]
-#   
-#   edge_attrs <- edges[, edge_attr_names, drop = FALSE]
-#   list(
-#     names_eval = rep(list(as.list(edge_attr_names)), times = nrow(edges)),
-#     vals_eval = do.call(mapply, c(FUN = "list", edge_attrs, 
-#                                   USE.NAMES = FALSE, SIMPLIFY = FALSE))
-#   )
-# }
-
 prep_edge_attrs <- function(edges) {
   edge_attr_names <- names(edges)[-(1:2)]
 
@@ -231,7 +220,12 @@ prep_vertex_attrs <- function(vertices) {
 #' @param vertices If \code{x} is a \code{data.frame}, \code{vertices} is an optional 
 #' \code{data.frame} containing the vertex attributes. The first column is assigned 
 #' to the \code{"vertex.names"} and additional columns are used to set vertex attributes
-#' using their column names.
+#' using their column names. If \code{bipartite} is \code{TRUE}, a \code{logical} column
+#' named \code{"is_actor"} can be provided indicating which vertices should be considered
+#' as actors. If not provided, vertices referenced in the first column of \code{x} are
+#' assumed to be the network's actors. If your network has isolates (i.e. there are 
+#' vertices referenced in \code{vertices} that are not referenced in \code{x}), the
+#' \code{"is_actor"} column is required.
 #'
 #' @examples
 #' # networks from data frames ===========================================================
