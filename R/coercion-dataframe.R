@@ -215,10 +215,6 @@ prep_edge_attrs <- function(edges) {
 }
 
 prep_vertex_attrs <- function(vertices) {
-  if (ncol(vertices) == 1L) {
-    return(vertices)
-  }
-
   vertices[-1L] <- lapply(
     vertices[-1L],
     function(.x) {

@@ -408,10 +408,56 @@ library(testthat)
     as.network(edge_df_with_NAs2),
     "The first two columns of `x` cannot contain `NA` values.", fixed = TRUE
   )
-
+  
+  expect_error(
+    as.network(edge_df_with_NAs1[0, 0]),
+    "`x` should be a data frame with at least two columns and one row.",
+    fixed = TRUE
+  )
   expect_error(
     as.network(na.omit(edge_df_with_NAs1), vertices = empty_vertex_df, loops = TRUE),
     "`vertices` should contain at least one column and row.", fixed = TRUE
+  )
+  
+  incompat_edge_types <- data.frame(
+    from = c("a", "b"),
+    to = c(1, 2),
+    stringsAsFactors = FALSE
+  )
+  expect_error(
+    as.network(incompat_edge_types),
+    "The first two columns of `x` must be of the same type.",
+    fixed = TRUE
+  )
+  
+  non_df_vertices_edge_df <- data.frame(from = 1, to = 2)
+  non_df_vertices <- list(name = 1:2)
+  expect_error(
+    as.network(non_df_vertices_edge_df, vertices = non_df_vertices),
+    "If provided, `vertices` should be a data frame.",
+    fixed = TRUE
+  )
+  
+  bad_vertex_names_col <- data.frame(name = I(list(1)))
+  expect_error(
+    as.network(non_df_vertices_edge_df, vertices = bad_vertex_names_col),
+    "The first column of `vertices` must be an atomic vector.",
+    fixed = TRUE
+  )
+  
+  incompat_types_edge_df <- data.frame(from = 1:3, to = 4:6)
+  incompat_types_vertex_df <- data.frame(name = paste(1:6), stringsAsFactors = FALSE)
+  expect_error(
+    as.network(incompat_types_edge_df, vertices = incompat_types_vertex_df),
+    "The first column of `vertices` must be the same type as the value with which they are referenced in `x`'s first two columns.",
+    fixed = TRUE
+  )
+  
+  recursive_edge_df <- data.frame(from = I(list(1:2)), to = 3)
+  expect_error(
+    as.network(recursive_edge_df),
+    "If `hyper` is `FALSE`, the first two columns of `x` should be atomic vectors.",
+    fixed = TRUE
   )
 # })
 
@@ -497,6 +543,15 @@ library(testthat)
     "network"
   )
   
+  bip_isolates_node_df$is_actor <- as.integer(bip_isolates_node_df$is_actor)
+  expect_error(
+    as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
+               bipartite = TRUE),
+    "`bipartite` is `TRUE` and vertex types are specified via a column in `vertices` named `\"is_actor\"`.\n\t- If provided, all values in `vertices[[\"is_actor\"]]` must be `TRUE` or `FALSE`.",
+    fixed = TRUE
+  )
+  
+  
   # check if nodes that appear in both of the first 2 `edge` columns are caught
   bip_confused_edge_df <- data.frame(
     actor = c("a", "a", "b", "b", "c", "d", "d", "e", "e1"),
@@ -567,6 +622,34 @@ library(testthat)
     as.network(hyper_edges_with_NA, hyper = TRUE),
     "`x`'s first two columns contain invalid values."
   )
+  
+  non_hyper_edges <- data.frame(
+    from = 1:3,
+    to = 4:6
+  )
+  expect_error(
+    as.network(non_hyper_edges, hyper = TRUE),
+    "If `hyper` is `TRUE`, the first two columns of `x` should be list columns."
+  )
+  
+  incompat_type_hyper_edges <- data.frame(
+    from = I(list(letters[1:5], 1:5)),
+    to = I(list(letters[6:10], letters[11:15]))
+  )
+  expect_error(
+    as.network(incompat_type_hyper_edges, hyper = T),
+    "The values in the first two columns of `x` must be of the same type and cannot be `NULL`, `NA`, or recursive values."
+  )
+  
+  loop_hyper_edges <- data.frame(
+    from = I(list(c("a", "b"))),
+    to = I(list(c("a", "b")))
+  )
+  expect_error(
+    as.network(loop_hyper_edges, hyper = TRUE),
+    "`loops` is `FALSE`, but `x` contains loops."
+  )
+  
 # })  
 
 # benchmarks =============================================================================
