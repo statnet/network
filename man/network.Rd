@@ -66,7 +66,13 @@ adjacency, incidence, or edgelist form; otherwise, an object of class
 
 \item{vertices}{If \code{x} is a \code{data.frame}, \code{vertices} is an optional 
 \code{data.frame} containing the vertex attributes. The first column is assigned 
-to the \code{"vertex.names"}.}
+to the \code{"vertex.names"} and additional columns are used to set vertex attributes
+using their column names. If \code{bipartite} is \code{TRUE}, a \code{logical} column
+named \code{"is_actor"} can be provided indicating which vertices should be considered
+as actors. If not provided, vertices referenced in the first column of \code{x} are
+assumed to be the network's actors. If your network has isolates (i.e. there are 
+vertices referenced in \code{vertices} that are not referenced in \code{x}), the
+\code{"is_actor"} column is required.}
 
 \item{hyper}{logical; are hyperedges allowed?}
 
