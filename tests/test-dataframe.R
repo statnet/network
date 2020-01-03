@@ -4,10 +4,12 @@ library(testthat)
 # context("as.network")
 
 # test_that("simple networks are built correctly", {
-  simple_edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
-                               to = c("a", "b", "a", "a", "b", "a"),
+  simple_edge_df <- data.frame(.tail = c("b", "c", "c", "d", "d", "e"),
+                               .head = c("a", "b", "a", "a", "b", "a"),
+                               time = 1:6,
                                stringsAsFactors = FALSE)
-  simple_vertex_df <- data.frame(name = letters[1:5],
+  simple_vertex_df <- data.frame(vertex.names = letters[1:5],
+                                 type = letters[1:5],
                                  stringsAsFactors = FALSE)
   expect_s3_class(
     as.network(x = simple_edge_df),
@@ -39,6 +41,20 @@ library(testthat)
     network.size(as.network(x = simple_edge_df)),
     nrow(simple_vertex_df)
   )
+  
+  simple_g <- as.network(x = simple_edge_df, vertices = simple_vertex_df)
+  delete.edges(simple_g, 2)
+  expect_identical(
+    `rownames<-`(simple_edge_df[-2, ], NULL),
+    as.data.frame(simple_g)
+  )
+  
+  delete.vertices(simple_g, 2)
+  expect_identical(
+    `rownames<-`(simple_vertex_df[-2, , drop = FALSE], NULL),
+    as.data.frame(simple_g, unit = "vertices")
+  )
+  
 # })
 
   
@@ -73,24 +89,6 @@ library(testthat)
                    structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
               class = c("XY", "POLYGON", "sfg"))
   )
-  vertex_df$sfc_attr <- structure(
-    list(structure(c(1, 2, 3), class = c("XY", "POINT", "sfg")), 
-         structure(1:10, .Dim = c(5L, 2L), class = c("XY", "MULTIPOINT", "sfg")), 
-         structure(1:10, .Dim = c(5L, 2L), class = c("XY", "LINESTRING", "sfg")), 
-         structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)), 
-                        structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)), 
-                        structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
-                   class = c("XY", "MULTILINESTRING", "sfg")), 
-         structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)), 
-                        structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)), 
-                        structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
-                   class = c("XY", "POLYGON", "sfg"))), class = c("sfc_GEOMETRY", "sfc"), 
-    precision = 0, bbox = structure(c(xmin = 0, ymin = 0, xmax = 10, ymax = 10), class = "bbox"), 
-    crs = structure(list(epsg = NA_integer_, proj4string = NA_character_), class = "crs"), 
-    classes = c("POINT", "MULTIPOINT", "LINESTRING", "MULTILINESTRING", "POLYGON"), 
-    n_empty = 0L
-  )
-    
   
   edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
                         to = c("a", "b", "a", "a", "b", "a"),
@@ -129,32 +127,6 @@ library(testthat)
                    list(structure(c(24, 34, 34, 24, 24, 24, 24, 34, 34, 24), .Dim = c(5L, 2L)))), 
               class = c("XY", "MULTIPOLYGON", "sfg"))
   )
-  edge_df$sfc_attr <- structure(
-    list(
-      structure(c(1, 2, 3), class = c("XY", "POINT", "sfg")), 
-      structure(1:10, .Dim = c(5L, 2L), class = c("XY", "MULTIPOINT", "sfg")), 
-      structure(1:10, .Dim = c(5L, 2L), class = c("XY", "LINESTRING", "sfg")), 
-      structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)), 
-                     structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)), 
-                     structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
-                class = c("XY", "MULTILINESTRING", "sfg")), 
-      structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)), 
-                     structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)), 
-                     structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
-                class = c("XY", "POLYGON", "sfg")), 
-      structure(list(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)), 
-                          structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)), 
-                          structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
-                     list(structure(c(12, 22, 22, 12, 12, 12, 12, 22, 22, 12), .Dim = c(5L, 2L)), 
-                          structure(c(13, 13, 14, 14, 13, 13, 14, 14, 13, 13), .Dim = c(5L, 2L))), 
-                     list(structure(c(24, 34, 34, 24, 24, 24, 24, 34, 34, 24), .Dim = c(5L, 2L)))), 
-                class = c("XY", "MULTIPOLYGON", "sfg"))), 
-    class = c("sfc_GEOMETRY", "sfc"), precision = 0, 
-    bbox = structure(c(xmin = 0, ymin = 0, xmax = 34, ymax = 34), class = "bbox"), 
-    crs = structure(list(epsg = NA_integer_, proj4string = NA_character_), class = "crs"), 
-    classes = c("POINT", "MULTIPOINT", "LINESTRING", "MULTILINESTRING", "POLYGON", "MULTIPOLYGON"),
-    n_empty = 0L
-  )
   
   g_many_attrs <- as.network(edge_df, vertices = vertex_df)
   
@@ -185,7 +157,6 @@ library(testthat)
   expect_identical(
     edge_date_attr_to_test,
     edge_df$date_attr
-    
   )
   edge_dttm_attr <- get.edge.attribute(g_many_attrs, "dttm_attr", unlist = FALSE)
   edge_dttm_attr_to_test <- `attributes<-`(unlist(edge_dttm_attr),
@@ -214,20 +185,6 @@ library(testthat)
     get.edge.attribute(g_many_attrs, "sfg_attr", unlist = FALSE),
     edge_df$sfg_attr
   )
-  expect_identical(
-    unlist(get.edge.attribute(g_many_attrs, "sfc_attr", unlist = FALSE), 
-           recursive = FALSE),
-    unlist(edge_df$sfc_attr, recursive = FALSE)
-  )
-  
-  # sf-based spatial network package will likely require setting a global CRS
-  # via a network-level attribute
-  #  - ignoring CRS, reconstructing the edge geometry/sfc column works like this:
-  #   - sf::st_sfc(get.edge.attribute(g_many_attrs, "sfc_attr", unlist = FALSE))
-  # expect_identical(
-  #   sf::st_sfc(get.edge.attribute(g_many_attrs, "sfc_attr", unlist = FALSE)),
-  #   edge_df$sfc_attr
-  # )
 
   # vertex attributes ====================================================================
   # bare atomic vectors
@@ -289,20 +246,27 @@ library(testthat)
     get.vertex.attribute(g_many_attrs, "sfg_attr", unlist = FALSE),
     vertex_df$sfg_attr
   )
+  
+  # conversion back to data.frame ========================================================
+  names(edge_df)[[1]] <- ".tail"
+  names(edge_df)[[2]] <- ".head"
+  edge_df$sfc_attr <- NULL
+  
+  names(vertex_df)[[1]] <- "vertex.names"
+  vertex_df$sfc_attr <- NULL
+
+  g_many_attrs <- delete.vertex.attribute(g_many_attrs, "sfc_attr")
+  g_many_attrs <- delete.edge.attribute(g_many_attrs, "sfc_attr")
+  
   expect_identical(
-    unlist(get.vertex.attribute(g_many_attrs, "sfc_attr", unlist = FALSE), 
-           recursive = FALSE),
-    unlist(vertex_df$sfc_attr, recursive = FALSE)
+    edge_df,
+    as.data.frame(g_many_attrs)
+  )
+  expect_identical(
+    vertex_df,
+    as.data.frame(g_many_attrs, unit = "vertices")
   )
   
-  # sf-based spatial network package will likely require setting a global CRS
-  # via a network-level attribute
-  #  - ignoring CRS, reconstructing the vertex geometry/sfc column works like this:
-  #   - sf::st_sfc(get.vertex.attribute(g_many_attrs, "sfc_attr", unlist = FALSE))
-  # expect_identical(
-  #   sf::st_sfc(get.vertex.attribute(g_many_attrs, "sfc_attr", unlist = FALSE)),
-  #   vertex_df$sfc_attr
-  # )
 
 # })
 
@@ -463,11 +427,11 @@ library(testthat)
 
 
 # test_that("bipartite networks work", {
-  bip_edge_df <- data.frame(actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
-                            event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
+  bip_edge_df <- data.frame(.tail = c("a", "a", "b", "b", "c", "d", "d", "e"),
+                            .head = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
                             an_edge_attr = letters[1:8],
                             stringsAsFactors = FALSE)
-  bip_node_df <- data.frame(node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e"),
+  bip_node_df <- data.frame(vertex.names = c("a", "e1", "b", "e2", "c", "e3", "d", "e"),
                             node_type = c("person", "event", "person", "event", "person",
                                           "event", "person", "person"),
                             color = c("red", "blue", "red", "blue", "red", "blue",
@@ -488,6 +452,20 @@ library(testthat)
 
   bip_g <- as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, 
                       loops = FALSE, bipartite = TRUE)
+  
+  expect_identical(
+    bip_edge_df,
+    as.data.frame(bip_g)
+  )
+  expect_identical(
+    # tracking modes by vertex order means we have to reorder the data frame
+    # and reset row.names to test
+    `rownames<-`( 
+      bip_node_df[order(bip_node_df$node_type == "person", decreasing = TRUE), ], 
+      NULL
+    ),
+    as.data.frame(bip_g, unit = "vertices")
+  )
   
   expect_s3_class(
     bip_g,
@@ -526,7 +504,7 @@ library(testthat)
   
   # check if bipartite networks with isolates are caught 
   bip_isolates_node_df <- data.frame(
-    node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e", "f", "g"),
+    vertex.names = c("a", "e1", "b", "e2", "c", "e3", "d", "e", "f", "g"),
     stringsAsFactors = FALSE
   )
   
@@ -536,12 +514,25 @@ library(testthat)
     "`bipartite` is `TRUE`, but the `vertices` you provided contain names that are not present in `x`"
   )
   
-  bip_isolates_node_df$is_actor <- grepl("^e\\d$", bip_isolates_node_df$node_id)
+  bip_isolates_node_df$is_actor <- !grepl("^e\\d$", bip_isolates_node_df$vertex.names)
+  bip_isoaltes_g <- as.network(x = bip_edge_df, directed = FALSE, 
+                               vertices = bip_isolates_node_df,
+                               bipartite = TRUE)
   expect_s3_class(
-    as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
-               bipartite = TRUE),
+    bip_isoaltes_g,
     "network"
   )
+  expect_identical(
+    bip_edge_df,
+    as.data.frame(bip_isoaltes_g)
+  )
+  expect_identical(
+    `rownames<-`(
+      bip_isolates_node_df[order(bip_isolates_node_df$is_actor, decreasing = TRUE), ],
+      NULL
+    ),
+    as.data.frame(bip_isoaltes_g, unit = "vertices")
+  )  
   
   bip_isolates_node_df$is_actor <- as.integer(bip_isolates_node_df$is_actor)
   expect_error(
@@ -566,10 +557,12 @@ library(testthat)
 # })
 
 # test_that("hyper-edges work", {
-  hyper_edge_df <- data.frame(
-    from = I(list(1:4, 3:5, 4:7, 6:10)),
-    to = I(list(1:4, 3:5, 4:7, 6:10)),
-    value = as.double(5:8)
+  hyper_edge_df <- structure(
+    list(.tail = list(1:4, 3:5, 4:7, 6:10),
+         .head = list(1:4, 3:5, 4:7, 6:10),
+         value = as.double(5:8)),
+    row.names = 1:4,
+    class = "data.frame"
   )
   
   hyper_target_net <- network.initialize(10, directed = FALSE, hyper = TRUE, loops = TRUE)
@@ -583,24 +576,28 @@ library(testthat)
     hyper_target_net
   )
   
-  
-  MtSHbyloc_edge_df <- data.frame(
-    from = I(
-      list(
-        c(1, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27), 
-        c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 26, 27)
-      )
-    ), 
-    to = I(
-      list(
-        c(1, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27), 
-        c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 26, 27)
-      )
-    )
+  expect_identical(
+    hyper_edge_df,
+    as.data.frame(hyper_target_net)
   )
-  MtSHbyloc_edge_df[] <- lapply(MtSHbyloc_edge_df, lapply, as.integer)
+  
+  
+  MtSHbyloc_edge_df <- structure(
+    list(
+      .tail = list(
+        as.integer(c(1, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27)),
+        as.integer(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 26, 27))
+      ), 
+      .head = list(
+        as.integer(c(1, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27)), 
+        as.integer(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 26, 27))
+      )
+    ),
+    row.names = 1:2,
+    class = "data.frame"
+  )
   MtSHbyloc_vertex_df <- data.frame(
-    node_id = 1:27
+    vertex.names = 1:27
   )
   
   data("emon")
@@ -613,6 +610,27 @@ library(testthat)
                loops = TRUE, hyper = TRUE),
     MtSHbyloc
   )
+  expect_identical(
+    MtSHbyloc_edge_df,
+    as.data.frame(MtSHbyloc)
+  )
+  expect_identical(
+    MtSHbyloc_vertex_df,
+    as.data.frame(MtSHbyloc, unit = "vertices")
+  )
+  
+  delete.edges(MtSHbyloc, 2)
+  expect_identical(
+    `rownames<-`(MtSHbyloc_edge_df[-2, ], NULL),
+    as.data.frame(MtSHbyloc)
+  )
+  
+  delete.vertices(MtSHbyloc, 2)
+  expect_identical(
+    `rownames<-`(MtSHbyloc_vertex_df[-2, , drop = FALSE], NULL),
+    as.data.frame(MtSHbyloc, unit = "vertices")
+  )
+  
   
   hyper_edges_with_NA <- data.frame(
     from = I(list(c(NA, "a", "b"))),
@@ -651,78 +669,51 @@ library(testthat)
   )
   
 # })  
+  
+# test_that("edge/vertex-less networks return empty data frames", {
+  
+  empty_g <- network.initialize(0)
+  expect_identical(
+    as.data.frame(empty_g),
+    data.frame()
+  )
+  expect_identical(
+    as.data.frame(empty_g, unit = "vertices"),
+    data.frame()
+  )
+  
+# })
 
-# benchmarks =============================================================================
-# suppressPackageStartupMessages(library(network))
-# set.seed(831)
-# 
-# X <- seq_len(5000)
-# 
-# big_edge_df <- tibble::tibble(
-#   from = sample(X),
-#   to = sample(X),
-#   attr = sample(letters, size = length(X), replace = TRUE)
-# )
-# big_node_df <- tibble::tibble(			
-#   name = X,			
-#   vattr = sample(letters, size = length(X), replace = TRUE),
-# )
-# 
-# hyper_sources <- replicate(length(X), sample(X, size = 5), simplify = F)			
-# hyper_targets <- replicate(length(X), sample(X, size = 5), simplify = F)
-# 
-# big_hyper_edge_df <- tibble::tibble(
-#   from = hyper_sources,			
-#   to = hyper_targets,			
-#   attr = sample(letters, size = length(X), replace = TRUE)
-# )			
-# big_hyper_node_df <- tibble::tibble(			
-#   name = X,			
-#   vattr = sample(letters, size = length(X), replace = TRUE),			
-# )
-# 
-# dplyr::glimpse(
-#   bench::mark(
-#     big_net = as.network(big_edge_df, vertices = big_node_df, loops = TRUE),
-#     iterations = 5, filter_gc = FALSE
-#   )
-# )
-# #> Observations: 1
-# #> Variables: 13
-# #> $ expression <bch:expr> [as.network(big_edge_df, vertices = big_node_df, loop…
-# #> $ min        <bch:tm> 70.3ms
-# #> $ median     <bch:tm> 104ms
-# #> $ `itr/sec`  <dbl> 9.748656
-# #> $ mem_alloc  <bch:byt> 194MB
-# #> $ `gc/sec`   <dbl> 52.64274
-# #> $ n_itr      <int> 5
-# #> $ n_gc       <dbl> 27
-# #> $ total_time <bch:tm> 513ms
-# #> $ result     <list> [<2883, 837, w, FALSE, 3028, 4737, c, FALSE, 251, 186, c,…
-# #> $ memory     <list> [<Rprofmem[11770 x 3]>]
-# #> $ time       <list> [<104ms, 104.2ms, 97.1ms, 137.3ms, 70.3ms>]
-# #> $ gc         <list> [<tbl_df[5 x 3]>]
-# 
-# dplyr::glimpse(
-#   bench::mark(
-#     big_hypernet = as.network(big_hyper_edge_df, vertices = big_hyper_node_df,
-#                               hyper = TRUE, loops = TRUE),
-#   iterations = 5, filter_gc = FALSE
-#   )
-# )
-# #> Observations: 1
-# #> Variables: 13
-# #> $ expression <bch:expr> [<as.network(big_hyper_edge_df, vertices = big_hyper_…
-# #> $ min        <bch:tm> 674ms
-# #> $ median     <bch:tm> 710ms
-# #> $ `itr/sec`  <dbl> 1.426628
-# #> $ mem_alloc  <bch:byt> 820MB
-# #> $ `gc/sec`   <dbl> 30.52985
-# #> $ n_itr      <int> 5
-# #> $ n_gc       <dbl> 107
-# #> $ total_time <bch:tm> 3.5s
-# #> $ result     <list> [<3823, 119, 1694, 688, 3452, 3061, 2332, 1978, 2172, 407…
-# #> $ memory     <list> [<Rprofmem[21767 x 3]>]
-# #> $ time       <list> [<718ms, 674ms, 682ms, 710ms, 720ms>]
-# #> $ gc         <list> [<tbl_df[5 x 3]>]
+# test_that("deleted edges/vertices and na attributes are handled correctly", {
 
+  na_edge_df <- data.frame(.tail = c("b", "c", "c", "d", "d", "e"),
+                           .head = c("a", "b", "a", "a", "b", "a"),
+                           na = c(rep(FALSE, 5), TRUE),
+                           stringsAsFactors = FALSE)
+  na_vertex_df <- data.frame(vertex.names = letters[1:5],
+                             na = c(rep(FALSE, 4), TRUE),
+                             stringsAsFactors = FALSE)
+  
+  na_g <- as.network(na_edge_df, vertices = na_vertex_df)
+  
+  expect_identical(
+    as.data.frame(na_g, na.rm = FALSE, attrs_to_ignore = NULL),
+    na_edge_df
+  )
+  expect_identical(
+    as.data.frame(na_g, unit = "vertices", na.rm = FALSE, attrs_to_ignore = NULL),
+    na_vertex_df
+  )
+  
+  delete.edges(na_g, 1)
+  expect_identical(
+    `rownames<-`(na_edge_df[-c(1, which(na_edge_df$na)), ], NULL),
+    as.data.frame(na_g, attrs_to_ignore = NULL)
+  )
+  delete.vertices(na_g, 1)
+  expect_identical(
+    `rownames<-`(na_vertex_df[-c(1, which(na_vertex_df$na)), ], NULL),
+    as.data.frame(na_g, unit = "vertices", attrs_to_ignore = NULL)
+  )
+  
+# })

@@ -142,7 +142,7 @@ validate_vertices <- function(vertices, el_vert_ids) {
   }
   # check for vertex names that are in the edges, but are missing from `vertices` 
   missing_vertex_names <- setdiff(el_vert_ids, vertex_ids)
-  if (length(missing_vertex_names) > 0L) {
+  if (length(missing_vertex_names) != 0L) {
     stop("The following vertices are in `x`, but not in `vertices`:",
          paste("\n\t-", missing_vertex_names),
          call. = FALSE)
@@ -186,16 +186,18 @@ prep_bipartite_vertices <- function(vertices, el_vert_ids) {
   vertices[vertex_order, , drop = FALSE]
 }
 
+
+distribute_vec_attrs <- function(x) {
+  lapply(x, function(.x) {
+    if (is.atomic(.x)) lapply(.x, `attributes<-`, attributes(.x))
+    else .x
+  })
+}
+
 prep_edge_attrs <- function(edges) {
   edge_attr_names <- names(edges)[-(1:2)]
 
-  init_vals_eval <- lapply(
-    edges[, edge_attr_names, drop = FALSE], 
-    function(.x) {
-      if (is.atomic(.x)) lapply(.x, `attributes<-`, attributes(.x))
-      else .x
-    }
-  )
+  init_vals_eval <- distribute_vec_attrs(edges[, edge_attr_names, drop = FALSE])
   
   list(
     names_eval = rep(list(as.list(edge_attr_names)), times = nrow(edges)),
@@ -204,16 +206,11 @@ prep_edge_attrs <- function(edges) {
 }
 
 prep_vertex_attrs <- function(vertices) {
-  vertices[-1L] <- lapply(
-    vertices[-1L],
-    function(.x) {
-      if (is.atomic(.x)) lapply(.x, `attributes<-`, attributes(.x))
-      else .x
-    }
-  )
+  vertices[-1L] <- distribute_vec_attrs(vertices[-1L])
 
   vertices
 }
+
 
 #' @rdname network
 #'
@@ -308,6 +305,21 @@ prep_vertex_attrs <- function(vertices) {
 #' as.network(hyper_edge_df, directed = FALSE, vertices = simple_vertex_df, 
 #'            hyper = TRUE, loops = TRUE)
 #'
+#' # convert network objects back to data frames =========================================
+#' simple_g <- as.network(simple_edge_df, vertices = simple_vertex_df)
+#' as.data.frame(simple_g)
+#' as.data.frame(simple_g, unit = "vertices")
+#' 
+#' bip_g <- as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, 
+#'                     bipartite = TRUE)
+#' as.data.frame(bip_g)
+#' as.data.frame(bip_g, unit = "vertices")
+#' 
+#' hyper_g <- as.network(hyper_edge_df, directed = FALSE, vertices = simple_vertex_df, 
+#'                       hyper = TRUE, loops = TRUE)
+#' as.data.frame(hyper_g)
+#' as.data.frame(hyper_g, unit = "vertices")
+#' 
 #' @export as.network.data.frame
 #' @export
 as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
@@ -413,4 +425,123 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
   }
   
   out
+}
+
+
+is_vectorizable <- function(x) {
+  vapply(
+    x, 
+    function(.x) {
+      is_atomic_scalar <- vapply(
+        .x, function(.y) is.atomic(.y) && length(.y) == 1L, logical(1L)
+      )
+      
+      all(is_atomic_scalar)
+    }, 
+    logical(1L), USE.NAMES = FALSE
+  )
+}
+
+vectorize_safely <- function(x) {
+  to_vectorize <- is_vectorizable(x)
+  
+  x[to_vectorize] <- lapply(x[to_vectorize], function(.x) {
+    `attributes<-`(unlist(.x, use.names = FALSE), attributes(.x[[1L]]))
+  })
+  
+  x
+}
+
+as_edge_df <- function(x, attrs_to_ignore, na.rm, ...) {
+  if (network.edgecount(x) == 0L) {
+    return(data.frame())
+  }
+  
+  vertex_names <- network.vertex.names(x)
+  el_list <- list(
+    .tail = lapply(x$mel, function(.x) vertex_names[.x[["outl"]]]),
+    .head = lapply(x$mel, function(.x) vertex_names[.x[["inl"]]])
+  )
+  
+  # list.edge.attributes() sorts, meaning we can't test round-trips
+  edge_attr_names <- unique(unlist(lapply(lapply(x$mel, `[[`, "atl"), names), 
+                                   use.names = FALSE))
+  # extract attributes as-is (lists)
+  edge_attrs <- lapply(`names<-`(edge_attr_names, edge_attr_names), 
+                       function(.x) get.edge.attribute(x, .x, unlist = FALSE))
+  # any `NULL` "na" attrs are treated as missing
+  edge_attrs[["na"]] <- lapply(edge_attrs[["na"]],
+                               function(.x) if (is.null(.x)) TRUE else .x)
+  # skip base::as.data.frame()'s auto-unlisting behavior
+  out <- structure(
+    c(el_list, edge_attrs),
+    row.names = seq_along(el_list[[1L]]),
+    class = "data.frame"
+  )
+
+  if (na.rm) {
+    out <- out[!vapply(out$na, isTRUE, logical(1L)), ]
+    rownames(out) <- NULL
+  }
+  
+  out_cols <- setdiff(names(out), attrs_to_ignore)
+  vectorize_safely(
+    out[, out_cols, drop = FALSE]
+  )
+}
+
+as_vertex_df <- function(x, attrs_to_ignore, na.rm, ...) {
+  if (network.size(x) == 0L) {
+    return(data.frame())
+  }
+  # list.vertex.attributes() sorts the result, meaning we can't test round-trips
+  vertex_attr_names <- unique(unlist(lapply(x$val, names), use.names = FALSE))
+  
+  vertex_attrs <- lapply(`names<-`(vertex_attr_names, vertex_attr_names), 
+                         function(.x) get.vertex.attribute(x, .x, unlist = FALSE))
+  vertex_attrs[["na"]] <- lapply(vertex_attrs[["na"]],
+                                 function(.x) if (is.null(.x)) TRUE else .x)
+
+  out <- structure(
+    vertex_attrs,
+    row.names = seq_len(network.size(x)),
+    class = "data.frame"
+  )
+  
+  if (na.rm) {
+    out <- out[!vapply(out$na, isTRUE, logical(1L)), ]
+    rownames(out) <- NULL
+  }
+  
+  out_cols <- c("vertex.names", setdiff(names(out), c("vertex.names", attrs_to_ignore)))
+  vectorize_safely(
+    out[, out_cols, drop = FALSE]
+  )
+}
+
+
+#' Coerce a Network Object to a \code{data.frame}
+#' 
+#' The \code{as.data.frame} method coerces its input to a \code{data.frame} containing
+#' \code{x}'s edges or vertices.
+#' 
+#' @param x an object of class \code{network}
+#' @param ...  additional arguments
+#' @param unit whether a \code{data.frame} of edge or vertex attributes
+#' should be returned.
+#' @param na.rm logical; ignore missing entries when constructing the data frame?
+#' @param attrs_to_ignore character; a vector of attribute names to exclude from 
+#' the returned \code{data.frame} (Default: \code{"na"})
+#' 
+#' @export as.data.frame.network
+#' @export
+as.data.frame.network <- function(x, ..., unit = c("edges", "vertices"),
+                                  na.rm = TRUE,
+                                  attrs_to_ignore = "na") {
+  switch(match.arg(unit, c("edges", "vertices")),
+    edges = as_edge_df(x, attrs_to_ignore = attrs_to_ignore,
+                       na.rm = na.rm, ...),
+    vertices = as_vertex_df(x, attrs_to_ignore = attrs_to_ignore,
+                            na.rm = na.rm, ...)
+  )
 }
