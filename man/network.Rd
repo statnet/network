@@ -253,6 +253,21 @@ tibble::as_tibble(hyper_edge_df)
 as.network(hyper_edge_df, directed = FALSE, vertices = simple_vertex_df, 
            hyper = TRUE, loops = TRUE)
 
+# convert network objects back to data frames =========================================
+simple_g <- as.network(simple_edge_df, vertices = simple_vertex_df)
+as.data.frame(simple_g)
+as.data.frame(simple_g, unit = "vertices")
+
+bip_g <- as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, 
+                    bipartite = TRUE)
+as.data.frame(bip_g)
+as.data.frame(bip_g, unit = "vertices")
+
+hyper_g <- as.network(hyper_edge_df, directed = FALSE, vertices = simple_vertex_df, 
+                      hyper = TRUE, loops = TRUE)
+as.data.frame(hyper_g)
+as.data.frame(hyper_g, unit = "vertices")
+
 }
 \references{
 Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
