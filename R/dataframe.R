@@ -165,7 +165,7 @@
 }
 
 
-prep_bipartite_vertices <- function(vertices, el_vert_ids) {
+.prep_bipartite_vertices <- function(vertices, el_vert_ids) {
   # use "is_actor" column if provided
   if ("is_actor" %in% names(vertices)) {
     # check if `"is_actor"` column is valid
@@ -196,17 +196,17 @@ prep_bipartite_vertices <- function(vertices, el_vert_ids) {
 }
 
 
-distribute_vec_attrs <- function(x) {
+.distribute_vec_attrs <- function(x) {
   lapply(x, function(.x) {
     if (is.atomic(.x)) lapply(.x, `attributes<-`, attributes(.x))
     else .x
   })
 }
 
-prep_edge_attrs <- function(edges) {
+.prep_edge_attrs <- function(edges) {
   edge_attr_names <- names(edges)[-(1:2)]
 
-  init_vals_eval <- distribute_vec_attrs(edges[, edge_attr_names, drop = FALSE])
+  init_vals_eval <- .distribute_vec_attrs(edges[, edge_attr_names, drop = FALSE])
   
   list(
     names_eval = rep(list(as.list(edge_attr_names)), times = nrow(edges)),
@@ -214,9 +214,8 @@ prep_edge_attrs <- function(edges) {
   )
 }
 
-prep_vertex_attrs <- function(vertices) {
-  vertices[-1L] <- distribute_vec_attrs(vertices[-1L])
-
+.prep_vertex_attrs <- function(vertices) {
+  vertices[-1L] <- .distribute_vec_attrs(vertices[-1L])
   vertices
 }
 
@@ -363,7 +362,7 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
   
   # validate edges
   .validate_edge_df(edges = x, directed = directed, hyper = hyper, loops = loops,
-                 multiple = multiple, bipartite = bipartite)
+                    multiple = multiple, bipartite = bipartite)
   # create reference variables to reduce amount of code requiring brackets
   sources <- x[[1L]]
   targets <- x[[2L]]
@@ -382,7 +381,7 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
   } else { # if vertices are provided, use that order
     if (bipartite) { 
       # if bipartite, first reorder vertices so actors come before non-actors
-      vertices <- prep_bipartite_vertices(vertices, el_vert_ids = vertex_ids_in_el)
+      vertices <- .prep_bipartite_vertices(vertices, el_vert_ids = vertex_ids_in_el)
     }
     vertex_names <- vertices[[1L]]
   }
@@ -395,10 +394,10 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
   if (ncol(x) == 2L) {
     edge_attrs <- list(names_eval = NULL, vals_eval = NULL)
   } else {
-    edge_attrs <- prep_edge_attrs(x)
+    edge_attrs <- .prep_edge_attrs(x)
   }
 
-  # initialize network
+  # start building the network to return
   out <- network.initialize(
     n = length(vertex_names),
     directed = directed,
@@ -429,7 +428,7 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
       x = out,
       attrname = c("vertex.names",        # first column is always "vertex.names"
                    names(vertices)[-1L]), 
-      value = prep_vertex_attrs(vertices)
+      value = .prep_vertex_attrs(vertices)
     )
   }
   
@@ -485,7 +484,7 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
   # extract attributes as-is (lists)
   edge_attrs <- lapply(`names<-`(edge_attr_names, edge_attr_names), 
                        function(.x) get.edge.attribute(x, .x, unlist = FALSE))
-  # if not `TRUE`, "na" is always `FALSE` (in the event of `NULL`s or corrupted data)
+  # if not `TRUE`, "na" is assumed `FALSE` (in the event of `NULL`s or corrupted data)
   edge_attrs[["na"]] <- !vapply(edge_attrs[["na"]], isFALSE, logical(1L))
   
   # skip base::as.data.frame()'s auto-unlisting behavior
