@@ -674,12 +674,29 @@ library(testthat)
   
   empty_g <- network.initialize(0)
   expect_identical(
-    as.data.frame(empty_g),
-    data.frame()
+    nrow(as.data.frame(empty_g)),
+    0L
   )
   expect_identical(
-    as.data.frame(empty_g, unit = "vertices"),
-    data.frame()
+    ncol(as.data.frame(empty_g)),
+    2L
+  )
+  expect_identical(
+    ncol(as.data.frame(empty_g, attrs_to_ignore = NULL)),
+    3L
+  )
+  
+  expect_identical(
+    nrow(as.data.frame(empty_g, unit = "vertices")),
+    0L
+  )
+  expect_identical(
+    ncol(as.data.frame(empty_g, unit = "vertices")),
+    1L
+  )
+  expect_identical(
+    ncol(as.data.frame(empty_g, unit = "vertices", attrs_to_ignore = NULL)),
+    2L
   )
   
 # })

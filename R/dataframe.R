@@ -1,4 +1,12 @@
-validate_edges <- function(edges, directed, hyper, loops, multiple, bipartite, ...) {
+.head <- function(x, n = 6) {
+  # rather than import `utils::head()`
+  # `.head()` is used to limit the number of diagnostic lines that are printed in 
+  # error messages that tell users which values are invalid
+  n <- min(length(x), n)
+  x[seq_len(n)]
+}
+
+.validate_edge_df <- function(edges, directed, hyper, loops, multiple, bipartite, ...) {
   # confirm edge data frame has valid dimensions
   if (ncol(edges) < 2L || nrow(edges) == 0L) {
     stop("`x` should be a data frame with at least two columns and one row.",
@@ -21,7 +29,7 @@ validate_edges <- function(edges, directed, hyper, loops, multiple, bipartite, .
     # confirm that target_type is itself valid
     if (any(is.na(sources[[1L]])) || target_type %in% c("NULL", "list")) {
       stop("`x`'s first two columns contain invalid values.",
-           "\n\t- `x[[1]][[1]]` is either `NULL` or recursive, or it contains `NA` values.",
+           "\n\t- `x[[1]][[1]]` is `NULL`, recursive, or it contains `NA` values.",
            call. = FALSE)
     }
     # Iterate through edge columns, testing that they're not `NA` and are of the same type
@@ -37,7 +45,8 @@ validate_edges <- function(edges, directed, hyper, loops, multiple, bipartite, .
       incompat_cols <- col(incompat_types)[incompat_types]
       stop("The values in the first two columns of `x` must be of the same type and cannot be `NULL`, `NA`, or recursive values.",
            "\nThe following values are incompatible:",
-           paste("\n\t-", sprintf("`x[%d, %d]`", incompat_rows, incompat_cols)),
+           paste("\n\t-", sprintf("`x[%d, %d]`",
+                                  .head(incompat_rows), .head(incompat_cols))),
            call. = FALSE)
     }
     
@@ -79,7 +88,7 @@ validate_edges <- function(edges, directed, hyper, loops, multiple, bipartite, .
     if (length(loop_rows) > 0L) {
       stop("`loops` is `FALSE`, but `x` contains loops.",
            "\nThe following values are affected:",
-           paste("\n\t-", sprintf("`x[%d, 1:2]`", loop_rows)),
+           paste("\n\t-", sprintf("`x[%d, 1:2]`", .head(loop_rows))),
            call. = FALSE)
     }
   }
@@ -93,7 +102,7 @@ validate_edges <- function(edges, directed, hyper, loops, multiple, bipartite, .
       stop("`bipartite` is `TRUE`, but there are vertices that appear in both of the",
            " first two columns of `x`.\n",
            "The following vertices appear in both columns:",
-           paste("\n\t-", confused_nodes),
+           paste("\n\t-", .head(confused_nodes)),
            call. = FALSE)
     }
   }
@@ -110,14 +119,14 @@ validate_edges <- function(edges, directed, hyper, loops, multiple, bipartite, .
       parallel_edges <- which(duplicated(test_el))
       stop("`multiple` is `FALSE`, but `x` contains parallel edges.\n",
            "The following rows in `x` are duplicated:",
-           paste("\n\t-", sprintf("`x[%d, ]`", parallel_edges)),
+           paste("\n\t-", sprintf("`x[%s, ]`", .head(parallel_edges))),
            call. = FALSE)
     }
   }
 }
 
 
-validate_vertices <- function(vertices, el_vert_ids) {
+.validate_vertex_df <- function(vertices, el_vert_ids) {
   # confirm `vertices` is a data frame
   if (!is.data.frame(vertices)) {
     stop("If provided, `vertices` should be a data frame.",
@@ -144,13 +153,13 @@ validate_vertices <- function(vertices, el_vert_ids) {
   missing_vertex_names <- setdiff(el_vert_ids, vertex_ids)
   if (length(missing_vertex_names) != 0L) {
     stop("The following vertices are in `x`, but not in `vertices`:",
-         paste("\n\t-", missing_vertex_names),
+         paste("\n\t-", .head(missing_vertex_names)),
          call. = FALSE)
   }
   # check if any of the `vertices` have duplicate names
   if (anyDuplicated(vertex_ids) != 0L) {
     stop("The following vertex names are duplicated in `vertices`:",
-         paste("\n\t-", vertex_ids[duplicated(vertex_ids)]),
+         paste("\n\t-", .head(vertex_ids[duplicated(vertex_ids)])),
          call. = FALSE)
   }
 }
@@ -176,7 +185,7 @@ prep_bipartite_vertices <- function(vertices, el_vert_ids) {
       stop("`bipartite` is `TRUE`, but the `vertices` you provided contain names that are not present in `x` (i.e. you have isolates).",
            "\nIf you have isolates, `vertices` must have a `logical` column named \"is_actor\" indicating each vertex's type.",
            "\nThe following vertex names are in `vertices`, but not in `x`:",
-           paste("\n\t-", isolates))
+           paste("\n\t-", .head(isolates)))
     }
     # if there are no isolates, follow order of vertices as they appear in the edges
     vertex_order <- match(el_vert_ids, vertex_ids)
@@ -353,7 +362,7 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
   }
   
   # validate edges
-  validate_edges(edges = x, directed = directed, hyper = hyper, loops = loops,
+  .validate_edge_df(edges = x, directed = directed, hyper = hyper, loops = loops,
                  multiple = multiple, bipartite = bipartite)
   # create reference variables to reduce amount of code requiring brackets
   sources <- x[[1L]]
@@ -363,7 +372,7 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
   
   # validate vertices
   if (!is.null(vertices)) {
-    validate_vertices(vertices, el_vert_ids = vertex_ids_in_el)
+    .validate_vertex_df(vertices, el_vert_ids = vertex_ids_in_el)
   }
   
   # if vertices aren't provided, use the order in which they appear in the edges
@@ -428,7 +437,7 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
 }
 
 
-is_vectorizable <- function(x) {
+.is_vectorizable <- function(x) {
   vapply(
     x, 
     function(.x) {
@@ -442,8 +451,8 @@ is_vectorizable <- function(x) {
   )
 }
 
-vectorize_safely <- function(x) {
-  to_vectorize <- is_vectorizable(x)
+.vectorize_safely <- function(x) {
+  to_vectorize <- .is_vectorizable(x)
   
   x[to_vectorize] <- lapply(x[to_vectorize], function(.x) {
     `attributes<-`(unlist(.x, use.names = FALSE), attributes(.x[[1L]]))
@@ -452,9 +461,16 @@ vectorize_safely <- function(x) {
   x
 }
 
-as_edge_df <- function(x, attrs_to_ignore, na.rm, ...) {
+
+.as_edge_df <- function(x, attrs_to_ignore, na.rm, ...) {
   if (network.edgecount(x) == 0L) {
-    return(data.frame())
+    empty_edge_df <- structure(list(.tail = logical(), .head = logical(),
+                                    .na = logical()), 
+                               row.names = integer(), class = "data.frame")
+    if ("na" %in% attrs_to_ignore) {
+      empty_edge_df <- empty_edge_df[, c(".tail", ".head")]
+    }
+    return(empty_edge_df)
   }
   
   vertex_names <- network.vertex.names(x)
@@ -462,16 +478,16 @@ as_edge_df <- function(x, attrs_to_ignore, na.rm, ...) {
     .tail = lapply(x$mel, function(.x) vertex_names[.x[["outl"]]]),
     .head = lapply(x$mel, function(.x) vertex_names[.x[["inl"]]])
   )
-  
+
   # list.edge.attributes() sorts, meaning we can't test round-trips
   edge_attr_names <- unique(unlist(lapply(lapply(x$mel, `[[`, "atl"), names), 
                                    use.names = FALSE))
   # extract attributes as-is (lists)
   edge_attrs <- lapply(`names<-`(edge_attr_names, edge_attr_names), 
                        function(.x) get.edge.attribute(x, .x, unlist = FALSE))
-  # any `NULL` "na" attrs are treated as missing
-  edge_attrs[["na"]] <- lapply(edge_attrs[["na"]],
-                               function(.x) if (is.null(.x)) TRUE else .x)
+  # if not `TRUE`, "na" is always `FALSE` (in the event of `NULL`s or corrupted data)
+  edge_attrs[["na"]] <- !vapply(edge_attrs[["na"]], isFALSE, logical(1L))
+  
   # skip base::as.data.frame()'s auto-unlisting behavior
   out <- structure(
     c(el_list, edge_attrs),
@@ -480,19 +496,47 @@ as_edge_df <- function(x, attrs_to_ignore, na.rm, ...) {
   )
 
   if (na.rm) {
-    out <- out[!vapply(out$na, isTRUE, logical(1L)), ]
+    # drop NA edge rows
+    out <- out[!out$na, ]
+    # reset `rownames()` so they're sequential in returned object
     rownames(out) <- NULL
+
+  } else if (!is.hyper(x)) {
+    # replace empty ".tail" and ".head" with `NA` so that the columns can be safely
+    # vectorized for non-hyper edges when `na.rm` is `FALSE`
+    out[[1L]] <- lapply(out[[1L]], function(.x) if (length(.x) == 0L) NA else .x)
+    out[[2L]] <- lapply(out[[2L]], function(.x) if (length(.x) == 0L) NA else .x)
   }
   
-  out_cols <- setdiff(names(out), attrs_to_ignore)
-  vectorize_safely(
-    out[, out_cols, drop = FALSE]
-  )
+  cols_to_keep <- c(".tail", ".head", setdiff(names(edge_attrs), attrs_to_ignore))
+  out <- out[cols_to_keep]
+  
+  # if not hyper, `unlist()` ".tail" and ".head"
+  if (!is.hyper(x)) {
+    out[[1L]] <- unlist(out[[1L]])
+    out[[2L]] <- unlist(out[[2L]])
+  }
+
+  # safely vectorize non-edgelist columns
+  cols_to_vectorize <- !names(out) %in% c(".tail", ".head")
+  if (any(cols_to_vectorize)) { 
+    out[cols_to_vectorize] <- .vectorize_safely(
+      out[cols_to_vectorize]
+    )
+  }
+  
+  out
 }
 
-as_vertex_df <- function(x, attrs_to_ignore, na.rm, ...) {
+
+.as_vertex_df <- function(x, attrs_to_ignore, na.rm, ...) {
   if (network.size(x) == 0L) {
-    return(data.frame())
+    empty_vertex_df <- structure(list(vertex.names = logical(), na = logical()), 
+                                 class = "data.frame", row.names = c(integer()))
+    if ("na" %in% attrs_to_ignore) {
+      empty_vertex_df <- empty_vertex_df[, "vertex.names", drop = FALSE]
+    }
+    return(empty_vertex_df)
   }
   # list.vertex.attributes() sorts the result, meaning we can't test round-trips
   vertex_attr_names <- unique(unlist(lapply(x$val, names), use.names = FALSE))
@@ -514,7 +558,7 @@ as_vertex_df <- function(x, attrs_to_ignore, na.rm, ...) {
   }
   
   out_cols <- c("vertex.names", setdiff(names(out), c("vertex.names", attrs_to_ignore)))
-  vectorize_safely(
+  .vectorize_safely(
     out[, out_cols, drop = FALSE]
   )
 }
@@ -539,9 +583,13 @@ as.data.frame.network <- function(x, ..., unit = c("edges", "vertices"),
                                   na.rm = TRUE,
                                   attrs_to_ignore = "na") {
   switch(match.arg(unit, c("edges", "vertices")),
-    edges = as_edge_df(x, attrs_to_ignore = attrs_to_ignore,
-                       na.rm = na.rm, ...),
-    vertices = as_vertex_df(x, attrs_to_ignore = attrs_to_ignore,
-                            na.rm = na.rm, ...)
+    edges = .as_edge_df(x, attrs_to_ignore = attrs_to_ignore,
+                        na.rm = na.rm, ...),
+    vertices = .as_vertex_df(x, attrs_to_ignore = attrs_to_ignore,
+                             na.rm = na.rm, ...)
+    ,
+    # `match.arg()` used, so this should never be reached...
+    stop('`unit` must be one of `"edges"` or `"vertices".')
   )
 }
+
