@@ -143,7 +143,7 @@
     stop("The first column of `vertices` must be an atomic vector.",
          call. = FALSE)
   }
-  # confirm vertex IDs match type uses in edges
+  # confirm vertex IDs match type used in edges
   if (typeof(vertex_ids) != typeof(el_vert_ids)) {
     stop("The first column of `vertices` must be the same type as the value with which",
          " they are referenced in `x`'s first two columns.",
