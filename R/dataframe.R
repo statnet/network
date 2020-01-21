@@ -592,3 +592,4 @@ as.data.frame.network <- function(x, ..., unit = c("edges", "vertices"),
     stop('`unit` must be one of `"edges"` or `"vertices".')
   )
 }
+
