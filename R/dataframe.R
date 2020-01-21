@@ -462,16 +462,16 @@ as_edge_df <- function(x, attrs_to_ignore, na.rm, ...) {
     .tail = lapply(x$mel, function(.x) vertex_names[.x[["outl"]]]),
     .head = lapply(x$mel, function(.x) vertex_names[.x[["inl"]]])
   )
-  
+
   # list.edge.attributes() sorts, meaning we can't test round-trips
   edge_attr_names <- unique(unlist(lapply(lapply(x$mel, `[[`, "atl"), names), 
                                    use.names = FALSE))
   # extract attributes as-is (lists)
   edge_attrs <- lapply(`names<-`(edge_attr_names, edge_attr_names), 
                        function(.x) get.edge.attribute(x, .x, unlist = FALSE))
-  # any `NULL` "na" attrs are treated as missing
-  edge_attrs[["na"]] <- lapply(edge_attrs[["na"]],
-                               function(.x) if (is.null(.x)) TRUE else .x)
+  # if not `TRUE`, "na" is always `FALSE` (in the event of `NULL`s or corrupted data)
+  edge_attrs[["na"]] <- !vapply(edge_attrs[["na"]], isFALSE, logical(1L))
+  
   # skip base::as.data.frame()'s auto-unlisting behavior
   out <- structure(
     c(el_list, edge_attrs),
@@ -480,14 +480,36 @@ as_edge_df <- function(x, attrs_to_ignore, na.rm, ...) {
   )
 
   if (na.rm) {
-    out <- out[!vapply(out$na, isTRUE, logical(1L)), ]
+    # drop NA edge rows
+    out <- out[!out$na, ]
+    # reset `rownames()` so they're sequential in returned object
     rownames(out) <- NULL
+
+  } else if (!is.hyper(x)) {
+    # replace empty ".tail" and ".head" with `NA` so that the columns can be safely
+    # vectorized for non-hyper edges when `na.rm` is `FALSE`
+    out[[1L]] <- lapply(out[[1L]], function(.x) if (length(.x) == 0L) NA else .x)
+    out[[2L]] <- lapply(out[[2L]], function(.x) if (length(.x) == 0L) NA else .x)
   }
   
-  out_cols <- setdiff(names(out), attrs_to_ignore)
-  vectorize_safely(
-    out[, out_cols, drop = FALSE]
-  )
+  cols_to_keep <- c(".tail", ".head", setdiff(names(edge_attrs), attrs_to_ignore))
+  out <- out[cols_to_keep]
+  
+  # if not hyper, `unlist()` ".tail" and ".head"
+  if (!is.hyper(x)) {
+    out[[1L]] <- unlist(out[[1L]])
+    out[[2L]] <- unlist(out[[2L]])
+  }
+
+  # safely vectorize non-edgelist columns
+  cols_to_vectorize <- !names(out) %in% c(".tail", ".head")
+  if (any(cols_to_vectorize)) { 
+    out[cols_to_vectorize] <- vectorize_safely(
+      out[cols_to_vectorize]
+    )
+  }
+  
+  out
 }
 
 as_vertex_df <- function(x, attrs_to_ignore, na.rm, ...) {
