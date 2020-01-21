@@ -119,7 +119,7 @@
       parallel_edges <- which(duplicated(test_el))
       stop("`multiple` is `FALSE`, but `x` contains parallel edges.\n",
            "The following rows in `x` are duplicated:",
-           paste("\n\t-", sprintf("`x[%s, ]`", .head(parallel_edges))),
+           paste("\n\t-", sprintf("`x[%d, ]`", .head(parallel_edges))),
            call. = FALSE)
     }
   }
