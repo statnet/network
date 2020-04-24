@@ -12,9 +12,9 @@ set.edge.attribute(test,'weight',10:11)
 expect_equal(as.matrix.network.edgelist(test),structure(c(5L, 1L, 1L, 5L), .Dim = c(2L, 2L), n = 5, vnames = 1:5))
 # sort order should be different
 if(Sys.getenv("_R_CLASS_MATRIX_ARRAY_")==""){
-  expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist","matrix")))
+  expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("matrix_edgelist", "edgelist","matrix")))
 }else{
-  expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist","matrix","array")))
+  expect_equal(as.edgelist(test),structure(c(1L, 5L, 5L, 1L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("matrix_edgelist", "edgelist","matrix","array")))
 }
 
 expect_true(is.edgelist(as.edgelist(test)))
@@ -27,9 +27,9 @@ expect_equal(as.matrix.network.edgelist(test,attrname='value'),structure(c('5', 
 
 # character attribute with tibble output: does not make matrix character
 expect_equal(as.edgelist(test,attrname='value', output="tibble"),
-             structure(list(.tail = c(1L, 5L), .head = c(5L, 1L), .eid = 2:1, 
+             structure(list(.tail = c(1L, 5L), .head = c(5L, 1L),
                             value = c("b", "a")), row.names = c(NA, -2L),
-                       class = c("edgelist", "tbl_df", "tbl", "data.frame"),
+                       class = c("tibble_edgelist", "edgelist", "tbl_df", "tbl", "data.frame"),
                        n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE)
 )
 
@@ -47,8 +47,8 @@ deledge<-network.initialize(5)
 add.edges(deledge,1:3,2:4)
 delete.edges(deledge,2)
 if(Sys.getenv("_R_CLASS_MATRIX_ARRAY_")==""){
-  expect_equal(as.edgelist(deledge),structure(c(1L, 3L, 2L, 4L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist", "matrix")))
+  expect_equal(as.edgelist(deledge),structure(c(1L, 3L, 2L, 4L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("matrix_edgelist", "edgelist", "matrix")))
 }else{
-  expect_equal(as.edgelist(deledge),structure(c(1L, 3L, 2L, 4L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("edgelist", "matrix", "array")))
+  expect_equal(as.edgelist(deledge),structure(c(1L, 3L, 2L, 4L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("matrix_edgelist", "edgelist", "matrix", "array")))
 }
 

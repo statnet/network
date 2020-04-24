@@ -115,12 +115,12 @@ as.edgelist.matrix <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE
   if(!loops) x <- x[x[,1]!=x[,2],,drop=FALSE]
   if(bipartite) x <- x[(x[,1]<=bipartite)!=(x[,2]<=bipartite),,drop=FALSE]
   x <- unique(x[order(x[,1],x[,2]),,drop=FALSE])
-  attr(x,"n") <- n
+  attr(x,"n") <- as.integer(n)
   attr(x,"vnames")<- vnames
-  attr(x,"directed") <- directed
-  attr(x,"bipartite") <- bipartite
-  attr(x,"loops") <- loops
-  class(x)<-c('edgelist',class(x))
+  attr(x,"directed") <- as.logical(directed)
+  attr(x,"bipartite") <- if(is.numeric(bipartite)) as.integer(bipartite) else bipartite
+  attr(x,"loops") <- as.logical(loops)
+  class(x)<-c('matrix_edgelist','edgelist',class(x))
   x
 }
 
@@ -134,12 +134,12 @@ as.edgelist.tbl_df <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE
   if(!loops) x <- x[x$.tail!=x$.head,]
   if(bipartite) x <- x[(x$.tail<=bipartite)!=(x$.head<=bipartite),]
   x <- unique(x[order(x$.tail, x$.head),])
-  attr(x,"n") <- n
+  attr(x,"n") <- as.integer(n)
   attr(x,"vnames")<- vnames
-  attr(x,"directed") <- directed
-  attr(x,"bipartite") <- bipartite
-  attr(x,"loops") <- loops
-  class(x)<-c('edgelist',class(x))
+  attr(x,"directed") <- as.logical(directed)
+  attr(x,"bipartite") <- if(is.numeric(bipartite)) as.integer(bipartite) else bipartite
+  attr(x,"loops") <- as.logical(loops)
+  class(x)<-c('tibble_edgelist','edgelist',class(x))
   x
 }
 

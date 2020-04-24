@@ -6,14 +6,23 @@
 \alias{get.dyads.eids}
 \title{Retrieve Edges or Edge IDs Associated with a Given Vertex}
 \usage{
-get.edgeIDs(x, v, alter = NULL, neighborhood = c("out", "in",
-  "combined"), na.omit = TRUE)
+get.edgeIDs(
+  x,
+  v,
+  alter = NULL,
+  neighborhood = c("out", "in", "combined"),
+  na.omit = TRUE
+)
 
-get.edges(x, v, alter = NULL, neighborhood = c("out", "in",
-  "combined"), na.omit = TRUE)
+get.edges(
+  x,
+  v,
+  alter = NULL,
+  neighborhood = c("out", "in", "combined"),
+  na.omit = TRUE
+)
 
-get.dyads.eids(x, tails, heads, neighborhood = c("out", "in",
-  "combined"))
+get.dyads.eids(x, tails, heads, neighborhood = c("out", "in", "combined"))
 }
 \arguments{
 \item{x}{an object of class \code{network}}

@@ -4,8 +4,18 @@
 \alias{network.edgelabel}
 \title{Plots a label corresponding to an edge in a network plot.}
 \usage{
-network.edgelabel(px0, py0, px1, py1, label, directed, loops = FALSE,
-  cex, curve = 0, ...)
+network.edgelabel(
+  px0,
+  py0,
+  px1,
+  py1,
+  label,
+  directed,
+  loops = FALSE,
+  cex,
+  curve = 0,
+  ...
+)
 }
 \arguments{
 \item{px0}{vector of x coordinates of tail vertex of the edge}

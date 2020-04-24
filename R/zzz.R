@@ -14,10 +14,6 @@
 #
 ######################################################################
 
-.onLoad <-function(libname, pkgname){
-  library.dynam("network", package=pkgname, lib.loc=libname)
-}
-
 .onAttach <- function(libname, pkgname){
   temp<-packageDescription("network")
   msg<-paste(temp$Package,": ",temp$Title,"\n",

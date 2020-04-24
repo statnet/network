@@ -4,9 +4,23 @@
 \alias{network.loop}
 \title{Add Loops to a Plot}
 \usage{
-network.loop(x0, y0, length = 0.1, angle = 10, width = 0.01,
-  col = 1, border = 1, lty = 1, offset = 0, edge.steps = 10,
-  radius = 1, arrowhead = TRUE, xctr = 0, yctr = 0, ...)
+network.loop(
+  x0,
+  y0,
+  length = 0.1,
+  angle = 10,
+  width = 0.01,
+  col = 1,
+  border = 1,
+  lty = 1,
+  offset = 0,
+  edge.steps = 10,
+  radius = 1,
+  arrowhead = TRUE,
+  xctr = 0,
+  yctr = 0,
+  ...
+)
 }
 \arguments{
 \item{x0}{a vector of x coordinates for points of origin.}

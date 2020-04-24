@@ -9,8 +9,7 @@
 \alias{as.matrix.network.incidence}
 \title{Coerce a Network Object to Matrix or Table Form}
 \usage{
-\method{as.matrix}{network}(x, matrix.type = NULL, attrname = NULL,
-  ...)
+\method{as.matrix}{network}(x, matrix.type = NULL, attrname = NULL, ...)
 
 \method{as.matrix.network}{adjacency}(x, attrname=NULL, 
    expand.bipartite = FALSE, ...)
@@ -18,11 +17,23 @@
 \method{as.matrix.network}{edgelist}(x, attrname=NULL, 
    as.sna.edgelist = FALSE, na.rm = TRUE, ...)
 
-\method{as_tibble}{network}(x, attrnames = (match.arg(unit) ==
-  "vertices"), na.rm = TRUE, ..., unit = c("edges", "vertices"))
+\method{as_tibble}{network}(
+  x,
+  attrnames = (match.arg(unit) == "vertices"),
+  na.rm = TRUE,
+  ...,
+  unit = c("edges", "vertices"),
+  store.eid = FALSE
+)
 
-\method{as.tibble}{network}(x, attrnames = (match.arg(unit)=="vertices"), na.rm = TRUE, ...,
-   unit=c("edges","vertices"))
+as.tibble.network(
+  x,
+  attrnames = (match.arg(unit) == "vertices"),
+  na.rm = TRUE,
+  ...,
+  unit = c("edges", "vertices"),
+  store.eid = FALSE
+)
 
 \method{as.matrix.network}{incidence}(x, attrname=NULL, ...)
 }
@@ -54,6 +65,8 @@ as indices for selecting them from \code{\link{list.edge.attributes}(x)} or
 
 \item{unit}{whether a \code{\link{tibble}} of edge or vertex attributes
 should be returned.}
+
+\item{store.eid}{whether the edge ID should be stored in the third column (`.eid`).}
 }
 \value{
 For \code{as.matrix} methods, an adjacency, incidence, or edgelist

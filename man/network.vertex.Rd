@@ -4,8 +4,18 @@
 \alias{network.vertex}
 \title{Add Vertices to a Plot}
 \usage{
-network.vertex(x, y, radius = 1, sides = 4, border = 1, col = 2,
-  lty = NULL, rot = 0, lwd = 1, ...)
+network.vertex(
+  x,
+  y,
+  radius = 1,
+  sides = 4,
+  border = 1,
+  col = 2,
+  lty = NULL,
+  rot = 0,
+  lwd = 1,
+  ...
+)
 }
 \arguments{
 \item{x}{a vector of x coordinates.}
