@@ -4,7 +4,8 @@
 \name{emon}
 \alias{emon}
 \title{Interorganizational Search and Rescue Networks (Drabek et al.)}
-\format{A list of 7 \code{\link{network}} objects:
+\format{
+A list of 7 \code{\link{network}} objects:
 
  \tabular{rlll}{
    [[1]] \tab Cheyenne     \tab network \tab Cheyenne SAR EMON\cr
@@ -32,7 +33,8 @@ Each network also has 8 vertex attributes:
   Sponsorship         \tab character \tab Sponsorship type\cr
   vertex.names        \tab character \tab Organization name\cr
   Volunteer.Staff     \tab numeric   \tab Number of volunteer staff
- }}
+ }
+}
 \source{
 Drabek, T.E.; Tamminga, H.L.; Kilijanek, T.S.; and Adams, C.R.
 (1981).  \emph{Data from Managing Multiorganizational Emergency Responses:
