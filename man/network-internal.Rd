@@ -3,14 +3,6 @@
 \name{network-internal}
 \alias{network-internal}
 \alias{is.discrete.numeric}
-\alias{+}
-\alias{-}
-\alias{*}
-\alias{+.default}
-\alias{-.default}
-\alias{*.default}
-\alias{summary.character}
-\alias{print.summary.character}
 \alias{is.discrete.character}
 \alias{is.discrete}
 \alias{networkOperatorSetup}
