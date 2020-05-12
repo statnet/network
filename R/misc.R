@@ -17,27 +17,21 @@
 #
 # Contents:
 #
-#   as.color
-#   mixingmatrix
-#   network.density
-#   is.color
 #   is.discrete
 #   is.discrete.character
 #   is.discrete.numeric
-#   print.mixingmatrix
-#   which.matrix.type
 #
 ######################################################################
-
-
-#Given a vector of non-colors, try to coerce them into some reasonable
-#color format.  This may not work well, but what the hell....
-
 
 #' Transform vector of values into color specification
 #' 
 #' Convenience function to convert a vector of values into a color
 #' specification.
+#' 
+#' @param x vector of numeric, character or factor values to be transformed
+#' @param opacity optional numeric value in the range 0.0 to 1.0 used to specify
+#'   the opacity/transparency (alpha) of the colors to be returned. 0 means
+#'   fully opaque, 1 means fully transparent.
 #' 
 #' Behavior of \code{as.color} is as follows: \itemize{ \item integer numeric
 #' values: unchanged, (assumed to corespond to values of R's active
@@ -60,13 +54,13 @@
 #' These functions are used for the color parameters of
 #' \code{\link{plot.network}}.
 #' 
-#' @param x vector of numeric, character or factor values to be transformed
-#' @param opacity optional numeric value in the range 0.0 to 1.0 used to
-#' specify the opacity/transparency (alpha) of the colors to be returned. 0
-#' means fully opaque, 1 means fully transparent.
 #' @return For \code{as.color}, a vector integer values (corresponding to color
-#' palette values) or character color name. For \code{is.color}, a logical
-#' vector indicating if each element of x appears to be a color
+#'   palette values) or character color name. For \code{is.color}, a logical
+#'   vector indicating if each element of x appears to be a color
+#' 
+#' @rdname as.color
+#' @export
+#' 
 #' @examples
 #' 
 #' 
@@ -77,8 +71,6 @@
 #' as.color(c('red','green','blue'),0.5) # gives "#FF000080", "#00FF0080", "#0000FF80"
 #' 
 #' is.color(c('red',1,'foo',NA,'#FFFFFF55'))
-#' 
-#' @export as.color
 as.color<-function(x,opacity=1.0){
   if(opacity > 1 | opacity < 0){
     stop('opacity parameter must be a numeric value in the range 0 to 1')
@@ -111,33 +103,36 @@ as.color<-function(x,opacity=1.0){
 }
 
 
-#Return the mixing matrix for a network object, on a given attribute.  This
-#is a relocated function from the ergm package; it probably belongs elsewhere,
-#but is needed for the summary.network method (and in that sense is basic
-#enough to include.
-#' Internal Network Package Functions
+# Mixing matrix -----------------------------------------------------------
+
+#' Mixing matrix
 #' 
-#' Internal network functions.
+#' Return the mixing matrix for a network, on a given attribute.
 #' 
-#' Most of these are not to be called by the user.
-#' 
-#' @name network-internal
-#' 
-#' @aliases + - * +.default -.default *.default summary.character
-#' print.summary.character print.mixingmatrix
 #' @param object a network or some other data structure for which a mixing
-#' matrix is meaningful.
-#' @param x an object to be designated either discrete or continuous, or a
-#' network.
-#' @param attrname a vertex attribute name.
-#' @param y a network or something coercible to one.
-#' @param \dots further arguments passed to or used by methods.
-#' @seealso network
-#' @keywords internal
+#'   matrix is meaningful.
+#' @param ... further arguments passed to or used by methods.
+#' 
+#' 
+#' @rdname mixingmatrix
+#' @include constructors.R
 #' @export
+
 mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 
-#' @rdname network-internal
+
+# Return the mixing matrix for a network object, on a given attribute.  This is
+# a relocated function from the ergm package; it probably belongs elsewhere, but
+# is needed for the summary.network method (and in that sense is basic enough to
+# include.
+
+
+
+
+#' @rdname mixingmatrix
+#' 
+#' @param attrname a vertex attribute name.
+#' 
 #' @export
 mixingmatrix.network <- function(object, attrname, ...) {
   nw <- object
@@ -187,10 +182,8 @@ mixingmatrix.network <- function(object, attrname, ...) {
 }
 
 
-# Return the density of the given network.  (This probably won't stay in
-# this package....
-#
 
+# network.density ---------------------------------------------------------
 
 #' Compute the Density of a Network
 #' 
@@ -230,6 +223,7 @@ mixingmatrix.network <- function(object, attrname, ...) {
 #' g<-network.initialize(5)    #Initialize the network
 #' network.density(g)          #Calculate the density
 #' 
+#' @rdname network.density
 #' @export network.density
 network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   if(!is.network(x))
@@ -262,8 +256,13 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   ec/pe
 }
 
-# has.edges  checks if any of the specified vertex ids have edges (are not isolates)
 
+
+
+
+
+
+# has.edges ---------------------------------------------------------------
 
 #' Determine if specified vertices of a network have any edges (are not
 #' isolates)
@@ -285,6 +284,7 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
 #' has.edges(test)
 #' has.edges(test,v=5)
 #' 
+#' @rdname has.edges
 #' @export has.edges
 has.edges<-function(net,v=seq_len(network.size(net))){
   if(network.size(net)==0){
@@ -299,8 +299,16 @@ has.edges<-function(net,v=seq_len(network.size(net))){
 }
 
 
-#Returns TRUE if x is a character in a known color format
+
+
+# is.color ----------------------------------------------------------------
+
+
+
 #' @rdname as.color
+#' 
+#' @return \code{as.color()} returns TRUE if x is a character in a known color format.
+#' 
 #' @export
 is.color<-function(x){
   xic<-rep(FALSE,length(x))         #Assume not a color by default
@@ -312,6 +320,25 @@ is.color<-function(x){
   #Return the result
   xic
 }
+
+
+
+#' Internal Network Package Functions
+#' 
+#' Internal network functions.
+#' 
+#' Most of these are not to be called by the user.
+#' 
+#' @name network-internal
+#' 
+#' @param x an object to be designated either discrete or continuous, or a
+#' network.
+#' @param y a network or something coercible to one.
+#' @param \dots further arguments passed to or used by methods.
+#' 
+#' @seealso network
+#' 
+#' @keywords internal
 
 #' @rdname network-internal
 #' @export
@@ -332,8 +359,14 @@ is.discrete<-function(x){
 }
 
 
-#Print method for mixingmatrix objects
-#' @export print.mixingmatrix
+
+# print.mixingmatrix ------------------------------------------------------
+
+
+#' @rdname mixingmatrix
+#' 
+#' @param x mixingmatrix object
+#' 
 #' @export
 print.mixingmatrix <- function(x, ...) {
   m <- x$mat
@@ -360,6 +393,7 @@ print.mixingmatrix <- function(x, ...) {
 
 
 
+# which.matrix.type -------------------------------------------------------
 
 #' Heuristic Determination of Matrix Types for Network Storage
 #' 
@@ -395,6 +429,7 @@ print.mixingmatrix <- function(x, ...) {
 #'   which.matrix.type(as.matrix.network(g,matrix.type="incidence"))
 #'   which.matrix.type(as.matrix.network(g,matrix.type="edgelist"))
 #' 
+#' @rdname which.matrix.type
 #' @export which.matrix.type
 which.matrix.type<-function(x)
 {
