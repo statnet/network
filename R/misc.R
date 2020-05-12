@@ -30,8 +30,8 @@
 ######################################################################
 
 
-#Given a vector of non-colors, try to coerce them into some reasonable
-#color format.  This may not work well, but what the hell....
+# Given a vector of non-colors, try to coerce them into some reasonable color
+# format.  This may not work well, but what the hell....
 
 
 #' Transform vector of values into color specification
@@ -133,7 +133,6 @@ as.color<-function(x,opacity=1.0){
 # Return the density of the given network.  (This probably won't stay in
 # this package....
 #
-
 
 #' Compute the Density of a Network
 #' 
