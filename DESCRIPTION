@@ -24,6 +24,7 @@ URL: http://statnet.org/
 RoxygenNote: 7.1.1
 Collate:
     'access.R'
+    'as.color.R'
     'as.edgelist.R'
     'assignment.R'
     'coercion.R'
