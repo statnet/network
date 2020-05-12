@@ -31,13 +31,16 @@ Collate:
     'constructors.R'
     'dataframe.R'
     'fileio.R'
+    'has.edges.R'
     'layout.R'
     'misc.R'
     'mixingmatrix.R'
     'network-package.R'
+    'network.density.R'
     'operators.R'
     'plot.R'
     'printsum.R'
+    'which.matrix.type.R'
     'zzz.R'
 Encoding: UTF-8
 Remotes: github::statnet/statnet.common
