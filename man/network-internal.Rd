@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc.R, R/operators.R
 \name{network-internal}
 \alias{network-internal}
-\alias{mixingmatrix}
+\alias{network.density}
 \alias{+}
 \alias{-}
 \alias{*}
@@ -11,17 +11,13 @@
 \alias{*.default}
 \alias{summary.character}
 \alias{print.summary.character}
-\alias{print.mixingmatrix}
-\alias{mixingmatrix.network}
 \alias{is.discrete.numeric}
 \alias{is.discrete.character}
 \alias{is.discrete}
 \alias{networkOperatorSetup}
 \title{Internal Network Package Functions}
 \usage{
-mixingmatrix(object, ...)
-
-\method{mixingmatrix}{network}(object, attrname, ...)
+network.density(x, na.omit = TRUE, discount.bipartite = FALSE)
 
 is.discrete.numeric(x)
 
@@ -32,17 +28,20 @@ is.discrete(x)
 networkOperatorSetup(x, y = NULL)
 }
 \arguments{
-\item{object}{a network or some other data structure for which a mixing
-matrix is meaningful.}
+\item{x}{an object of class \code{network}}
 
-\item{\dots}{further arguments passed to or used by methods.}
+\item{na.omit}{logical; omit missing edges from extant edges when assessing
+density?}
 
-\item{attrname}{a vertex attribute name.}
-
-\item{x}{an object to be designated either discrete or continuous, or a
-network.}
+\item{discount.bipartite}{logical; if \code{x} is bipartite, should
+\dQuote{forbidden} edges be excluded from the count of potential edges?}
 
 \item{y}{a network or something coercible to one.}
+
+\item{\dots}{further arguments passed to or used by methods.}
+}
+\value{
+The network density.
 }
 \description{
 Internal network functions.
@@ -50,7 +49,78 @@ Internal network functions.
 \details{
 Most of these are not to be called by the user.
 }
+\section{Warning }{
+ \code{network.density} relies on network attributes (see
+\link{network.indicators}) to determine the properties of the underlying
+network object.  If these are set incorrectly (e.g., multiple edges in a
+non-multiplex network, network coded with directed edges but set to
+\dQuote{undirected}, etc.), surprising results may ensue.
+}
+
+\examples{
+
+#Create an arbitrary adjacency matrix
+m<-matrix(rbinom(25,1,0.5),5,5)
+diag(m)<-0
+
+g<-network.initialize(5)    #Initialize the network
+network.density(g)          #Calculate the density
+
+}
+\references{
+Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
+\url{http://www.jstatsoft.org/v24/i02/}
+
+Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods
+and Applications.} Cambridge: Cambridge University Press.
+}
 \seealso{
 network
+
+\code{\link{network.edgecount}}, \code{\link{network.size}}
 }
+\author{
+Carter T. Butts \email{buttsc@uci.edu}
+}
+\keyword{(but}
+\keyword{Compute}
+\keyword{Density}
+\keyword{Network}
+\keyword{The}
+\keyword{We}
+\keyword{\code{na.omit==TRUE}.}
+\keyword{\code{network.density}}
+\keyword{a}
+\keyword{are}
+\keyword{argument.}
+\keyword{as}
+\keyword{computes}
+\keyword{consider}
+\keyword{count}
+\keyword{currently}
+\keyword{defined}
+\keyword{density}
+\keyword{do}
+\keyword{edge}
+\keyword{edges}
+\keyword{edges.}
+\keyword{extant}
+\keyword{extent}
+\keyword{from}
+\keyword{graphs}
 \keyword{internal}
+\keyword{is}
+\keyword{its}
+\keyword{missing}
+\keyword{network}
+\keyword{not}
+\keyword{of}
+\keyword{omitted}
+\keyword{potential}
+\keyword{potential)}
+\keyword{ratio}
+\keyword{the}
+\keyword{to}
+\keyword{values;}
+\keyword{when}
