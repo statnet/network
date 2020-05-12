@@ -33,9 +33,6 @@
 #' 
 #' @name network-internal
 #' 
-#' @aliases + - * +.default -.default *.default summary.character
-#' print.summary.character
-#' 
 #' @param x an object to be designated either discrete or continuous, or a
 #' network.
 #' @param y a network or something coercible to one.
