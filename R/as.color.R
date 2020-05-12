@@ -75,3 +75,27 @@ as.color<-function(x,opacity=1.0){
   }
   return(colors)
 }
+
+
+
+
+
+
+
+
+
+#' @rdname as.color
+#' 
+#' @return \code{as.color()} returns TRUE if x is a character in a known color format.
+#' 
+#' @export
+is.color<-function(x){
+  xic<-rep(FALSE,length(x))         #Assume not a color by default
+  
+  xc<-sapply(x,is.character)        #Must be a character string
+  #For characters, must be a named color or a #RRGGBB/#RRGGBBAA sequence
+  xic[xc]<-(x[xc]%in%colors())| ((nchar(x[xc])%in%c(7,9))&(substr(x[xc],1,1)=="#"))
+  xic[is.na(x)]<-NA                 #Missing counts as missing
+  #Return the result
+  xic
+}
