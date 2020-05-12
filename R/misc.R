@@ -17,22 +17,11 @@
 #
 # Contents:
 #
-#   as.color
-#   mixingmatrix
-#   network.density
-#   is.color
 #   is.discrete
 #   is.discrete.character
 #   is.discrete.numeric
-#   print.mixingmatrix
-#   which.matrix.type
 #
 ######################################################################
-
-
-# Given a vector of non-colors, try to coerce them into some reasonable color
-# format.  This may not work well, but what the hell....
-
 
 
 
@@ -46,25 +35,15 @@
 #' 
 #' @aliases + - * +.default -.default *.default summary.character
 #' print.summary.character
+#' 
 #' @param x an object to be designated either discrete or continuous, or a
 #' network.
 #' @param y a network or something coercible to one.
 #' @param \dots further arguments passed to or used by methods.
+#' 
 #' @seealso network
+#' 
 #' @keywords internal
-
-
-
-# Return the density of the given network.  (This probably won't stay in
-# this package....
-#
-
-
-
-# has.edges  checks if any of the specified vertex ids have edges (are not isolates)
-
-
-
 
 #' @rdname network-internal
 #' @export
