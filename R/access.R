@@ -1738,7 +1738,7 @@ network.vertex.names<-function(x){
       return(NULL)
     vnames <- get.vertex.attribute(x,"vertex.names")
     if(is.null(vnames)  | all(is.na(vnames)) ){
-      paste(1:network.size(x))
+      as.character(1:network.size(x))
     }else{
       vnames
     }
