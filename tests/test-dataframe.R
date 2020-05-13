@@ -3,6 +3,49 @@ library(testthat)
 
 # context("as.network")
 
+# test_that("invalid or conflicting arguments throw", {
+  edge_df <- data.frame(from = 1:3, to = 4:6)
+  
+  expect_error(
+    as.network(edge_df, directed = "should be true or false"),
+    "The following arguments must be either `TRUE` or `FALSE`:\n\t- directed",
+    fixed = TRUE
+  )
+  expect_error(
+    as.network(edge_df, hyper = NULL),
+    "The following arguments must be either `TRUE` or `FALSE`:\n\t- hyper",
+    fixed = TRUE
+  )
+  expect_error(
+    as.network(edge_df, loops = NA),
+    "The following arguments must be either `TRUE` or `FALSE`:\n\t- loops",
+    fixed = TRUE
+  )
+  expect_error(
+    as.network(edge_df, bipartite = 1),
+    "The following arguments must be either `TRUE` or `FALSE`:\n\t- bipartite",
+    fixed = TRUE
+  )
+  
+  hyper_edge_df <- data.frame(from = c("a,b", "b,c"), to = c("c,d", "e,f"),
+                              stringsAsFactors = FALSE)
+  hyper_edge_df[] <- lapply(hyper_edge_df, strsplit, split = ",")
+  
+  expect_warning(
+    as.network(hyper_edge_df, hyper = TRUE, directed = FALSE),
+    "If `hyper` is `TRUE` and `directed` is `FALSE`, `loops` must be `TRUE`.",
+    fixed = TRUE
+  )
+  expect_error(
+    suppressWarnings(
+      as.network(hyper_edge_df, hyper = TRUE,
+                 bipartite = TRUE, loops = TRUE, directed = FALSE)
+    ),
+    "Both `hyper` and `bipartite` are `TRUE`, but bipartite hypergraphs are not supported.",
+    fixed = TRUE
+  )
+# }
+
 # test_that("simple networks are built correctly", {
   simple_edge_df <- data.frame(.tail = c("b", "c", "c", "d", "d", "e"),
                                .head = c("a", "b", "a", "a", "b", "a"),
@@ -266,7 +309,6 @@ library(testthat)
     vertex_df,
     as.data.frame(g_many_attrs, unit = "vertices")
   )
-  
 
 # })
 
@@ -734,3 +776,5 @@ library(testthat)
   )
   
 # })
+
+  
