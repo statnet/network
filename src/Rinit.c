@@ -6,6 +6,7 @@
 # Written by Jeffrey Horner <jeffrey.horner@gmail.com>
 # Last Modified 5/07/2016
 # Licensed under the GNU General Public License version 2 (June, 1991)
+# or greater
 #
 # Part of the R/network package
 #

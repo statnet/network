@@ -6,6 +6,7 @@
 #
 # Last Modified 11/30/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
+# or greater
 #
 # Part of the R/network package
 #

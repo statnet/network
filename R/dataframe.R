@@ -353,7 +353,7 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
     loops <- FALSE
   }
   if (hyper && !directed && !loops) {
-    warning("If `hyper` is `TRUE` and `directed` is `FALSE`, `loops` must be `TRUE`")
+    warning("If `hyper` is `TRUE` and `directed` is `FALSE`, `loops` must be `TRUE`.")
     loops <- TRUE
   }
   if (hyper && bipartite) {
