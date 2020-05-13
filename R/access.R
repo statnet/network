@@ -8,6 +8,7 @@
 #
 # Last Modified 02/24/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
+# or greater
 #
 # Part of the R/network package
 #
@@ -1737,7 +1738,7 @@ network.vertex.names<-function(x){
       return(NULL)
     vnames <- get.vertex.attribute(x,"vertex.names")
     if(is.null(vnames)  | all(is.na(vnames)) ){
-      paste(1:network.size(x))
+      as.character(1:network.size(x))
     }else{
       vnames
     }
