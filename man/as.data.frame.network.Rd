@@ -22,7 +22,7 @@ should be returned.}
 
 \item{na.rm}{logical; ignore missing entries when constructing the data frame?}
 
-\item{attrs_to_ignore}{character; a vector of attribute names to exclude from 
+\item{attrs_to_ignore}{character; a vector of attribute names to exclude from
 the returned \code{data.frame} (Default: \code{"na"})}
 }
 \description{

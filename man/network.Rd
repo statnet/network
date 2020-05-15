@@ -83,13 +83,13 @@ events). The edges are then interpreted as nondirected. Values of
 bipartite==0 are permited, indicating a bipartite network with zero-sized
 first partition.}
 
-\item{vertices}{If \code{x} is a \code{data.frame}, \code{vertices} is an optional 
-\code{data.frame} containing the vertex attributes. The first column is assigned 
+\item{vertices}{If \code{x} is a \code{data.frame}, \code{vertices} is an optional
+\code{data.frame} containing the vertex attributes. The first column is assigned
 to the \code{"vertex.names"} and additional columns are used to set vertex attributes
 using their column names. If \code{bipartite} is \code{TRUE}, a \code{logical} column
 named \code{"is_actor"} can be provided indicating which vertices should be considered
 as actors. If not provided, vertices referenced in the first column of \code{x} are
-assumed to be the network's actors. If your network has isolates (i.e. there are 
+assumed to be the network's actors. If your network has isolates (i.e. there are
 vertices referenced in \code{vertices} that are not referenced in \code{x}), the
 \code{"is_actor"} column is required.}
 
@@ -175,47 +175,61 @@ summary(h)
 
 # networks from data frames ===========================================================
 #* simple networks ====================================================================
-simple_edge_df <- data.frame(from = c("b", "c", "c", "d", "a"),
-                             to = c("a", "b", "a", "a", "b"),
-                             weight = c(1, 1, 2, 2, 3),
-                             stringsAsFactors = FALSE)
+simple_edge_df <- data.frame(
+  from = c("b", "c", "c", "d", "a"),
+  to = c("a", "b", "a", "a", "b"),
+  weight = c(1, 1, 2, 2, 3),
+  stringsAsFactors = FALSE
+)
 simple_edge_df
 
 as.network(simple_edge_df)
 
 # simple networks with vertices =======================================================
 simple_vertex_df <- data.frame(
- name = letters[1:5],
- residence = c("urban", "rural", "suburban", "suburban", "rural"),
- stringsAsFactors = FALSE
+  name = letters[1:5],
+  residence = c("urban", "rural", "suburban", "suburban", "rural"),
+  stringsAsFactors = FALSE
 )
 simple_vertex_df
 
 as.network(simple_edge_df, vertices = simple_vertex_df)
 
-as.network(simple_edge_df, directed = FALSE, vertices = simple_vertex_df,
-           multiple = TRUE)
+as.network(simple_edge_df,
+  directed = FALSE, vertices = simple_vertex_df,
+  multiple = TRUE
+)
 
 #* splitting multiplex data frames into multiple networks =============================
-simple_edge_df$relationship = c(rep("friends", 3), rep("colleagues", 2))
+simple_edge_df$relationship <- c(rep("friends", 3), rep("colleagues", 2))
 simple_edge_df
 
-lapply(split(simple_edge_df, f = simple_edge_df$relationship), 
-      as.network, vertices = simple_vertex_df)
+lapply(split(simple_edge_df, f = simple_edge_df$relationship),
+  as.network,
+  vertices = simple_vertex_df
+)
 
 #* bipartite networks without isolates ================================================
-bip_edge_df <- data.frame(actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
-                          event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
-                          actor_enjoyed_event = rep(c(TRUE, FALSE), 4),
-                          stringsAsFactors = FALSE)
+bip_edge_df <- data.frame(
+  actor = c("a", "a", "b", "b", "c", "d", "d", "e"),
+  event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
+  actor_enjoyed_event = rep(c(TRUE, FALSE), 4),
+  stringsAsFactors = FALSE
+)
 bip_edge_df
 
-bip_node_df <- data.frame(node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e"),
-                          node_type = c("person", "event", "person", "event", "person",
-                                        "event", "person", "person"),
-                          color = c("red", "blue", "red", "blue", "red", "blue",
-                                   "red", "red"),
-                          stringsAsFactors = FALSE)
+bip_node_df <- data.frame(
+  node_id = c("a", "e1", "b", "e2", "c", "e3", "d", "e"),
+  node_type = c(
+    "person", "event", "person", "event", "person",
+    "event", "person", "person"
+  ),
+  color = c(
+    "red", "blue", "red", "blue", "red", "blue",
+    "red", "red"
+  ),
+  stringsAsFactors = FALSE
+)
 bip_node_df
 
 as.network(bip_edge_df, directed = FALSE, bipartite = TRUE)
@@ -223,18 +237,22 @@ as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, bipartite = TR
 
 #* bipartite networks with isolates ===================================================
 bip_nodes_with_isolates <- rbind(
-  bip_node_df, 
-  data.frame(node_id = c("f", "e4"),
-             node_type = c("person", "event"),
-             color = c("red", "blue"),
-             stringsAsFactors = FALSE)
+  bip_node_df,
+  data.frame(
+    node_id = c("f", "e4"),
+    node_type = c("person", "event"),
+    color = c("red", "blue"),
+    stringsAsFactors = FALSE
+  )
 )
 # indicate which vertices are actors via a column named `"is_actor"`
 bip_nodes_with_isolates$is_actor <- bip_nodes_with_isolates$node_type == "person"
 bip_nodes_with_isolates
 
-as.network(bip_edge_df, directed = FALSE, vertices = bip_nodes_with_isolates, 
-           bipartite = TRUE)
+as.network(bip_edge_df,
+  directed = FALSE, vertices = bip_nodes_with_isolates,
+  bipartite = TRUE
+)
 
 #* hyper networks from data frames ====================================================
 hyper_edge_df <- data.frame(
@@ -250,24 +268,29 @@ hyper_edge_df$from <- strsplit(hyper_edge_df$from, split = "/")
 hyper_edge_df$to <- strsplit(hyper_edge_df$to, split = "/")
 tibble::as_tibble(hyper_edge_df)
 
-as.network(hyper_edge_df, directed = FALSE, vertices = simple_vertex_df, 
-           hyper = TRUE, loops = TRUE)
+as.network(hyper_edge_df,
+  directed = FALSE, vertices = simple_vertex_df,
+  hyper = TRUE, loops = TRUE
+)
 
 # convert network objects back to data frames =========================================
 simple_g <- as.network(simple_edge_df, vertices = simple_vertex_df)
 as.data.frame(simple_g)
 as.data.frame(simple_g, unit = "vertices")
 
-bip_g <- as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, 
-                    bipartite = TRUE)
+bip_g <- as.network(bip_edge_df,
+  directed = FALSE, vertices = bip_node_df,
+  bipartite = TRUE
+)
 as.data.frame(bip_g)
 as.data.frame(bip_g, unit = "vertices")
 
-hyper_g <- as.network(hyper_edge_df, directed = FALSE, vertices = simple_vertex_df, 
-                      hyper = TRUE, loops = TRUE)
+hyper_g <- as.network(hyper_edge_df,
+  directed = FALSE, vertices = simple_vertex_df,
+  hyper = TRUE, loops = TRUE
+)
 as.data.frame(hyper_g)
 as.data.frame(hyper_g, unit = "vertices")
-
 }
 \references{
 Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
