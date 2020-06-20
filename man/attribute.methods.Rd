@@ -3,50 +3,98 @@
 \name{attribute.methods}
 \alias{attribute.methods}
 \alias{delete.edge.attribute}
+\alias{delete.edge.attribute.network}
 \alias{delete.network.attribute}
+\alias{delete.network.attribute.network}
 \alias{delete.vertex.attribute}
+\alias{delete.vertex.attribute.network}
 \alias{get.edge.attribute}
+\alias{get.edge.attribute.network}
+\alias{get.edge.attribute.list}
 \alias{get.edge.value}
+\alias{get.edge.value.network}
+\alias{get.edge.value.list}
 \alias{get.network.attribute}
+\alias{get.network.attribute.network}
 \alias{get.vertex.attribute}
 \alias{get.vertex.attribute.network}
 \alias{list.edge.attributes}
+\alias{list.edge.attributes.network}
 \alias{list.network.attributes}
+\alias{list.network.attributes.network}
 \alias{list.vertex.attributes}
 \alias{list.vertex.attributes.network}
 \alias{network.vertex.names}
 \alias{network.vertex.names<-}
 \alias{set.edge.attribute}
+\alias{set.edge.attribute.network}
 \alias{set.edge.value}
+\alias{set.edge.value.network}
 \alias{set.network.attribute}
+\alias{set.network.attribute.network}
 \alias{set.vertex.attribute}
+\alias{set.vertex.attribute.network}
 \title{Attribute Interface Methods for the Network Class}
 \usage{
-delete.edge.attribute(x, attrname)
+delete.edge.attribute(x, attrname, ...)
 
-delete.network.attribute(x, attrname)
+\method{delete.edge.attribute}{network}(x, attrname, ...)
 
-delete.vertex.attribute(x, attrname)
+delete.network.attribute(x, attrname, ...)
 
-get.edge.attribute(
-  el,
-  attrname,
-  unlist = TRUE,
-  na.omit = FALSE,
-  null.na = FALSE,
-  deleted.edges.omit = FALSE
-)
+\method{delete.network.attribute}{network}(x, attrname, ...)
 
-get.edge.value(
+delete.vertex.attribute(x, attrname, ...)
+
+\method{delete.vertex.attribute}{network}(x, attrname, ...)
+
+get.edge.attribute(x, ...)
+
+\method{get.edge.attribute}{network}(
   x,
   attrname,
   unlist = TRUE,
   na.omit = FALSE,
   null.na = FALSE,
-  deleted.edges.omit = FALSE
+  deleted.edges.omit = FALSE,
+  ...
 )
 
-get.network.attribute(x, attrname, unlist = FALSE)
+\method{get.edge.attribute}{list}(
+  x,
+  attrname,
+  unlist = TRUE,
+  na.omit = FALSE,
+  null.na = FALSE,
+  deleted.edges.omit = FALSE,
+  ...
+)
+
+get.edge.value(x, ...)
+
+\method{get.edge.value}{network}(
+  x,
+  attrname,
+  unlist = TRUE,
+  na.omit = FALSE,
+  null.na = FALSE,
+  deleted.edges.omit = FALSE,
+  ...
+)
+
+\method{get.edge.value}{list}(
+  x,
+  attrname,
+  unlist = TRUE,
+  na.omit = FALSE,
+  null.na = FALSE,
+  deleted.edges.omit = FALSE,
+  ...
+)
+
+get.network.attribute(x, ...)
+
+\method{get.network.attribute}{network}(x, attrname, unlist = FALSE, ...)
 
 get.vertex.attribute(x, ...)
 
@@ -59,9 +107,13 @@ get.vertex.attribute(x, ...)
   ...
 )
 
-list.edge.attributes(x)
+list.edge.attributes(x, ...)
 
-list.network.attributes(x)
+\method{list.edge.attributes}{network}(x, ...)
+
+list.network.attributes(x, ...)
+
+\method{list.network.attributes}{network}(x, ...)
 
 list.vertex.attributes(x, ...)
 
@@ -71,21 +123,29 @@ network.vertex.names(x)
 
 network.vertex.names(x) <- value
 
-set.edge.attribute(x, attrname, value, e = seq_along(x$mel))
+set.edge.attribute(x, attrname, value, e, ...)
 
-set.edge.value(x, attrname, value, e = seq_along(x$mel))
+\method{set.edge.attribute}{network}(x, attrname, value, e = seq_along(x$mel), ...)
 
-set.network.attribute(x, attrname, value)
+set.edge.value(x, attrname, value, e, ...)
 
-set.vertex.attribute(x, attrname, value, v = seq_len(network.size(x)))
+\method{set.edge.value}{network}(x, attrname, value, e = seq_along(x$mel), ...)
+
+set.network.attribute(x, attrname, value, ...)
+
+\method{set.network.attribute}{network}(x, attrname, value, ...)
+
+set.vertex.attribute(x, attrname, value, v = seq_len(network.size(x)), ...)
+
+\method{set.vertex.attribute}{network}(x, attrname, value, v = seq_len(network.size(x)), ...)
 }
 \arguments{
-\item{x}{an object of class \code{network}.}
+\item{x}{an object of class \code{network}, or a list of edges 
+(possibly \code{network$mel}) in \code{get.edge.attribute}.}
 
 \item{attrname}{the name of the attribute to get or set.}
 
-\item{el}{a list of edges (possibly \code{network$mel}), or an object of 
-class \code{network} from which the full list of edges will be extracted}
+\item{...}{additional arguments}
 
 \item{unlist}{logical; should retrieved attribute values be 
 \code{\link{unlist}}ed prior to being returned?}
@@ -99,8 +159,6 @@ in output?}
 
 \item{deleted.edges.omit}{logical: should the elements corresponding to 
 deleted edges be removed?}
-
-\item{...}{additional arguments}
 
 \item{value}{values of the attribute to be set; these should be in 
 \code{vector} or \code{list} form for the \code{edge} and \code{vertex}
