@@ -48,7 +48,7 @@ delete.vertex.attribute(x, attrname, ...)
 
 \method{delete.vertex.attribute}{network}(x, attrname, ...)
 
-get.edge.attribute(x, ...)
+get.edge.attribute(x, ..., el)
 
 \method{get.edge.attribute}{network}(
   x,
@@ -57,7 +57,8 @@ get.edge.attribute(x, ...)
   na.omit = FALSE,
   null.na = FALSE,
   deleted.edges.omit = FALSE,
-  ...
+  ...,
+  el
 )
 
 \method{get.edge.attribute}{list}(
@@ -67,7 +68,8 @@ get.edge.attribute(x, ...)
   na.omit = FALSE,
   null.na = FALSE,
   deleted.edges.omit = FALSE,
-  ...
+  ...,
+  el
 )
 
 get.edge.value(x, ...)
@@ -146,6 +148,8 @@ set.vertex.attribute(x, attrname, value, v = seq_len(network.size(x)), ...)
 \item{attrname}{the name of the attribute to get or set.}
 
 \item{...}{additional arguments}
+
+\item{el}{Deprecated; use \code{x} instead.}
 
 \item{unlist}{logical; should retrieved attribute values be 
 \code{\link{unlist}}ed prior to being returned?}
