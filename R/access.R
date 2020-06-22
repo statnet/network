@@ -395,6 +395,7 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
 #'
 #' @param x an object of class \code{network}, or a list of edges 
 #'          (possibly \code{network$mel}) in \code{get.edge.attribute}.
+#' @param el Deprecated; use \code{x} instead.
 #' @param attrname the name of the attribute to get or set.
 #' @param unlist logical; should retrieved attribute values be 
 #'   \code{\link{unlist}}ed prior to being returned?
@@ -658,13 +659,20 @@ delete.vertices<-function(x,vid){
 #
 #' @rdname attribute.methods
 #' @export
-get.edge.attribute <- function(x, ...) {
-  UseMethod("get.edge.attribute")
+get.edge.attribute <- function(x, ..., el) {
+  if(!missing(el)) {
+    warning("Argument ", sQuote("el"), " to ", sQuote("get.edge.attribute"), " is deprecated and will be removed in a future version.  Use ", sQuote("x"), " instead.")
+    UseMethod("get.edge.attribute", object = el)
+  } else {
+    UseMethod("get.edge.attribute", object = x)
+  }
 }
 
 #' @rdname attribute.methods
 #' @export
-get.edge.attribute.network <- function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=FALSE, deleted.edges.omit=FALSE, ...) {
+get.edge.attribute.network <- function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=FALSE, deleted.edges.omit=FALSE, ..., el) {
+  if(!missing(el)) x <- el
+  
   if (is.network(x)) x <- x$mel
 
   if (!is.list(x))
