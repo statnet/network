@@ -1,4 +1,6 @@
 CHANGELOG:
+v1.17
+  - Converted get.edge.attribute, get.edge.value, get.network.attribute, list.edge.attributes, list.network.attributes, set.vertex.attribute, set.edge.attribute, set.edge.value, set.network.attribute, delete.vertex.attribute, delete.edge.attribute, and delete.network.attribute to generics for greater extensibility.
 v1.16
   - Converted get.vertex.attribute and list.vertex.attributes to generics for greater extensibility.
   - Updated tests to fix a color-related issue.

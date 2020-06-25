@@ -1,6 +1,6 @@
 Package: network
-Version: 1.17.0-412
-Date: 2020-03-27
+Version: 1.17.0-413
+Date: 2020-06-20
 Title: Classes for Relational Data
 Authors@R: c(
     person("Carter T.", "Butts", role=c("aut","cre"), email="buttsc@uci.edu"),
@@ -19,7 +19,7 @@ Suggests:
 Description: Tools to create and modify network objects.  The network class can represent a range of relational data types, and supports arbitrary vertex/edge/graph attributes.
 License: GPL (>=2)
 URL: http://statnet.org/
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Collate:
     'access.R'
     'as.edgelist.R'
