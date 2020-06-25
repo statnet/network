@@ -345,7 +345,7 @@ summary.network<-function(object, na.omit=TRUE, mixingmatrices=FALSE, print.adj=
   object%n%"summary.na.omit"<-na.omit
   object%n%"summary.mixingmatrices"<-mixingmatrices
   object%n%"summary.print.adj"<-print.adj
-  class(object)<-"summary.network"
+  class(object)<-c("summary.network", class(object))
   #Return the object
   object
 }
