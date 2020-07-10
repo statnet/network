@@ -41,6 +41,7 @@ network.copy(x)
   loops = FALSE,
   multiple = FALSE,
   bipartite = FALSE,
+  bipartite_col = "is_actor",
   ...
 )
 
@@ -87,11 +88,16 @@ first partition.}
 \code{data.frame} containing the vertex attributes. The first column is assigned
 to the \code{"vertex.names"} and additional columns are used to set vertex attributes
 using their column names. If \code{bipartite} is \code{TRUE}, a \code{logical} column
-named \code{"is_actor"} can be provided indicating which vertices should be considered
-as actors. If not provided, vertices referenced in the first column of \code{x} are
-assumed to be the network's actors. If your network has isolates (i.e. there are
-vertices referenced in \code{vertices} that are not referenced in \code{x}), the
-\code{"is_actor"} column is required.}
+named \code{"is_actor"} (or the name of a column specified using the
+\code{bipartite_col} parameter) can be provided indicating which vertices
+should be considered as actors. If not provided, vertices referenced in the
+first column of \code{x} are assumed to be the network's actors. If your
+network has isolates (i.e. there are vertices referenced in \code{vertices}
+that are not referenced in \code{x}), the \code{"is_actor"} column is required.}
+
+\item{bipartite_col}{\code{character(1L)}, default: \code{"is_actor"}.
+The name of the \code{logical} column indicating which vertices should be
+considered as actors in bipartite networks.}
 
 \item{matrix.type}{one of \code{"adjacency"}, \code{"edgelist"},
 \code{"incidence"}. See \code{\link{edgeset.constructors}} for details and

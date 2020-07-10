@@ -1,7 +1,16 @@
+#' @importFrom statnet.common once
+.warn_bipartite_vertex_reorder <- once(
+  function() {
+    warning(
+      "`vertices` were not provided in the order required for bipartite networks. Reordering.",
+      "\n\nThis is the first and last time you will be warned during this session.",
+      call. = FALSE
+    )
+  }
+)
+
+
 .head <- function(x, n = 6) {
-  # rather than import `utils::head()`
-  # `.head()` is used to limit the number of diagnostic lines that are printed in
-  # error messages that tell users which values are invalid
   n <- min(length(x), n)
   x[seq_len(n)]
 }
@@ -198,18 +207,23 @@
 }
 
 
-.prep_bipartite_vertices <- function(vertices, el_vert_ids) {
+.prep_bipartite_vertices <- function(vertices, el_vert_ids, bipartite_col) {
   # use "is_actor" column if provided
-  if ("is_actor" %in% names(vertices)) {
+  if (bipartite_col %in% names(vertices)) {
     # check if `"is_actor"` column is valid
-    if (!is.logical(vertices[["is_actor"]]) || any(is.na(vertices[["is_actor"]]))) {
+    if (!is.logical(vertices[[bipartite_col]]) || any(is.na(vertices[[bipartite_col]]))) {
       stop(
-        "`bipartite` is `TRUE` and vertex types are specified via a column in `vertices` named `\"is_actor\"`.",
-        "\n\t- If provided, all values in `vertices[[\"is_actor\"]]` must be `TRUE` or `FALSE`."
+        sprintf(
+          paste0(
+          '`bipartite` is `TRUE` and vertex types are specified via a column in `vertices` named `"%s"`.',
+          '\n\t- If provided, all values in `vertices[["%s"]]` must be `TRUE` or `FALSE`.'
+          ),
+          bipartite_col, bipartite_col
+        )
       )
     }
     # actors (`TRUE`) go before non-actors (`FALSE`)
-    vertex_order <- order(vertices[["is_actor"]], decreasing = TRUE)
+    vertex_order <- order(vertices[[bipartite_col]], decreasing = TRUE)
   } else { # if no "is_actor" column is provided...
     vertex_ids <- vertices[[1L]]
     # ... check for isolates...
@@ -217,9 +231,12 @@
     # ... and throw error informing user of which vertices are isolates
     if (length(isolates) > 0L) {
       stop(
-        "`bipartite` is `TRUE`, but the `vertices` you provided contain names that are not present in `x` (i.e. you have isolates).",
-        "\nIf you have isolates, `vertices` must have a `logical` column named \"is_actor\" indicating each vertex's type.",
-        "\nThe following vertex names are in `vertices`, but not in `x`:",
+        sprintf(
+          "`bipartite` is `TRUE`, but the `vertices` you provided contain names that are not present in `x` (i.e. you have isolates).",
+          "\nIf you have isolates, `vertices` must have a `logical` column named \"%s\" indicating each vertex's type.",
+          "\nThe following vertex names are in `vertices`, but not in `x`:",
+          bipartite_col
+        ),
         paste("\n\t-", .head(isolates))
       )
     }
@@ -227,6 +244,9 @@
     vertex_order <- match(el_vert_ids, vertex_ids)
   }
 
+  if (!identical(vertices[[1L]], vertices[[1L]][vertex_order])) {
+    .warn_bipartite_vertex_reorder()
+  }
   # reorder the vertex rows to match the actor/non-actor order of the final network
   vertices[vertex_order, ]
 }
@@ -265,11 +285,16 @@
 #' \code{data.frame} containing the vertex attributes. The first column is assigned
 #' to the \code{"vertex.names"} and additional columns are used to set vertex attributes
 #' using their column names. If \code{bipartite} is \code{TRUE}, a \code{logical} column
-#' named \code{"is_actor"} can be provided indicating which vertices should be considered
-#' as actors. If not provided, vertices referenced in the first column of \code{x} are
-#' assumed to be the network's actors. If your network has isolates (i.e. there are
-#' vertices referenced in \code{vertices} that are not referenced in \code{x}), the
-#' \code{"is_actor"} column is required.
+#' named \code{"is_actor"} (or the name of a column specified using the
+#' \code{bipartite_col} parameter) can be provided indicating which vertices
+#' should be considered as actors. If not provided, vertices referenced in the
+#' first column of \code{x} are assumed to be the network's actors. If your
+#' network has isolates (i.e. there are vertices referenced in \code{vertices}
+#' that are not referenced in \code{x}), the \code{"is_actor"} column is required.
+#'
+#' @param bipartite_col \code{character(1L)}, default: \code{"is_actor"}.
+#' The name of the \code{logical} column indicating which vertices should be
+#' considered as actors in bipartite networks.
 #'
 #' @examples
 #' # networks from data frames ===========================================================
@@ -392,9 +417,15 @@
 #' as.data.frame(hyper_g, unit = "vertices")
 #' @export as.network.data.frame
 #' @export
-as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
-                                  hyper = FALSE, loops = FALSE, multiple = FALSE,
-                                  bipartite = FALSE, ...) {
+as.network.data.frame <- function(x,
+                                  directed = TRUE,
+                                  vertices = NULL,
+                                  hyper = FALSE,
+                                  loops = FALSE,
+                                  multiple = FALSE,
+                                  bipartite = FALSE,
+                                  bipartite_col = "is_actor",
+                                  ...) {
   # validate network type args
   invalid_network_args <- vapply(
     list(
@@ -409,6 +440,10 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
       "The following arguments must be either `TRUE` or `FALSE`:",
       paste("\n\t-", names(invalid_network_args)[invalid_network_args])
     )
+  }
+
+  if (length(bipartite_col) != 1L || !is.character(bipartite_col) || is.na(bipartite_col)) {
+    stop("`bipartite_col` must be a single, non-`NA` `character` value.")
   }
 
   # handle incompatible network type args
@@ -452,7 +487,9 @@ as.network.data.frame <- function(x, directed = TRUE, vertices = NULL,
   } else { # if vertices are provided, use that order
     if (bipartite) {
       # if bipartite, first reorder vertices so actors come before non-actors
-      vertices <- .prep_bipartite_vertices(vertices, el_vert_ids = vertex_ids_in_el)
+      vertices <- .prep_bipartite_vertices(vertices,
+                                           el_vert_ids = vertex_ids_in_el,
+                                           bipartite_col = bipartite_col)
     }
     vertex_names <- vertices[[1L]]
   }
@@ -668,10 +705,10 @@ as.data.frame.network <- function(x, ..., unit = c("edges", "vertices"),
                                   na.rm = TRUE,
                                   attrs_to_ignore = "na") {
   if (inherits(x, "network", which = TRUE) != length(class(x))) {
-    warning(
+    warning( # nocov start
       '`x` may not correctly inherit from class "network".',
       sprintf("\n\t- `class(x)`: `%s", deparse(class(x)))
-    )
+    )        # nocov end
   }
 
   switch(match.arg(unit, c("edges", "vertices")),
@@ -688,6 +725,6 @@ as.data.frame.network <- function(x, ..., unit = c("edges", "vertices"),
       ...
     ),
     # `match.arg()` used, so this should never be reached...
-    stop('`unit` must be one of `"edges"` or `"vertices".')
+    stop('`unit` must be one of `"edges"` or `"vertices".') # nocov
   )
 }

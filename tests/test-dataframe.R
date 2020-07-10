@@ -5,7 +5,7 @@ library(testthat)
 
 # test_that("invalid or conflicting arguments throw", {
   edge_df <- data.frame(from = 1:3, to = 4:6)
-  
+
   expect_error(
     as.network(edge_df, directed = "should be true or false"),
     "The following arguments must be either `TRUE` or `FALSE`:\n\t- directed",
@@ -26,11 +26,11 @@ library(testthat)
     "The following arguments must be either `TRUE` or `FALSE`:\n\t- bipartite",
     fixed = TRUE
   )
-  
+
   hyper_edge_df <- data.frame(from = c("a,b", "b,c"), to = c("c,d", "e,f"),
                               stringsAsFactors = FALSE)
   hyper_edge_df[] <- lapply(hyper_edge_df, strsplit, split = ",")
-  
+
   expect_warning(
     as.network(hyper_edge_df, hyper = TRUE, directed = FALSE),
     "If `hyper` is `TRUE` and `directed` is `FALSE`, `loops` must be `TRUE`.",
@@ -62,7 +62,7 @@ library(testthat)
     as.network(x = simple_edge_df, vertices = simple_vertex_df),
     "network"
   )
-  
+
   expect_true(
     is.directed(as.network(x = simple_edge_df))
   )
@@ -75,7 +75,7 @@ library(testthat)
   expect_false(
     is.multiplex(as.network(x = simple_edge_df))
   )
-  
+
   expect_equal(
     network.edgecount(as.network(x = simple_edge_df)),
     nrow(simple_edge_df)
@@ -84,23 +84,23 @@ library(testthat)
     network.size(as.network(x = simple_edge_df)),
     nrow(simple_vertex_df)
   )
-  
+
   simple_g <- as.network(x = simple_edge_df, vertices = simple_vertex_df)
   delete.edges(simple_g, 2)
   expect_identical(
     `rownames<-`(simple_edge_df[-2, ], NULL),
     as.data.frame(simple_g)
   )
-  
+
   delete.vertices(simple_g, 2)
   expect_identical(
     `rownames<-`(simple_vertex_df[-2, , drop = FALSE], NULL),
     as.data.frame(simple_g, unit = "vertices")
   )
-  
+
 # })
 
-  
+
 # test_that("simple and complex edge/vertex/R-object attributes are safely handled", {
   vertex_df <- data.frame(name = letters[5:1],
                           lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE),
@@ -123,16 +123,16 @@ library(testthat)
     structure(c(1, 2, 3), class = c("XY", "POINT", "sfg")),
     structure(1:10, .Dim = c(5L, 2L), class = c("XY", "MULTIPOINT", "sfg")),
     structure(1:10, .Dim = c(5L, 2L), class = c("XY", "LINESTRING", "sfg")),
-    structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)), 
-                   structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)), 
-                   structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
-              class = c("XY", "MULTILINESTRING", "sfg")),
-    structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0),.Dim = c(5L, 2L)), 
+    structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)),
                    structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)),
-                   structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
+                   structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))),
+              class = c("XY", "MULTILINESTRING", "sfg")),
+    structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0),.Dim = c(5L, 2L)),
+                   structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)),
+                   structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))),
               class = c("XY", "POLYGON", "sfg"))
   )
-  
+
   edge_df <- data.frame(from = c("b", "c", "c", "d", "d", "e"),
                         to = c("a", "b", "a", "a", "b", "a"),
                         lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
@@ -154,25 +154,25 @@ library(testthat)
     structure(c(1, 2, 3), class = c("XY", "POINT", "sfg")),
     structure(1:10, .Dim = c(5L, 2L), class = c("XY", "MULTIPOINT", "sfg")),
     structure(1:10, .Dim = c(5L, 2L), class = c("XY", "LINESTRING", "sfg")),
-    structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)), 
-                   structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)), 
-                   structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
-              class = c("XY", "MULTILINESTRING", "sfg")),
-    structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0),.Dim = c(5L, 2L)), 
+    structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)),
                    structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)),
-                   structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
+                   structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))),
+              class = c("XY", "MULTILINESTRING", "sfg")),
+    structure(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0),.Dim = c(5L, 2L)),
+                   structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)),
+                   structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))),
               class = c("XY", "POLYGON", "sfg")),
-    structure(list(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)), 
-                        structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)), 
-                        structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))), 
-                   list(structure(c(12, 22, 22, 12, 12, 12, 12, 22, 22, 12), .Dim = c(5L, 2L)), 
-                        structure(c(13, 13, 14, 14, 13, 13, 14, 14, 13, 13), .Dim = c(5L, 2L))), 
-                   list(structure(c(24, 34, 34, 24, 24, 24, 24, 34, 34, 24), .Dim = c(5L, 2L)))), 
+    structure(list(list(structure(c(0, 10, 10, 0, 0, 0, 0, 10, 10, 0), .Dim = c(5L, 2L)),
+                        structure(c(1, 1, 2, 2, 1, 1, 2, 2, 1, 1), .Dim = c(5L, 2L)),
+                        structure(c(5, 5, 6, 6, 5, 5, 6, 6, 5, 5), .Dim = c(5L, 2L))),
+                   list(structure(c(12, 22, 22, 12, 12, 12, 12, 22, 22, 12), .Dim = c(5L, 2L)),
+                        structure(c(13, 13, 14, 14, 13, 13, 14, 14, 13, 13), .Dim = c(5L, 2L))),
+                   list(structure(c(24, 34, 34, 24, 24, 24, 24, 34, 34, 24), .Dim = c(5L, 2L)))),
               class = c("XY", "MULTIPOLYGON", "sfg"))
   )
-  
+
   g_many_attrs <- as.network(edge_df, vertices = vertex_df)
-  
+
   # edge attributes ======================================================================
   # bare atomic vectors
   expect_identical(
@@ -260,7 +260,7 @@ library(testthat)
   expect_identical(
     vertex_date_attr_to_test,
     vertex_df$date_attr
-    
+
   )
   vertex_dttm_attr <- get.vertex.attribute(g_many_attrs, "dttm_attr", unlist = FALSE)
   vertex_dttm_attr_to_test <- `attributes<-`(unlist(vertex_dttm_attr),
@@ -289,18 +289,18 @@ library(testthat)
     get.vertex.attribute(g_many_attrs, "sfg_attr", unlist = FALSE),
     vertex_df$sfg_attr
   )
-  
+
   # conversion back to data.frame ========================================================
   names(edge_df)[[1]] <- ".tail"
   names(edge_df)[[2]] <- ".head"
   edge_df$sfc_attr <- NULL
-  
+
   names(vertex_df)[[1]] <- "vertex.names"
   vertex_df$sfc_attr <- NULL
 
   g_many_attrs <- delete.vertex.attribute(g_many_attrs, "sfc_attr")
   g_many_attrs <- delete.edge.attribute(g_many_attrs, "sfc_attr")
-  
+
   expect_identical(
     edge_df,
     as.data.frame(g_many_attrs)
@@ -414,7 +414,7 @@ library(testthat)
     as.network(edge_df_with_NAs2),
     "The first two columns of `x` cannot contain `NA` values.", fixed = TRUE
   )
-  
+
   expect_error(
     as.network(edge_df_with_NAs1[0, 0]),
     "`x` should be a data frame with at least two columns and one row.",
@@ -424,7 +424,7 @@ library(testthat)
     as.network(na.omit(edge_df_with_NAs1), vertices = empty_vertex_df, loops = TRUE),
     "`vertices` should contain at least one column and row.", fixed = TRUE
   )
-  
+
   incompat_edge_types <- data.frame(
     from = c("a", "b"),
     to = c(1, 2),
@@ -435,7 +435,7 @@ library(testthat)
     "The first two columns of `x` must be of the same type.",
     fixed = TRUE
   )
-  
+
   non_df_vertices_edge_df <- data.frame(from = 1, to = 2)
   non_df_vertices <- list(name = 1:2)
   expect_error(
@@ -443,14 +443,14 @@ library(testthat)
     "If provided, `vertices` should be a data frame.",
     fixed = TRUE
   )
-  
+
   bad_vertex_names_col <- data.frame(name = I(list(1)))
   expect_error(
     as.network(non_df_vertices_edge_df, vertices = bad_vertex_names_col),
     "The first column of `vertices` must be an atomic vector.",
     fixed = TRUE
   )
-  
+
   incompat_types_edge_df <- data.frame(from = 1:3, to = 4:6)
   incompat_types_vertex_df <- data.frame(name = paste(1:6), stringsAsFactors = FALSE)
   expect_error(
@@ -458,7 +458,7 @@ library(testthat)
     "The first column of `vertices` must be the same type as the value with which they are referenced in `x`'s first two columns.",
     fixed = TRUE
   )
-  
+
   recursive_edge_df <- data.frame(from = I(list(1:2)), to = 3)
   expect_error(
     as.network(recursive_edge_df),
@@ -479,22 +479,37 @@ library(testthat)
                             color = c("red", "blue", "red", "blue", "red", "blue",
                                       "red", "red"),
                             stringsAsFactors = FALSE)
-  
+
+  expect_silent( # vertices already in correct order
+    as.network(bip_edge_df, directed = FALSE,
+               vertices = data.frame(name = unique(unlist(bip_edge_df[1:2]))))
+  )
+
+  expect_warning( # warn that vertices are reordered once
+    as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df,
+               bipartite = TRUE)
+  )
+
+  expect_silent( # do not warn again in the same session
+    as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df,
+               bipartite = TRUE)
+  )
+
   expect_warning(
-    as.network(bip_edge_df, vertices = bip_node_df, 
+    as.network(bip_edge_df, vertices = bip_node_df,
                bipartite = TRUE),
     "If `bipartite` is `TRUE`, edges are interpreted as undirected.", fixed = TRUE
   )
-  
+
   expect_warning(
-    as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, 
+    as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df,
                bipartite = TRUE, loops = TRUE),
     "If `bipartite` is `TRUE`, `loops` must be `FALSE`.", fixed = TRUE
   )
 
-  bip_g <- as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df, 
+  bip_g <- as.network(bip_edge_df, directed = FALSE, vertices = bip_node_df,
                       loops = FALSE, bipartite = TRUE)
-  
+
   expect_identical(
     bip_edge_df,
     as.data.frame(bip_g)
@@ -502,18 +517,18 @@ library(testthat)
   expect_identical(
     # tracking modes by vertex order means we have to reorder the data frame
     # and reset row.names to test
-    `rownames<-`( 
-      bip_node_df[order(bip_node_df$node_type == "person", decreasing = TRUE), ], 
+    `rownames<-`(
+      bip_node_df[order(bip_node_df$node_type == "person", decreasing = TRUE), ],
       NULL
     ),
     as.data.frame(bip_g, unit = "vertices")
   )
-  
+
   expect_s3_class(
     bip_g,
     "network"
   )
-  
+
   expect_true(
     is.bipartite(bip_g)
   )
@@ -523,41 +538,41 @@ library(testthat)
   expect_false(
     is.directed(bip_g)
   )
-  
+
   expect_identical(
     get.network.attribute(bip_g, "bipartite"),
     5L
   )
-  
+
   expect_identical(
     get.vertex.attribute(bip_g, attrname = "node_type"),
     c(rep("person", 5), rep("event", 3))
   )
-  
+
   expect_identical(
     get.vertex.attribute(bip_g, attrname = "vertex.names"),
     c("a", "b", "c", "d", "e", "e1", "e2", "e3")
   )
-  
+
   expect_identical(
     get.edge.attribute(bip_g, attrname = "an_edge_attr"),
     letters[1:8]
   )
-  
-  # check if bipartite networks with isolates are caught 
+
+  # check if bipartite networks with isolates are caught
   bip_isolates_node_df <- data.frame(
     vertex.names = c("a", "e1", "b", "e2", "c", "e3", "d", "e", "f", "g"),
     stringsAsFactors = FALSE
   )
-  
+
   expect_error(
     as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
                bipartite = TRUE),
     "`bipartite` is `TRUE`, but the `vertices` you provided contain names that are not present in `x`"
   )
-  
+
   bip_isolates_node_df$is_actor <- !grepl("^e\\d$", bip_isolates_node_df$vertex.names)
-  bip_isoaltes_g <- as.network(x = bip_edge_df, directed = FALSE, 
+  bip_isoaltes_g <- as.network(x = bip_edge_df, directed = FALSE,
                                vertices = bip_isolates_node_df,
                                bipartite = TRUE)
   expect_s3_class(
@@ -574,8 +589,30 @@ library(testthat)
       NULL
     ),
     as.data.frame(bip_isoaltes_g, unit = "vertices")
-  )  
-  
+  )
+
+  # use custom `bipartite_col` name
+  bip_isolates_node_df$my_bipartite_col <- bip_isolates_node_df$is_actor
+  expect_identical(
+    as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
+               bipartite = TRUE),
+    as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
+               bipartite = TRUE, bipartite_col = "my_bipartite_col")
+  )
+  # throw errors on invalid `bipartite_col`s
+  expect_error(
+    as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
+               bipartite = TRUE, bipartite_col = NA_character_)
+  )
+  expect_error(
+    as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
+               bipartite = TRUE, bipartite_col = list())
+  )
+  expect_error(
+    as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
+               bipartite = TRUE, bipartite_col = c("bad", "arg"))
+  )
+
   bip_isolates_node_df$is_actor <- as.integer(bip_isolates_node_df$is_actor)
   expect_error(
     as.network(x = bip_edge_df, directed = FALSE, vertices = bip_isolates_node_df,
@@ -583,15 +620,15 @@ library(testthat)
     "`bipartite` is `TRUE` and vertex types are specified via a column in `vertices` named `\"is_actor\"`.\n\t- If provided, all values in `vertices[[\"is_actor\"]]` must be `TRUE` or `FALSE`.",
     fixed = TRUE
   )
-  
-  
+
+
   # check if nodes that appear in both of the first 2 `edge` columns are caught
   bip_confused_edge_df <- data.frame(
     actor = c("a", "a", "b", "b", "c", "d", "d", "e", "e1"),
     event = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1", "e2"),
     stringsAsFactors = FALSE
   )
-  
+
   expect_error(
     as.network(x = bip_confused_edge_df, directed = FALSE, bipartite = TRUE),
     "`bipartite` is `TRUE`, but there are vertices that appear in both of the first two columns of `x`."
@@ -606,32 +643,32 @@ library(testthat)
     row.names = 1:4,
     class = "data.frame"
   )
-  
+
   hyper_target_net <- network.initialize(10, directed = FALSE, hyper = TRUE, loops = TRUE)
   hyper_target_net <- add.edge(hyper_target_net, 1:4, 1:4, "value", list(5))
   hyper_target_net <- add.edge(hyper_target_net, 3:5, 3:5, "value", list(6))
   hyper_target_net <- add.edge(hyper_target_net, 4:7, 4:7, "value", list(7))
   hyper_target_net <- add.edge(hyper_target_net, 6:10, 6:10, "value", list(8))
-  
+
   expect_identical(
     as.network(hyper_edge_df, directed = FALSE, hyper = TRUE, loops = TRUE),
     hyper_target_net
   )
-  
+
   expect_identical(
     hyper_edge_df,
     as.data.frame(hyper_target_net)
   )
-  
-  
+
+
   MtSHbyloc_edge_df <- structure(
     list(
       .tail = list(
         as.integer(c(1, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27)),
         as.integer(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 26, 27))
-      ), 
+      ),
       .head = list(
-        as.integer(c(1, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27)), 
+        as.integer(c(1, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27)),
         as.integer(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 26, 27))
       )
     ),
@@ -641,7 +678,7 @@ library(testthat)
   MtSHbyloc_vertex_df <- data.frame(
     vertex.names = 1:27
   )
-  
+
   data("emon")
   MtSHloc <- emon$MtStHelens %v% "Location"
   MtSHimat <- cbind(MtSHloc %in% c("L", "B"), MtSHloc %in% c("NL", "B"))
@@ -660,20 +697,20 @@ library(testthat)
     MtSHbyloc_vertex_df,
     as.data.frame(MtSHbyloc, unit = "vertices")
   )
-  
+
   delete.edges(MtSHbyloc, 2)
   expect_identical(
     `rownames<-`(MtSHbyloc_edge_df[-2, ], NULL),
     as.data.frame(MtSHbyloc)
   )
-  
+
   delete.vertices(MtSHbyloc, 2)
   expect_identical(
     `rownames<-`(MtSHbyloc_vertex_df[-2, , drop = FALSE], NULL),
     as.data.frame(MtSHbyloc, unit = "vertices")
   )
-  
-  
+
+
   hyper_edges_with_NA <- data.frame(
     from = I(list(c(NA, "a", "b"))),
     to = I(list(c("c", "d")))
@@ -682,7 +719,7 @@ library(testthat)
     as.network(hyper_edges_with_NA, hyper = TRUE),
     "`x`'s first two columns contain invalid values."
   )
-  
+
   non_hyper_edges <- data.frame(
     from = 1:3,
     to = 4:6
@@ -691,7 +728,7 @@ library(testthat)
     as.network(non_hyper_edges, hyper = TRUE),
     "If `hyper` is `TRUE`, the first two columns of `x` should be list columns."
   )
-  
+
   incompat_type_hyper_edges <- data.frame(
     from = I(list(letters[1:5], 1:5)),
     to = I(list(letters[6:10], letters[11:15]))
@@ -700,7 +737,7 @@ library(testthat)
     as.network(incompat_type_hyper_edges, hyper = T),
     "The values in the first two columns of `x` must be of the same type and cannot be `NULL`, `NA`, or recursive values."
   )
-  
+
   loop_hyper_edges <- data.frame(
     from = I(list(c("a", "b"))),
     to = I(list(c("a", "b")))
@@ -709,11 +746,11 @@ library(testthat)
     as.network(loop_hyper_edges, hyper = TRUE),
     "`loops` is `FALSE`, but `x` contains loops."
   )
-  
-# })  
-  
+
+# })
+
 # test_that("edge/vertex-less networks return empty data frames", {
-  
+
   empty_g <- network.initialize(0)
   expect_identical(
     nrow(as.data.frame(empty_g)),
@@ -727,7 +764,7 @@ library(testthat)
     ncol(as.data.frame(empty_g, attrs_to_ignore = NULL)),
     3L
   )
-  
+
   expect_identical(
     nrow(as.data.frame(empty_g, unit = "vertices")),
     0L
@@ -740,7 +777,7 @@ library(testthat)
     ncol(as.data.frame(empty_g, unit = "vertices", attrs_to_ignore = NULL)),
     2L
   )
-  
+
 # })
 
 # test_that("deleted edges/vertices and na attributes are handled correctly", {
@@ -752,9 +789,9 @@ library(testthat)
   na_vertex_df <- data.frame(vertex.names = letters[1:5],
                              na = c(rep(FALSE, 4), TRUE),
                              stringsAsFactors = FALSE)
-  
+
   na_g <- as.network(na_edge_df, vertices = na_vertex_df)
-  
+
   expect_identical(
     as.data.frame(na_g, na.rm = FALSE, attrs_to_ignore = NULL),
     na_edge_df
@@ -763,7 +800,7 @@ library(testthat)
     as.data.frame(na_g, unit = "vertices", na.rm = FALSE, attrs_to_ignore = NULL),
     na_vertex_df
   )
-  
+
   delete.edges(na_g, 1)
   expect_identical(
     `rownames<-`(na_edge_df[-c(1, which(na_edge_df$na)), ], NULL),
@@ -774,7 +811,7 @@ library(testthat)
     `rownames<-`(na_vertex_df[-c(1, which(na_vertex_df$na)), ], NULL),
     as.data.frame(na_g, unit = "vertices", attrs_to_ignore = NULL)
   )
-  
+
 # })
 
-  
+
