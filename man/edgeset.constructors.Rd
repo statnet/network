@@ -100,14 +100,6 @@ inci
 g<-network.incidence(inci,network.initialize(4,directed=FALSE))
 as.matrix(g)
 
-# load in biparite dataframe with weights
-bipMat<-data.frame(
-        event1=c(1,2,1,0),
-        event2=c(0,0,3,0),
-        event3=c(1,1,0,4),
-        row.names=c("a","b","c","d"))
-net<-network(bipMat,matrix.type='bipartite',ignore.eval=FALSE,names.eval='pies')
-as.matrix(net,attername='pies')
 
 
 
