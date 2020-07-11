@@ -10,22 +10,22 @@ Authors@R: c(
     person("Jeffrey", "Horner", role=c("ctb"), email="jeffrey.horner@gmail.com"),
     person("Li", "Wang", role=c("ctb"), email="lxwang@uw.edu"))
 Depends: R (>= 2.10), utils
-Imports: tibble, magrittr
+Imports: tibble, magrittr, statnet.common
 Suggests: 
     sna,
-    statnet.common,
     testthat,
     covr
 Description: Tools to create and modify network objects.  The network class can represent a range of relational data types, and supports arbitrary vertex/edge/graph attributes.
 License: GPL (>=2)
 URL: http://statnet.org/
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate:
     'access.R'
     'as.edgelist.R'
     'assignment.R'
     'coercion.R'
     'constructors.R'
+    'dataframe.R'
     'fileio.R'
     'layout.R'
     'misc.R'
@@ -35,3 +35,4 @@ Collate:
     'printsum.R'
     'zzz.R'
 Encoding: UTF-8
+Remotes: github::statnet/statnet.common

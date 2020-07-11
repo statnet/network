@@ -4,13 +4,11 @@
 #
 # Written by Carter T. Butts <buttsc@uci.edu>.
 #
-# Last Modified 03/01/12
+# Last Modified 11/30/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
 # Part of the R/network package
-#
-# .onLoad is run when the package is loaded with library(network)
 #
 ######################################################################
 

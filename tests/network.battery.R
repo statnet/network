@@ -112,30 +112,6 @@ if (network.naedgecount(plain) != 1){
 
 
 
-# check creating of network using dataframe with named cols
-edata <-data.frame(
-  tails=c(1,2,3),
-  heads=c(2,3,1),
-  love=c('yes','no','maybe'),
-  hate=c(3,0,2)
-  )
-
-temp<-as.network(edata,matrix.type="edgelist",ignore.eval=FALSE)
-if(!all(list.edge.attributes(temp)==c('hate','love','na'))){
-  stop("problem with network edgelist coercion from data frame")
-}
-if(!all(temp%e%'hate'==c(3,0,2))){
-  stop("problem with network edgelist coercion from data frame")
-}
-   
-# ditto, but with passed in names for attributes
-temp<-as.network(edata,matrix.type="edgelist",ignore.eval=FALSE,names.eval=c('hello','goodbye'))
-if(!all(list.edge.attributes(temp)==c('goodbye','hello','na'))){
-     stop("problem with network edgelist coercion from data frame")
-}
-if(!all(temp%e%'goodbye'==c(3,0,2))){
-    stop("problem with network edgelist coercion from data frame")
-}   
 # test for as.matrix.network edgelist bug #935
 x <- network.initialize(10)
 add.edge(x,1,2)
