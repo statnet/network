@@ -35,3 +35,4 @@ Collate:
     'printsum.R'
     'zzz.R'
 Encoding: UTF-8
+Remotes: github::statnet/statnet.common
