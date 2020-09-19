@@ -102,7 +102,7 @@ cat("*Vertices          2
 *Arcs
 1 A 1
 ",file=tmptest)
-expect_error(read.paj(tmptest),regexp = 'contains non-numeric or NA values')
+expect_error(suppressWarnings(read.paj(tmptest)),regexp = 'contains non-numeric or NA values')
 
 tmptest<-tempfile()
 cat("*Vertices          2
@@ -163,11 +163,13 @@ download.file(
   scotland,
   quiet = TRUE)
 scotpaj<-tempfile('Scotland',fileext='.paj')
+con <- unz(scotland,'Scotland.paj')
 cat(
-  readLines(unz(scotland,'Scotland.paj'), encoding = "UTF-8"),
+  readLines(con, encoding = "UTF-8"),
   sep='\n',
   file = scotpaj
   )
+close(con)
 scotproj<-read.paj(scotpaj)
 
 # produces two element list, containing networks and partitions
