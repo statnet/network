@@ -167,9 +167,7 @@ mixingmatrix.network <- function(object, attrname, ...) {
     rowswitch <- apply(el, 1, function(x) x[1]>x[2])
     el[rowswitch, 1:2] <- el[rowswitch, 2:1]
     nb1 <- get.network.attribute(nw,"bipartite")
-    u<-sort(unique(nodecov[0:nb1]))
     From <- c(u, nodecov[el[,1]])
-    u<-sort(unique(nodecov[(nb1+1):network.size(nw)]))
     To <- c(u, nodecov[el[,2]])
   }else{
     From <- c(u, nodecov[el[,1]])
