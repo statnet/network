@@ -1,5 +1,5 @@
-suppressPackageStartupMessages(library(network))
-library(testthat)
+
+context("test-dataframe")
 
 # context("as.network")
 
