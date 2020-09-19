@@ -151,8 +151,6 @@ print.network<-function(x, matrix.type=which.matrix.type(x),
 
 
 #Print method for summary.character
-#' @export print.summary.character
-#' @export
 print.summary.character <- function(x, max.print=10, ...){
   x<-table(x)
   nam<-names(x)
@@ -327,8 +325,6 @@ print.summary.network<-function(x, ...){
 
 
 #An internal routine to handle summaries of characters
-#' @export summary.character
-#' @export
 summary.character <- function(object, ...){
   class(object)<-c("summary.character",class(object))
   object
