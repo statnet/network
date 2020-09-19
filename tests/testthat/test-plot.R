@@ -1,7 +1,8 @@
 # various tests for network plotting functions
 # mostly recent functionality added by skyebend
-require(network)
-require(testthat)
+
+context("test-plot")
+
 # -----  test edge labels ------
 ymat<-matrix(c(0,1,2,3, 0,0,0,0, 1,0,0,0, 0,0,0,0),ncol=4)
 ynet<-network(ymat,ignore.eval=FALSE,names.eval='weight')

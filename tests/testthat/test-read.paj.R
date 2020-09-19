@@ -1,6 +1,6 @@
 # test for reading pajek formatted files
-require(testthat)
-require(network)
+
+context("test-read.paj")
 
 
 # test for case of verticse, but no edges/arcs
