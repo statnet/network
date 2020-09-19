@@ -374,7 +374,7 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
 
 
      #need to check to see if we are reading in more vertex rows than there actually are (some edges are implied)
-     edgelistPosition <-  grep("\\*(arcs|edges|matrix)",as.matrix(vertex),ignore.case=TRUE)
+     edgelistPosition <-  grep("\\*(arcs|edges|matrix)",as.matrix(vertex),ignore.case=TRUE, useBytes = TRUE)
 
      if(any(edgelistPosition)){
        if(verbose){
