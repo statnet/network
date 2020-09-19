@@ -393,9 +393,9 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
 #'   efficient.  See the associated man page for details.
 #'
 #'
-#' @param el a list of edges (possibly \code{network$mel}), or an object of 
-#'   class \code{network} from which the full list of edges will be extracted
-#' @param x an object of class \code{network}.
+#' @param x an object of class \code{network}, or a list of edges 
+#'          (possibly \code{network$mel}) in \code{get.edge.attribute}.
+#' @param el Deprecated; use \code{x} instead.
 #' @param attrname the name of the attribute to get or set.
 #' @param unlist logical; should retrieved attribute values be 
 #'   \code{\link{unlist}}ed prior to being returned?
@@ -485,10 +485,13 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
 #' 
 #' @keywords classes graphs
 #' @export delete.edge.attribute
-delete.edge.attribute<-function(x,attrname){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("delete.edge.attribute requires an argument of class network.")
+delete.edge.attribute <- function(x, attrname, ...) {
+  UseMethod("delete.edge.attribute")
+}
+
+#' @rdname attribute.methods
+#' @export
+delete.edge.attribute.network <- function(x, attrname, ...) {
   #Remove the edges
   xn<-substitute(x)
   x<-.Call(deleteEdgeAttribute_R,x,attrname)
@@ -582,10 +585,13 @@ delete.edges<-function(x,eid){
 #
 #' @rdname attribute.methods
 #' @export
-delete.network.attribute<-function(x,attrname){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("delete.network.attribute requires an argument of class network.")
+delete.network.attribute <- function(x, attrname, ...) {
+  UseMethod("delete.network.attribute")
+}
+
+#' @rdname attribute.methods
+#' @export
+delete.network.attribute.network <- function(x, attrname, ...){
   #Remove the edges
   xn<-substitute(x)
   x<-.Call(deleteNetworkAttribute_R,x,attrname)
@@ -600,10 +606,13 @@ delete.network.attribute<-function(x,attrname){
 #
 #' @rdname attribute.methods
 #' @export
-delete.vertex.attribute<-function(x,attrname){
-  #Check to be sure we were called with a network, and that it has vertices
-  if(!is.network(x))
-    stop("delete.vertex.attribute requires an argument of class network.")
+delete.vertex.attribute <- function(x, attrname, ...) {
+  UseMethod("delete.vertex.attribute")
+}
+
+#' @rdname attribute.methods
+#' @export
+delete.vertex.attribute.network <- function(x, attrname, ...) {
   #Remove the attribute (or do nothing, if there are no vertices)
   if(network.size(x)>0){
     xn<-substitute(x)
@@ -642,7 +651,7 @@ delete.vertices<-function(x,vid){
 }
 
 
-# Retrieve a specified edge attribute from edge list el.  The attribute
+# Retrieve a specified edge attribute from edge list or network x.  The attribute
 # is returned as a list, unless unlist is TRUE. 
 # if deleted.edges.omit is TRUE, then only attribute values on existing (non-null) edges will be returned.
 # if na.omit is TRUE, than values corresponding to 'missing' edges (edges with attribute 'na' set to TRUE) should be ommited. (NULL edgs count as not-missing)
@@ -650,11 +659,24 @@ delete.vertices<-function(x,vid){
 #
 #' @rdname attribute.methods
 #' @export
-get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=FALSE,null.na=FALSE,deleted.edges.omit=FALSE){
-  if (is.network(el)) el <- el$mel
+get.edge.attribute <- function(x, ..., el) {
+  if(!missing(el)) {
+    warning("Argument ", sQuote("el"), " to ", sQuote("get.edge.attribute"), " is deprecated and will be removed in a future version.  Use ", sQuote("x"), " instead.")
+    UseMethod("get.edge.attribute", object = el)
+  } else {
+    UseMethod("get.edge.attribute", object = x)
+  }
+}
 
-  if (!is.list(el))
-    stop("el must be a network object or a list.")
+#' @rdname attribute.methods
+#' @export
+get.edge.attribute.network <- function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=FALSE, deleted.edges.omit=FALSE, ..., el) {
+  if(!missing(el)) x <- el
+  
+  if (is.network(x)) x <- x$mel
+
+  if (!is.list(x))
+    stop("x must be a network object or a list.")
 
   if (!is.character(attrname))
     stop("attrname must be a character vector.")
@@ -663,7 +685,7 @@ get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=FALSE,null.na=FAL
       !is.logical(deleted.edges.omit))
     stop("na.omit, null.na, deleted.edges.omit must be a logical vector.")
 
-  edges <- .Call(getEdgeAttribute_R,el,attrname,na.omit,null.na,deleted.edges.omit)
+  edges <- .Call(getEdgeAttribute_R,x,attrname,na.omit,null.na,deleted.edges.omit)
 
   if(unlist)
     unlist(edges)
@@ -671,14 +693,27 @@ get.edge.attribute<-function(el, attrname, unlist=TRUE,na.omit=FALSE,null.na=FAL
     edges
 }
 
+#' @rdname attribute.methods
+#' @export
+get.edge.attribute.list <- get.edge.attribute.network
 
 # Retrieve a specified edge attribute from all edges in x.
 #
 #' @rdname attribute.methods
 #' @export
-get.edge.value<-function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=FALSE, deleted.edges.omit=FALSE){
+get.edge.value <- function(x, ...) {
+  UseMethod("get.edge.value")
+}
+
+#' @rdname attribute.methods
+#' @export
+get.edge.value.network <- function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=FALSE, deleted.edges.omit=FALSE, ...){
   get.edge.attribute(x,attrname,unlist,na.omit,null.na,deleted.edges.omit)
 }
+
+#' @rdname attribute.methods
+#' @export
+get.edge.value.list <- get.edge.value.network
 
 # Retrieve the ID numbers for all edges incident on v, in network x.  
 # Outgoing or incoming edges are specified by neighborhood, while na.omit 
@@ -979,11 +1014,16 @@ get.inducedSubgraph<-function(x, v, alters=NULL, eid=NULL){
 #
 #' @rdname attribute.methods
 #' @export
-get.network.attribute<-function(x,attrname,unlist=FALSE){
+get.network.attribute <- function(x, ...) {
+  UseMethod("get.network.attribute")
+}
+
+#' @rdname attribute.methods
+#' @export
+get.network.attribute.network <- function(x, attrname, unlist=FALSE, ...) {
   x <- x$gal[[attrname]]
   if(unlist){unlist(x)}else{x}
 }
-
 
 # Retrieve the neighborhood of v in network x.  Depending on the value of 
 # type, the neighborhood in question may be in, out, or the union of the two.
@@ -1052,17 +1092,14 @@ get.neighborhood<-function(x, v, type=c("out","in","combined"), na.omit=TRUE){
 # 
 #' @rdname attribute.methods
 #' @export
-get.vertex.attribute<-function(x,...){
+get.vertex.attribute <- function(x, ...) {
   UseMethod("get.vertex.attribute")
 }
 
 #' @rdname attribute.methods
 #' @export
-get.vertex.attribute.network<-function(x,attrname,na.omit=FALSE,null.na=TRUE,
-                               unlist=TRUE,...){
+get.vertex.attribute.network <- function(x, attrname, na.omit=FALSE, null.na=TRUE, unlist=TRUE, ...) {
   #Check to see if there's anything to be done
-  if(!is.network(x))
-    stop("get.vertex.attribute requires an argument of class network.")
   if(network.size(x)==0){
     return(NULL)
   }
@@ -1473,10 +1510,13 @@ is.network<-function(x){
 #
 #' @rdname attribute.methods
 #' @export
-list.edge.attributes<-function(x){
-  #First, check to see that this is a graph object
-  if(!is.network(x))
-    stop("list.edge.attributes requires an argument of class network.\n")
+list.edge.attributes <- function(x, ...) {
+  UseMethod("list.edge.attributes")
+}
+
+#' @rdname attribute.methods
+#' @export
+list.edge.attributes.network <- function(x, ...) {
   # no edges in the network
   if (network.edgecount(x, na.omit=F) == 0) return(character(0))
   #Accumulate names
@@ -1490,10 +1530,13 @@ list.edge.attributes<-function(x){
 #
 #' @rdname attribute.methods
 #' @export
-list.network.attributes<-function(x){
-  #First, check to see that this is a graph object
-  if(!is.network(x))
-    stop("list.network.attributes requires an argument of class network.\n")
+list.network.attributes <- function(x, ...) {
+  UseMethod("list.network.attributes")
+}
+
+#' @rdname attribute.methods
+#' @export
+list.network.attributes.network <- function(x, ...) {
   #Return the attribute names
   sort(names(x$gal))
 }
@@ -1503,14 +1546,13 @@ list.network.attributes<-function(x){
 #
 #' @rdname attribute.methods
 #' @export
-list.vertex.attributes<-function(x,...) UseMethod("list.vertex.attributes")
+list.vertex.attributes <- function(x, ...) {
+  UseMethod("list.vertex.attributes")
+}
 
 #' @rdname attribute.methods
 #' @export
-list.vertex.attributes.network<-function(x,...){
-  #First, check to see that this is a graph object
-  if(!is.network(x))
-    stop("list.vertex.attributes requires an argument of class network.\n")
+list.vertex.attributes.network <- function(x, ...) {
   if(network.size(x)==0){
     return(NULL)
   }
@@ -1738,7 +1780,7 @@ network.vertex.names<-function(x){
       return(NULL)
     vnames <- get.vertex.attribute(x,"vertex.names")
     if(is.null(vnames)  | all(is.na(vnames)) ){
-      paste(1:network.size(x))
+      as.character(1:network.size(x))
     }else{
       vnames
     }
@@ -1844,11 +1886,13 @@ permute.vertexIDs<-function(x,vids){
 # }
 #' @rdname attribute.methods
 #' @export
-set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
-  #Check to be sure we were called with a network
-  if(!is.network(x)){
-    stop("set.edge.attribute requires an argument of class network.")
-  }
+set.edge.attribute <- function(x, attrname, value, e, ...) {
+  UseMethod("set.edge.attribute")
+}
+
+#' @rdname attribute.methods
+#' @export
+set.edge.attribute.network <- function(x, attrname, value, e=seq_along(x$mel), ...) {
   # determine if we have to do anything at all
   if(length(e)>0){
     if((min(e)<1)|(max(e)>length(x$mel))){
@@ -1915,10 +1959,13 @@ set.edge.attribute<-function(x,attrname,value,e=seq_along(x$mel)){
 #
 #' @rdname attribute.methods
 #' @export
-set.edge.value<-function(x,attrname,value,e=seq_along(x$mel)){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("set.edge.value requires an argument of class network.\n")
+set.edge.value <- function(x, attrname, value, e, ...) {
+  UseMethod("set.edge.value")
+}
+
+#' @rdname attribute.methods
+#' @export
+set.edge.value.network <- function(x, attrname, value, e = seq_along(x$mel), ...) {
   #Check to ensure that this is not a hypergraph
   if(is.hyper(x))
     stop("Hypergraphs not currently supported in set.edge.value.\n")
@@ -1950,10 +1997,13 @@ set.edge.value<-function(x,attrname,value,e=seq_along(x$mel)){
 #
 #' @rdname attribute.methods
 #' @export
-set.network.attribute<-function(x,attrname,value){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("set.network.attribute requires an argument of class network.")
+set.network.attribute <- function(x, attrname, value, ...) {
+  UseMethod("set.network.attribute")
+}
+
+#' @rdname attribute.methods
+#' @export
+set.network.attribute.network <- function(x, attrname, value, ...) {
   #Make sure the values are consistent
   if(length(attrname)==1){
     value<-list(value)
@@ -2042,10 +2092,13 @@ valid.eids <-function(x){
 
 #' @rdname attribute.methods
 #' @export
-set.vertex.attribute<-function(x,attrname,value,v=seq_len(network.size(x))){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("set.vertex.attribute requires an argument of class network.")
+set.vertex.attribute <- function(x, attrname, value, v = seq_len(network.size(x)), ...) {
+  UseMethod("set.vertex.attribute")
+}
+
+#' @rdname attribute.methods
+#' @export
+set.vertex.attribute.network <- function(x, attrname, value, v = seq_len(network.size(x)), ...) {
   #Perform some sanity checks
   if(any((v>network.size(x))|(v<1)))
     stop("Vertex ID does not correspond to actual vertex in set.vertex.attribute.\n")

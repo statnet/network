@@ -1,6 +1,6 @@
 Package: network
-Version: 1.17.0-412
-Date: 2020-03-27
+Version: 1.17.0-498
+Date: 2020-09-19
 Title: Classes for Relational Data
 Authors@R: c(
     person("Carter T.", "Butts", role=c("aut","cre"), email="buttsc@uci.edu"),
@@ -8,12 +8,13 @@ Authors@R: c(
     person("Mark", "Handcock", role=c("ctb"), email="handcock@stat.ucla.edu"),
     person("Skye", "Bender-deMoll", role=c("ctb"), email="skyebend@uw.edu"),
     person("Jeffrey", "Horner", role=c("ctb"), email="jeffrey.horner@gmail.com"),
-    person("Li", "Wang", role=c("ctb"), email="lxwang@uw.edu"))
+    person("Li", "Wang", role=c("ctb"), email="lxwang@uw.edu"),
+    person("Pavel N.", "Krivitsky", role=c("ctb"), email="pavel@statnet.org", comment=c(ORCID="0000-0002-9101-3362")),
+    person("Knapp", "Brendan", role=c("ctb"), email="brendan.g.knapp@gmail.com", comment=c(ORCID="0000-0003-3284-4972")))
 Depends: R (>= 2.10), utils
-Imports: tibble, magrittr
+Imports: tibble, magrittr, statnet.common
 Suggests: 
     sna,
-    statnet.common,
     testthat,
     covr
 Description: Tools to create and modify network objects.  The network class can represent a range of relational data types, and supports arbitrary vertex/edge/graph attributes.
@@ -27,6 +28,7 @@ Collate:
     'assignment.R'
     'coercion.R'
     'constructors.R'
+    'dataframe.R'
     'fileio.R'
     'has.edges.R'
     'layout.R'
@@ -40,3 +42,4 @@ Collate:
     'which.matrix.type.R'
     'zzz.R'
 Encoding: UTF-8
+Remotes: github::statnet/statnet.common
