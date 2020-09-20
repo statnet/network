@@ -1,6 +1,6 @@
 # test for reading pajek formatted files
-require(testthat)
-require(network)
+
+context("test-read.paj")
 
 
 # test for case of verticse, but no edges/arcs
@@ -102,7 +102,7 @@ cat("*Vertices          2
 *Arcs
 1 A 1
 ",file=tmptest)
-expect_error(read.paj(tmptest),regexp = 'contains non-numeric or NA values')
+expect_error(suppressWarnings(read.paj(tmptest)),regexp = 'contains non-numeric or NA values')
 
 tmptest<-tempfile()
 cat("*Vertices          2
@@ -158,9 +158,18 @@ expect_equal(fillIn%v%'shape',c('box','box','box','ellipse'))
 
 # this file has character encoding issues
 scotland<-tempfile('scotland',fileext='.zip')
-download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.zip',scotland)
+download.file(
+  'http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.zip',
+  scotland,
+  quiet = TRUE)
 scotpaj<-tempfile('Scotland',fileext='.paj')
-cat(readLines(unz(scotland,'Scotland.paj')),sep='\n',file = scotpaj)
+con <- unz(scotland,'Scotland.paj')
+cat(
+  readLines(con, encoding = "UTF-8"),
+  sep='\n',
+  file = scotpaj
+  )
+close(con)
 scotproj<-read.paj(scotpaj)
 
 # produces two element list, containing networks and partitions
@@ -203,7 +212,7 @@ cat("*Vertices          2
 *Arcs
 1 1 1
 ",file=tmptest)
-loopTest<-read.paj(tmptest,verbose=TRUE)
+loopTest<-read.paj(tmptest,verbose=FALSE)
 expect_true(has.loops(loopTest))
 
 # check edge.name argument
@@ -215,7 +224,7 @@ cat("*Vertices          2
 *Arcs
 1 1 1
 ",file=tmptest)
-loopTest<-read.paj(tmptest,verbose=TRUE,edge.name='weight')
+loopTest<-read.paj(tmptest,verbose=FALSE,edge.name='weight')
 expect_equal(list.edge.attributes(loopTest),c('na','weight'))
 
 # the rest of these will take longer, so including in opttest block so won't run on CRAN

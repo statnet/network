@@ -1,7 +1,6 @@
 
-# test comparing edgelist
-require(network)
-require(testthat)
+context("test-as.edgelist")
+
 
 test<-network.initialize(5)
 add.edges(test,5,1)

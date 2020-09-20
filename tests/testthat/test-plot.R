@@ -1,7 +1,12 @@
 # various tests for network plotting functions
 # mostly recent functionality added by skyebend
-require(network)
-require(testthat)
+
+context("test-plot")
+
+# Open null device
+pdf(file = NULL, onefile = TRUE)
+dev_id <- dev.cur()
+
 # -----  test edge labels ------
 ymat<-matrix(c(0,1,2,3, 0,0,0,0, 1,0,0,0, 0,0,0,0),ncol=4)
 ynet<-network(ymat,ignore.eval=FALSE,names.eval='weight')
@@ -83,3 +88,5 @@ plot(network.initialize(7),vertex.sides=c(50,4,3,2,1,0,NA),vertex.cex=40,coord=m
 plot(network.initialize(7),vertex.sides=c(50,4,3,2,1,0,NA),vertex.cex=0)
 plot(network.initialize(7),vertex.sides=c(50,4,3,2,1,0,NA),vertex.cex=NA)
 
+# close the device
+dev.off(which = dev_id)
