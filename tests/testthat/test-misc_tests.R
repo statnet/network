@@ -1,8 +1,6 @@
 # tests for misc R functions
 
-require(network)
-require(testthat)
-# tests for has.edges
+context("test-misc_tests")
 
 test<-network.initialize(5)
 test[1,2]<-1
