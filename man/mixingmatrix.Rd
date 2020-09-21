@@ -25,3 +25,9 @@ matrix is meaningful.}
 \description{
 Return the mixing matrix for a network, on a given attribute.
 }
+\examples{
+# Interaction ties between Lake Pomona SAR organizations by sponsorship type
+# of tie sender and receiver (data from Drabek et al. 1981)
+data(emon)
+mixingmatrix(emon$LakePomona, "Sponsorship")
+}

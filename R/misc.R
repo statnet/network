@@ -134,6 +134,11 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #' @param attrname a vertex attribute name.
 #' 
 #' @export
+#' @examples
+#' # Interaction ties between Lake Pomona SAR organizations by sponsorship type
+#' # of tie sender and receiver (data from Drabek et al. 1981)
+#' data(emon)
+#' mixingmatrix(emon$LakePomona, "Sponsorship")
 mixingmatrix.network <- function(object, attrname, ...) {
   nw <- object
   if(missing(attrname)){
