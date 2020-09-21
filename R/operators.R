@@ -61,7 +61,15 @@
   return(x)
 }
 
+# A helper function to check that a particular edgelist can be validly queried or assigned to.
+#' @importFrom statnet.common NVL
+out_of_bounds <- function(x, el){
+  n <- network.size(x)
+  bip <- NVL(x%n%"bipartite", FALSE)
 
+  anyNA(el) || any(el<1L) || any(el>n) ||
+    (bip && (any((el[,1]<=bip) == (el[,2]<=bip))))
+}
 
 # removed so that will dispatch to internal primitive method #642
 #"$<-.network"<-function(x,i,value){
@@ -187,26 +195,32 @@
 "[.network"<-function(x,i,j,na.omit=FALSE){
   narg<-nargs()+missing(na.omit)
   n<-network.size(x)
+  bip <- x%n%"bipartite"
   xnames <- network.vertex.names(x)
-  if(missing(i))              #If missing, use 1:n
-    i<-1:n
-  if((narg>3)&&missing(j))
-    j<-1:n
+  if(missing(i)){              #If missing, use 1:n
+    i <- if(is.bipartite(x)) 1:bip else 1:n
+  }
+  if((narg>3)&&missing(j)){
+    j <- if(is.bipartite(x)) (bip+1L):n else 1:n
+  }
   if(is.matrix(i)&&(NCOL(i)==1))  #Vectorize if degenerate matrix
     i<-as.vector(i)
   if(is.matrix(i)){    #Still a matrix?
     if(is.logical(i)){                    #Subset w/T/F?
       j<-col(i)[i]
       i<-row(i)[i]
+      if(out_of_bounds(x, cbind(i,j))) stop("subscript out of bounds")
       out<-is.adjacent(x,i,j,na.omit=na.omit)
     }else{                                #Were we passed a pair list?
       if(is.character(i))
         i<-apply(i,c(1,2),match,xnames)
+      if(out_of_bounds(x, i)) stop("subscript out of bounds")
       out<-is.adjacent(x,i[,1],i[,2], na.omit=na.omit)
     }
   }else if((narg<3)&&missing(j)){   #Here, assume a list of cell numbers
     ir<-1+((i-1)%%n)
     ic<-1+((i-1)%/%n)
+    if(out_of_bounds(x, cbind(ir,ic))) stop("subscript out of bounds")
     out<-is.adjacent(x,ir,ic,na.omit=na.omit)
   }else{                      #Otherwise, assume a vector or submatrix
     if(is.character(i))
@@ -215,16 +229,18 @@
       j<-match(j,xnames)
     i<-(1:n)[i]                 #Piggyback on R's internal tricks
     j<-(1:n)[j]
-    if(anyNA(i) || anyNA(j)) stop("subscript out of bounds")
     if(length(i)==1){
+      if(out_of_bounds(x, cbind(i,j))) stop("subscript out of bounds")
       out<-is.adjacent(x,i,j,na.omit=na.omit)
     }else{
       if(length(j)==1){
+        if(out_of_bounds(x, cbind(i,j))) stop("subscript out of bounds")
         out<-is.adjacent(x,i,j,na.omit=na.omit)
       }else{
         jrep<-rep(j,rep.int(length(i),length(j)))
         if(length(i)>0)
           irep<-rep(i,times=ceiling(length(jrep)/length(i)))
+        if(out_of_bounds(x, cbind(irep,jrep))) stop("subscript out of bounds")
         out<-matrix(is.adjacent(x,irep,jrep,na.omit=na.omit), length(i),length(j))
       }
     }
@@ -256,10 +272,13 @@
   narg<-nargs()+missing(names.eval)+missing(add.edges)
   n<-network.size(x)
   xnames <- network.vertex.names(x)
-  if(missing(i))              #If missing, use 1:n
-    i<-1:n
-  if((narg>5)&&missing(j))
-    j<-1:n
+  bip <- x%n%"bipartite"
+  if(missing(i)){              #If missing, use 1:n
+    i <- if(is.bipartite(x)) 1:bip else 1:n
+  }
+  if((narg>5)&&missing(j)){
+    j <- if(is.bipartite(x)) (bip+1L):n else 1:n
+  }
   if(is.matrix(i)&&(NCOL(i)==1))  #Vectorize if degenerate matrix
     i<-as.vector(i)
   if(is.matrix(i)){    #Still a matrix?
@@ -281,7 +300,6 @@
       j<-match(j,xnames)
     i<-(1:n)[i]                 #Piggyback on R's internal tricks
     j<-(1:n)[j]
-    if(anyNA(i)||anyNA(j)) stop("subscript out of bounds")
     if(length(i)==1){
       el<-cbind(rep(i,length(j)),j)
     }else{
@@ -295,6 +313,10 @@
       }
     }
   }
+
+  # Check bounds
+  if(out_of_bounds(x, el)) stop("subscript out of bounds")
+
   #Set up values
   if(is.matrix(value))
     val<-value[cbind(match(el[,1],sort(unique(el[,1]))), match(el[,2],sort(unique(el[,2]))))]
