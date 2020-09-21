@@ -5,3 +5,4 @@
 appveyor.yml
 ^codecov\.yml$
 ^revdep$
+^.github$
