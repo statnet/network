@@ -23,8 +23,6 @@
 #
 ######################################################################
 
-#' @rdname as.color
-#' 
 #' Transform vector of values into color specification
 #' 
 #' Convenience function to convert a vector of values into a color
@@ -60,6 +58,7 @@
 #'   palette values) or character color name. For \code{is.color}, a logical
 #'   vector indicating if each element of x appears to be a color
 #' 
+#' @rdname as.color
 #' @export
 #' 
 #' @examples
@@ -106,7 +105,6 @@ as.color<-function(x,opacity=1.0){
 
 # Mixing matrix -----------------------------------------------------------
 
-#' @rdname mixingmatrix
 #' Mixing matrix
 #' 
 #' Return the mixing matrix for a network, on a given attribute.
@@ -116,6 +114,7 @@ as.color<-function(x,opacity=1.0){
 #' @param ... further arguments passed to or used by methods.
 #' 
 #' 
+#' @rdname mixingmatrix
 #' @include constructors.R
 #' @export
 
@@ -188,7 +187,6 @@ mixingmatrix.network <- function(object, attrname, ...) {
 
 # network.density ---------------------------------------------------------
 
-#' @rdname network.density
 #' Compute the Density of a Network
 #' 
 #' \code{network.density} computes the density of its argument.
@@ -227,6 +225,7 @@ mixingmatrix.network <- function(object, attrname, ...) {
 #' g<-network.initialize(5)    #Initialize the network
 #' network.density(g)          #Calculate the density
 #' 
+#' @rdname network.density
 #' @export network.density
 network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   if(!is.network(x))
@@ -267,7 +266,6 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
 
 # has.edges ---------------------------------------------------------------
 
-#' @rdname has.edges
 #' Determine if specified vertices of a network have any edges (are not
 #' isolates)
 #' 
@@ -288,6 +286,7 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
 #' has.edges(test)
 #' has.edges(test,v=5)
 #' 
+#' @rdname has.edges
 #' @export has.edges
 has.edges<-function(net,v=seq_len(network.size(net))){
   if(network.size(net)==0){
@@ -412,7 +411,6 @@ is.discrete<-function(x){
 
 # which.matrix.type -------------------------------------------------------
 
-#' @rdname which.matrix.type
 #' Heuristic Determination of Matrix Types for Network Storage
 #' 
 #' \code{which.matrix.type} attempts to choose an appropriate matrix expression
@@ -447,6 +445,7 @@ is.discrete<-function(x){
 #'   which.matrix.type(as.matrix.network(g,matrix.type="incidence"))
 #'   which.matrix.type(as.matrix.network(g,matrix.type="edgelist"))
 #' 
+#' @rdname which.matrix.type
 #' @export which.matrix.type
 which.matrix.type<-function(x)
 {
