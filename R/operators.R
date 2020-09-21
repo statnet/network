@@ -215,6 +215,7 @@
       j<-match(j,xnames)
     i<-(1:n)[i]                 #Piggyback on R's internal tricks
     j<-(1:n)[j]
+    if(anyNA(i) || anyNA(j)) stop("subscript out of bounds")
     if(length(i)==1){
       out<-is.adjacent(x,i,j,na.omit=na.omit)
     }else{
@@ -280,6 +281,7 @@
       j<-match(j,xnames)
     i<-(1:n)[i]                 #Piggyback on R's internal tricks
     j<-(1:n)[j]
+    if(anyNA(i)||anyNA(j)) stop("subscript out of bounds")
     if(length(i)==1){
       el<-cbind(rep(i,length(j)),j)
     }else{
