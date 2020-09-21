@@ -598,7 +598,7 @@ out_of_bounds <- function(x, el){
     if(!is.multiplex(out)){           #If not multiplex, remove duplicates
       el<-unique(el)
       elna<-unique(elna)
-      if(NROW(el)*NROW(elna)>0){
+      if(NROW(el)>0&&NROW(elna)>0){
         n<-network.size(out)
         elnum<-(el[,1]-1)+n*(el[,2]-1)
         elnanum<-(elna[,1]-1)+n*(elna[,2]-1)
@@ -885,7 +885,7 @@ out_of_bounds <- function(x, el){
     elna<-rbind(outinf$elnax,outinf$elnay)
     el<-unique(el)
     elna<-unique(elna)
-    if(NROW(el)*NROW(elna)>0){
+    if(NROW(el)>0&&NROW(elna)>0){
       n<-network.size(out)
       elnum<-(el[,1]-1)+n*(el[,2]-1)
       elnanum<-(elna[,1]-1)+n*(elna[,2]-1)
@@ -1087,7 +1087,7 @@ if (!exists('%c%')){
     if(NROW(elna)>1){
       elna<-unique(elna)
     }
-    if(NROW(elna)*NROW(el)>0){
+    if(NROW(elna)>0&&NROW(el)>0){
       sel<-rep(TRUE,NROW(elna))
       for(i in 1:NROW(elna)){
         if(any((el[,1]==elna[i,1])&(el[,2]==elna[i,2])))
