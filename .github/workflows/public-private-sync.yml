@@ -13,8 +13,8 @@
 
 # Set public and private repositories (i.e., USER/PKG). Leave blank to autodetect.
 env:
-  PUBLIC: ''
-  PRIVATE: ''
+  PUBLIC: 'statnet/network'
+  PRIVATE: 'statnet/network-private'
 
 on: push
 jobs:
