@@ -1,5 +1,13 @@
 CHANGELOG:
 v1.17
+  - Michal Bojanowski, Pavel N. Krivitsky, Chad Klumb, and Brendan Knapp have been added as contributors.
+  - summary.character() and print.summary.character() are no longer exported as it interfered with base::summary.data.frame().
+  - Added functions as.network.data.frame and as.data.frame.network for converting between data.frames and networks.
+  - as.tibble.network and as_tibble.network now optionally return edge IDs, controlled with the store.eid argument
+  - Fixes to read.paj().
+  - Various testthat improvements.
+  - Bugs fixed in mixingmatrix.network().
+  - Updated tests for compatibility with R 4.0
   - Converted get.edge.attribute, get.edge.value, get.network.attribute, list.edge.attributes, list.network.attributes, set.vertex.attribute, set.edge.attribute, set.edge.value, set.network.attribute, delete.vertex.attribute, delete.edge.attribute, and delete.network.attribute to generics for greater extensibility.
 v1.16
   - Converted get.vertex.attribute and list.vertex.attributes to generics for greater extensibility.
