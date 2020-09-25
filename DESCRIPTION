@@ -11,7 +11,8 @@ Authors@R: c(
     person("Li", "Wang", role=c("ctb"), email="lxwang@uw.edu"),
     person("Pavel N.", "Krivitsky", role=c("ctb"), email="pavel@statnet.org", comment=c(ORCID="0000-0002-9101-3362")),
     person("Knapp", "Brendan", role=c("ctb"), email="brendan.g.knapp@gmail.com", comment=c(ORCID="0000-0003-3284-4972")),
-    person("Michał", " Bojanowski", role=c("ctb"), email="mbojanowski@kozminski.edu.pl"))
+    person("Michał", " Bojanowski", role=c("ctb"), email="mbojanowski@kozminski.edu.pl"),
+    person("Chad", "Klumb", role=c("ctb"), email="cklumb@gmail.com"))
 Depends: R (>= 2.10), utils
 Imports: tibble, magrittr, statnet.common
 Suggests: 
