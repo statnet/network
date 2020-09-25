@@ -12,20 +12,10 @@ is.color(x)
 \arguments{
 \item{x}{vector of numeric, character or factor values to be transformed}
 
-\item{opacity}{optional numeric value in the range 0.0 to 1.0 used to
-specify the opacity/transparency (alpha) of the colors to be returned. 0
-means fully opaque, 1 means fully transparent.}
-}
-\value{
-For \code{as.color}, a vector integer values (corresponding to color
-palette values) or character color name. For \code{is.color}, a logical
-vector indicating if each element of x appears to be a color
-}
-\description{
-Convenience function to convert a vector of values into a color
-specification.
-}
-\details{
+\item{opacity}{optional numeric value in the range 0.0 to 1.0 used to specify
+  the opacity/transparency (alpha) of the colors to be returned. 0 means
+  fully opaque, 1 means fully transparent.
+
 Behavior of \code{as.color} is as follows: \itemize{ \item integer numeric
 values: unchanged, (assumed to corespond to values of R's active
 \code{\link{palette}}) \item integer real values: will be translated to into
@@ -45,7 +35,18 @@ checking if it is an HTML-style hex color code.  Note that it will return
 FALSE for integer values.
 
 These functions are used for the color parameters of
-\code{\link{plot.network}}.
+\code{\link{plot.network}}.}
+}
+\value{
+For \code{as.color}, a vector integer values (corresponding to color
+  palette values) or character color name. For \code{is.color}, a logical
+  vector indicating if each element of x appears to be a color
+
+\code{as.color()} returns TRUE if x is a character in a known color format.
+}
+\description{
+Convenience function to convert a vector of values into a color
+specification.
 }
 \examples{
 
@@ -57,5 +58,4 @@ as.color(c('a','b','c'))
 as.color(c('red','green','blue'),0.5) # gives "#FF000080", "#00FF0080", "#0000FF80"
 
 is.color(c('red',1,'foo',NA,'#FFFFFF55'))
-
 }

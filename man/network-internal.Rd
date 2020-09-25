@@ -2,27 +2,12 @@
 % Please edit documentation in R/misc.R, R/operators.R
 \name{network-internal}
 \alias{network-internal}
-\alias{mixingmatrix}
-\alias{+}
-\alias{-}
-\alias{*}
-\alias{+.default}
-\alias{-.default}
-\alias{*.default}
-\alias{summary.character}
-\alias{print.summary.character}
-\alias{print.mixingmatrix}
-\alias{mixingmatrix.network}
 \alias{is.discrete.numeric}
 \alias{is.discrete.character}
 \alias{is.discrete}
 \alias{networkOperatorSetup}
 \title{Internal Network Package Functions}
 \usage{
-mixingmatrix(object, ...)
-
-\method{mixingmatrix}{network}(object, attrname, ...)
-
 is.discrete.numeric(x)
 
 is.discrete.character(x)
@@ -32,17 +17,12 @@ is.discrete(x)
 networkOperatorSetup(x, y = NULL)
 }
 \arguments{
-\item{object}{a network or some other data structure for which a mixing
-matrix is meaningful.}
-
-\item{\dots}{further arguments passed to or used by methods.}
-
-\item{attrname}{a vertex attribute name.}
-
 \item{x}{an object to be designated either discrete or continuous, or a
 network.}
 
 \item{y}{a network or something coercible to one.}
+
+\item{\dots}{further arguments passed to or used by methods.}
 }
 \description{
 Internal network functions.
