@@ -1,6 +1,6 @@
 Package: network
-Version: 1.17.0-554
-Date: 2020-09-21
+Version: 1.17.0-567
+Date: 2020-09-25
 Title: Classes for Relational Data
 Authors@R: c(
     person("Carter T.", "Butts", role=c("aut","cre"), email="buttsc@uci.edu"),
