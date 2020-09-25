@@ -8,7 +8,7 @@
 \usage{
 mixingmatrix(object, ...)
 
-\method{mixingmatrix}{network}(object, attrname, ...)
+\method{mixingmatrix}{network}(object, attrname, expand.bipartite = FALSE, ...)
 
 \method{print}{mixingmatrix}(x, ...)
 }
@@ -19,6 +19,11 @@ matrix is meaningful.}
 \item{...}{further arguments passed to or used by methods.}
 
 \item{attrname}{a vertex attribute name.}
+
+\item{expand.bipartite}{logical; if `object` is bipartite, should
+we return the square mixing matrix representing every level of
+`attrname` against every other level, or a rectangular matrix
+considering only levels present in each bipartition?}
 
 \item{x}{mixingmatrix object}
 }
