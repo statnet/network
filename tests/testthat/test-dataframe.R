@@ -1,9 +1,7 @@
-
 context("test-dataframe")
 
-# context("as.network")
 
-# test_that("invalid or conflicting arguments throw", {
+test_that("invalid or conflicting arguments throw", {
   edge_df <- data.frame(from = 1:3, to = 4:6)
 
   expect_error(
@@ -44,9 +42,10 @@ context("test-dataframe")
     "Both `hyper` and `bipartite` are `TRUE`, but bipartite hypergraphs are not supported.",
     fixed = TRUE
   )
-# }
+})
 
-# test_that("simple networks are built correctly", {
+
+test_that("simple networks are built correctly", {
   simple_edge_df <- data.frame(.tail = c("b", "c", "c", "d", "d", "e"),
                                .head = c("a", "b", "a", "a", "b", "a"),
                                time = 1:6,
@@ -98,10 +97,10 @@ context("test-dataframe")
     as.data.frame(simple_g, unit = "vertices")
   )
 
-# })
+})
 
 
-# test_that("simple and complex edge/vertex/R-object attributes are safely handled", {
+test_that("simple and complex edge/vertex/R-object attributes are safely handled", {
   vertex_df <- data.frame(name = letters[5:1],
                           lgl_attr = c(TRUE, FALSE, TRUE, FALSE, TRUE),
                           int_attr = as.integer(seq_len(5)),
@@ -310,10 +309,10 @@ context("test-dataframe")
     as.data.frame(g_many_attrs, unit = "vertices")
   )
 
-# })
+})
 
 
-# test_that("`multiple` arguments work", {
+test_that("`multiple` arguments work", {
   dir_parallel_edge_df <- data.frame(from = c("a", "a"),
                                      to = c("b", "b"),
                                      stringsAsFactors = FALSE)
@@ -353,9 +352,10 @@ context("test-dataframe")
   expect_false(
     is.directed(as.network(undir_parallel_edge_df, directed = FALSE, multiple = TRUE))
   )
-# })
+})
 
-# test_that("`loops` works", {
+
+test_that("`loops` works", {
   df_with_loops <- data.frame(from = c("b", "c", "c", "d", "d", "e", "f"),
                               to = c("a", "b", "a", "a", "b", "a", "f"),
                               stringsAsFactors = FALSE)
@@ -367,9 +367,10 @@ context("test-dataframe")
     as.network(df_with_loops, loops = TRUE),
     "network"
   )
-# })
+})
 
-# test_that("missing vertex names are caught", {
+
+test_that("missing vertex names are caught", {
   missing_vertex_df <- data.frame(name = letters[1:5],
                                   stringsAsFactors = FALSE)
 
@@ -381,9 +382,10 @@ context("test-dataframe")
     as.network(missing_edge_df, vertices = missing_vertex_df),
     "The following vertices are in `x`, but not in `vertices`:\n\t- f\n\t- g", fixed = TRUE
   )
-# })
+})
 
-# test_that("duplicate vertex names are caught", {
+
+test_that("duplicate vertex names are caught", {
   dup_vertex_df <- data.frame(name = c("a", "a", "b", "c", "d", "e"),
                               stringsAsFactors = FALSE)
 
@@ -395,9 +397,10 @@ context("test-dataframe")
     as.network(dup_edge_df, vertices = dup_vertex_df),
     "The following vertex names are duplicated in `vertices`:\n\t- a", fixed = TRUE
   )
-# })
+})
 
-# test_that("bad data frames are caught", {
+
+test_that("bad data frames are caught", {
   edge_df_with_NAs1 <- data.frame(from = c(letters, NA),
                                   to = c("a", letters),
                                   stringsAsFactors = FALSE)
@@ -465,10 +468,10 @@ context("test-dataframe")
     "If `hyper` is `FALSE`, the first two columns of `x` should be atomic vectors.",
     fixed = TRUE
   )
-# })
+})
 
 
-# test_that("bipartite networks work", {
+test_that("bipartite networks work", {
   bip_edge_df <- data.frame(.tail = c("a", "a", "b", "b", "c", "d", "d", "e"),
                             .head = c("e1", "e2", "e1", "e3", "e3", "e2", "e3", "e1"),
                             an_edge_attr = letters[1:8],
@@ -633,9 +636,10 @@ context("test-dataframe")
     as.network(x = bip_confused_edge_df, directed = FALSE, bipartite = TRUE),
     "`bipartite` is `TRUE`, but there are vertices that appear in both of the first two columns of `x`."
   )
-# })
+})
 
-# test_that("hyper-edges work", {
+
+test_that("hyper-edges work", {
   hyper_edge_df <- structure(
     list(.tail = list(1:4, 3:5, 4:7, 6:10),
          .head = list(1:4, 3:5, 4:7, 6:10),
@@ -747,9 +751,10 @@ context("test-dataframe")
     "`loops` is `FALSE`, but `x` contains loops."
   )
 
-# })
+})
 
-# test_that("edge/vertex-less networks return empty data frames", {
+
+test_that("edge/vertex-less networks return empty data frames", {
 
   empty_g <- network.initialize(0)
   expect_identical(
@@ -778,10 +783,9 @@ context("test-dataframe")
     2L
   )
 
-# })
+})
 
-# test_that("deleted edges/vertices and na attributes are handled correctly", {
-
+test_that("deleted edges/vertices and na attributes are handled correctly", {
   na_edge_df <- data.frame(.tail = c("b", "c", "c", "d", "d", "e"),
                            .head = c("a", "b", "a", "a", "b", "a"),
                            na = c(rep(FALSE, 5), TRUE),
@@ -812,6 +816,16 @@ context("test-dataframe")
     as.data.frame(na_g, unit = "vertices", attrs_to_ignore = NULL)
   )
 
-# })
+})
 
 
+test_that("as.data.frame.network() handles missing vertex.names ", {
+  # addresses https://github.com/statnet/network/issues/43
+  nw_no_vertex.names <- network.initialize(5)
+  delete.vertex.attribute(nw_no_vertex.names, "vertex.names")
+
+  expect_identical(
+    as.data.frame(nw_no_vertex.names, unit = "vertices"),
+    data.frame(vertex.names = as.character(1:5))
+  )
+})
