@@ -21,17 +21,19 @@ flonet %v% "a" <- sample(c(1,2,NA), network.size(flonet), replace=TRUE)
 
 
 test_that("mixingmatrix() just works on a directed network", {
-  emm <- stupid_mm(emon$Texas, "Location", exclude=NULL)
   mm <- mixingmatrix(emon$Texas, "Location")
+  expect_type(mm$matrix, "integer")
   expect_identical(
     mm$matrix,
-    emm
+    stupid_mm(emon$Texas, "Location", exclude=NULL)
   )
 })
 
 test_that("directed: rows and cols for NA on attribute are always shown", {
+  mm <- mixingmatrix(emon$MtSi, "Formalization")
+  expect_type(mm$matrix, "integer")
   expect_identical(
-    mixingmatrix(emon$MtSi, "Formalization")$matrix,
+    mm$matrix,
     stupid_mm(emon$MtSi, "Formalization", exclude=NULL)
   )
 })
@@ -48,10 +50,12 @@ test_that("mixingmatrix() just works on a directed network", {
   net <- network.initialize(4, directed=FALSE)
   net[1,2] <- net[1,3] <- 1
   net %v% "a" <- c(1,1, 2,2)
+  mm <- mixingmatrix(net, "a")
+  expect_type(mm$matrix, "integer")
   expect_identical(
-    mixingmatrix(net, "a")$matrix,
+    mm$matrix,
     structure(
-      matrix(c(1,1,1,0), 2, 2),
+      matrix(as.integer(c(1,1,1,0)), 2, 2),
       dimnames = list(From = 1:2, To = 1:2),
       class = "table"
     )
@@ -60,8 +64,10 @@ test_that("mixingmatrix() just works on a directed network", {
 
 
 test_that("undirected: rows and cols for NA on attribute are always shown", {
+  mm <- mixingmatrix(flonet, "a")
+  expect_type(mm$matrix, "integer")
   expect_identical(
-    mixingmatrix(flonet, "a")$matrix,
+    mm$matrix,
     stupid_mm(flonet, "a", exclude=NULL)
   )
 })
@@ -76,10 +82,12 @@ test_that("mixingmatrix() just works on a bipartite network", {
   net <- as.network(am, directed=FALSE, bipartite=3)
   net %v% "mode" <- c(1,1,2,2,2)
   net %v% "a" <- c(1,2,1,2,1,2)
-  expect_equivalent(    # TODO should test identical, but mixingmatrix() returns int or num...
-    mixingmatrix(net, "mode")$matrix,
+  mm <- mixingmatrix(net, "mode")
+  expect_type(mm$matrix, "integer")
+  expect_identical(
+    mm$matrix,
     structure(
-      matrix(c(2,0), 2, 1),
+      matrix(c(2L, 0L), 2, 1),
       dimnames = list(From = 1:2, To=2),
       class = "table"
     )
