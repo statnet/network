@@ -1,5 +1,4 @@
-context("test-mixingmatrix directed")
-
+# Directed networks
 
 stupid_mm <- function(net, a, ...) {
   edb <- as.data.frame(net, unit="edges")
@@ -7,7 +6,7 @@ stupid_mm <- function(net, a, ...) {
   edb$.head.a <- vdb[[a]][match(edb$.head, vdb$vertex.names)]
   edb$.tail.a <- vdb[[a]][match(edb$.tail, vdb$vertex.names)]
   # +0 to have numeric not integer
-  with(edb, table(From = .tail.a, To = .head.a, ...)) + 0
+  with(edb, table(From = .tail.a, To = .head.a, ...))
 }
 
 data(emon)
@@ -21,7 +20,6 @@ test_that("mixingmatrix() works on a directed network", {
   )
 })
 
+# Undirected networks
 
-
-context("test-mixingmatrix undirected")
 
