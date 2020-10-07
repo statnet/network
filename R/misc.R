@@ -148,12 +148,12 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
   if(missing(attrname)){
     stop("attrname argument is missing. mixingmatrix() requires an an attribute name")
   }
-  if(network.size(nw)==0){
+  if(network.size(nw)==0L){
     warning("mixing matrices not well-defined for graphs with no vertices.")
     type<-"directed"
     if(is.bipartite(nw))
       type<-"bipartite"
-    tabu<-matrix(nrow=0,ncol=0)
+    tabu<-matrix(nrow=0L,ncol=0L)
     ans<-list(type=type,matrix=tabu)
     class(ans)<-"mixingmatrix"
     return(ans)
@@ -168,22 +168,22 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
       cat("Warning:  Bipartite networks are currently\n",
           "automatically treated as undirected\n")
     type <- "bipartite"
-    rowswitch <- apply(el, 1, function(x) x[1]>x[2])
-    el[rowswitch, 1:2] <- el[rowswitch, 2:1]
+    rowswitch <- apply(el, 1L, function(x) x[1L]>x[2L])
+    el[rowswitch, 1L:2L] <- el[rowswitch, 2L:1L]
     nb1 <- get.network.attribute(nw,"bipartite")
-    if(!expand.bipartite) u <- sort(unique(nodecov[1:nb1]))
-    From <- factor(nodecov[el[,1]], levels=u)
-    if(!expand.bipartite) u <- sort(unique(nodecov[(nb1+1):network.size(nw)]))
-    To <- factor(nodecov[el[,2]], levels=u)
+    if(!expand.bipartite) u <- sort(unique(nodecov[1L:nb1]))
+    From <- factor(nodecov[el[,1L]], levels=u)
+    if(!expand.bipartite) u <- sort(unique(nodecov[(nb1+1L):network.size(nw)]))
+    To <- factor(nodecov[el[,2L]], levels=u)
   }else{
-    From <- factor(nodecov[el[,1]], levels=u)
-    To <- factor(nodecov[el[,2]], levels=u)
+    From <- factor(nodecov[el[,1L]], levels=u)
+    To <- factor(nodecov[el[,2L]], levels=u)
   }
   tabu <- table(From, To)
   if(!is.directed(nw) && !is.bipartite(nw)){
     type <- "undirected"
     tabu <- tabu + t(tabu)
-    diag(tabu) <- diag(tabu)/2
+    diag(tabu) <- diag(tabu)/2L
   }
   ans <- list(type=type, matrix=tabu)
   class(ans) <- "mixingmatrix"
