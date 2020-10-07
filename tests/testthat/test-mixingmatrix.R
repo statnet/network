@@ -30,6 +30,7 @@ test_that("mixingmatrix() just works on a directed network", {
 })
 
 test_that("directed: rows and cols for NA on attribute are always shown", {
+  skip("Skip until #42 is resolved")
   mm <- mixingmatrix(emon$MtSi, "Formalization")
   expect_type(mm$matrix, "integer")
   expect_identical(
@@ -64,6 +65,7 @@ test_that("mixingmatrix() just works on a directed network", {
 
 
 test_that("undirected: rows and cols for NA on attribute are always shown", {
+  skip("Skip until #42 is resolved")
   mm <- mixingmatrix(flonet, "a")
   expect_type(mm$matrix, "integer")
   expect_identical(
