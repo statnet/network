@@ -134,6 +134,7 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #'   the *square* mixing matrix representing every level of `attrname` against
 #'   every other level, or a *rectangular* matrix considering only levels
 #'   present in each bipartition?
+#' @param useNA,... arguments passed to \code{\link{table}}.
 #'
 #' @return Function `mixingmatrix()` returns an object of class "mixingmatrix"
 #'   extending "table" with a cross-tabulation of edges in the `object`
@@ -154,7 +155,7 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #' # of tie sender and receiver (data from Drabek et al. 1981)
 #' data(emon)
 #' mixingmatrix(emon$LakePomona, "Sponsorship")
-mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) {
+mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, useNA="ifany", ...) {
   nw <- object
   if(missing(attrname)){
     stop("attrname argument is missing. mixingmatrix() requires an an attribute name")
@@ -188,7 +189,7 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
     From <- factor(nodecov[el[,1L]], levels=u)
     To <- factor(nodecov[el[,2L]], levels=u)
   }
-  tabu <- table(From, To)
+  tabu <- table(From, To, useNA=useNA, ...)
   if(!is.directed(nw) && !is.bipartite(nw)){
     type <- "undirected"
     tabu <- tabu + t(tabu)

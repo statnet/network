@@ -35,6 +35,21 @@ test_that("directed: rows and cols for NA on attribute are always shown", {
     mm$matrix,
     stupid_mm(emon$MtSi, "Formalization", exclude=NULL)
   )
+  
+  net <- network.initialize(2, directed=TRUE)
+  net %v% "a" <- c(1,NA)
+  net[1,2] <- 1
+  mm <- mixingmatrix(net, "a")
+  expect_type(mm$matrix, "integer")
+  expect_identical(
+    mm$matrix,
+    structure(
+      matrix(as.integer(c(0, 1), 1, 2)),
+      dimnames = list(From=1, To=c("1", "<NA>")),
+      class = "table"
+    )
+  )
+  
 })
 
 
