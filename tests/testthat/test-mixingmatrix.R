@@ -1,18 +1,19 @@
 data(emon, package="network")
-data(flo, package="network")
-flonet <- as.network(flo, directed=FALSE)
-set.seed(666)
-flonet %v% "a" <- sample(c(1,2,NA), network.size(flonet), replace=TRUE)
-# plot(flonet, vertex.col = "a")
-
-
 
 
 # Directed networks -------------------------------------------------------
 
 test_that("mixingmatrix() just works on a directed network", {
-  expect_silent(
-    mm <- mixingmatrix(emon$Texas, "Location")
+  net <- network.initialize(4, directed=TRUE)
+  net[1,2] <- net[3,4] <- 1
+  net %v% "a" <- c(1,1,2,2)
+  expect_identical(
+    mixingmatrix(net, "a")$matrix,
+    structure(
+      matrix(as.integer(c(1,0,0,1)), 2, 2),
+      dimnames = list(From=1:2, To=1:2),
+      class = "table"
+    )
   )
   expect_type(mm, "integer")
   expect_s3_class(mm, c("mixingmatrix", "table"), exact=TRUE)
@@ -27,29 +28,83 @@ test_that("mixingmatrix() just works on a directed network", {
   expect_false(is.bipartite(mm))
 })
 
+test_that("mixingmatrix() works on emon$Texas (directed)", {
+  data(emon, package="network")
+  a <- get.vertex.attribute(emon$Texas, "Location")
+  el <- as.matrix(emon$Texas, matrix.type="edgelist")
+  emm <- table(From=a[el[,1]], To=a[el[,2]])
+  expect_identical(
+    mixingmatrix(emon$Texas, "Location")$matrix,
+    emm
+  )
+})
+
+
+
 test_that("directed: rows and cols for NA on attribute are always shown", {
   skip("Wait and update when #42 is resolved")
   mm <- mixingmatrix(emon$MtSi, "Formalization")
   expect_type(mm$matrix, "integer")
   expect_identical(
     mm$matrix,
-    stupid_mm(emon$MtSi, "Formalization", exclude=NULL)
+    stupid_mm(emon$MtSi, "Formalization")
   )
-  
-  net <- network.initialize(2, directed=TRUE)
-  net %v% "a" <- c(1,NA)
-  net[1,2] <- 1
+} )
+
+test_that("mixingmatrix(directed with categories without incident ties)", {
+  net <- network.initialize(4, directed = TRUE)
+  net %v% "a" <- c(1,1,2,3)
+  net[1,2] <- net[1,3] <- 1 # no ties incident on a=3
   mm <- mixingmatrix(net, "a")
   expect_type(mm$matrix, "integer")
   expect_identical(
     mm$matrix,
     structure(
-      matrix(as.integer(c(0, 1), 1, 2)),
-      dimnames = list(From=1, To=c("1", "<NA>")),
+      matrix(as.integer(c(1,0,0, 1,0,0, 0,0,0)), 3, 3),
+      dimnames = list(From=1:3, To=1:3),
       class = "table"
     )
   )
-  
+})
+
+
+test_that("mixingmatrx() responds correctly to useNA= and exclude=NULL", {
+  net <- network.initialize(2, directed=TRUE)
+  net %v% "a" <- c(1,NA)
+  net[1,2] <- 1
+  for(useNA in c("no", "always", "ifany")) {
+    mm <- mixingmatrix(net, "a", useNA = useNA)
+    expect_type(mm$matrix, "integer")
+    expect_identical(
+      mm$matrix,
+      switch(
+        useNA,
+        no = structure(
+          matrix(as.integer(0), 1, 1),
+          dimnames = list(From=1, To=1),
+          class = "table"
+        ),
+        always = structure(
+          matrix(as.integer(c(0,0, 1,0)), 2, 2),
+          dimnames = list(From=c(1,NA), To=c(1, NA)),
+          class = "table"
+        ),
+        ifany = structure(
+          matrix(as.integer(c(0, 1)), 1, 2),
+          dimnames = list(From=1, To=c(1, NA)),
+          class = "table"
+        )
+      )
+    )
+  }
+  expect_identical(
+    mixingmatrix(net, "a", exclude=NULL)$matrix,
+    structure(
+      matrix(as.integer(c(0, 1)), 1, 2),
+      dimnames = list(From=1, To=c(1, NA)),
+      class = "table"
+    )
+  )
 })
 
 
@@ -57,7 +112,6 @@ test_that("directed: rows and cols for NA on attribute are always shown", {
 
 
 # Undirected networks -----------------------------------------------------
-
 
 test_that("mixingmatrix() just works on a undirected network", {
   net <- network.initialize(4, directed=FALSE)
@@ -82,43 +136,113 @@ test_that("mixingmatrix() just works on a undirected network", {
 
 test_that("undirected: rows and cols for NA on attribute are always shown", {
   skip("Wait and update when #42 is resolved")
-  mm <- mixingmatrix(flonet, "a")
+  net <- network.initialize(2, directed=FALSE)
+  net %v% "a" <- c(1, NA)
+  net[1,2] <- 1
+  mm <- mixingmatrix(net, "a")
   expect_type(mm$matrix, "integer")
   expect_identical(
     mm$matrix,
-    stupid_mm(flonet, "a", exclude=NULL)
+    structure(
+      matrix(as.integer(c(1,1,0, 1,0,0, 0,0,0)), 3, 3),
+      dimnames = list(From=1:3, To=1:3),
+      class = "table"
+    )
   )
 })
+
+
+
+
+net <- network.initialize(2, directed=FALSE)
+net %v% "a" <- c(1,NA)
+net[1,2] <- 1
+for(useNA in c("no", "always")) {
+  test_that(
+    paste0("mixingmatrx(undir net with NA on attribute) responds correctly to useNA=", sQuote(useNA)),
+    {
+      expect_silent(
+        mm <- mixingmatrix(net, "a", useNA = useNA)
+      )
+      # Expected output
+      emm <- switch(
+        useNA,
+        no = structure(
+          matrix(as.integer(0), 1, 1),
+          dimnames = list(From=1, To=1),
+          class = "table"
+        ),
+        always = structure(
+          matrix(as.integer(c(0,1, 1,0)), 2, 2),
+          dimnames = list(From=c(1,NA), To=c(1, NA)),
+          class = "table"
+        )
+      )
+      expect_type(mm$matrix, "integer")
+      expect_identical(
+        mm$matrix,
+        emm
+      )
+    }
+  )
+}
+test_that("mixingmatrx(undir net with NA on attributes) responds correctly to exclude=NULL", {
+  # Expected: matri with row for 1 and column for NA
+  a <- get.vertex.attribute(net, "a")
+  el <- as.matrix(net, matrix.type="edgelist")
+  emm <- table(From=a[el[,1]], To=a[el[,2]], exclude=NULL)
+  expect_silent(
+    mm <- mixingmatrix(net, "a", exclude=NULL)
+  )
+  expect_identical(mm$matrix, emm)
+})
+
+
+
+
+
+
+
+
 
 
 # Bipartite networks ------------------------------------------------------
 
 am <- matrix(0, 5, 5)
-am[1,3] <- am[2,4] <- 1
+am[1,3] <- am[1,4] <- am[2,3] <- am[2,5] <-  1
 net <- as.network(am, directed=FALSE, bipartite=2)
-# Mode attribute matches the partition
-net %v% "mode" <- c("circle", "square")[c(1,1,2,2,2)]
-# Attribute 'a' defined for all nodes in both partitions
-net %v% "common" <- c("black", "red")[c(1,2,1,2,1,2)]
-# plot(net, vertex.col="a", vertex.cex = 3, vertex.sides = (net %v% "mode") * 4)
-# Attribute present only for circle nodes
-set.vertex.attribute(net, "radius", 1:2, 1:2)
-# Attribute present only for square nodes
-set.vertex.attribute(net, "side_length", c(2,3,2), 1:3)
+net %v% "mode" <- c(1,1,2,2,2)
+net %v% "a" <- c(1,2,3,4,4)
+# plot(net, vertex.col="mode")
 
-test_that("mixingmatrix() just works on a bipartite network - partition attribute", {
+test_that("mixingmatrix(bipartite with heter value sets, expand.bipartite=FALSE)", {
+  # On `mode`
   expect_silent(
-    mm <- mixingmatrix(net, "mode")
+    mm <- mixingmatrix(net, "mode", expand.bipartite = FALSE)
   )
-  expect_type(mm, "integer")
-  expect_false(is.directed(mm))
-  expect_true(is.bipartite(mm))
-  expect_equivalent(
-    mm,
-    structure(matrix(2, 1, 1), class="mixingmatrix")
+  expect_type(mm$matrix, "integer")
+  expect_identical(
+    mm$matrix,
+    structure(
+      matrix(4L, 1, 1),
+      dimnames = list(From = 1, To = 2),
+      class = "table"
+    )
   )
-})  
-
+  # On `a`
+  expect_silent(
+    mm <- mixingmatrix(net, "a", expand.bipartite = FALSE)
+  )
+  expect_type(mm$matrix, "integer")
+  expect_identical(
+    mm$matrix,
+    structure(
+      matrix(as.integer(c(1,1, 1,1)), 2, 2),
+      dimnames = list(From = 1:2, To=3:4),
+      class = "table"
+    )
+  )
+})
 
 test_that("mixingmatrix() just works on a bipartite network - common attribute", {
   # Attribute matching the partition
@@ -139,6 +263,38 @@ test_that("mixingmatrix() just works on a bipartite network - two partition-spec
   skip("Not yet implemented")
   expect_silent(
     mm <- mixingmatrix(net, c("radius", "side_length"))
+  )
+})
+
+
+test_that("mixingmatrix(bipartite with heter value sets, expand.bipartite=FALSE)", {
+  # On `mode`
+  expect_silent(
+    mm <- mixingmatrix(net, "mode", expand.bipartite = TRUE)
+  )
+  expect_type(mm$matrix, "integer")
+  expect_identical(
+    mm$matrix,
+    structure(
+      matrix(as.integer(c(0,0, 4,0)), 2, 2),
+      dimnames = list(From = 1:2, To=1:2),
+      class = "table"
+    )
+  )
+  # On `a`
+  expect_silent(
+    mm <- mixingmatrix(net, "a", expand.bipartite = TRUE)
+  )
+})
+
+
+test_that("mixingmatrix(bipartite with categories without incident ties)", {
+  am <- matrix(0, 5, 5)
+  am[1,3] <- am[2,4] <- 1
+  net <- as.network(am, directed=FALSE, bipartite=2)
+  net %v% "a" <- c(1,2,30,40,99)
+  expect_silent(
+    mm <- mixingmatrix(net, "a")
   )
   expect_type(mm, "integer")
   expect_false(is.directed(mm))
