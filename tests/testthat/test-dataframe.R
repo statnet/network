@@ -815,3 +815,12 @@ context("test-dataframe")
 # })
 
 
+test_that("as.data.frame.network() handles missing vertex.names ", {
+  # addresses https://github.com/statnet/network/issues/43
+  nw_no_vertex.names <- network.initialize(5)
+  delete.vertex.attribute(nw_no_vertex.names, "vertex.names")
+
+  expect_identical(
+    as.data.frame(nw_no_vertex.names, unit = "vertices"),
+    data.frame(vertex.names = as.character(1:5))
+  )

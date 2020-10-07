@@ -672,6 +672,10 @@ as.network.data.frame <- function(x,
     class = "data.frame"
   )
 
+  if (!"vertex.names" %in% names(out)) {
+    out[["vertex.names"]] <- network.vertex.names(x)
+  }
+
   if (na.rm) {
     out <- out[!vapply(out[["na"]], isTRUE, logical(1L), USE.NAMES = FALSE), ]
     rownames(out) <- NULL
