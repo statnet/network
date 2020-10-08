@@ -1,6 +1,3 @@
-
-context("testing issue #22")
-
 td <- data.frame(
   lettres = letters[1:10],
   values = 1:10,

@@ -1,5 +1,3 @@
-context("test-indexing")
-
 test_that("proper error messages for out of bounds indexing (unipartite)",{
   nw <- network.initialize(10)
   expect_error(nw[1,100], "subscript out of bounds")

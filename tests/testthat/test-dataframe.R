@@ -1,6 +1,3 @@
-context("test-dataframe")
-
-
 test_that("invalid or conflicting arguments throw", {
   edge_df <- data.frame(from = 1:3, to = 4:6)
 

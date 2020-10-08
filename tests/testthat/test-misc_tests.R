@@ -1,7 +1,5 @@
 # tests for misc R functions
 
-context("test-misc_tests")
-
 test<-network.initialize(5)
 test[1,2]<-1
 expect_equal(has.edges(test), c(TRUE,TRUE,FALSE,FALSE,FALSE))
