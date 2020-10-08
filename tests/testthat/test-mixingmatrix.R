@@ -47,7 +47,7 @@ test_that("directed: rows and cols for NA on attribute are always shown", {
 # Undirected networks -----------------------------------------------------
 
 
-test_that("mixingmatrix() just works on a directed network", {
+test_that("mixingmatrix() just works on a undirected network", {
   net <- network.initialize(4, directed=FALSE)
   net[1,2] <- net[1,3] <- 1
   net %v% "a" <- c(1,1, 2,2)
