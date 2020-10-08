@@ -55,7 +55,7 @@ as.sociomatrix(pouch,attrname="marsupial")     #Recover the marsupial
 \references{
 Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-\url{http://www.jstatsoft.org/v24/i02/}
+\url{https://www.jstatsoft.org/v24/i02/}
 }
 \seealso{
 \code{\link{network.operators}}

@@ -100,10 +100,10 @@ require(network)
 
 par(mfrow=c(2,2))
 
-test.net.1 <- read.paj("http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd98/A98.net")
+test.net.1 <- read.paj("https://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd98/A98.net")
 plot(test.net.1,main=test.net.1\%n\%'title')
 
-test.net.2 <- read.paj("http://vlado.fmf.uni-lj.si/pub/networks/data/mix/USAir97.net")
+test.net.2 <- read.paj("https://vlado.fmf.uni-lj.si/pub/networks/data/mix/USAir97.net")
 # plot using coordinates from the file in the file
 plot(test.net.2,main=test.net.2\%n\%'title',
                coord=cbind(test.net.2\%v\%'x',
@@ -112,20 +112,20 @@ plot(test.net.2,main=test.net.2\%n\%'title',
                
 # read .paj project file
 # notice output has $networks and $partitions
-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Tina.paj')
+read.paj('https://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Tina.paj')
 }
 
 }
 \references{
 Batagelj, Vladimir and Mrvar, Andrej (2011) Pajek Reference
 Manual version 2.05
-\url{http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf} Section
+\url{https://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf} Section
 5.3 pp 73-79
 
 Batageli, Vladimir (2008) "Network Analysis Description of Networks"
-\url{http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf}
+\url{https://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf}
 
-Pajek Datasets \url{http://vlado.fmf.uni-lj.si/pub/networks/data/esna/}
+Pajek Datasets \url{https://vlado.fmf.uni-lj.si/pub/networks/data/esna/}
 }
 \seealso{
 \code{\link{network}}

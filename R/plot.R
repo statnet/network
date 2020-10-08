@@ -8,6 +8,7 @@
 #
 # Last Modified 11/24/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
+# or later
 #
 # Part of the R/network package
 #
@@ -134,7 +135,7 @@ make.arrow.poly.coords<-function(x0,y0,x1,y1,ahangle,ahlen,swid,toff,hoff,ahead,
 #' @export network.arrow
 network.arrow<-function(x0,y0,x1,y1,length=0.1,angle=20,width=0.01,col=1,border=1,lty=1,offset.head=0,offset.tail=0,arrowhead=TRUE,curve=0,edge.steps=50,...){
   if(length(x0)==0)   #Leave if there's nothing to do
-    return;
+    return();
 
   #"Stretch" the arguments
   n<-length(x0)
@@ -257,7 +258,7 @@ make.loop.poly.coords<-function(x0,y0,xctr,yctr,ahangle,ahlen,swid,off,rad,ahead
 #' @export network.loop
 network.loop<-function(x0,y0,length=0.1,angle=10,width=0.01,col=1,border=1,lty=1,offset=0,edge.steps=10,radius=1,arrowhead=TRUE,xctr=0,yctr=0,...){
   if(length(x0)==0)   #Leave if there's nothing to do
-    return;
+    return();
 
   #"Stretch" the arguments
   n<-length(x0)

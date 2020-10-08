@@ -1,4 +1,6 @@
 CHANGELOG:
+v1.16.1
+  - Fixed return without () to comply with CRAN issues.
 v1.16
   - Converted get.vertex.attribute and list.vertex.attributes to generics for greater extensibility.
   - Updated tests to fix a color-related issue.

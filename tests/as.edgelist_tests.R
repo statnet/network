@@ -2,6 +2,7 @@
 # test comparing edgelist
 require(network)
 require(testthat)
+require(utf8)
 
 test<-network.initialize(5)
 add.edges(test,5,1)

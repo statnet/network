@@ -6,6 +6,7 @@
 # Written by Carter T. Butts <buttsc@uci.edu>
 # Last Modified 03/04/19
 # Licensed under the GNU General Public License version 2 (June, 1991)
+# or later
 #
 # Part of the R/network package
 #
