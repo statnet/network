@@ -155,7 +155,7 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #' # of tie sender and receiver (data from Drabek et al. 1981)
 #' data(emon)
 #' mixingmatrix(emon$LakePomona, "Sponsorship")
-mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, useNA="ifany", ...) {
+mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) {
   nw <- object
   if(missing(attrname)){
     stop("attrname argument is missing. mixingmatrix() requires an an attribute name")
@@ -189,7 +189,7 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, useNA
     From <- factor(nodecov[el[,1L]], levels=u)
     To <- factor(nodecov[el[,2L]], levels=u)
   }
-  tabu <- table(From, To, useNA=useNA, ...)
+  tabu <- table(From, To, ...)
   if(!is.directed(nw) && !is.bipartite(nw)){
     type <- "undirected"
     tabu <- tabu + t(tabu)

@@ -12,7 +12,7 @@
 \usage{
 mixingmatrix(object, ...)
 
-\method{mixingmatrix}{network}(object, attrname, expand.bipartite = FALSE, useNA = "ifany", ...)
+\method{mixingmatrix}{network}(object, attrname, expand.bipartite = FALSE, ...)
 
 \method{[[}{mixingmatrix}(x, ...)
 
@@ -28,7 +28,8 @@ mixingmatrix(object, ...)
 \item{object}{a network or some other data structure for which a mixing
 matrix is meaningful.}
 
-\item{...}{further arguments passed to or used by methods.}
+\item{...}{arguments passed to \code{\link{table}}. Use \code{useNA} or
+\code{exclude} to display rows/columns for possible \code{NA} values}
 
 \item{attrname}{a vertex attribute name.}
 
@@ -36,8 +37,6 @@ matrix is meaningful.}
 the \emph{square} mixing matrix representing every level of \code{attrname} against
 every other level, or a \emph{rectangular} matrix considering only levels
 present in each bipartition?}
-
-\item{useNA, ...}{arguments passed to \code{\link{table}}.}
 
 \item{x}{mixingmatrix object}
 
