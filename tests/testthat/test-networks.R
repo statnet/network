@@ -1,7 +1,4 @@
-
-context("test-networks")
-
-# ----- checks for network edgecount ------ 
+# ----- checks for network edgecount ------
 
 test<-network.initialize(4)
 # directed

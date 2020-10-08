@@ -1,7 +1,3 @@
-
-context("test-as.edgelist")
-
-
 test<-network.initialize(5)
 add.edges(test,5,1)
 add.edges(test,1,5)

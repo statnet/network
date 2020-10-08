@@ -1,7 +1,5 @@
 # test for reading pajek formatted files
 
-context("test-read.paj")
-
 
 # test for case of verticse, but no edges/arcs
 tmptest<-tempfile()
@@ -22,9 +20,9 @@ expect_equal(network.edgecount(noEdges),0)
 
 tmptest<-tempfile()
 cat("*Vertices          3
-1   'A' 
+1   'A'
 2   'B'
-3   'C' 
+3   'C'
 *Arcs
 1 2 1
 1 3 1
@@ -58,7 +56,7 @@ cat('*Vertices      9
 6      8       1
 6      9       1
 7      8       1
-8      9       1 
+8      9       1
 ',file=tmptest)
 edgesOnly<-read.paj(tmptest)
 expect_false(is.directed(edgesOnly))
@@ -69,8 +67,8 @@ expect_equal(network.edgecount(edgesOnly),12)
 # network will be directed, each *edges record will create one arc in each direction
 tmptest<-tempfile()
 cat("*Vertices          4
-1   'A' 
-2   'B' 
+1   'A'
+2   'B'
 3   'C'
 4   'D'
 *Arcs
@@ -88,17 +86,17 @@ as.matrix(arcsNEdges)
 # ----- error testing
 tmptest<-tempfile()
 cat("*Vertices          2
-1   'A' 
-2   'B' 
+1   'A'
+2   'B'
 *Arcs
-1 
+1
 ",file=tmptest)
 expect_error(read.paj(tmptest),regexp = 'does not appear to have the required')
 
 tmptest<-tempfile()
 cat("*Vertices          2
-1   'A' 
-2   'B' 
+1   'A'
+2   'B'
 *Arcs
 1 A 1
 ",file=tmptest)
@@ -106,8 +104,8 @@ expect_error(suppressWarnings(read.paj(tmptest)),regexp = 'contains non-numeric 
 
 tmptest<-tempfile()
 cat("*Vertices          2
-1   'A' 
-2   'B' 
+1   'A'
+2   'B'
 *Arcs
 1 2.5 1
 ",file=tmptest)
@@ -119,7 +117,7 @@ tmptest<-tempfile()
 cat("*Vertices          4
 1   'A' 0 0 0 box
 2   'B' 0 0 0
-3   'C' 0 0 0 
+3   'C' 0 0 0
 4   'D' 0 0 0 ellipse
 *Arcs
 1 2 1
@@ -130,16 +128,16 @@ expect_equal(fillIn%v%'shape',c('box','box','box','ellipse'))
 
 
 # test stuff in file comments
-########## but multirelational ############ only ~200  nodes 
-#GulfLDays.net 
+########## but multirelational ############ only ~200  nodes
+#GulfLDays.net
 #GulfLMonths.net
-#GulfLDow.net 
+#GulfLDow.net
 #gulfAllDays.net     #GulfADays.zip
 #gulfAllMonths.net   #GulfAMonths.zip
-#LevantDays.net 
+#LevantDays.net
 #LevantMonths.net
-#BalkanDays.net 
-#BalkanMonths.net 
+#BalkanDays.net
+#BalkanMonths.net
 
 #arcs and edges both present   search for " #these have both arc and edge lines " or "URL has a net file"
 #Graph drawing competition page (GD)
@@ -207,8 +205,8 @@ expect_equal(bkfratProj[[2]]%n%'title',"UciNet\\BKFRAT.DAT : BKFRAC")
 
 tmptest<-tempfile()
 cat("*Vertices          2
-1   'A' 
-2   'B' 
+1   'A'
+2   'B'
 *Arcs
 1 1 1
 ",file=tmptest)
@@ -219,8 +217,8 @@ expect_true(has.loops(loopTest))
 
 tmptest<-tempfile()
 cat("*Vertices          2
-1   'A' 
-2   'B' 
+1   'A'
+2   'B'
 *Arcs
 1 1 1
 ",file=tmptest)
@@ -244,11 +242,11 @@ expect_equal(network.vertex.names(GraphSet),letters[1:12])
 Tina<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaSet.net')
 
 # arcslist
-GraphList<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphList.net')  
+GraphList<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphList.net')
 # http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaList.net  # arcslist
 
 # matrix
-GraphMat <-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphMat.net') 
+GraphMat <-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphMat.net')
 expect_equal(network.vertex.names(GraphMat),letters[1:12])
 # check that edge attribute created and parsed correctly
 expect_equal(as.matrix(GraphMat,attrname='GraphMat')[3,7],2)
@@ -275,7 +273,7 @@ expect_equal(get.vertex.attribute(timetestNd,'active',unlist=FALSE),list(structu
 expect_equal(get.edge.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(7, 8), .Dim = 1:2), structure(c(6, 9), .Dim = 1:2)))
 
 # read a *big* one http://vlado.fmf.uni-lj.si/pub/networks/data/CRA/Days.zip
-# 1.3 Mb, 13k vertices, 256K lines. 
+# 1.3 Mb, 13k vertices, 256K lines.
 #  days<-tempfile('days',fileext='.zip')
 #  download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/CRA/Days.zip',days)
 #  terrorTerms<-read.paj(unz(days,'Days.net'),verbose=TRUE,time.format='networkDynamic',edge.name='count')
@@ -283,15 +281,15 @@ expect_equal(get.edge.attribute(timetestNd,'active',unlist=FALSE),list(structure
 
 
 # multiple networks
-sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')  
+sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')
 lapply(sampson,class)  # for some reason it is a formula?
 expect_equal(names(sampson$networks),c("SAMPLK1", "SAMPLK2", "SAMPLK3",  "SAMPDLK",  "SAMPES","SAMPDES","SAMPIN","SAMPNIN","SAMPPR","SAMNPR"))
 
 # multiple networks in arcslist format
-# sampsonL<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/SampsonL.net') 
+# sampsonL<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/SampsonL.net')
 
 # two-mode
-sandi<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/2mode/sandi/sandi.net')  
+sandi<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/2mode/sandi/sandi.net')
 expect_true(is.bipartite(sandi))
 expect_equal(sandi%n%'bipartite',314)
 Davis<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Davis.paj')         # two-mode

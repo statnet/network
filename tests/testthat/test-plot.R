@@ -1,8 +1,6 @@
 # various tests for network plotting functions
 # mostly recent functionality added by skyebend
 
-context("test-plot")
-
 # Open null device
 pdf(file = NULL, onefile = TRUE)
 dev_id <- dev.cur()
@@ -35,7 +33,7 @@ col.list<-c('red','#800000','#80000505',NA)
 if(!all(is.color(col.list)[1:3] & is.na(is.color(col.list)[4]))){
   stop('is.color did not correctly recognize colors and NA values in a character vector')
 }
-   
+
 col.list<-list('red','#800000','#80000505',NA)
 # test is.color for list NA processing bug #491
 if(!all(is.color(col.list)[1:3] & is.na(is.color(col.list)[4]))){
