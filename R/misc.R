@@ -183,7 +183,7 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
   if(!is.directed(nw) && !is.bipartite(nw)){
     type <- "undirected"
     tabu <- tabu + t(tabu)
-    diag(tabu) <- diag(tabu)/2L
+    diag(tabu) <- diag(tabu)%/%2L
   }
   ans <- list(type=type, matrix=tabu)
   class(ans) <- "mixingmatrix"
