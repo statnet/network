@@ -349,8 +349,8 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
 #'
 #' @title Attribute Interface Methods for the Network Class
 #'
-#' @description These methods get, set, list, and delete attributes at the 
-#'   network, edge, and vertex level.
+#' @description These methods get, set, list, delete, and check for attributes
+#'   at the network, edge, and vertex level.
 #'
 #' @details The \code{list.attributes} functions return the names of all edge,
 #'   network, or vertex attributes (respectively) in the network.  All 
@@ -1193,6 +1193,39 @@ has.loops<-function(x){
 # Return TRUE iff (vi,vj) in network x.  Where na.omit==TRUE, edges flagged
 # as missing are ignored.
 #
+
+#' @rdname attribute.methods
+#'
+#' @details Functions \code{has.vertex.attribute}, \code{has.edge.attribute},
+#'   and \code{has.network.attribute} test if attribute \code{attrname} is
+#'   present in network \code{x}.
+#'
+#' @return Functions \code{has.vertex.attribute}, \code{has.edge.attribute}, and
+#'   \code{has.network.attribute} return \code{TRUE} if attribute
+#'   \code{attrname} is present in network \code{x}, \code{FALSE} otherwise.
+#'
+#' @export
+has.vertex.attribute <- function(x, attrname) {
+  stopifnot(is.network(x))
+  attrname %in% list.vertex.attributes(x)
+}
+
+#' @rdname attribute.methods
+#' @export
+has.edge.attribute <- function(x, attrname) {
+  stopifnot(is.network(x))
+  attrname %in% list.edge.attributes(x)
+}
+
+#' @rdname attribute.methods
+#' @export
+has.network.attribute <- function(x, attrname) {
+  stopifnot(is.network(x))
+  stopifnot(is.network(x))
+  attrname %in% list.network.attributes(x)
+}
+
+
 
 
 #' Determine Whether Two Vertices Are Adjacent

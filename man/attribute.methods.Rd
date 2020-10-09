@@ -18,6 +18,9 @@
 \alias{get.network.attribute.network}
 \alias{get.vertex.attribute}
 \alias{get.vertex.attribute.network}
+\alias{has.vertex.attribute}
+\alias{has.edge.attribute}
+\alias{has.network.attribute}
 \alias{list.edge.attributes}
 \alias{list.edge.attributes.network}
 \alias{list.network.attributes}
@@ -109,6 +112,12 @@ get.vertex.attribute(x, ...)
   ...
 )
 
+has.vertex.attribute(x, attrname)
+
+has.edge.attribute(x, attrname)
+
+has.network.attribute(x, attrname)
+
 list.edge.attributes(x, ...)
 
 \method{list.edge.attributes}{network}(x, ...)
@@ -179,10 +188,14 @@ For the \code{list.attributes} methods, a vector containing
   \code{get.network.attribute}).  For the \code{set.attribute} and 
   \code{delete.attribute} methods, a pointer to the updated \code{network}
   object.
+
+Functions \code{has.vertex.attribute}, \code{has.edge.attribute}, and
+  \code{has.network.attribute} return \code{TRUE} if attribute
+  \code{attrname} is present in network \code{x}, \code{FALSE} otherwise.
 }
 \description{
-These methods get, set, list, and delete attributes at the 
-  network, edge, and vertex level.
+These methods get, set, list, delete, and check for attributes
+  at the network, edge, and vertex level.
 }
 \details{
 The \code{list.attributes} functions return the names of all edge,
@@ -224,6 +237,10 @@ Additional practical example of how to load and attach attributes are on the
 Some attribute assignment/extraction can be performed conveniently through 
   the various extraction/replacement operators, although they may be less 
   efficient.  See the associated man page for details.
+
+Functions \code{has.vertex.attribute}, \code{has.edge.attribute},
+  and \code{has.network.attribute} test if attribute \code{attrname} is
+  present in network \code{x}.
 }
 \note{
 As of version 1.9 the \code{set.vertex.attribute} function can accept
