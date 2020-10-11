@@ -6,6 +6,7 @@
 # Written by Carter T. Butts <buttsc@uci.edu>
 # Last Modified 5/07/16
 # Licensed under the GNU General Public License version 2 (June, 1991)
+# or later
 #
 # Provides support for the R/network package API.
 #
