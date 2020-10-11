@@ -1230,12 +1230,26 @@ has.vertex.attribute.network <- function(x, attrname, ...) {
 
 #' @rdname attribute.methods
 #' @export
+has.vertex.attribute.default <- function(x, ...) {
+  stop("don't know how to handle object of class ",
+       paste(class(x), collapse="<") )
+}
+
+#' @rdname attribute.methods
+#' @export
 has.edge.attribute <- function(x, ...) UseMethod("has.edge.attribute")
 
 #' @rdname attribute.methods
 #' @export
 has.edge.attribute.network <- function(x, attrname, ...) {
   attrname %in% list.edge.attributes(x)
+}
+
+#' @rdname attribute.methods
+#' @export
+has.edge.attribute.default <- function(x, ...) {
+  stop("don't know how to handle object of class ",
+       paste(class(x), collapse="<") )
 }
 
 #' @rdname attribute.methods
@@ -1248,6 +1262,12 @@ has.network.attribute <- function(x, attrname, ...) {
   attrname %in% list.network.attributes(x)
 }
 
+#' @rdname attribute.methods
+#' @export
+has.network.attribute.default <- function(x, ...) {
+  stop("don't know how to handle object of class ",
+       paste(class(x), collapse="<") )
+}
 
 
 
