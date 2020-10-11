@@ -1219,22 +1219,32 @@ has.loops<-function(x){
 #'   \code{attrname} is present in network \code{x}, \code{FALSE} otherwise.
 #'
 #' @export
-has.vertex.attribute <- function(x, attrname) {
-  stopifnot(is.network(x))
+
+has.vertex.attribute <- function(x, ...) UseMethod("has.vertex.attribute")
+
+#' @rdname attribute.methods
+#' @export
+has.vertex.attribute.network <- function(x, attrname) {
   attrname %in% list.vertex.attributes(x)
 }
 
 #' @rdname attribute.methods
 #' @export
-has.edge.attribute <- function(x, attrname) {
-  stopifnot(is.network(x))
+has.edge.attribute <- function(x, ...) UseMethod("has.edge.attribute")
+
+#' @rdname attribute.methods
+#' @export
+has.edge.attribute.network <- function(x, attrname) {
   attrname %in% list.edge.attributes(x)
 }
 
 #' @rdname attribute.methods
 #' @export
+has.network.attribute <- function(x, ...) UseMethod("has.network.attribute")
+
+#' @rdname attribute.methods
+#' @export
 has.network.attribute <- function(x, attrname) {
-  stopifnot(is.network(x))
   attrname %in% list.network.attributes(x)
 }
 

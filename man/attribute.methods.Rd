@@ -19,7 +19,9 @@
 \alias{get.vertex.attribute}
 \alias{get.vertex.attribute.network}
 \alias{has.vertex.attribute}
+\alias{has.vertex.attribute.network}
 \alias{has.edge.attribute}
+\alias{has.edge.attribute.network}
 \alias{has.network.attribute}
 \alias{list.edge.attributes}
 \alias{list.edge.attributes.network}
@@ -112,9 +114,15 @@ get.vertex.attribute(x, ...)
   ...
 )
 
-has.vertex.attribute(x, attrname)
+has.vertex.attribute(x, ...)
 
-has.edge.attribute(x, attrname)
+\method{has.vertex.attribute}{network}(x, attrname)
+
+has.edge.attribute(x, ...)
+
+\method{has.edge.attribute}{network}(x, attrname)
+
+has.network.attribute(x, attrname)
 
 has.network.attribute(x, attrname)
 
