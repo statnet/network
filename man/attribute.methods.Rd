@@ -116,15 +116,15 @@ get.vertex.attribute(x, ...)
 
 has.vertex.attribute(x, ...)
 
-\method{has.vertex.attribute}{network}(x, attrname)
+\method{has.vertex.attribute}{network}(x, attrname, ...)
 
 has.edge.attribute(x, ...)
 
-\method{has.edge.attribute}{network}(x, attrname)
+\method{has.edge.attribute}{network}(x, attrname, ...)
 
-has.network.attribute(x, attrname)
+has.network.attribute(x, attrname, ...)
 
-has.network.attribute(x, attrname)
+has.network.attribute(x, attrname, ...)
 
 list.edge.attributes(x, ...)
 

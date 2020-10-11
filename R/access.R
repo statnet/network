@@ -1224,7 +1224,7 @@ has.vertex.attribute <- function(x, ...) UseMethod("has.vertex.attribute")
 
 #' @rdname attribute.methods
 #' @export
-has.vertex.attribute.network <- function(x, attrname) {
+has.vertex.attribute.network <- function(x, attrname, ...) {
   attrname %in% list.vertex.attributes(x)
 }
 
@@ -1234,7 +1234,7 @@ has.edge.attribute <- function(x, ...) UseMethod("has.edge.attribute")
 
 #' @rdname attribute.methods
 #' @export
-has.edge.attribute.network <- function(x, attrname) {
+has.edge.attribute.network <- function(x, attrname, ...) {
   attrname %in% list.edge.attributes(x)
 }
 
@@ -1244,7 +1244,7 @@ has.network.attribute <- function(x, ...) UseMethod("has.network.attribute")
 
 #' @rdname attribute.methods
 #' @export
-has.network.attribute <- function(x, attrname) {
+has.network.attribute <- function(x, attrname, ...) {
   attrname %in% list.network.attributes(x)
 }
 
