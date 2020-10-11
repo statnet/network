@@ -1103,8 +1103,8 @@ get.vertex.attribute.network <- function(x, attrname, na.omit=FALSE, null.na=TRU
   if(network.size(x)==0){
     return(NULL)
   }
-  #if(!(attrname %in% list.vertex.attributes(x))) 
-  #  warning(paste('attribute', attrname,'is not specified for these vertices'))
+  if(!has.vertex.attribute(x, attrname))
+    warning(paste('attribute', attrname,'is not specified for these vertices'))
   #Get the list of attribute values
   va<-lapply(x$val,"[[",attrname)
   #If needed, figure out who's missing
