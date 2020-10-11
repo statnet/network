@@ -671,6 +671,14 @@ get.edge.attribute <- function(x, ..., el) {
 #' @rdname attribute.methods
 #' @export
 get.edge.attribute.network <- function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=FALSE, deleted.edges.omit=FALSE, ..., el) {
+  if(is.network(x) && !has.edge.attribute(x, attrname)) {
+    warning(
+      paste0("there is no attribute ", sQuote(attrname), " in ",
+             sQuote(deparse(substitute(x))))
+    )
+    return(NULL)
+  }
+
   if(!missing(el)) x <- el
   
   if (is.network(x)) x <- x$mel
