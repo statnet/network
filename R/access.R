@@ -1811,11 +1811,10 @@ network.vertex.names<-function(x){
   }else{
     if(network.size(x)==0)
       return(NULL)
-    vnames <- get.vertex.attribute(x,"vertex.names")
-    if(is.null(vnames)  | all(is.na(vnames)) ){
+    if(has.vertex.attribute(x, "vertex.names")) {
+      get.vertex.attribute(x, "vertex.names")
+    } else {
       as.character(1:network.size(x))
-    }else{
-      vnames
     }
   }
 }
