@@ -1022,6 +1022,7 @@ get.inducedSubgraph<-function(x, v, alters=NULL, eid=NULL){
 #
 #' @rdname attribute.methods
 #' @export
+
 get.network.attribute <- function(x, ...) {
   UseMethod("get.network.attribute")
 }
@@ -1029,6 +1030,12 @@ get.network.attribute <- function(x, ...) {
 #' @rdname attribute.methods
 #' @export
 get.network.attribute.network <- function(x, attrname, unlist=FALSE, ...) {
+  if(!has.network.attribute(x, attrname)) {
+    warning(
+      paste0("there is no attribute ", sQuote(attrname), " in ",
+             sQuote(deparse(substitute(x))))
+    )
+  }
   x <- x$gal[[attrname]]
   if(unlist){unlist(x)}else{x}
 }
