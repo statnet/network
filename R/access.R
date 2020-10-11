@@ -1235,7 +1235,6 @@ has.edge.attribute <- function(x, attrname) {
 #' @export
 has.network.attribute <- function(x, attrname) {
   stopifnot(is.network(x))
-  stopifnot(is.network(x))
   attrname %in% list.network.attributes(x)
 }
 
