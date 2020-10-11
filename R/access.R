@@ -349,8 +349,8 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
 #'
 #' @title Attribute Interface Methods for the Network Class
 #'
-#' @description These methods get, set, list, and delete attributes at the 
-#'   network, edge, and vertex level.
+#' @description These methods get, set, list, delete, and check for attributes
+#'   at the network, edge, and vertex level.
 #'
 #' @details The \code{list.attributes} functions return the names of all edge,
 #'   network, or vertex attributes (respectively) in the network.  All 
@@ -671,6 +671,13 @@ get.edge.attribute <- function(x, ..., el) {
 #' @rdname attribute.methods
 #' @export
 get.edge.attribute.network <- function(x, attrname, unlist=TRUE, na.omit=FALSE, null.na=FALSE, deleted.edges.omit=FALSE, ..., el) {
+  if(is.network(x) && !has.edge.attribute(x, attrname)) {
+    warning(
+      paste0("there is no attribute ", sQuote(attrname), " in ",
+             sQuote(deparse(substitute(x))))
+    )
+  }
+
   if(!missing(el)) x <- el
   
   if (is.network(x)) x <- x$mel
@@ -1014,6 +1021,7 @@ get.inducedSubgraph<-function(x, v, alters=NULL, eid=NULL){
 #
 #' @rdname attribute.methods
 #' @export
+
 get.network.attribute <- function(x, ...) {
   UseMethod("get.network.attribute")
 }
@@ -1021,6 +1029,12 @@ get.network.attribute <- function(x, ...) {
 #' @rdname attribute.methods
 #' @export
 get.network.attribute.network <- function(x, attrname, unlist=FALSE, ...) {
+  if(!has.network.attribute(x, attrname)) {
+    warning(
+      paste0("there is no attribute ", sQuote(attrname), " in ",
+             sQuote(deparse(substitute(x))))
+    )
+  }
   x <- x$gal[[attrname]]
   if(unlist){unlist(x)}else{x}
 }
@@ -1103,8 +1117,8 @@ get.vertex.attribute.network <- function(x, attrname, na.omit=FALSE, null.na=TRU
   if(network.size(x)==0){
     return(NULL)
   }
-  #if(!(attrname %in% list.vertex.attributes(x))) 
-  #  warning(paste('attribute', attrname,'is not specified for these vertices'))
+  if(!has.vertex.attribute(x, attrname))
+    warning(paste('attribute', attrname,'is not specified for these vertices'))
   #Get the list of attribute values
   va<-lapply(x$val,"[[",attrname)
   #If needed, figure out who's missing
@@ -1193,6 +1207,48 @@ has.loops<-function(x){
 # Return TRUE iff (vi,vj) in network x.  Where na.omit==TRUE, edges flagged
 # as missing are ignored.
 #
+
+#' @rdname attribute.methods
+#'
+#' @details Functions \code{has.vertex.attribute}, \code{has.edge.attribute},
+#'   and \code{has.network.attribute} test if attribute \code{attrname} is
+#'   present in network \code{x}.
+#'
+#' @return Functions \code{has.vertex.attribute}, \code{has.edge.attribute}, and
+#'   \code{has.network.attribute} return \code{TRUE} if attribute
+#'   \code{attrname} is present in network \code{x}, \code{FALSE} otherwise.
+#'
+#' @export
+
+has.vertex.attribute <- function(x, ...) UseMethod("has.vertex.attribute")
+
+#' @rdname attribute.methods
+#' @export
+has.vertex.attribute.network <- function(x, attrname, ...) {
+  attrname %in% list.vertex.attributes(x)
+}
+
+#' @rdname attribute.methods
+#' @export
+has.edge.attribute <- function(x, ...) UseMethod("has.edge.attribute")
+
+#' @rdname attribute.methods
+#' @export
+has.edge.attribute.network <- function(x, attrname, ...) {
+  attrname %in% list.edge.attributes(x)
+}
+
+#' @rdname attribute.methods
+#' @export
+has.network.attribute <- function(x, ...) UseMethod("has.network.attribute")
+
+#' @rdname attribute.methods
+#' @export
+has.network.attribute <- function(x, attrname, ...) {
+  attrname %in% list.network.attributes(x)
+}
+
+
 
 
 #' Determine Whether Two Vertices Are Adjacent
@@ -1778,11 +1834,10 @@ network.vertex.names<-function(x){
   }else{
     if(network.size(x)==0)
       return(NULL)
-    vnames <- get.vertex.attribute(x,"vertex.names")
-    if(is.null(vnames)  | all(is.na(vnames)) ){
+    if(has.vertex.attribute(x, "vertex.names")) {
+      get.vertex.attribute(x, "vertex.names")
+    } else {
       as.character(1:network.size(x))
-    }else{
-      vnames
     }
   }
 }
