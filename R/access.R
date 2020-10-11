@@ -676,7 +676,6 @@ get.edge.attribute.network <- function(x, attrname, unlist=TRUE, na.omit=FALSE, 
       paste0("there is no attribute ", sQuote(attrname), " in ",
              sQuote(deparse(substitute(x))))
     )
-    return(NULL)
   }
 
   if(!missing(el)) x <- el
