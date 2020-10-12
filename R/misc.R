@@ -160,6 +160,9 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
   if(missing(attrname)){
     stop("attrname argument is missing. mixingmatrix() requires an an attribute name")
   }
+  if(!has.vertex.attribute.network(object, attrname))
+    stop("vertex attribute ", sQuote(attrname), " not found in network ",
+         sQuote(deparse(substitute(object))))
   if(network.size(nw)==0L){
     warning("mixing matrices not well-defined for graphs with no vertices.")
     return(as.mixingmatrix(
