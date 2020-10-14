@@ -13,7 +13,7 @@ Authors@R: c(
     person("Knapp", "Brendan", role=c("ctb"), email="brendan.g.knapp@gmail.com", comment=c(ORCID="0000-0003-3284-4972")),
     person("Michał", " Bojanowski", role=c("ctb"), email="mbojanowski@kozminski.edu.pl"),
     person("Chad", "Klumb", role=c("ctb"), email="cklumb@gmail.com"))
-Depends: R (>= 3.5), utils
+Depends: R (>= 2.10), utils
 Imports: tibble, magrittr, statnet.common
 Suggests: 
     sna,
