@@ -1103,6 +1103,12 @@ get.vertex.attribute.network <- function(x, attrname, na.omit=FALSE, null.na=TRU
   if(network.size(x)==0){
     return(NULL)
   }
+
+  # MB: Showing warnings if attribute not present is infeasible and causes an
+  # avalanche of problems downstream. Hence, it is commented-out here as a
+  # warning to future generations of Statnet developers before they decide to
+  # revisit the problem. C.f. https://github.com/statnet/network/issues/41
+  #
   #if(!(attrname %in% list.vertex.attributes(x))) 
   #  warning(paste('attribute', attrname,'is not specified for these vertices'))
   #Get the list of attribute values
