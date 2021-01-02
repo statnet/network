@@ -192,6 +192,18 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
 
 
 
+# A non-exported constructor
+as.mixingmatrix <- function(mat, type) {
+  # Test/check/symmetrize here?
+  structure(
+    mat,
+    type = type,
+    class = c("mixingmatrix", "table")
+  )
+}
+
+
+
 # network.density ---------------------------------------------------------
 
 #' Compute the Density of a Network
