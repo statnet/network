@@ -110,9 +110,13 @@ data(flo, package="network")
 net <- as.network(flo, directed=FALSE)
 set.seed(666)
 net %v% "a" <- sample(c(1,2,NA), network.size(net), replace=TRUE)
-mixingmatrix(net, "a")
+mm <- mixingmatrix(net, "a")
+mm
+str(mm)
 
 dinet <- as.network(flo, directed=TRUE)
 set.seed(666)
 dinet %v% "a" <- sample(c(1,2,NA), network.size(dinet), replace=TRUE)
 mm <- mixingmatrix(dinet, "a")
+mm
+str(mm)
