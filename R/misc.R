@@ -185,9 +185,7 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
     tabu <- tabu + t(tabu)
     diag(tabu) <- diag(tabu)%/%2L
   }
-  ans <- list(type=type, matrix=tabu)
-  class(ans) <- "mixingmatrix"
-  ans
+  as.mixingmatrix(tabu, type = type)
 }
 
 
