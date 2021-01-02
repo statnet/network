@@ -68,43 +68,48 @@ test_that("mixingmatrix(directed with categories without incident ties)", {
 })
 
 
-test_that("mixingmatrx() responds correctly to useNA= and exclude=NULL", {
-  net <- network.initialize(2, directed=TRUE)
-  net %v% "a" <- c(1,NA)
-  net[1,2] <- 1
-  for(useNA in c("no", "always", "ifany")) {
-    mm <- mixingmatrix(net, "a", useNA = useNA)
-    expect_type(mm$matrix, "integer")
-    expect_identical(
-      mm$matrix,
-      switch(
-        useNA,
-        no = structure(
-          matrix(as.integer(0), 1, 1),
-          dimnames = list(From=1, To=1),
-          class = "table"
-        ),
-        always = structure(
-          matrix(as.integer(c(0,0, 1,0)), 2, 2),
-          dimnames = list(From=c(1,NA), To=c(1, NA)),
-          class = "table"
-        ),
-        ifany = structure(
-          matrix(as.integer(c(0, 1)), 1, 2),
-          dimnames = list(From=1, To=c(1, NA)),
-          class = "table"
+net <- network.initialize(2, directed=TRUE)
+net %v% "a" <- c(1,NA)
+net[1,2] <- 1
+for(useNA in c("no", "always", "ifany")) {
+  test_that(
+    paste0("correct output for mixingmatrix(directed, useNA=", 
+           dQuote(useNA), ")"),
+    {
+      expect_silent(
+        mm <- mixingmatrix(net, "a", useNA = useNA)
+      )
+      expect_type(mm$matrix, "integer")
+      expect_identical(
+        mm$matrix,
+        switch(
+          useNA,
+          no = structure(
+            matrix(as.integer(0), 1, 1),
+            dimnames = list(From=1, To=1),
+            class = "table"
+          ),
+          always = structure(
+            matrix(as.integer(c(0,0, 1,0)), 2, 2),
+            dimnames = list(From=c(1,NA), To=c(1, NA)),
+            class = "table"
+          ),
+          ifany = structure(
+            matrix(as.integer(c(0,0, 1,0)), 2, 2),
+            dimnames = list(From=c(1,NA), To=c(1, NA)),
+            class = "table"
+          )
         )
       )
-    )
-  }
-  expect_identical(
-    mixingmatrix(net, "a", exclude=NULL)$matrix,
-    structure(
-      matrix(as.integer(c(0, 1)), 1, 2),
-      dimnames = list(From=1, To=c(1, NA)),
-      class = "table"
-    )
+    }
   )
+}
+
+test_that("mixingmatrx() warns on exclude=NULL", {
+  expect_warning(
+    r <- mixingmatrix(net, "a", exclude=NULL)
+  )
+  expect_identical(r, mixingmatrix(net, "a"))
 })
 
 
@@ -186,16 +191,6 @@ for(useNA in c("no", "always")) {
     }
   )
 }
-test_that("mixingmatrx(undir net with NA on attributes) responds correctly to exclude=NULL", {
-  # Expected: matri with row for 1 and column for NA
-  a <- get.vertex.attribute(net, "a")
-  el <- as.matrix(net, matrix.type="edgelist")
-  emm <- table(From=a[el[,1]], To=a[el[,2]], exclude=NULL)
-  expect_silent(
-    mm <- mixingmatrix(net, "a", exclude=NULL)
-  )
-  expect_identical(mm$matrix, emm)
-})
 
 
 

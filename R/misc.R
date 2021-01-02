@@ -155,12 +155,12 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #' # of tie sender and receiver (data from Drabek et al. 1981)
 #' data(emon)
 #' mixingmatrix(emon$LakePomona, "Sponsorship")
-mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) {
+mixingmatrix.network <- function(object, attrname, useNA = "ifany", expand.bipartite=FALSE, ...) {
   nw <- object
   if(missing(attrname)){
     stop("attrname argument is missing. mixingmatrix() requires an an attribute name")
   }
-  if(!has.vertex.attribute.network(object, attrname))
+  if(!(attrname %in% list.vertex.attributes(object)))
     stop("vertex attribute ", sQuote(attrname), " not found in network ",
          sQuote(deparse(substitute(object))))
   if(network.size(nw)==0L){
@@ -192,7 +192,13 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
     From <- factor(nodecov[el[,1L]], levels=u)
     To <- factor(nodecov[el[,2L]], levels=u)
   }
-  tabu <- table(From, To, ...)
+  if(any(is.na(nodecov)) && useNA == "ifany") useNA <- "always"
+  dots <- list(...)
+  if("exclude" %in% names(dots) && (is.null(dots$exclude) | any(is.na(dots$exclude)) | any(is.nan(dots$exclude)))) {
+    warning("passing `exclude=NULL` to table() is not supported, ignoring")
+    dots$exclude <- NULL
+  }
+  tabu <- do.call("table", c(list(From=From, To=To, useNA=useNA), dots))
   if(!is.directed(nw) && !is.bipartite(nw)){
     type <- "undirected"
     tabu <- tabu + t(tabu)
