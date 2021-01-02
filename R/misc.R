@@ -185,17 +185,31 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
     tabu <- tabu + t(tabu)
     diag(tabu) <- diag(tabu)%/%2L
   }
-  as.mixingmatrix(tabu, type = type)
+  as.mixingmatrix(
+    tabu,
+    directed = is.directed(object),
+    bipartite = is.bipartite(object)
+  )
 }
 
 
 
-# A non-exported constructor
-as.mixingmatrix <- function(mat, type) {
+# A non-exported constructor of mixingmatrix objects
+# 
+# @param mat matrix with the actual cross-tabulation
+# @param directed logical if the network is directed
+# @param bipartite logical if the netwoek is bipartite
+# @param ... other arguments currently ignored
+# 
+# @return The matrix with attributes "directed" and "bipartite" of class
+#   "mixingmatrix" inheriting from "table".
+
+as.mixingmatrix <- function(mat, directed, bipartite, ...) {
   # Test/check/symmetrize here?
   structure(
     mat,
-    type = type,
+    directed = directed,
+    bipartite = bipartite,
     class = c("mixingmatrix", "table")
   )
 }
@@ -388,26 +402,21 @@ is.discrete<-function(x){
 #' 
 #' @export
 print.mixingmatrix <- function(x, ...) {
-  m <- x$mat
-  rn <- rownames(m)
-  cn <- colnames(m)  
-  if (x$type == "undirected") {
-    dimnames(m) <- list(rn, cn)
-    cat("Note:  Marginal totals can be misleading\n",
-        "for undirected mixing matrices.\n")
+  rn <- rownames(x)
+  cn <- colnames(x)  
+  if (!attr(x, "directed")) {
+    dimnames(x) <- list(rn, cn)
+    on.exit(
+      message("Note:  Marginal totals can be misleading for undirected mixing matrices.")  
+    )
   } else {
-    total <- apply(m,1,sum)
-    m <- cbind(m,total)
-    total <- apply(m,2,sum)
-    m <- rbind(m,total)
-    rn <- c(rn, "Total")
-    cn <- c(cn, "Total")
-    if (x$type == "bipartite")
-      dimnames(m) <- list(B1 = rn,B2 = cn)
+    x <- addmargins(x)
+    if (attr(x, "bipartite"))
+      dimnames(x) <- list(B1 = rn,B2 = cn)
     else
-      dimnames(m) <- list(From = rn,To = cn)
+      dimnames(x) <- list(From = rn,To = cn)
   }
-  print(m)
+  NextMethod()
 }
 
 
