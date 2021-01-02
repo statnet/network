@@ -134,7 +134,20 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #'   the *square* mixing matrix representing every level of `attrname` against
 #'   every other level, or a *rectangular* matrix considering only levels
 #'   present in each bipartition?
-#' @param useNA,... arguments passed to \code{\link{table}}.
+#' @param useNA one of "ifany", "no" or "always". Argument passed to
+#'   \code{\link{table}}. By default (\code{useNA = "ifany"}) if there are any
+#'   \code{NA}s on the attribute corresponding row \emph{and} column will be
+#'   contained in the result. See Details.
+#' @param ... arguments passed to \code{\link{table}}.
+#'
+#' @details Handling of missing values on the attribute \code{attrname} almost
+#'   follows similar logic to \code{\link{table}}. If there are \code{NA}s on
+#'   the attribute and \code{useNA="ifany"} (default) the result will contain
+#'   both row and column for the missing values to ensure the resulting matrix
+#'   is square (essentially calling \code{\link{table}} with
+#'   \code{useNA="always"}). Also for that reason passing \code{exclude}
+#'   parameter with \code{NULL}, \code{NA} or \code{NaN} is ignored with a
+#'   warning as it may break the symmetry.
 #'
 #' @return Function `mixingmatrix()` returns an object of class "mixingmatrix"
 #'   extending "table" with a cross-tabulation of edges in the `object`
@@ -148,7 +161,7 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #'   does not have to be square as only the actually observed values of the
 #'   attribute are shown for each partition, if `expand.bipartite` is `TRUE` the
 #'   matrix will be square.
-#'
+#'   
 #' @export
 #' @examples
 #' # Interaction ties between Lake Pomona SAR organizations by sponsorship type
