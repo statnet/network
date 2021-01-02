@@ -150,13 +150,11 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
   }
   if(network.size(nw)==0L){
     warning("mixing matrices not well-defined for graphs with no vertices.")
-    type<-"directed"
-    if(is.bipartite(nw))
-      type<-"bipartite"
-    tabu<-matrix(nrow=0L,ncol=0L)
-    ans<-list(type=type,matrix=tabu)
-    class(ans)<-"mixingmatrix"
-    return(ans)
+    return(as.mixingmatrix(
+      matrix(nrow=0L, ncol=0L),
+      directed = is.directed(object),
+      bipartite = is.bipartite(object)
+    ))
   }
   nodecov <- unlist(get.vertex.attribute(nw, attrname))
   u<-sort(unique(nodecov))
@@ -402,21 +400,25 @@ is.discrete<-function(x){
 #' 
 #' @export
 print.mixingmatrix <- function(x, ...) {
+  m <- x
   rn <- rownames(x)
   cn <- colnames(x)  
   if (!attr(x, "directed")) {
-    dimnames(x) <- list(rn, cn)
+    dimnames(m) <- list(rn, cn)
     on.exit(
       message("Note:  Marginal totals can be misleading for undirected mixing matrices.")  
     )
   } else {
-    x <- addmargins(x)
-    if (attr(x, "bipartite"))
-      dimnames(x) <- list(B1 = rn,B2 = cn)
-    else
-      dimnames(x) <- list(From = rn,To = cn)
+    dimnames(m) <- if(attr(x, "bipartite")) list(B1 = rn, B2 = cn) else list(From = rn, To = cn)
+    m <- addmargins(m)
   }
-  NextMethod()
+  m <- structure(
+    m,
+    directed = attr(x, "directed"),
+    bipartite = attr(x, "bipartite"),
+    class = "table"
+  )
+  print(m)
 }
 
 
