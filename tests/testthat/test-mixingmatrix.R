@@ -95,3 +95,24 @@ test_that("mixingmatrix() just works on a bipartite network", {
     )
   )
 })
+
+
+
+
+
+
+
+# Testing new mixingmatrix() ----------------------------------------------
+# 
+# As per statnet/network#32
+
+data(flo, package="network")
+net <- as.network(flo, directed=FALSE)
+set.seed(666)
+net %v% "a" <- sample(c(1,2,NA), network.size(net), replace=TRUE)
+mixingmatrix(net, "a")
+
+dinet <- as.network(flo, directed=TRUE)
+set.seed(666)
+dinet %v% "a" <- sample(c(1,2,NA), network.size(dinet), replace=TRUE)
+mm <- mixingmatrix(dinet, "a")
