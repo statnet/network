@@ -125,28 +125,4 @@ test_that("mixingmatrix() just works on a bipartite network - two partition-spec
   expect_type(mm, "integer")
   expect_false(attr(mm, "directed"))
   expect_true(attr(mm, "bipartite"))
-})  
-
-
-
-
-# Testing new mixingmatrix() ----------------------------------------------
-# 
-# As per statnet/network#32
-
-if(FALSE) {
-  data(flo, package="network")
-  net <- as.network(flo, directed=FALSE)
-  set.seed(666)
-  net %v% "a" <- sample(c(1,2,NA), network.size(net), replace=TRUE)
-  mm <- mixingmatrix(net, "a")
-  mm
-  str(mm)
-  
-  dinet <- as.network(flo, directed=TRUE)
-  set.seed(666)
-  dinet %v% "a" <- sample(c(1,2,NA), network.size(dinet), replace=TRUE)
-  mm <- mixingmatrix(dinet, "a")
-  mm
-  str(mm)
-}
+})
