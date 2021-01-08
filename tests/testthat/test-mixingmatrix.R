@@ -26,7 +26,7 @@ test_that("mixingmatrix() just works on a directed network", {
 })
 
 test_that("directed: rows and cols for NA on attribute are always shown", {
-  skip("Skip until #42 is resolved")
+  skip("Wait and update when #42 is resolved")
   mm <- mixingmatrix(emon$MtSi, "Formalization")
   expect_type(mm$matrix, "integer")
   expect_identical(
@@ -63,7 +63,7 @@ test_that("mixingmatrix() just works on a undirected network", {
 
 
 test_that("undirected: rows and cols for NA on attribute are always shown", {
-  skip("Skip until #42 is resolved")
+  skip("Wait and update when #42 is resolved")
   mm <- mixingmatrix(flonet, "a")
   expect_type(mm$matrix, "integer")
   expect_identical(
@@ -83,7 +83,10 @@ net %v% "mode" <- c("circle", "square")[c(1,1,2,2,2)]
 # Attribute 'a' defined for all nodes in both partitions
 net %v% "common" <- c("black", "red")[c(1,2,1,2,1,2)]
 # plot(net, vertex.col="a", vertex.cex = 3, vertex.sides = (net %v% "mode") * 4)
-
+# Attribute present only for circle nodes
+set.vertex.attribute(net, "radius", 1:2, 1:2)
+# Attribute present only for square nodes
+set.vertex.attribute(net, "side_length", c(2,3,2), 1:3)
 
 test_that("mixingmatrix() just works on a bipartite network - partition attribute", {
   expect_silent(
@@ -114,7 +117,15 @@ test_that("mixingmatrix() just works on a bipartite network - common attribute",
 })  
 
 
-
+test_that("mixingmatrix() just works on a bipartite network - two partition-specific attributes", {
+  skip("Not yet implemented")
+  expect_silent(
+    mm <- mixingmatrix(net, c("radius", "side_length"))
+  )
+  expect_type(mm, "integer")
+  expect_false(attr(mm, "directed"))
+  expect_true(attr(mm, "bipartite"))
+})  
 
 
 
