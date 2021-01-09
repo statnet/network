@@ -192,6 +192,35 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
 
 
 
+
+
+# Fake method for mixingmatrices
+# x[["matrix"]]
+# x[["type"]] = directed, undirected, bipartite 
+#' @export
+"[[.mixingmatrix" <- function(x, ...) {
+  .Deprecated("mixingmatrix")
+  x <- to_oldmm(x)
+  NextMethod()
+}
+
+#' @export
+"$.mixingmatrix" <- function(x, name) {
+  x <- to_oldmm(x)
+  NextMethod()
+}
+
+
+to_oldmm <- function(x) {
+  directed <- attr(x, "directed")
+  bipartite <- attr(x, "bipartite")
+  list(
+    matrix = structure(as.integer(x), dimnames=dimnames(x), dim=dim(x)),
+    type = if(bipartite) "bipartite" else if(directed) "directed" else "undirected"
+  )
+}
+
+
 # A non-exported constructor of mixingmatrix objects
 # 
 # @param mat matrix with the actual cross-tabulation
