@@ -3,12 +3,18 @@
 \name{mixingmatrix}
 \alias{mixingmatrix}
 \alias{mixingmatrix.network}
+\alias{[[.mixingmatrix}
+\alias{$.mixingmatrix}
 \alias{print.mixingmatrix}
 \title{Mixing matrix}
 \usage{
 mixingmatrix(object, ...)
 
 \method{mixingmatrix}{network}(object, attrname, expand.bipartite = FALSE, ...)
+
+\method{[[}{mixingmatrix}(x, ...)
+
+\method{$}{mixingmatrix}(x, name)
 
 \method{print}{mixingmatrix}(x, ...)
 }
@@ -21,14 +27,20 @@ matrix is meaningful.}
 \item{attrname}{a vertex attribute name.}
 
 \item{expand.bipartite}{logical; if \code{object} is bipartite, should
-we return the square mixing matrix representing every level of
-\code{attrname} against every other level, or a rectangular matrix
+we return the \emph{square} mixing matrix representing every level of
+\code{attrname} against every other level, or a \emph{rectangular} matrix
 considering only levels present in each bipartition?}
 
 \item{x}{mixingmatrix object}
+
+\item{name}{name of the element to extract, one of "matrix" or "type"}
 }
 \description{
 Return the mixing matrix for a network, on a given attribute.
+}
+\note{
+The \code{$} and \code{[[} methods are included only for backward-compatiblity
+reason and will become defunct in future releases of the package.
 }
 \examples{
 # Interaction ties between Lake Pomona SAR organizations by sponsorship type
