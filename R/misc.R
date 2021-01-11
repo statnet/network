@@ -113,9 +113,7 @@ as.color<-function(x,opacity=1.0){
 #'   matrix is meaningful.
 #' @param ... further arguments passed to or used by methods.
 #' 
-#' 
 #' @rdname mixingmatrix
-#' @include constructors.R
 #' @export
 
 mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
@@ -248,6 +246,40 @@ as.mixingmatrix <- function(mat, directed, bipartite, ...) {
     class = c("mixingmatrix", "table")
   )
 }
+
+
+
+#' @rdname mixingmatrix
+#' 
+#' @param x mixingmatrix object
+#' 
+#' @export
+print.mixingmatrix <- function(x, ...) {
+  m <- x
+  rn <- rownames(x)
+  cn <- colnames(x)  
+  if (!attr(x, "directed")) {
+    dimnames(m) <- list(rn, cn)
+    on.exit(
+      message("Note:  Marginal totals can be misleading for undirected mixing matrices.")  
+    )
+  } else {
+    dimnames(m) <- if(attr(x, "bipartite")) list(B1 = rn, B2 = cn) else list(From = rn, To = cn)
+    m <- addmargins(m)
+  }
+  m <- structure(
+    m,
+    directed = attr(x, "directed"),
+    bipartite = attr(x, "bipartite"),
+    class = "table"
+  )
+  print(m)
+}
+
+
+
+
+
 
 
 
@@ -428,35 +460,9 @@ is.discrete<-function(x){
 
 
 
-# print.mixingmatrix ------------------------------------------------------
 
 
-#' @rdname mixingmatrix
-#' 
-#' @param x mixingmatrix object
-#' 
-#' @export
-print.mixingmatrix <- function(x, ...) {
-  m <- x
-  rn <- rownames(x)
-  cn <- colnames(x)  
-  if (!attr(x, "directed")) {
-    dimnames(m) <- list(rn, cn)
-    on.exit(
-      message("Note:  Marginal totals can be misleading for undirected mixing matrices.")  
-    )
-  } else {
-    dimnames(m) <- if(attr(x, "bipartite")) list(B1 = rn, B2 = cn) else list(From = rn, To = cn)
-    m <- addmargins(m)
-  }
-  m <- structure(
-    m,
-    directed = attr(x, "directed"),
-    bipartite = attr(x, "bipartite"),
-    class = "table"
-  )
-  print(m)
-}
+
 
 
 
