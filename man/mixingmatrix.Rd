@@ -32,14 +32,31 @@ matrix is meaningful.}
 
 \item{attrname}{a vertex attribute name.}
 
-\item{expand.bipartite}{logical; if \code{object} is bipartite, should
-we return the \emph{square} mixing matrix representing every level of
-\code{attrname} against every other level, or a \emph{rectangular} matrix
-considering only levels present in each bipartition?}
+\item{expand.bipartite}{logical; if \code{object} is bipartite, should we return
+the \emph{square} mixing matrix representing every level of \code{attrname} against
+every other level, or a \emph{rectangular} matrix considering only levels
+present in each bipartition?}
 
 \item{x}{mixingmatrix object}
 
 \item{name}{name of the element to extract, one of "matrix" or "type"}
+}
+\value{
+Function \code{mixingmatrix()} returns an object of class "mixingmatrix"
+extending "table" with a cross-tabulation of edges in the \code{object}
+according to the values of attribute \code{attrname} for the two incident
+vertices. If \code{object} is a \emph{directed} network rows correspond to the "tie
+sender" and columns to the "tie receiver". If \code{object} is an \emph{undirected}
+network there is no such distinction and the matrix is symmetrized. In both
+cases the matrix is square and all the observed values of the attribute
+\code{attrname} are represented in rows and columns. If \code{object} is a
+\emph{bipartite} network and \code{expand.bipartite} is \code{FALSE} the resulting matrix
+does not have to be square as only the actually observed values of the
+attribute are shown for each partition, if \code{expand.bipartite} is \code{TRUE} the
+matrix will be square.
+
+Functions \code{is.directed()} and \code{is.bipartite()} return \code{TRUE} or
+\code{FALSE}. The values will be identical for the input network \code{object}.
 }
 \description{
 Return the mixing matrix for a network, on a given attribute.

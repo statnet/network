@@ -128,13 +128,26 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 
 
 #' @rdname mixingmatrix
-#' 
+#'
 #' @param attrname a vertex attribute name.
-#' @param expand.bipartite logical; if `object` is bipartite, should
-#'   we return the *square* mixing matrix representing every level of
-#'   `attrname` against every other level, or a *rectangular* matrix
-#'   considering only levels present in each bipartition?
-#' 
+#' @param expand.bipartite logical; if `object` is bipartite, should we return
+#'   the *square* mixing matrix representing every level of `attrname` against
+#'   every other level, or a *rectangular* matrix considering only levels
+#'   present in each bipartition?
+#'
+#' @return Function `mixingmatrix()` returns an object of class "mixingmatrix"
+#'   extending "table" with a cross-tabulation of edges in the `object`
+#'   according to the values of attribute `attrname` for the two incident
+#'   vertices. If `object` is a *directed* network rows correspond to the "tie
+#'   sender" and columns to the "tie receiver". If `object` is an *undirected*
+#'   network there is no such distinction and the matrix is symmetrized. In both
+#'   cases the matrix is square and all the observed values of the attribute
+#'   `attrname` are represented in rows and columns. If `object` is a
+#'   *bipartite* network and `expand.bipartite` is `FALSE` the resulting matrix
+#'   does not have to be square as only the actually observed values of the
+#'   attribute are shown for each partition, if `expand.bipartite` is `TRUE` the
+#'   matrix will be square.
+#'
 #' @export
 #' @examples
 #' # Interaction ties between Lake Pomona SAR organizations by sponsorship type
@@ -255,6 +268,10 @@ as.mixingmatrix <- function(mat, directed, bipartite, ...) {
 
 
 #' @rdname mixingmatrix
+#' 
+#' @return Functions `is.directed()` and `is.bipartite()` return `TRUE` or
+#'   `FALSE`. The values will be identical for the input network `object`.
+#' 
 #' @export
 is.directed.mixingmatrix <- function(x, ...) attr(x, "directed")
 
