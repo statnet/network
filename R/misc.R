@@ -194,24 +194,32 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
 
 
 
+#' @rdname mixingmatrix
+#
 # Fake method for mixingmatrices
+#
 # x[["matrix"]]
 # x[["type"]] = directed, undirected, bipartite 
 #' @export
 "[[.mixingmatrix" <- function(x, ...) {
   .Deprecated("mixingmatrix")
-  x <- to_oldmm(x)
+  x <- .to_oldmm(x)
   NextMethod()
 }
 
+
+#' @rdname mixingmatrix
+#' 
+#' @param name name of the element to extract, one of "matrix" or "type"
+#'
 #' @export
 "$.mixingmatrix" <- function(x, name) {
-  x <- to_oldmm(x)
+  x <- .to_oldmm(x)
   NextMethod()
 }
 
 
-to_oldmm <- function(x) {
+.to_oldmm <- function(x) {
   directed <- attr(x, "directed")
   bipartite <- attr(x, "bipartite")
   list(
