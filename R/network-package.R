@@ -60,13 +60,13 @@ NULL
 #' @format A list of 7 \code{\link{network}} objects:
 #' 
 #'  \tabular{rlll}{
-#'    [[1]] \tab Cheyenne     \tab network \tab Cheyenne SAR EMON\cr
-#'    [[2]] \tab HurrFrederic \tab network \tab Hurricane Frederic SAR EMON\cr
-#'    [[3]] \tab LakePomona   \tab network \tab Lake Pomona SAR EMON\cr
-#'    [[4]] \tab MtSi         \tab network \tab Mt. Si SAR EMON\cr
-#'    [[5]] \tab MtStHelens   \tab network \tab Mt. St. Helens SAR EMON\cr
-#'    [[6]] \tab Texas        \tab network \tab Texas Hill Country SAR EMON\cr
-#'    [[7]] \tab Wichita      \tab network \tab Wichita Falls SAR EMON
+#'    `[[1]]` \tab Cheyenne     \tab network \tab Cheyenne SAR EMON\cr
+#'    `[[2]]` \tab HurrFrederic \tab network \tab Hurricane Frederic SAR EMON\cr
+#'    `[[3]]` \tab LakePomona   \tab network \tab Lake Pomona SAR EMON\cr
+#'    `[[4]]` \tab MtSi         \tab network \tab Mt. Si SAR EMON\cr
+#'    `[[5]]` \tab MtStHelens   \tab network \tab Mt. St. Helens SAR EMON\cr
+#'    `[[6]]` \tab Texas        \tab network \tab Texas Hill Country SAR EMON\cr
+#'    `[[7]]` \tab Wichita      \tab network \tab Wichita Falls SAR EMON
 #'  }
 #' 
 #' Each network has one edge attribute:

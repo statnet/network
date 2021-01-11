@@ -20,9 +20,9 @@ matrix is meaningful.}
 
 \item{attrname}{a vertex attribute name.}
 
-\item{expand.bipartite}{logical; if `object` is bipartite, should
+\item{expand.bipartite}{logical; if \code{object} is bipartite, should
 we return the square mixing matrix representing every level of
-`attrname` against every other level, or a rectangular matrix
+\code{attrname} against every other level, or a rectangular matrix
 considering only levels present in each bipartition?}
 
 \item{x}{mixingmatrix object}

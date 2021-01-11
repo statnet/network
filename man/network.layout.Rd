@@ -42,9 +42,9 @@ follows:
 \enumerate{
 \item the first argument, \code{nw}, must be a network object;
 \item the second argument, \code{layout.par}, must be a list of parameters
-  (or \code{NULL}, if no parameters are specified); and
+(or \code{NULL}, if no parameters are specified); and
 \item the return value must be a real matrix of dimension \code{c(2,network.size(nw))},
-  whose rows contain the vertex coordinates.
+whose rows contain the vertex coordinates.
 }
 Other than this, anything goes.  (In particular, note that \code{layout.par}
 could be used to pass additional matrices or other information, if needed.
@@ -54,7 +54,7 @@ plot.network.)
 
 The \code{network.layout} functions currently supplied by default are as
 follows (with \code{n==network.size(nw)}):
-\describe{ 
+\describe{
 \item{circle}{ This function places vertices uniformly in a circle; it takes no arguments.}
 \item{fruchtermanreingold}{ This function generates a layout using a variant of Fruchterman and Reingold's force-directed placement algorithm.  It takes the following arguments:
 \describe{
@@ -62,10 +62,10 @@ follows (with \code{n==network.size(nw)}):
 \item{layout.par$max.delta}{ Sets the maximum change in position for any given iteration.  (Defaults to \code{n}.)}
 \item{layout.par$area}{ Sets the "area" parameter for the F-R algorithm. (Defaults to \code{n^2}.)}
 \item{layout.par$cool.exp}{ Sets the cooling exponent for the annealer. (Defaults to 3.)}
-\item{layout.par$repulse.rad}{ Determines the radius at which vertex-vertex repulsion cancels out attraction of adjacent vertices. (Defaults to \code{area*log(n)}.)} 
-\item{layout.par$ncell}{ To speed calculations on large graphs, the plot region is divided at each iteration into \code{ncell} by \code{ncell} \dQuote{cells}, which are used to define neighborhoods for force calculation.  Moderate numbers of cells result in fastest performance; too few cells (down to 1, which produces \dQuote{pure} F-R results) can yield odd layouts, while too many will result in long layout times.  (Defaults to \code{n^0.4}.)} 
+\item{layout.par$repulse.rad}{ Determines the radius at which vertex-vertex repulsion cancels out attraction of adjacent vertices. (Defaults to \code{area*log(n)}.)}
+\item{layout.par$ncell}{ To speed calculations on large graphs, the plot region is divided at each iteration into \code{ncell} by \code{ncell} \dQuote{cells}, which are used to define neighborhoods for force calculation.  Moderate numbers of cells result in fastest performance; too few cells (down to 1, which produces \dQuote{pure} F-R results) can yield odd layouts, while too many will result in long layout times.  (Defaults to \code{n^0.4}.)}
 \item{layout.par$cell.jitter}{ Jitter factor (in units of cell width) used in assigning vertices to cells. Small values may generate \dQuote{grid-like} anomalies for graphs with many isolates.  (Defaults to \code{0.5}.)}
-\item{layout.par$cell.pointpointrad}{ Squared \dQuote{radius} (in units of cells) such that exact point interaction calculations are used for all vertices belonging to any two cells less than or equal to this distance apart.  Higher values approximate the true F-R solution, but increase computational cost.  (Defaults to \code{0}.)} 
+\item{layout.par$cell.pointpointrad}{ Squared \dQuote{radius} (in units of cells) such that exact point interaction calculations are used for all vertices belonging to any two cells less than or equal to this distance apart.  Higher values approximate the true F-R solution, but increase computational cost.  (Defaults to \code{0}.)}
 \item{layout.par$cell.pointcellrad}{ Squared \dQuote{radius} (in units of cells) such that approximate point/cell interaction calculations are used for all vertices belonging to any two cells less than or equal to this distance apart (and not within the point/point radius). Higher values provide somewhat better approximations to the true F-R solution at slightly increased computational cost.  (Defaults to \code{18}.)}
 \item{layout.par$cell.cellcellrad}{ Squared \dQuote{radius} (in units of cells) such that approximate cell/cell interaction calculations are used for all vertices belonging to any two cells less than or equal to this distance apart (and not within the point/point or point/cell radii). Higher values provide somewhat better approximations to the true F-R solution at slightly increased computational cost.  Note that cells beyond this radius (if any) do not interact, save through edge attraction. (Defaults to \code{ncell^2}.)}
 \item{layout.par$seed.coord}{ A two-column matrix of initial vertex coordinates.  (Defaults to a random circular layout.) }
@@ -76,12 +76,12 @@ follows (with \code{n==network.size(nw)}):
 \item{layout.par$niter}{ This argument controls the number of iterations to be employed.  (Defaults to 1000.) }
 \item{layout.par$sigma}{ Sets the base standard deviation of position change proposals.  (Defaults to \code{n/4}.)}
 \item{layout.par$initemp}{ Sets the initial "temperature" for the annealing algorithm. (Defaults to 10.)}
-\item{layout.par$cool.exp}{ Sets the cooling exponent for the annealer. (Defaults to 0.99.)} 
+\item{layout.par$cool.exp}{ Sets the cooling exponent for the annealer. (Defaults to 0.99.)}
 \item{layout.par$kkconst}{ Sets the Kamada-Kawai vertex attraction constant.  (Defaults to \code{n)^2}.)}
 \item{layout.par$elen}{ Provides the matrix of interpoint distances to be approximated.  (Defaults to the geodesic distances of \code{nw} after symmetrizing, capped at \code{sqrt(n)}.)}
-\item{layout.par$seed.coord}{ A two-column matrix of initial vertex coordinates.  (Defaults to a gaussian layout.) } 
-} 
-} 
+\item{layout.par$seed.coord}{ A two-column matrix of initial vertex coordinates.  (Defaults to a gaussian layout.) }
+}
+}
 }
 }
 \note{

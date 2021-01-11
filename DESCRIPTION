@@ -23,6 +23,7 @@ Description: Tools to create and modify network objects.  The network class can 
 License: GPL (>=2)
 URL: http://statnet.org/
 RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
 Collate:
     'access.R'
     'as.edgelist.R'

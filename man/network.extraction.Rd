@@ -115,7 +115,7 @@ extraction case, \code{x \%n\% attrname} is equivalent to
 corresponding to \code{get.vertex.attribute(x,attrname)}.  In assignment,
 the respective equivalences are to
 \code{set.network.attribute(x,attrname,value)} and
-\code{set.vertex.attribute(x,attrname,value)}.  Note that the ``\%\%''
+\code{set.vertex.attribute(x,attrname,value)}.  Note that the \code{\%\%}
 assignment forms are generally slower than the named versions of the
 functions beause they will trigger an additional internal copy of the
 network object.
