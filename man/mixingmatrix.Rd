@@ -5,6 +5,8 @@
 \alias{mixingmatrix.network}
 \alias{[[.mixingmatrix}
 \alias{$.mixingmatrix}
+\alias{is.directed.mixingmatrix}
+\alias{is.bipartite.mixingmatrix}
 \alias{print.mixingmatrix}
 \title{Mixing matrix}
 \usage{
@@ -15,6 +17,10 @@ mixingmatrix(object, ...)
 \method{[[}{mixingmatrix}(x, ...)
 
 \method{$}{mixingmatrix}(x, name)
+
+\method{is.directed}{mixingmatrix}(x, ...)
+
+\method{is.bipartite}{mixingmatrix}(x, ...)
 
 \method{print}{mixingmatrix}(x, ...)
 }

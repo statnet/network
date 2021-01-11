@@ -22,7 +22,9 @@ test_that("mixingmatrix() just works on a directed network", {
               class = c("mixingmatrix", "table"), directed = TRUE, bipartite = FALSE)
   )
   expect_true(attr(mm, "directed"))
+  expect_true(is.directed(mm))
   expect_false(attr(mm, "bipartite"))
+  expect_false(is.bipartite(mm))
 })
 
 test_that("directed: rows and cols for NA on attribute are always shown", {
@@ -34,7 +36,6 @@ test_that("directed: rows and cols for NA on attribute are always shown", {
     stupid_mm(emon$MtSi, "Formalization", exclude=NULL)
   )
 })
-
 
 
 
@@ -58,7 +59,9 @@ test_that("mixingmatrix() just works on a undirected network", {
     )
   )
   expect_false(attr(mm, "directed"))
+  expect_false(is.directed(mm))
   expect_false(attr(mm, "bipartite"))
+  expect_false(is.bipartite(mm))
 })
 
 
@@ -93,8 +96,8 @@ test_that("mixingmatrix() just works on a bipartite network - partition attribut
     mm <- mixingmatrix(net, "mode")
   )
   expect_type(mm, "integer")
-  expect_false(attr(mm, "directed"))
-  expect_true(attr(mm, "bipartite"))
+  expect_false(is.directed(mm))
+  expect_true(is.bipartite(mm))
   expect_equivalent(
     mm,
     structure(matrix(2, 1, 1), class="mixingmatrix")
@@ -108,8 +111,8 @@ test_that("mixingmatrix() just works on a bipartite network - common attribute",
     mm <- mixingmatrix(net, "common")
   )
   expect_type(mm, "integer")
-  expect_false(attr(mm, "directed"))
-  expect_true(attr(mm, "bipartite"))
+  expect_false(is.directed(mm))
+  expect_true(is.bipartite(mm))
   expect_equivalent(
     mm,
     structure(matrix(c(1,0,0,1), 2, 2), class="mixingmatrix")
@@ -123,6 +126,6 @@ test_that("mixingmatrix() just works on a bipartite network - two partition-spec
     mm <- mixingmatrix(net, c("radius", "side_length"))
   )
   expect_type(mm, "integer")
-  expect_false(attr(mm, "directed"))
-  expect_true(attr(mm, "bipartite"))
+  expect_false(is.directed(mm))
+  expect_true(is.bipartite(mm))
 })

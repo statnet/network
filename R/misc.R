@@ -254,6 +254,14 @@ as.mixingmatrix <- function(mat, directed, bipartite, ...) {
 }
 
 
+#' @rdname mixingmatrix
+#' @export
+is.directed.mixingmatrix <- function(x, ...) attr(x, "directed")
+
+#' @rdname mixingmatrix
+#' @export
+is.bipartite.mixingmatrix <- function(x, ...) attr(x, "bipartite")
+
 
 #' @rdname mixingmatrix
 #' 
@@ -281,6 +289,7 @@ print.mixingmatrix <- function(x, ...) {
   )
   print(m)
 }
+
 
 
 
