@@ -6,6 +6,7 @@
 \alias{is.bipartite}
 \alias{is.bipartite.network}
 \alias{is.directed}
+\alias{is.directed.network}
 \alias{is.hyper}
 \alias{is.multiplex}
 \title{Indicator Functions for Network Properties}
@@ -16,7 +17,9 @@ is.bipartite(x, ...)
 
 \method{is.bipartite}{network}(x, ...)
 
-is.directed(x)
+is.directed(x, ...)
+
+\method{is.directed}{network}(x, ...)
 
 is.hyper(x)
 

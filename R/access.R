@@ -1299,11 +1299,12 @@ is.bipartite.network<-function(x, ...){
 #
 #' @rdname network.indicators
 #' @export
-is.directed<-function(x){
-  if(!is.network(x))
-    stop("is.directed requires an argument of class network.\n")
-  else
-    get.network.attribute(x,"directed")
+is.directed <- function(x, ...) UseMethod("is.directed")
+
+#' @rdname network.indicators
+#' @export
+is.directed.network<-function(x, ...){
+  get.network.attribute(x,"directed")
 }
 
 
