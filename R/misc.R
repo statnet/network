@@ -131,8 +131,8 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #' 
 #' @param attrname a vertex attribute name.
 #' @param expand.bipartite logical; if `object` is bipartite, should
-#'   we return the square mixing matrix representing every level of
-#'   `attrname` against every other level, or a rectangular matrix
+#'   we return the *square* mixing matrix representing every level of
+#'   `attrname` against every other level, or a *rectangular* matrix
 #'   considering only levels present in each bipartition?
 #' 
 #' @export
@@ -193,14 +193,16 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
 
 
 #' @rdname mixingmatrix
-#
-# Fake method for mixingmatrices
-#
-# x[["matrix"]]
-# x[["type"]] = directed, undirected, bipartite 
+#' 
+#' @note The `$` and `[[` methods are included only for backward-compatiblity
+#'   reason and will become defunct in future releases of the package.
+#' 
 #' @export
 "[[.mixingmatrix" <- function(x, ...) {
-  .Deprecated("mixingmatrix")
+  .Deprecated(
+    new = "mixingmatrix",
+    msg = "Mixing matrix objects now extend class \"table\". The `[[` method is deprecated and will be removed from future releases of the package. See ?mixingmatrix for details."
+  )
   x <- .to_oldmm(x)
   NextMethod()
 }
@@ -212,6 +214,10 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
 #'
 #' @export
 "$.mixingmatrix" <- function(x, name) {
+  .Deprecated(
+    new = "mixingmatrix",
+    msg = "Mixing matrix objects now extend class \"table\". The `$` method is deprecated and will be removed from future releases of the package. See ?mixingmatrix for details."
+  )
   x <- .to_oldmm(x)
   NextMethod()
 }
