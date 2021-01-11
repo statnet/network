@@ -4,6 +4,7 @@
 \alias{network.indicators}
 \alias{has.loops}
 \alias{is.bipartite}
+\alias{is.bipartite.network}
 \alias{is.directed}
 \alias{is.hyper}
 \alias{is.multiplex}
@@ -11,7 +12,9 @@
 \usage{
 has.loops(x)
 
-is.bipartite(x)
+is.bipartite(x, ...)
+
+\method{is.bipartite}{network}(x, ...)
 
 is.directed(x)
 

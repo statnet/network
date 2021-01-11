@@ -1279,11 +1279,12 @@ is.adjacent<-function(x,vi,vj,na.omit=FALSE){
 #
 #' @rdname network.indicators
 #' @export
-is.bipartite<-function(x){
-  if(!is.network(x))
-    stop("is.bipartite requires an argument of class network.")
-  else
-    bip <- get.network.attribute(x,"bipartite")
+is.bipartite <- function(x, ...) UseMethod("is.bipartite")
+
+#' @rdname network.indicators
+#' @export
+is.bipartite.network<-function(x, ...){
+  bip <- get.network.attribute(x,"bipartite")
   if(is.null(bip)){
    return(FALSE)
   } else if (is.logical(bip)){
