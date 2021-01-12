@@ -27,6 +27,8 @@ is.multiplex(x)
 }
 \arguments{
 \item{x}{an object of class \code{network}}
+
+\item{...}{other arguments passed to/from other methods}
 }
 \value{
 \code{TRUE} or \code{FALSE}
