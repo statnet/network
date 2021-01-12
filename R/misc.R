@@ -296,7 +296,7 @@ print.mixingmatrix <- function(x, ...) {
     )
   } else {
     dimnames(m) <- if(attr(x, "bipartite")) list(B1 = rn, B2 = cn) else list(From = rn, To = cn)
-    m <- addmargins(m)
+    m <- stats::addmargins(m)
   }
   m <- structure(
     m,
