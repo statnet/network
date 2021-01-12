@@ -1278,6 +1278,7 @@ is.adjacent<-function(x,vi,vj,na.omit=FALSE){
 # Return TRUE iff network x is bipartite
 #
 #' @rdname network.indicators
+#' @param ... other arguments passed to/from other methods
 #' @export
 is.bipartite <- function(x, ...) UseMethod("is.bipartite")
 
