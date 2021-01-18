@@ -201,10 +201,6 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
   )
 }
 
-
-
-
-
 #' @rdname mixingmatrix
 #' 
 #' @note The `$` and `[[` methods are included only for backward-compatiblity
@@ -307,14 +303,6 @@ print.mixingmatrix <- function(x, ...) {
   print(m)
 }
 
-
-
-
-
-
-
-
-
 # network.density ---------------------------------------------------------
 
 #' Compute the Density of a Network
@@ -388,12 +376,6 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   ec/pe
 }
 
-
-
-
-
-
-
 # has.edges ---------------------------------------------------------------
 
 #' Determine if specified vertices of a network have any edges (are not
@@ -430,12 +412,7 @@ has.edges<-function(net,v=seq_len(network.size(net))){
   return(ins+outs != 0)
 }
 
-
-
-
 # is.color ----------------------------------------------------------------
-
-
 
 #' @rdname as.color
 #' 
