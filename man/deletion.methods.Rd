@@ -19,29 +19,29 @@ delete.vertices(x, vid)
 }
 \value{
 Invisibly, a pointer to the updated network; these functions modify
-  their arguments in place.
+their arguments in place.
 }
 \description{
-\code{delete.edges} removes one or more edges (specified by 
-  their internal ID numbers) from a network; \code{delete.vertices} 
-  performs the same task for vertices (removing all associated edges in 
-  the process).
+\code{delete.edges} removes one or more edges (specified by
+their internal ID numbers) from a network; \code{delete.vertices}
+performs the same task for vertices (removing all associated edges in
+the process).
 }
 \details{
-Note that an edge's ID number corresponds to its order within 
-  \code{x$mel}.  To determine edge IDs, see \code{\link{get.edgeIDs}}.  
-  Likewise, vertex ID numbers reflect the order with which vertices are
-  listed internally (e.g., the order of \code{x$oel} and \code{x$iel}, or 
-  that used by \code{as.matrix.network.adjacency}).  When vertices are 
-  removed from a network, all edges having those vertices as endpoints are
-  removed as well.  When edges are removed, the remaining edge ids are NOT
-  permuted and \code{NULL} elements will be left on the list of edges, which
-  may complicate some functions that require eids (such as 
-  \code{\link{set.edge.attribute}}).  The function \code{\link{valid.eids}}
-  provides a means to determine the set of valid (non-NULL) edge ids. 
+Note that an edge's ID number corresponds to its order within
+\code{x$mel}.  To determine edge IDs, see \code{\link{get.edgeIDs}}.
+Likewise, vertex ID numbers reflect the order with which vertices are
+listed internally (e.g., the order of \code{x$oel} and \code{x$iel}, or
+that used by \code{as.matrix.network.adjacency}).  When vertices are
+removed from a network, all edges having those vertices as endpoints are
+removed as well.  When edges are removed, the remaining edge ids are NOT
+permuted and \code{NULL} elements will be left on the list of edges, which
+may complicate some functions that require eids (such as
+\code{\link{set.edge.attribute}}).  The function \code{\link{valid.eids}}
+provides a means to determine the set of valid (non-NULL) edge ids.
 
 Edges can also be added/removed via the extraction/replacement operators.
-  See the associated man page for details.
+See the associated man page for details.
 }
 \examples{
 #Create a network with three edges
@@ -64,13 +64,13 @@ g[,]
 
 }
 \references{
-Butts, C. T.  (2008).  \dQuote{network: a Package for Managing 
-  Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  
-  \url{http://www.jstatsoft.org/v24/i02/}
+Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
+Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).
+\url{http://www.jstatsoft.org/v24/i02/}
 }
 \seealso{
-\code{\link{get.edgeIDs}}, \code{\link{network.extraction}}, 
-  \code{\link{valid.eids}}
+\code{\link{get.edgeIDs}}, \code{\link{network.extraction}},
+\code{\link{valid.eids}}
 }
 \author{
 Carter T. Butts \email{buttsc@uci.edu}

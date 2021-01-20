@@ -7,15 +7,15 @@
 \format{
 A list of 7 \code{\link{network}} objects:
 
- \tabular{rlll}{
-   [[1]] \tab Cheyenne     \tab network \tab Cheyenne SAR EMON\cr
-   [[2]] \tab HurrFrederic \tab network \tab Hurricane Frederic SAR EMON\cr
-   [[3]] \tab LakePomona   \tab network \tab Lake Pomona SAR EMON\cr
-   [[4]] \tab MtSi         \tab network \tab Mt. Si SAR EMON\cr
-   [[5]] \tab MtStHelens   \tab network \tab Mt. St. Helens SAR EMON\cr
-   [[6]] \tab Texas        \tab network \tab Texas Hill Country SAR EMON\cr
-   [[7]] \tab Wichita      \tab network \tab Wichita Falls SAR EMON
- }
+\tabular{rlll}{
+\verb{[[1]]} \tab Cheyenne     \tab network \tab Cheyenne SAR EMON\cr
+\verb{[[2]]} \tab HurrFrederic \tab network \tab Hurricane Frederic SAR EMON\cr
+\verb{[[3]]} \tab LakePomona   \tab network \tab Lake Pomona SAR EMON\cr
+\verb{[[4]]} \tab MtSi         \tab network \tab Mt. Si SAR EMON\cr
+\verb{[[5]]} \tab MtStHelens   \tab network \tab Mt. St. Helens SAR EMON\cr
+\verb{[[6]]} \tab Texas        \tab network \tab Texas Hill Country SAR EMON\cr
+\verb{[[7]]} \tab Wichita      \tab network \tab Wichita Falls SAR EMON
+}
 
 Each network has one edge attribute:
 
@@ -24,16 +24,16 @@ Each network has one edge attribute:
 
 Each network also has 8 vertex attributes:
 
- \tabular{lll}{
-  Command.Rank.Score  \tab numeric   \tab Mean rank in the command structure\cr
-  Decision.Rank.Score \tab numeric   \tab Mean rank in the decision process\cr
-  Formalization       \tab numeric   \tab Degree of formalization\cr
-  Location            \tab character \tab Location code\cr
-  Paid.Staff          \tab numeric   \tab Number of paid staff\cr
-  Sponsorship         \tab character \tab Sponsorship type\cr
-  vertex.names        \tab character \tab Organization name\cr
-  Volunteer.Staff     \tab numeric   \tab Number of volunteer staff
- }
+\tabular{lll}{
+Command.Rank.Score  \tab numeric   \tab Mean rank in the command structure\cr
+Decision.Rank.Score \tab numeric   \tab Mean rank in the decision process\cr
+Formalization       \tab numeric   \tab Degree of formalization\cr
+Location            \tab character \tab Location code\cr
+Paid.Staff          \tab numeric   \tab Number of paid staff\cr
+Sponsorship         \tab character \tab Sponsorship type\cr
+vertex.names        \tab character \tab Organization name\cr
+Volunteer.Staff     \tab numeric   \tab Number of volunteer staff
+}
 }
 \source{
 Drabek, T.E.; Tamminga, H.L.; Kilijanek, T.S.; and Adams, C.R.
@@ -65,25 +65,25 @@ For each network, several covariates are recorded as vertex attributes:
 
 \describe{
 \item{Command.Rank.Score}{ Mean (reversed) rank for the
-  prominence of each organization in the command structure of the response, as
-  judged by organizational informants.}
-\item{Decision.Rank.Score}{ Mean (reversed) rank for the 
-  prominence of each organization in decision making
-  processes during the response, as judged by organizational informants.}
+prominence of each organization in the command structure of the response, as
+judged by organizational informants.}
+\item{Decision.Rank.Score}{ Mean (reversed) rank for the
+prominence of each organization in decision making
+processes during the response, as judged by organizational informants.}
 \item{Formalization}{ An index of organizational formalization, ranging from
-  0 (least formalized) to 4 (most formalized).} \item{Localization}{ For each
-  organization, \code{"L"} if the organization was sited locally to the impact
-  area, \code{"NL"} if the organization was not sited near the impact area,
-  \code{"B"} if the organization was sited at both local and non-local
-  locations.}
+0 (least formalized) to 4 (most formalized).} \item{Localization}{ For each
+organization, \code{"L"} if the organization was sited locally to the impact
+area, \code{"NL"} if the organization was not sited near the impact area,
+\code{"B"} if the organization was sited at both local and non-local
+locations.}
 \item{Paid.Staff}{ Number of paid staff employed by each
-  organization at the time of the response.}
+organization at the time of the response.}
 \item{Sponsorship}{ The level at which each organization
-  was sponsored (e.g., \code{"City"}, \code{"County"},
-  \code{"State"}, \code{"Federal"}, and \code{"Private"}).}
+was sponsored (e.g., \code{"City"}, \code{"County"},
+\code{"State"}, \code{"Federal"}, and \code{"Private"}).}
 \item{vertex.names}{ The identity of each organization.}
 \item{Volunteer.Staff}{ Number of volunteer staff employed by each
-  organization at the time of the response.}
+organization at the time of the response.}
 }
 
 Note that where intervals were given by the original source, midpoints have

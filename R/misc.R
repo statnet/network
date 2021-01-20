@@ -113,9 +113,7 @@ as.color<-function(x,opacity=1.0){
 #'   matrix is meaningful.
 #' @param ... further arguments passed to or used by methods.
 #' 
-#' 
 #' @rdname mixingmatrix
-#' @include constructors.R
 #' @export
 
 mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
@@ -130,13 +128,26 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 
 
 #' @rdname mixingmatrix
-#' 
+#'
 #' @param attrname a vertex attribute name.
-#' @param expand.bipartite logical; if `object` is bipartite, should
-#'   we return the square mixing matrix representing every level of
-#'   `attrname` against every other level, or a rectangular matrix
-#'   considering only levels present in each bipartition?
-#' 
+#' @param expand.bipartite logical; if `object` is bipartite, should we return
+#'   the *square* mixing matrix representing every level of `attrname` against
+#'   every other level, or a *rectangular* matrix considering only levels
+#'   present in each bipartition?
+#'
+#' @return Function `mixingmatrix()` returns an object of class "mixingmatrix"
+#'   extending "table" with a cross-tabulation of edges in the `object`
+#'   according to the values of attribute `attrname` for the two incident
+#'   vertices. If `object` is a *directed* network rows correspond to the "tie
+#'   sender" and columns to the "tie receiver". If `object` is an *undirected*
+#'   network there is no such distinction and the matrix is symmetrized. In both
+#'   cases the matrix is square and all the observed values of the attribute
+#'   `attrname` are represented in rows and columns. If `object` is a
+#'   *bipartite* network and `expand.bipartite` is `FALSE` the resulting matrix
+#'   does not have to be square as only the actually observed values of the
+#'   attribute are shown for each partition, if `expand.bipartite` is `TRUE` the
+#'   matrix will be square.
+#'
 #' @export
 #' @examples
 #' # Interaction ties between Lake Pomona SAR organizations by sponsorship type
@@ -150,13 +161,11 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
   }
   if(network.size(nw)==0L){
     warning("mixing matrices not well-defined for graphs with no vertices.")
-    type<-"directed"
-    if(is.bipartite(nw))
-      type<-"bipartite"
-    tabu<-matrix(nrow=0L,ncol=0L)
-    ans<-list(type=type,matrix=tabu)
-    class(ans)<-"mixingmatrix"
-    return(ans)
+    return(as.mixingmatrix(
+      matrix(nrow=0L, ncol=0L),
+      directed = is.directed(object),
+      bipartite = is.bipartite(object)
+    ))
   }
   nodecov <- unlist(get.vertex.attribute(nw, attrname))
   u<-sort(unique(nodecov))
@@ -185,12 +194,114 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
     tabu <- tabu + t(tabu)
     diag(tabu) <- diag(tabu)%/%2L
   }
-  ans <- list(type=type, matrix=tabu)
-  class(ans) <- "mixingmatrix"
-  ans
+  as.mixingmatrix(
+    tabu,
+    directed = is.directed(object),
+    bipartite = is.bipartite(object)
+  )
+}
+
+#' @rdname mixingmatrix
+#' 
+#' @note The `$` and `[[` methods are included only for backward-compatiblity
+#'   reason and will become defunct in future releases of the package.
+#' 
+#' @export
+"[[.mixingmatrix" <- function(x, ...) {
+  .Deprecated(
+    new = "mixingmatrix",
+    msg = "Mixing matrix objects now extend class \"table\". The `[[` method is deprecated and will be removed from future releases of the package. See ?mixingmatrix for details."
+  )
+  x <- .to_oldmm(x)
+  NextMethod()
 }
 
 
+#' @rdname mixingmatrix
+#' 
+#' @param name name of the element to extract, one of "matrix" or "type"
+#'
+#' @export
+"$.mixingmatrix" <- function(x, name) {
+  .Deprecated(
+    new = "mixingmatrix",
+    msg = "Mixing matrix objects now extend class \"table\". The `$` method is deprecated and will be removed from future releases of the package. See ?mixingmatrix for details."
+  )
+  x <- .to_oldmm(x)
+  NextMethod()
+}
+
+
+.to_oldmm <- function(x) {
+  directed <- attr(x, "directed")
+  bipartite <- attr(x, "bipartite")
+  list(
+    matrix = structure(as.integer(x), dimnames=dimnames(x), dim=dim(x)),
+    type = if(bipartite) "bipartite" else if(directed) "directed" else "undirected"
+  )
+}
+
+
+# A non-exported constructor of mixingmatrix objects
+# 
+# @param mat matrix with the actual cross-tabulation
+# @param directed logical if the network is directed
+# @param bipartite logical if the netwoek is bipartite
+# @param ... other arguments currently ignored
+# 
+# @return The matrix with attributes "directed" and "bipartite" of class
+#   "mixingmatrix" inheriting from "table".
+
+as.mixingmatrix <- function(mat, directed, bipartite, ...) {
+  # Test/check/symmetrize here?
+  structure(
+    mat,
+    directed = directed,
+    bipartite = bipartite,
+    class = c("mixingmatrix", "table")
+  )
+}
+
+
+#' @rdname mixingmatrix
+#' 
+#' @return Functions `is.directed()` and `is.bipartite()` return `TRUE` or
+#'   `FALSE`. The values will be identical for the input network `object`.
+#' 
+#' @export
+is.directed.mixingmatrix <- function(x, ...) attr(x, "directed")
+
+#' @rdname mixingmatrix
+#' @export
+is.bipartite.mixingmatrix <- function(x, ...) attr(x, "bipartite")
+
+
+#' @rdname mixingmatrix
+#' 
+#' @param x mixingmatrix object
+#' 
+#' @export
+print.mixingmatrix <- function(x, ...) {
+  m <- x
+  rn <- rownames(x)
+  cn <- colnames(x)  
+  if (!attr(x, "directed")) {
+    dimnames(m) <- list(rn, cn)
+    on.exit(
+      message("Note:  Marginal totals can be misleading for undirected mixing matrices.")  
+    )
+  } else {
+    dimnames(m) <- if(attr(x, "bipartite")) list(B1 = rn, B2 = cn) else list(From = rn, To = cn)
+    m <- stats::addmargins(m)
+  }
+  m <- structure(
+    m,
+    directed = attr(x, "directed"),
+    bipartite = attr(x, "bipartite"),
+    class = "table"
+  )
+  print(m)
+}
 
 # network.density ---------------------------------------------------------
 
@@ -265,12 +376,6 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
   ec/pe
 }
 
-
-
-
-
-
-
 # has.edges ---------------------------------------------------------------
 
 #' Determine if specified vertices of a network have any edges (are not
@@ -307,12 +412,7 @@ has.edges<-function(net,v=seq_len(network.size(net))){
   return(ins+outs != 0)
 }
 
-
-
-
 # is.color ----------------------------------------------------------------
-
-
 
 #' @rdname as.color
 #' 
@@ -369,36 +469,9 @@ is.discrete<-function(x){
 
 
 
-# print.mixingmatrix ------------------------------------------------------
 
 
-#' @rdname mixingmatrix
-#' 
-#' @param x mixingmatrix object
-#' 
-#' @export
-print.mixingmatrix <- function(x, ...) {
-  m <- x$mat
-  rn <- rownames(m)
-  cn <- colnames(m)  
-  if (x$type == "undirected") {
-    dimnames(m) <- list(rn, cn)
-    cat("Note:  Marginal totals can be misleading\n",
-        "for undirected mixing matrices.\n")
-  } else {
-    total <- apply(m,1,sum)
-    m <- cbind(m,total)
-    total <- apply(m,2,sum)
-    m <- rbind(m,total)
-    rn <- c(rn, "Total")
-    cn <- c(cn, "Total")
-    if (x$type == "bipartite")
-      dimnames(m) <- list(B1 = rn,B2 = cn)
-    else
-      dimnames(m) <- list(From = rn,To = cn)
-  }
-  print(m)
-}
+
 
 
 

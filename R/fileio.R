@@ -68,7 +68,7 @@
 #' each direction) added for every row in the \code{*Edges} block.
 #' 
 #' If the \code{*Vertices}, \code{*Arcs} or \code{*Edges} blocks having timing
-#' information included in the rows (indicated by '[...]' tokens), it will be
+#' information included in the rows (indicated by `...` tokens), it will be
 #' attached to the vertices with behavior determined by the \code{time.format}
 #' option.  If the \code{'networkDynamic'} format is used, times will be
 #' translated to \code{networkDynamic}'s spell model with the assumtion that

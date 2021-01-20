@@ -13,8 +13,8 @@ is.color(x)
 \item{x}{vector of numeric, character or factor values to be transformed}
 
 \item{opacity}{optional numeric value in the range 0.0 to 1.0 used to specify
-  the opacity/transparency (alpha) of the colors to be returned. 0 means
-  fully opaque, 1 means fully transparent.
+the opacity/transparency (alpha) of the colors to be returned. 0 means
+fully opaque, 1 means fully transparent.
 
 Behavior of \code{as.color} is as follows: \itemize{ \item integer numeric
 values: unchanged, (assumed to corespond to values of R's active
@@ -39,8 +39,8 @@ These functions are used for the color parameters of
 }
 \value{
 For \code{as.color}, a vector integer values (corresponding to color
-  palette values) or character color name. For \code{is.color}, a logical
-  vector indicating if each element of x appears to be a color
+palette values) or character color name. For \code{is.color}, a logical
+vector indicating if each element of x appears to be a color
 
 \code{as.color()} returns TRUE if x is a character in a known color format.
 }

@@ -73,24 +73,24 @@ self-explanatory in the non-multiplex case, but semantics in the latter
 circumstance bear elaboration.  The following summarizes the behavior of
 each operator:
 \describe{
-  \item{\code{+}}{An \eqn{(i,j)} edge is created in
+\item{\code{+}}{An \eqn{(i,j)} edge is created in
 the return graph for every \eqn{(i,j)} edge in each of the input graphs.}
-  \item{\code{-}}{An \eqn{(i,j)} edge is created in the return graph for
+\item{\code{-}}{An \eqn{(i,j)} edge is created in the return graph for
 every \eqn{(i,j)} edge in the first input that is not matched by an
 \eqn{(i,j)} edge in the second input; if the second input has more
 \eqn{(i,j)} edges than the first, no \eqn{(i,j)} edges are created in the
 return graph.}
-  \item{\code{*}}{An \eqn{(i,j)} edge is created for every
+\item{\code{*}}{An \eqn{(i,j)} edge is created for every
 pairing of \eqn{(i,j)} edges in the respective input graphs.}
-  \item{\code{\%c\%}}{An \eqn{(i,j)} edge is created in the return graph for
+\item{\code{\%c\%}}{An \eqn{(i,j)} edge is created in the return graph for
 every edge pair \eqn{(i,k),(k,j)} with the first edge in the first input and
 the second edge in the second input.}
-  \item{\code{!}}{An \eqn{(i,j)} edge
+\item{\code{!}}{An \eqn{(i,j)} edge
 is created in the return graph for every \eqn{(i,j)} in the input not having
 an edge.}
-  \item{\code{|}}{An \eqn{(i,j)} edge is created in the return
+\item{\code{|}}{An \eqn{(i,j)} edge is created in the return
 graph if either input contains an \eqn{(i,j)} edge.}
-  \item{\code{&}}{An
+\item{\code{&}}{An
 \eqn{(i,j)} edge is created in the return graph if both inputs contain an
 \eqn{(i,j)} edge.}
 }

@@ -4,16 +4,22 @@
 \alias{network.indicators}
 \alias{has.loops}
 \alias{is.bipartite}
+\alias{is.bipartite.network}
 \alias{is.directed}
+\alias{is.directed.network}
 \alias{is.hyper}
 \alias{is.multiplex}
 \title{Indicator Functions for Network Properties}
 \usage{
 has.loops(x)
 
-is.bipartite(x)
+is.bipartite(x, ...)
 
-is.directed(x)
+\method{is.bipartite}{network}(x, ...)
+
+is.directed(x, ...)
+
+\method{is.directed}{network}(x, ...)
 
 is.hyper(x)
 
@@ -21,6 +27,8 @@ is.multiplex(x)
 }
 \arguments{
 \item{x}{an object of class \code{network}}
+
+\item{...}{other arguments passed to/from other methods}
 }
 \value{
 \code{TRUE} or \code{FALSE}

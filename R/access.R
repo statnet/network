@@ -1278,12 +1278,14 @@ is.adjacent<-function(x,vi,vj,na.omit=FALSE){
 # Return TRUE iff network x is bipartite
 #
 #' @rdname network.indicators
+#' @param ... other arguments passed to/from other methods
 #' @export
-is.bipartite<-function(x){
-  if(!is.network(x))
-    stop("is.bipartite requires an argument of class network.")
-  else
-    bip <- get.network.attribute(x,"bipartite")
+is.bipartite <- function(x, ...) UseMethod("is.bipartite")
+
+#' @rdname network.indicators
+#' @export
+is.bipartite.network<-function(x, ...){
+  bip <- get.network.attribute(x,"bipartite")
   if(is.null(bip)){
    return(FALSE)
   } else if (is.logical(bip)){
@@ -1298,11 +1300,12 @@ is.bipartite<-function(x){
 #
 #' @rdname network.indicators
 #' @export
-is.directed<-function(x){
-  if(!is.network(x))
-    stop("is.directed requires an argument of class network.\n")
-  else
-    get.network.attribute(x,"directed")
+is.directed <- function(x, ...) UseMethod("is.directed")
+
+#' @rdname network.indicators
+#' @export
+is.directed.network<-function(x, ...){
+  get.network.attribute(x,"directed")
 }
 
 

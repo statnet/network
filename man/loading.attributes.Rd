@@ -15,7 +15,7 @@ gives examples of how to load in and attach attribute data, drawing heavily
 on material from the Sunbelt statnet workshops
 \url{https://github.com/statnet/Workshops/wiki}.
 
-The examples section below give a quick overview of: 
+The examples section below give a quick overview of:
 \itemize{
 \item Loading in a matrix
 

@@ -14,7 +14,7 @@ Authors@R: c(
     person("Michał", " Bojanowski", role=c("ctb"), email="mbojanowski@kozminski.edu.pl"),
     person("Chad", "Klumb", role=c("ctb"), email="cklumb@gmail.com"))
 Depends: R (>= 2.10), utils
-Imports: tibble, magrittr, statnet.common
+Imports: tibble, magrittr, statnet.common, stats
 Suggests: 
     sna,
     testthat,
@@ -23,6 +23,7 @@ Description: Tools to create and modify network objects.  The network class can 
 License: GPL (>=2)
 URL: http://statnet.org/
 RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
 Collate:
     'access.R'
     'as.edgelist.R'

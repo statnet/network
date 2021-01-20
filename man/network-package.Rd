@@ -96,12 +96,12 @@ which.matrix.type       Heuristic Determination of Matrix Types for
 }
 }
 \author{
-Carter T. Butts <buttsc@uci.edu>, with help from Mark S. Handcock
-<handcock@stat.ucla.edu>, David Hunter <dhunter@stat.psu.edu>, Martina
-Morris <morrism@u.washington.edu>, Skye Bender-deMoll
-<skyebend@u.washington.edu>, and Jeffrey Horner
-<jeffrey.horner@gmail.com>.
+Carter T. Butts \href{mailto:buttsc@uci.edu}{buttsc@uci.edu}, with help from Mark S. Handcock
+\href{mailto:handcock@stat.ucla.edu}{handcock@stat.ucla.edu}, David Hunter \href{mailto:dhunter@stat.psu.edu}{dhunter@stat.psu.edu}, Martina
+Morris \href{mailto:morrism@u.washington.edu}{morrism@u.washington.edu}, Skye Bender-deMoll
+\href{mailto:skyebend@u.washington.edu}{skyebend@u.washington.edu}, and Jeffrey Horner
+\href{mailto:jeffrey.horner@gmail.com}{jeffrey.horner@gmail.com}.
 
-Maintainer: Carter T. Butts <buttsc@uci.edu>
+Maintainer: Carter T. Butts \href{mailto:buttsc@uci.edu}{buttsc@uci.edu}
 }
 \keyword{package}
