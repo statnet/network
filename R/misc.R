@@ -134,9 +134,23 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #'   the *square* mixing matrix representing every level of `attrname` against
 #'   every other level, or a *rectangular* matrix considering only levels
 #'   present in each bipartition?
+#' @param useNA one of "ifany", "no" or "always". Argument passed to
+#'   \code{\link{table}}. By default (\code{useNA = "ifany"}) if there are any
+#'   \code{NA}s on the attribute corresponding row \emph{and} column will be
+#'   contained in the result. See Details.
+#' @param ... arguments passed to \code{\link{table}}.
 #'
-#' @return Function `mixingmatrix()` returns an object of class "mixingmatrix"
-#'   extending "table" with a cross-tabulation of edges in the `object`
+#' @details Handling of missing values on the attribute \code{attrname} almost
+#'   follows similar logic to \code{\link{table}}. If there are \code{NA}s on
+#'   the attribute and \code{useNA="ifany"} (default) the result will contain
+#'   both row and column for the missing values to ensure the resulting matrix
+#'   is square (essentially calling \code{\link{table}} with
+#'   \code{useNA="always"}). Also for that reason passing \code{exclude}
+#'   parameter with \code{NULL}, \code{NA} or \code{NaN} is ignored with a
+#'   warning as it may break the symmetry.
+#'
+#' @return Function `mixingmatrix()` returns an object of class `mixingmatrix`
+#'   extending `table` with a cross-tabulation of edges in the `object`
 #'   according to the values of attribute `attrname` for the two incident
 #'   vertices. If `object` is a *directed* network rows correspond to the "tie
 #'   sender" and columns to the "tie receiver". If `object` is an *undirected*
@@ -154,11 +168,14 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #' # of tie sender and receiver (data from Drabek et al. 1981)
 #' data(emon)
 #' mixingmatrix(emon$LakePomona, "Sponsorship")
-mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) {
+mixingmatrix.network <- function(object, attrname, useNA = "ifany", expand.bipartite=FALSE, ...) {
   nw <- object
   if(missing(attrname)){
     stop("attrname argument is missing. mixingmatrix() requires an an attribute name")
   }
+  if(!(attrname %in% list.vertex.attributes(object)))
+    stop("vertex attribute ", sQuote(attrname), " not found in network ",
+         sQuote(deparse(substitute(object))))
   if(network.size(nw)==0L){
     warning("mixing matrices not well-defined for graphs with no vertices.")
     return(as.mixingmatrix(
@@ -188,7 +205,13 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
     From <- factor(nodecov[el[,1L]], levels=u)
     To <- factor(nodecov[el[,2L]], levels=u)
   }
-  tabu <- table(From, To)
+  if(any(is.na(nodecov)) && useNA == "ifany") useNA <- "always"
+  dots <- list(...)
+  if("exclude" %in% names(dots) && (is.null(dots$exclude) | any(is.na(dots$exclude)) | any(is.nan(dots$exclude)))) {
+    warning("passing `exclude=NULL` to table() is not supported, ignoring")
+    dots$exclude <- NULL
+  }
+  tabu <- do.call(table, c(list(From=From, To=To, useNA=useNA), dots))
   if(!is.directed(nw) && !is.bipartite(nw)){
     type <- "undirected"
     tabu <- tabu + t(tabu)
@@ -249,8 +272,8 @@ mixingmatrix.network <- function(object, attrname, expand.bipartite=FALSE, ...) 
 # @param bipartite logical if the netwoek is bipartite
 # @param ... other arguments currently ignored
 # 
-# @return The matrix with attributes "directed" and "bipartite" of class
-#   "mixingmatrix" inheriting from "table".
+# @return The matrix with attributes `directed` and `bipartite` of class
+#   `mixingmatrix` inheriting from `table`.
 
 as.mixingmatrix <- function(mat, directed, bipartite, ...) {
   # Test/check/symmetrize here?
@@ -302,6 +325,7 @@ print.mixingmatrix <- function(x, ...) {
   )
   print(m)
 }
+
 
 # network.density ---------------------------------------------------------
 
