@@ -12,7 +12,7 @@
 \usage{
 mixingmatrix(object, ...)
 
-\method{mixingmatrix}{network}(object, attrname, expand.bipartite = FALSE, ...)
+\method{mixingmatrix}{network}(object, attrname, useNA = "ifany", expand.bipartite = FALSE, ...)
 
 \method{[[}{mixingmatrix}(x, ...)
 
@@ -28,10 +28,14 @@ mixingmatrix(object, ...)
 \item{object}{a network or some other data structure for which a mixing
 matrix is meaningful.}
 
-\item{...}{arguments passed to \code{\link{table}}. Use \code{useNA} or
-\code{exclude} to display rows/columns for possible \code{NA} values}
+\item{...}{arguments passed to \code{\link{table}}.}
 
 \item{attrname}{a vertex attribute name.}
+
+\item{useNA}{one of "ifany", "no" or "always". Argument passed to
+\code{\link{table}}. By default (\code{useNA = "ifany"}) if there are any
+\code{NA}s on the attribute corresponding row \emph{and} column will be
+contained in the result. See Details.}
 
 \item{expand.bipartite}{logical; if \code{object} is bipartite, should we return
 the \emph{square} mixing matrix representing every level of \code{attrname} against
@@ -61,6 +65,16 @@ Functions \code{is.directed()} and \code{is.bipartite()} return \code{TRUE} or
 }
 \description{
 Return the mixing matrix for a network, on a given attribute.
+}
+\details{
+Handling of missing values on the attribute \code{attrname} almost
+follows similar logic to \code{\link{table}}. If there are \code{NA}s on
+the attribute and \code{useNA="ifany"} (default) the result will contain
+both row and column for the missing values to ensure the resulting matrix
+is square (essentially calling \code{\link{table}} with
+\code{useNA="always"}). Also for that reason passing \code{exclude}
+parameter with \code{NULL}, \code{NA} or \code{NaN} is ignored with a
+warning as it may break the symmetry.
 }
 \note{
 The \code{$} and \code{[[} methods are included only for backward-compatiblity
