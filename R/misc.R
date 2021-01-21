@@ -149,8 +149,8 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #'   parameter with \code{NULL}, \code{NA} or \code{NaN} is ignored with a
 #'   warning as it may break the symmetry.
 #'
-#' @return Function `mixingmatrix()` returns an object of class "mixingmatrix"
-#'   extending "table" with a cross-tabulation of edges in the `object`
+#' @return Function `mixingmatrix()` returns an object of class `mixingmatrix`
+#'   extending `table` with a cross-tabulation of edges in the `object`
 #'   according to the values of attribute `attrname` for the two incident
 #'   vertices. If `object` is a *directed* network rows correspond to the "tie
 #'   sender" and columns to the "tie receiver". If `object` is an *undirected*
@@ -161,7 +161,7 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #'   does not have to be square as only the actually observed values of the
 #'   attribute are shown for each partition, if `expand.bipartite` is `TRUE` the
 #'   matrix will be square.
-#'   
+#'
 #' @export
 #' @examples
 #' # Interaction ties between Lake Pomona SAR organizations by sponsorship type
@@ -211,7 +211,7 @@ mixingmatrix.network <- function(object, attrname, useNA = "ifany", expand.bipar
     warning("passing `exclude=NULL` to table() is not supported, ignoring")
     dots$exclude <- NULL
   }
-  tabu <- do.call("table", c(list(From=From, To=To, useNA=useNA), dots))
+  tabu <- do.call(table, c(list(From=From, To=To, useNA=useNA), dots))
   if(!is.directed(nw) && !is.bipartite(nw)){
     type <- "undirected"
     tabu <- tabu + t(tabu)
@@ -272,8 +272,8 @@ mixingmatrix.network <- function(object, attrname, useNA = "ifany", expand.bipar
 # @param bipartite logical if the netwoek is bipartite
 # @param ... other arguments currently ignored
 # 
-# @return The matrix with attributes "directed" and "bipartite" of class
-#   "mixingmatrix" inheriting from "table".
+# @return The matrix with attributes `directed` and `bipartite` of class
+#   `mixingmatrix` inheriting from `table`.
 
 as.mixingmatrix <- function(mat, directed, bipartite, ...) {
   # Test/check/symmetrize here?
@@ -325,6 +325,7 @@ print.mixingmatrix <- function(x, ...) {
   )
   print(m)
 }
+
 
 # network.density ---------------------------------------------------------
 

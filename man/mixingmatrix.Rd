@@ -47,8 +47,8 @@ present in each bipartition?}
 \item{name}{name of the element to extract, one of "matrix" or "type"}
 }
 \value{
-Function \code{mixingmatrix()} returns an object of class "mixingmatrix"
-extending "table" with a cross-tabulation of edges in the \code{object}
+Function \code{mixingmatrix()} returns an object of class \code{mixingmatrix}
+extending \code{table} with a cross-tabulation of edges in the \code{object}
 according to the values of attribute \code{attrname} for the two incident
 vertices. If \code{object} is a \emph{directed} network rows correspond to the "tie
 sender" and columns to the "tie receiver". If \code{object} is an \emph{undirected}

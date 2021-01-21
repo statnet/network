@@ -1,4 +1,3 @@
-
 # Directed networks -------------------------------------------------------
 
 test_that("mixingmatrix() just works on a directed network", {
@@ -77,8 +76,6 @@ test_that("mixingmatrx() warns on exclude=NULL", {
 
 
 
-
-
 # Undirected networks -----------------------------------------------------
 
 test_that("mixingmatrix() just works on a undirected network", {
@@ -129,13 +126,6 @@ test_that("NA rows & cols are shown for undirected net unless useNA='no'", {
 
 
 
-
-
-
-
-
-
-
 # Bipartite networks ------------------------------------------------------
 
 am <- matrix(0, 5, 5)
@@ -181,7 +171,6 @@ test_that("mixingmatrix for bipartite net with expand.bipartite=FALSE is correct
     )
   )
 })
-
 
 
 test_that("mixingmatrix for bipartite net with expand.bipartite=TRUE is correct", {
