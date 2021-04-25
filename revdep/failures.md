@@ -1,89 +1,23 @@
-# CeTF
+# VBLPCM
 
 <details>
 
-* Version: 
+* Version: 2.4.7
 * GitHub: NA
-* Source code: NA
-* Number of recursive dependencies: 0
+* Source code: https://github.com/cran/VBLPCM
+* Date/Publication: 2020-12-15 22:30:18 UTC
+* Number of recursive dependencies: 28
 
-</details>
-
-## Error before installation
-
-### Devel
-
-```
-
-
-
-
-
-
-```
-### CRAN
-
-```
-
-
-
-
-
-
-```
-# CluMSID
-
-<details>
-
-* Version: 
-* GitHub: NA
-* Source code: NA
-* Number of recursive dependencies: 0
-
-</details>
-
-## Error before installation
-
-### Devel
-
-```
-
-
-
-
-
-
-```
-### CRAN
-
-```
-
-
-
-
-
-
-```
-# pkggraph
-
-<details>
-
-* Version: 0.2.3
-* GitHub: https://github.com/talegari/pkggraph
-* Source code: https://github.com/cran/pkggraph
-* Date/Publication: 2018-11-15 09:50:03 UTC
-* Number of recursive dependencies: 77
-
-Run `revdep_details(, "pkggraph")` for more info
+Run `revdep_details(, "VBLPCM")` for more info
 
 </details>
 
 ## In both
 
-*   checking whether package ‘pkggraph’ can be installed ... ERROR
+*   checking whether package ‘VBLPCM’ can be installed ... ERROR
     ```
     Installation failed.
-    See ‘/homes/morrism/GitHub/StatnetOrganization/network/revdep/checks/pkggraph/new/pkggraph.Rcheck/00install.out’ for details.
+    See ‘/homes/morrism/GitHub/StatnetOrganization/network/revdep/checks/VBLPCM/new/VBLPCM.Rcheck/00install.out’ for details.
     ```
 
 ## Installation
@@ -91,36 +25,26 @@ Run `revdep_details(, "pkggraph")` for more info
 ### Devel
 
 ```
-* installing *source* package ‘pkggraph’ ...
-** package ‘pkggraph’ successfully unpacked and MD5 sums checked
+* installing *source* package ‘VBLPCM’ ...
+** package ‘VBLPCM’ successfully unpacked and MD5 sums checked
 ** using staged installation
-** R
-** data
-** inst
-** byte-compile and prepare package for lazy loading
-Error: package or namespace load failed for ‘ggplot2’:
- package ‘R6’ does not have a namespace
-Error: package ‘ggplot2’ could not be loaded
-Execution halted
-ERROR: lazy loading failed for package ‘pkggraph’
-* removing ‘/homes/morrism/GitHub/StatnetOrganization/network/revdep/checks/pkggraph/new/pkggraph.Rcheck/pkggraph’
+checking for gsl-config... no
+configure: error: gsl-config not found, is GSL installed?
+ERROR: configuration failed for package ‘VBLPCM’
+* removing ‘/homes/morrism/GitHub/StatnetOrganization/network/revdep/checks/VBLPCM/new/VBLPCM.Rcheck/VBLPCM’
+
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘pkggraph’ ...
-** package ‘pkggraph’ successfully unpacked and MD5 sums checked
+* installing *source* package ‘VBLPCM’ ...
+** package ‘VBLPCM’ successfully unpacked and MD5 sums checked
 ** using staged installation
-** R
-** data
-** inst
-** byte-compile and prepare package for lazy loading
-Error: package or namespace load failed for ‘ggplot2’:
- package ‘R6’ does not have a namespace
-Error: package ‘ggplot2’ could not be loaded
-Execution halted
-ERROR: lazy loading failed for package ‘pkggraph’
-* removing ‘/homes/morrism/GitHub/StatnetOrganization/network/revdep/checks/pkggraph/old/pkggraph.Rcheck/pkggraph’
+checking for gsl-config... no
+configure: error: gsl-config not found, is GSL installed?
+ERROR: configuration failed for package ‘VBLPCM’
+* removing ‘/homes/morrism/GitHub/StatnetOrganization/network/revdep/checks/VBLPCM/old/VBLPCM.Rcheck/VBLPCM’
+
 
 ```

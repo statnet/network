@@ -1,6 +1,6 @@
 ## revdepcheck results
 
-We checked 88 reverse dependencies (79 from CRAN + 9 from BioConductor), comparing R CMD check results across CRAN and dev versions of this package.
+We checked 103 reverse dependencies (93 from CRAN + 10 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
 
  * We saw 19 new problems
  * We failed to check 1 packages
@@ -10,72 +10,65 @@ Issues with CRAN packages are summarised below.
 ### New problems
 (This reports the first line of each new failure)
 
-* Bergm
-  checking examples ... ERROR
-
-* broom
-  checking examples ... ERROR
-
-* btergm
-  checking examples ... ERROR
-  checking tests ...
+* bingat
+  checking loading without being on the library search path ... WARNING
 
 * discourseGT
   checking examples ... ERROR
 
-* dnr
+* EloRating
+  checking loading without being on the library search path ... WARNING
+
+* geomnet
   checking examples ... ERROR
-
-* EpiModel
-  checking examples ... ERROR
-  checking tests ...
-
-* ergm
-  checking examples ... ERROR
-  checking tests ...
-  checking R code for possible problems ... NOTE
-
-* ergm.count
-  checking tests ...
-
-* ergm.ego
-  checking examples ... ERROR
-  checking tests ...
-
-* ergm.rank
-  checking tests ...
-
-* ergm.userterms
-  checking examples ... ERROR
-  checking tests ...
-
-* ergMargins
-  checking examples ... ERROR
-
-* ergmito
-  checking examples ... ERROR
-  checking tests ...
 
 * GGally
   checking tests ...
 
-* latentnet
-  checking tests ...
+* GOxploreR
+  checking examples ... ERROR
 
-* lolog
-  checking tests ...
+* haplotypes
+  checking loading without being on the library search path ... WARNING
+
+* ICON
+  checking loading without being on the library search path ... WARNING
+
+* mpa
+  checking loading without being on the library search path ... WARNING
+
+* netdiffuseR
+  checking loading without being on the library search path ... WARNING
+
+* networkABC
+  checking loading without being on the library search path ... WARNING
+
+* NetworkDistance
+  checking loading without being on the library search path ... WARNING
 
 * networkDynamic
+  checking loading without being on the library search path ... WARNING
   checking S3 generic/method consistency ... WARNING
   checking Rd \usage sections ... NOTE
 
-* tergm
-  checking examples ... ERROR
-  checking tests ...
+* networkDynamicData
+  checking loading without being on the library search path ... WARNING
 
-* tergmLite
-  checking tests ...
+* networksis
+  checking loading without being on the library search path ... WARNING
+
+* PAFit
+  checking loading without being on the library search path ... WARNING
+
+* PDN
+  checking loading without being on the library search path ... WARNING
+
+* sna
+  checking loading without being on the library search path ... WARNING
+
+* SparseTSCGM
+  checking loading without being on the library search path ... WARNING
 
 ### Failed to check
 
-* pkggraph (NA)
+* VBLPCM (NA)
