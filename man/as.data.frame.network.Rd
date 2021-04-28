@@ -9,7 +9,10 @@
   ...,
   unit = c("edges", "vertices"),
   na.rm = TRUE,
-  attrs_to_ignore = "na"
+  attrs_to_ignore = "na",
+  name_vertices = TRUE,
+  sort_attrs = FALSE,
+  store_eid = FALSE
 )
 }
 \arguments{
@@ -17,13 +20,26 @@
 
 \item{...}{additional arguments}
 
-\item{unit}{whether a \code{data.frame} of edge or vertex attributes
-should be returned.}
+\item{unit}{whether a \code{data.frame} of edge or vertex
+attributes should be returned.}
 
-\item{na.rm}{logical; ignore missing entries when constructing the data frame?}
+\item{na.rm}{logical; ignore missing entries when constructing the
+data frame?}
 
-\item{attrs_to_ignore}{character; a vector of attribute names to exclude from
-the returned \code{data.frame} (Default: \code{"na"})}
+\item{attrs_to_ignore}{character; a vector of attribute names to
+exclude from the returned \code{data.frame} (Default:
+\code{"na"})}
+
+\item{name_vertices}{logical; for \code{unit="edges"}, should the
+\code{.tail} and the \code{.head} columns contain vertex names as opposed
+to vertex indices?}
+
+\item{sort_attrs}{logical; should the attribute columns in the
+returned data frame be sorted alphabetically?}
+
+\item{store_eid}{logical; for \code{unit="edges"}, should the edge ID in
+the network's internal representation be stored in a column
+\code{.eid}?}
 }
 \description{
 The \code{as.data.frame} method coerces its input to a \code{data.frame} containing
