@@ -15,6 +15,7 @@
   x[seq_len(n)]
 }
 
+#' @importFrom statnet.common .Deprecate_once
 .validate_edge_df <- function(edges, directed, hyper, loops, multiple, bipartite, ...) {
   # confirm edge data frame has valid dimensions
   if (ncol(edges) < 2L || nrow(edges) == 0L) {
@@ -110,11 +111,13 @@
     }
     # if loops are found, throw error pointing user to the edge rows that contain them
     if (length(loop_rows) > 0L) {
-      stop(
-        "`loops` is `FALSE`, but `x` contains loops.",
+      message(
+        "`loops` is `FALSE`, but `x` contains self-loops.",
         "\nThe following values are affected:",
-        paste("\n\t-", sprintf("`x[%d, 1:2]`", .head(loop_rows))),
-        call. = FALSE
+        paste("\n\t-", sprintf("`x[%d, 1:2]`", .head(loop_rows)))
+      )
+      .Deprecate_once(
+        msg = "In a call to `as.network()` for `x` a `data.frame`, `loops` is `FALSE`, but `x` contains self-loops. In the future, this will be an error."
       )
     }
   }
