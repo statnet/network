@@ -23,7 +23,7 @@
 \item{unit}{whether a \code{data.frame} of edge or vertex
 attributes should be returned.}
 
-\item{na.rm}{logical; ignore missing entries when constructing the
+\item{na.rm}{logical; ignore missing edges/vertices when constructing the
 data frame?}
 
 \item{attrs_to_ignore}{character; a vector of attribute names to

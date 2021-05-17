@@ -583,6 +583,8 @@ as.network.data.frame <- function(x,
 
   vertex_names <- network.vertex.names(x)
 
+  deleted <- vapply(x[["mel"]], is.null, logical(1))
+
   if (name_vertices) {
     el_list <- list(
       .tail = lapply(x[["mel"]], function(.x) vertex_names[.x[["outl"]]]),
@@ -608,7 +610,7 @@ as.network.data.frame <- function(x,
   # extract attributes as-is (lists)
   edge_attrs <- lapply(
     edge_attr_names,
-    function(.x) get.edge.attribute(x, .x, unlist = FALSE)
+    function(.x) get.edge.attribute(x, .x, unlist = FALSE, null.na = TRUE)
   )
   # if not `TRUE`, "na" is assumed `FALSE` (in the event of `NULL`s or corrupted data)
   edge_attrs[["na"]] <- !vapply(
@@ -625,16 +627,14 @@ as.network.data.frame <- function(x,
     class = "data.frame"
   )
 
+  out <- out[!deleted, ]
   if (na.rm) {
     # drop NA edge rows
     out <- out[!out[["na"]], ]
-    # reset `rownames()` so they're sequential in returned object
-    rownames(out) <- NULL
-  } else if (!is.hyper(x)) {
-    # replace empty ".tail" and ".head" with `NA` so that the columns can be safely
-    # vectorized for non-hyper edges when `na.rm` is `FALSE`
-    out[1:2] <- lapply(out[1:2], lapply, function(.x) if (length(.x)) .x else NA)
   }
+
+  # reset `rownames()` so they're sequential in returned object
+  rownames(out) <- NULL
 
   cols_to_keep <- c(".tail", ".head", setdiff(names(edge_attrs), attrs_to_ignore))
   out <- out[cols_to_keep]
@@ -714,7 +714,7 @@ as.network.data.frame <- function(x,
 #' @param ...  additional arguments
 #' @param unit whether a \code{data.frame} of edge or vertex
 #'   attributes should be returned.
-#' @param na.rm logical; ignore missing entries when constructing the
+#' @param na.rm logical; ignore missing edges/vertices when constructing the
 #'   data frame?
 #' @param attrs_to_ignore character; a vector of attribute names to
 #'   exclude from the returned \code{data.frame} (Default:
