@@ -260,57 +260,22 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,na.rm
 #
 #' @rdname as.matrix.network
 #' @param store.eid whether the edge ID should be stored in the third column (`.eid`).
-#' @importFrom statnet.common simplify_simple
 #' @export
 as_tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE,..., unit=c("edges", "vertices"), store.eid=FALSE){
+  df <- as.data.frame(x, unit = unit, store_eid = store.eid, na.rm = na.rm, attrs_to_ignore = c(), name_vertices = FALSE, sort_attrs=TRUE, ...)
+
   unit <- match.arg(unit)
-  if(unit=="edges"){
+  if(is.logical(attrnames) || is.numeric(attrnames))
+    attrnames <- na.omit(setdiff(names(df), c(".tail", ".head", ".eid"))[attrnames])
 
-    #Find the missing edges
-    nal<-as.logical(get.edge.attribute(x$mel,"na"))
+  df <- df[intersect(c(".tail", ".head", ".eid", attrnames), names(df))]
 
-    #Generate the edgelist matrix
-    tails <- lapply(x$mel,`[[`,"outl")
-    heads <- lapply(x$mel,`[[`,"inl")
-    m <- list(
-      .tail = if(is.hyper(x)) tails else as.integer(unlist(tails)),
-      .head = if(is.hyper(x)) heads else as.integer(unlist(heads))
-    )
-    if(store.eid) m$.eid <- which(as.logical(sapply(tails, length)) | as.logical(sapply(heads, length)))
-
-    #Add edge values, if needed
-    # If logical or numeric, use as index; na.omit() is needed to handle
-    # a pathological case where list.edge.attributes(x) is empty but
-    # attrnames=TRUE.
-    if(is.logical(attrnames) || is.numeric(attrnames)) attrnames <- na.omit(list.edge.attributes(x)[attrnames])
-    a <- attrnames %>%
-      lapply(get.edge.attribute, x=x$mel, unlist=FALSE, na.omit=FALSE,null.na=TRUE,deleted.edges.omit=TRUE) %>% # Obtain a list of edge attribute values.
-      lapply(simplify_simple, toNA="keep") %>%
-      set_names(attrnames)
-    m <- c(m, a)
-
-  }else{ # "vertices" is the only other possibility at this time
-
-    #Find the missing vertices
-    nal<-as.logical(get.vertex.attribute(x,"na"))
-
-    if(is.logical(attrnames) || is.numeric(attrnames)) attrnames <- na.omit(list.vertex.attributes(x)[attrnames])
-    a <- attrnames %>%
-      lapply(get.vertex.attribute, x=x, unlist=FALSE, na.omit=FALSE,null.na=TRUE) %>% # Obtain a list of edge attribute values.
-      lapply(simplify_simple, toNA="keep") %>%
-      set_names(attrnames)
-    m <- a
-
-  }
-
-  m <- as_tibble(m)
-  if(na.rm) m <- m[!nal,]
-
-  attr(m,"n")<-network.size(x)
-  attr(m,"vnames")<-network.vertex.names(x)
+  attr(df,"n")<-network.size(x)
+  attr(df,"vnames")<-network.vertex.names(x)
   if(is.bipartite(x))
-    attr(m,"bipartite")<-x%n%"bipartite"
-  m
+    attr(df,"bipartite")<-x%n%"bipartite"
+
+  as_tibble(df)
 }
 
 #' @rdname as.matrix.network
