@@ -560,14 +560,14 @@ read.paj <- function(file,verbose=FALSE,debug=FALSE,
          if (all(RAlengths==2)){
            # assume default weight of 1
            # convert to data.frame by first unlisting and dumping into 3 col matrix
-           edgeData <- as.data.frame(matrix(unlist(lapply(dyadList,function(x){
+           edgeData <- as.data.frame(stringsAsFactors=TRUE,matrix(unlist(lapply(dyadList,function(x){
              c(as.numeric(x[1:2]),1)})),
              nrow=length(dyadList),ncol=3,byrow=TRUE))
 
            if(verbose) print('weights ommited from arcs/edges lines, assuming weight of 1')
          } else {
          # create a data frame from the (possibly ragged) rows of the dyadList
-         edgeData<-as.data.frame(fillMatrixFromListRows(dyadList))
+         edgeData<-as.data.frame(stringsAsFactors=TRUE,fillMatrixFromListRows(dyadList))
          # convert to appropriate class, have to convert to character first because it is a factor and NA will be recoded wrong
          edgeData[,1]<-as.numeric(as.character(edgeData[,1])) 
          edgeData[,2]<-as.numeric(as.character(edgeData[,2]))
@@ -845,7 +845,7 @@ postProcessProject<-function(
     temp <- networksData[[i]]
     isDynamic<-FALSE
     if(!is.null(vertex)){  
-      if (nrow(as.data.frame(vertex)) == network.size(temp)) {
+      if (nrow(as.data.frame(stringsAsFactors=TRUE,vertex)) == network.size(temp)) {
         # set the vertex names to match names in file
         temp <- set.vertex.attribute(temp, "vertex.names",
                                      as.character(vertex[as.numeric(vertex[,1]),2]))
@@ -977,7 +977,7 @@ postProcessProject<-function(
     }else{
       warning("null network title")
     }
-    if(nrow(as.data.frame(vertex))== network.size(temp)){ #should i be doing this? why don't these numbers match all time
+    if(nrow(as.data.frame(stringsAsFactors=TRUE,vertex))== network.size(temp)){ #should i be doing this? why don't these numbers match all time
       temp <- set.vertex.attribute(temp,"vertex.names",as.character(vertex[as.numeric(vertex[,1]),2]))
     }
     
