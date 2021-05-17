@@ -356,10 +356,11 @@ test_that("`loops` works", {
   df_with_loops <- data.frame(from = c("b", "c", "c", "d", "d", "e", "f"),
                               to = c("a", "b", "a", "a", "b", "a", "f"),
                               stringsAsFactors = FALSE)
-  expect_error(
-    as.network(df_with_loops),
-    "`loops` is `FALSE`"
-  )
+  ### Uncomment this test once loops= become mandatory.
+  ## expect_error(
+  ##   as.network(df_with_loops),
+  ##   "`loops` is `FALSE`"
+  ## )
   expect_s3_class(
     as.network(df_with_loops, loops = TRUE),
     "network"
@@ -743,10 +744,11 @@ test_that("hyper-edges work", {
     from = I(list(c("a", "b"))),
     to = I(list(c("a", "b")))
   )
-  expect_error(
-    as.network(loop_hyper_edges, hyper = TRUE),
-    "`loops` is `FALSE`, but `x` contains loops."
-  )
+  ### Uncomment this test once loops= become mandatory.
+  ## expect_error(
+  ##   as.network(loop_hyper_edges, hyper = TRUE),
+  ##   "`loops` is `FALSE`, but `x` contains loops."
+  ## )
 
 })
 
