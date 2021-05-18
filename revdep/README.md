@@ -22,17 +22,13 @@
 
 # Revdeps
 
-## New problems (7)
+## New problems (3)
 
 |package                                      |version |error  |warning |note   |
 |:--------------------------------------------|:-------|:------|:-------|:------|
-|[Blaunet](problems.md#blaunet)               |2.1.0   |__+1__ |        |2      |
 |[discourseGT](problems.md#discoursegt)       |1.1.5   |__+1__ |        |1      |
-|[geomnet](problems.md#geomnet)               |0.3.1   |__+1__ |        |1      |
-|[GGally](problems.md#ggally)                 |2.1.1   |__+1__ |        |       |
-|[GOxploreR](problems.md#goxplorer)           |1.1.0   |__+1__ |        |1      |
+|[GOxploreR](problems.md#goxplorer)           |1.2.0   |__+1__ |        |1      |
 |[networkDynamic](problems.md#networkdynamic) |0.10.1  |       |__+1__  |__+1__ |
-|[tsna](problems.md#tsna)                     |0.3.3   |       |        |__+1__ |
 
 ## All (102)
 
@@ -44,7 +40,7 @@
 |Bergm                                                |5.0.2    |       |        |       |
 |[BGGM](problems.md#bggm)                             |2.0.3    |       |        |1      |
 |[bingat](problems.md#bingat)                         |1.3      |       |        |1      |
-|[Blaunet](problems.md#blaunet)                       |2.1.0    |__+1__ |        |2      |
+|[Blaunet](problems.md#blaunet)                       |2.1.0    |       |        |2      |
 |[broom](problems.md#broom)                           |0.7.6    |       |        |2      |
 |btergm                                               |1.9.13   |       |        |       |
 |[CEMiTool](problems.md#cemitool)                     |1.14.1   |       |1       |2      |
@@ -73,14 +69,14 @@
 |fglsnet                                              |1.0      |       |        |       |
 |[fssemR](problems.md#fssemr)                         |0.1.6    |       |        |1      |
 |[genBaRcode](problems.md#genbarcode)                 |1.2.4    |       |        |1      |
-|[geomnet](problems.md#geomnet)                       |0.3.1    |__+1__ |        |1      |
-|[GGally](problems.md#ggally)                         |2.1.1    |__+1__ |        |       |
+|[geomnet](problems.md#geomnet)                       |0.3.1    |       |        |1      |
+|GGally                                               |2.1.1    |       |        |       |
 |[GGMnonreg](problems.md#ggmnonreg)                   |1.0.0    |       |        |1      |
 |GGMselect                                            |0.1-12.4 |       |        |       |
 |[ggnetwork](problems.md#ggnetwork)                   |0.5.8    |       |        |1      |
 |[GGPA](problems.md#ggpa)                             |1.2.0    |       |        |3      |
 |[ggraph](problems.md#ggraph)                         |2.0.5    |       |        |1      |
-|[GOxploreR](problems.md#goxplorer)                   |1.1.0    |__+1__ |        |1      |
+|[GOxploreR](problems.md#goxplorer)                   |1.2.0    |__+1__ |        |1      |
 |[GRENITS](problems.md#grenits)                       |1.42.0   |       |        |3      |
 |[gwdegree](problems.md#gwdegree)                     |0.1.1    |       |        |1      |
 |haplotypes                                           |1.1.2    |       |        |       |
@@ -134,7 +130,7 @@
 |tergm                                                |3.7.0    |       |        |       |
 |tergmLite                                            |2.2.1    |       |        |       |
 |tidygraph                                            |1.2.0    |       |        |       |
-|[tsna](problems.md#tsna)                             |0.3.3    |       |        |__+1__ |
+|tsna                                                 |0.3.3    |       |        |       |
 |VBLPCM                                               |2.4.7    |       |        |       |
 |VineCopula                                           |2.4.2    |       |        |       |
 |[vivid](problems.md#vivid)                           |0.1.0    |1      |        |2      |

@@ -81,33 +81,6 @@ Run `revdep_details(, "Blaunet")` for more info
 
 </details>
 
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘Blaunet-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: blau
-    > ### Title: Converts raw data into an object for Blau status analysis
-    > ### Aliases: blau
-    > 
-    > ### ** Examples
-    > 
-    > ##simple example
-    ...
-    > ##example with relational data
-    > data(BSANet)
-    > square.data <- BSANet$square.data
-    > el <- BSANet$el
-    > 
-    > b <- blau(square.data, node.ids = 'person', ecology.ids = 'city', graph = el)
-    Error in Ops.factor(sources, targets) : 
-      level sets of factors are different
-    Calls: blau ... as.network.data.frame -> .validate_edge_df -> which -> Ops.factor
-    Execution halted
-    ```
-
 ## In both
 
 *   checking package dependencies ... NOTE
@@ -334,15 +307,15 @@ Run `revdep_details(, "discourseGT")` for more info
     > 
     > df <- sampleData1
     ...
+    > prepNet <- tabulate_edges(df, iscsvfile = FALSE, silentNodes = 0)
+    > baseNet <- prepareGraphs(prepNet, project_title = "Sample Data 1", weightedGraph = TRUE)
+    > attdata <- attributeData
     > plot1Att(baseNet, prop = 20, graphmode = "fruchtermanreingold",
     + attribute = attdata$gender,
     + attribute.label = "Gender",
     + attribute.node.labels = attdata$node, attribute.nodesize = 12)
-    Error: `loops` is `FALSE`, but `x` contains loops.
-    The following values are affected:
-    	- `x[1, 1:2]`
-    	- `x[10, 1:2]`
-    	- `x[15, 1:2]`
+    Error in round(n) : non-numeric argument to mathematical function
+    Calls: plot1Att ... <Anonymous> -> as.network.matrix -> network.initialize
     Execution halted
     ```
 
@@ -553,10 +526,10 @@ Run `revdep_details(, "fcoex")` for more info
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      [1] "first_prime  round ( |s_prime| = 11 )"
-      Round 10 
-      [1] "first_prime  round ( |s_prime| = 11 )"
-         0.01429264   0.007676308   Removed feature  157 
+      [1] "first_prime  round ( |s_prime| = 12 )"
+      Round 11 
+      [1] "first_prime  round ( |s_prime| = 12 )"
+         0.05897525   0.0112316   Removed feature  113 
       ══ Failed tests ════════════════════════════════════════════════════════════════
       ── Error (test-fcoex.R:12:1): (code run outside of `test_that()`) ──────────────
       Error: invalid 'nchars' argument
@@ -651,33 +624,6 @@ Run `revdep_details(, "geomnet")` for more info
 
 </details>
 
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘geomnet-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: football
-    > ### Title: College football games network (undirected)
-    > ### Aliases: football
-    > ### Keywords: datasets
-    > 
-    > ### ** Examples
-    > 
-    ...
-    +   scale_colour_brewer("Conference", palette = "Paired")
-    Error: `loops` is `FALSE`, but `x` contains loops.
-    The following values are affected:
-    	- `x[604, 1:2]`
-    	- `x[605, 1:2]`
-    	- `x[610, 1:2]`
-    	- `x[615, 1:2]`
-    	- `x[617, 1:2]`
-    	- `x[618, 1:2]`
-    Execution halted
-    ```
-
 ## In both
 
 *   checking installed package size ... NOTE
@@ -686,44 +632,6 @@ Run `revdep_details(, "geomnet")` for more info
       sub-directories of 1Mb or more:
         data   3.6Mb
         doc    3.4Mb
-    ```
-
-# GGally
-
-<details>
-
-* Version: 2.1.1
-* GitHub: https://github.com/ggobi/ggally
-* Source code: https://github.com/cran/GGally
-* Date/Publication: 2021-03-08 06:00:03 UTC
-* Number of recursive dependencies: 136
-
-Run `revdep_details(, "GGally")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ...
-    ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-       4.     └─network:::.validate_edge_df(...)
-      ── Error (test-ggnetworkmap.R:34:1): (code run outside of `test_that()`) ───────
-      Error: `loops` is `FALSE`, but `x` contains loops.
-      The following values are affected:
-      	- `x[114, 1:2]`
-      Backtrace:
-          █
-       1. └─network::network(flights, directed = TRUE) test-ggnetworkmap.R:34:0
-       2.   ├─network::as.network(...)
-       3.   └─network::as.network.data.frame(...)
-       4.     └─network:::.validate_edge_df(...)
-      
-      [ FAIL 3 | WARN 1329 | SKIP 3 | PASS 563 ]
-      Error: Test failures
-      Execution halted
     ```
 
 # GGMnonreg
@@ -845,10 +753,10 @@ Run `revdep_details(, "ggraph")` for more info
 
 <details>
 
-* Version: 1.1.0
+* Version: 1.2.0
 * GitHub: NA
 * Source code: https://github.com/cran/GOxploreR
-* Date/Publication: 2020-11-20 09:30:03 UTC
+* Date/Publication: 2021-05-17 18:10:02 UTC
 * Number of recursive dependencies: 91
 
 Run `revdep_details(, "GOxploreR")` for more info
@@ -979,7 +887,7 @@ Run `revdep_details(, "gwdegree")` for more info
 * GitHub: https://github.com/TomKellyGenetics/leiden
 * Source code: https://github.com/cran/leiden
 * Date/Publication: 2021-01-26 16:00:02 UTC
-* Number of recursive dependencies: 114
+* Number of recursive dependencies: 125
 
 Run `revdep_details(, "leiden")` for more info
 
@@ -992,19 +900,19 @@ Run `revdep_details(, "leiden")` for more info
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      
-      Detailed traceback:
-        File "/srv/scratch/z3528859/github/statnet/network/revdep/library/leiden/reticulate/python/rpytools/loader.py", line 39, in _import_hook
-          module = _import(
-      
+       3.   └─reticulate::import("numpy", delay_load = TRUE)
+       4.     └─reticulate:::py_module_import(module, convert = convert)
+      ── Error (test_multiplex.R:251:3): run with ModularityVertexPartition multiplexed and max_comm_size ──
+      Error: Node size vector not the same size as the number of nodes.
       Backtrace:
           █
        1. ├─leiden::leiden(...) test_multiplex.R:251:2
        2. └─leiden:::leiden.list(...)
-       3.   └─reticulate::import("numpy", delay_load = TRUE)
-       4.     └─reticulate:::py_module_import(module, convert = convert)
+       3.   └─leiden:::find_partition_multiplex(...)
+       4.     └─leidenalg$find_partition_multiplex(...)
+       5.       └─reticulate:::py_call_impl(callable, dots$args, dots$keywords)
       
-      [ FAIL 7 | WARN 0 | SKIP 0 | PASS 52 ]
+      [ FAIL 7 | WARN 0 | SKIP 8 | PASS 31 ]
       Error: Test failures
       Execution halted
     ```
@@ -1593,29 +1501,6 @@ Run `revdep_details(, "sparsebnUtils")` for more info
 *   checking Rd cross-references ... NOTE
     ```
     Package unavailable to check Rd xrefs: ‘sparsebn’
-    ```
-
-# tsna
-
-<details>
-
-* Version: 0.3.3
-* GitHub: NA
-* Source code: https://github.com/cran/tsna
-* Date/Publication: 2021-04-23 19:50:02 UTC
-* Number of recursive dependencies: 60
-
-Run `revdep_details(, "tsna")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  7.3Mb
-      sub-directories of 1Mb or more:
-        doc   7.0Mb
     ```
 
 # vivid
