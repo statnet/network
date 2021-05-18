@@ -426,6 +426,8 @@ as.network.data.frame <- function(x,
                                   bipartite = FALSE,
                                   bipartite_col = "is_actor",
                                   ...) {
+  args <- c(as.list(environment()), list(...))
+  tryCatch({
   # validate network type args
   invalid_network_args <- vapply(
     list(
@@ -543,6 +545,11 @@ as.network.data.frame <- function(x,
   }
 
   out
+  },
+  error = function(e) {
+    args$x <- as.matrix(x)
+    do.call(as.network, args)
+  })
 }
 
 .is_atomic_scalar <- function(x) {
