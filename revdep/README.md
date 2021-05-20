@@ -10,29 +10,29 @@
 |collate  |en_US.UTF-8                  |
 |ctype    |en_US.UTF-8                  |
 |tz       |Australia/Sydney             |
-|date     |2021-05-18                   |
+|date     |2021-05-20                   |
 
 # Dependencies
 
 |package        |old    |new        |Δ  |
 |:--------------|:------|:----------|:--|
-|network        |1.16.1 |1.17.0-666 |*  |
-|rle            |NA     |0.9.2-234  |*  |
-|statnet.common |NA     |4.5.0-348  |*  |
+|network        |1.16.1 |1.17.0-678 |*  |
+|statnet.common |NA     |4.5.0-355  |*  |
 
 # Revdeps
 
-## New problems (7)
+## New problems (8)
 
 |package                                      |version |error  |warning |note   |
 |:--------------------------------------------|:-------|:------|:-------|:------|
 |[Blaunet](problems.md#blaunet)               |2.1.0   |__+1__ |        |2      |
 |[discourseGT](problems.md#discoursegt)       |1.1.5   |__+1__ |        |1      |
+|[EloRating](problems.md#elorating)           |0.46.11 |       |        |__+1__ |
 |[geomnet](problems.md#geomnet)               |0.3.1   |__+1__ |        |1      |
 |[GGally](problems.md#ggally)                 |2.1.1   |__+1__ |        |       |
-|[GOxploreR](problems.md#goxplorer)           |1.1.0   |__+1__ |        |1      |
+|[GOxploreR](problems.md#goxplorer)           |1.2.0   |__+1__ |        |1      |
 |[networkDynamic](problems.md#networkdynamic) |0.10.1  |       |__+1__  |__+1__ |
-|[tsna](problems.md#tsna)                     |0.3.3   |       |        |__+1__ |
+|[pkggraph](problems.md#pkggraph)             |0.2.3   |       |        |__+1__ |
 
 ## All (102)
 
@@ -58,10 +58,10 @@
 |dnr                                                  |0.3.5    |       |        |       |
 |[EGAnet](problems.md#eganet)                         |0.9.8    |       |        |1      |
 |[egor](problems.md#egor)                             |0.21.02  |       |        |1      |
-|[EloRating](problems.md#elorating)                   |0.46.11  |       |        |1      |
+|[EloRating](problems.md#elorating)                   |0.46.11  |       |        |__+1__ |
 |EpiModel                                             |2.0.5    |       |        |       |
 |epinet                                               |2.1.8    |       |        |       |
-|[ergm](problems.md#ergm)                             |3.11.0   |       |        |2      |
+|[ergm](problems.md#ergm)                             |3.11.0   |       |        |1      |
 |ergm.count                                           |3.4.0    |       |        |       |
 |ergm.ego                                             |0.6.1    |       |        |       |
 |ergm.rank                                            |1.2.0    |       |        |       |
@@ -80,7 +80,7 @@
 |[ggnetwork](problems.md#ggnetwork)                   |0.5.8    |       |        |1      |
 |[GGPA](problems.md#ggpa)                             |1.2.0    |       |        |3      |
 |[ggraph](problems.md#ggraph)                         |2.0.5    |       |        |1      |
-|[GOxploreR](problems.md#goxplorer)                   |1.1.0    |__+1__ |        |1      |
+|[GOxploreR](problems.md#goxplorer)                   |1.2.0    |__+1__ |        |1      |
 |[GRENITS](problems.md#grenits)                       |1.42.0   |       |        |3      |
 |[gwdegree](problems.md#gwdegree)                     |0.1.1    |       |        |1      |
 |haplotypes                                           |1.1.2    |       |        |       |
@@ -109,11 +109,11 @@
 |networkDynamicData                                   |0.2.1    |       |        |       |
 |NetworkExtinction                                    |0.1.1    |       |        |       |
 |[networksis](problems.md#networksis)                 |2.1-3    |       |        |1      |
-|[PAFit](problems.md#pafit)                           |1.1      |       |1       |1      |
+|[PAFit](problems.md#pafit)                           |1.1.0.2  |       |1       |1      |
 |[PAFway](problems.md#pafway)                         |0.1.3    |       |        |1      |
 |[PDN](problems.md#pdn)                               |0.1.0    |       |        |1      |
-|PhosR                                                |1.0.0    |       |        |-1     |
-|[pkggraph](problems.md#pkggraph)                     |0.2.3    |       |        |1      |
+|[PhosR](problems.md#phosr)                           |1.0.0    |       |        |1      |
+|[pkggraph](problems.md#pkggraph)                     |0.2.3    |       |        |__+1__ |
 |[predictionet](problems.md#predictionet)             |1.36.0   |       |        |4      |
 |[PubScore](problems.md#pubscore)                     |1.2.0    |       |        |2      |
 |pulsar                                               |0.3.7    |       |        |       |
@@ -134,7 +134,7 @@
 |tergm                                                |3.7.0    |       |        |       |
 |tergmLite                                            |2.2.1    |       |        |       |
 |tidygraph                                            |1.2.0    |       |        |       |
-|[tsna](problems.md#tsna)                             |0.3.3    |       |        |__+1__ |
+|tsna                                                 |0.3.3    |       |        |       |
 |VBLPCM                                               |2.4.7    |       |        |       |
 |VineCopula                                           |2.4.2    |       |        |       |
 |[vivid](problems.md#vivid)                           |0.1.0    |1      |        |2      |

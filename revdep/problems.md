@@ -176,9 +176,9 @@ Run `revdep_details(, "CEMiTool")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 13.0Mb
+      installed size is 12.4Mb
       sub-directories of 1Mb or more:
-        data      3.8Mb
+        data      3.1Mb
         doc       4.0Mb
         extdata   4.5Mb
     ```
@@ -226,7 +226,7 @@ Run `revdep_details(, "CeTF")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 10.7Mb
+      installed size is 10.4Mb
       sub-directories of 1Mb or more:
         data   1.7Mb
         doc    4.0Mb
@@ -300,9 +300,9 @@ Run `revdep_details(, "CluMSID")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  7.7Mb
+      installed size is  6.2Mb
       sub-directories of 1Mb or more:
-        doc   6.6Mb
+        doc   5.6Mb
     ```
 
 # discourseGT
@@ -373,7 +373,7 @@ Run `revdep_details(, "EGAnet")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  5.6Mb
+      installed size is  5.7Mb
       sub-directories of 1Mb or more:
         data   4.0Mb
     ```
@@ -396,7 +396,7 @@ Run `revdep_details(, "egor")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  5.2Mb
+      installed size is  5.1Mb
       sub-directories of 1Mb or more:
         doc       1.0Mb
         extdata   2.3Mb
@@ -416,11 +416,11 @@ Run `revdep_details(, "EloRating")` for more info
 
 </details>
 
-## In both
+## Newly broken
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  5.1Mb
+      installed size is  5.3Mb
       sub-directories of 1Mb or more:
         libs   3.9Mb
     ```
@@ -441,18 +441,14 @@ Run `revdep_details(, "ergm")` for more info
 
 ## In both
 
-*   checking package dependencies ... NOTE
-    ```
-    Package suggested but not available for checking: ‘Rmpi’
-    ```
-
 *   checking installed package size ... NOTE
     ```
-      installed size is 10.5Mb
+      installed size is  8.9Mb
       sub-directories of 1Mb or more:
+        R      1.0Mb
         doc    3.6Mb
         help   1.5Mb
-        libs   3.9Mb
+        libs   2.3Mb
     ```
 
 # ergMargins
@@ -554,9 +550,9 @@ Run `revdep_details(, "fcoex")` for more info
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       [1] "first_prime  round ( |s_prime| = 11 )"
+         0.02238133   0.01224877   Removed feature  111 
       Round 10 
-      [1] "first_prime  round ( |s_prime| = 11 )"
-         0.01429264   0.007676308   Removed feature  157 
+      [1] "first_prime  round ( |s_prime| = 10 )"
       ══ Failed tests ════════════════════════════════════════════════════════════════
       ── Error (test-fcoex.R:12:1): (code run outside of `test_that()`) ──────────────
       Error: invalid 'nchars' argument
@@ -790,9 +786,9 @@ Run `revdep_details(, "GGPA")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.8Mb
+      installed size is  6.9Mb
       sub-directories of 1Mb or more:
-        doc    3.6Mb
+        doc    1.6Mb
         libs   3.9Mb
     ```
 
@@ -835,20 +831,20 @@ Run `revdep_details(, "ggraph")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  9.3Mb
+      installed size is 17.1Mb
       sub-directories of 1Mb or more:
-        doc    3.6Mb
-        libs   4.0Mb
+        doc    7.5Mb
+        libs   7.9Mb
     ```
 
 # GOxploreR
 
 <details>
 
-* Version: 1.1.0
+* Version: 1.2.0
 * GitHub: NA
 * Source code: https://github.com/cran/GOxploreR
-* Date/Publication: 2020-11-20 09:30:03 UTC
+* Date/Publication: 2021-05-17 18:10:02 UTC
 * Number of recursive dependencies: 91
 
 Run `revdep_details(, "GOxploreR")` for more info
@@ -979,7 +975,7 @@ Run `revdep_details(, "gwdegree")` for more info
 * GitHub: https://github.com/TomKellyGenetics/leiden
 * Source code: https://github.com/cran/leiden
 * Date/Publication: 2021-01-26 16:00:02 UTC
-* Number of recursive dependencies: 114
+* Number of recursive dependencies: 125
 
 Run `revdep_details(, "leiden")` for more info
 
@@ -992,19 +988,19 @@ Run `revdep_details(, "leiden")` for more info
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      
-      Detailed traceback:
-        File "/srv/scratch/z3528859/github/statnet/network/revdep/library/leiden/reticulate/python/rpytools/loader.py", line 39, in _import_hook
-          module = _import(
-      
+       3.   └─reticulate::import("numpy", delay_load = TRUE)
+       4.     └─reticulate:::py_module_import(module, convert = convert)
+      ── Error (test_multiplex.R:251:3): run with ModularityVertexPartition multiplexed and max_comm_size ──
+      Error: Node size vector not the same size as the number of nodes.
       Backtrace:
           █
        1. ├─leiden::leiden(...) test_multiplex.R:251:2
        2. └─leiden:::leiden.list(...)
-       3.   └─reticulate::import("numpy", delay_load = TRUE)
-       4.     └─reticulate:::py_module_import(module, convert = convert)
+       3.   └─leiden:::find_partition_multiplex(...)
+       4.     └─leidenalg$find_partition_multiplex(...)
+       5.       └─reticulate:::py_call_impl(callable, dots$args, dots$keywords)
       
-      [ FAIL 7 | WARN 0 | SKIP 0 | PASS 52 ]
+      [ FAIL 7 | WARN 0 | SKIP 8 | PASS 31 ]
       Error: Test failures
       Execution halted
     ```
@@ -1205,7 +1201,7 @@ Run `revdep_details(, "NetworkChange")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.7Mb
+      installed size is  8.5Mb
       sub-directories of 1Mb or more:
         doc   8.0Mb
     ```
@@ -1299,10 +1295,10 @@ Run `revdep_details(, "networksis")` for more info
 
 <details>
 
-* Version: 1.1
+* Version: 1.1.0.2
 * GitHub: https://github.com/thongphamthe/PAFit
 * Source code: https://github.com/cran/PAFit
-* Date/Publication: 2021-05-12 23:02:31 UTC
+* Date/Publication: 2021-05-17 21:50:24 UTC
 * Number of recursive dependencies: 50
 
 Run `revdep_details(, "PAFit")` for more info
@@ -1320,7 +1316,7 @@ Run `revdep_details(, "PAFit")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  5.3Mb
+      installed size is  5.4Mb
       sub-directories of 1Mb or more:
         libs   3.9Mb
     ```
@@ -1370,6 +1366,30 @@ Run `revdep_details(, "PDN")` for more info
       All declared Imports should be used.
     ```
 
+# PhosR
+
+<details>
+
+* Version: 1.0.0
+* GitHub: NA
+* Source code: https://github.com/cran/PhosR
+* Date/Publication: 2020-10-27
+* Number of recursive dependencies: 144
+
+Run `revdep_details(, "PhosR")` for more info
+
+</details>
+
+## In both
+
+*   checking installed package size ... NOTE
+    ```
+      installed size is  7.9Mb
+      sub-directories of 1Mb or more:
+        data   3.9Mb
+        doc    3.4Mb
+    ```
+
 # pkggraph
 
 <details>
@@ -1384,7 +1404,7 @@ Run `revdep_details(, "pkggraph")` for more info
 
 </details>
 
-## In both
+## Newly broken
 
 *   checking installed package size ... NOTE
     ```
@@ -1483,9 +1503,9 @@ Run `revdep_details(, "PubScore")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 20.4Mb
+      installed size is 16.4Mb
       sub-directories of 1Mb or more:
-        data  12.1Mb
+        data   8.1Mb
         doc    8.0Mb
     ```
 
@@ -1593,29 +1613,6 @@ Run `revdep_details(, "sparsebnUtils")` for more info
 *   checking Rd cross-references ... NOTE
     ```
     Package unavailable to check Rd xrefs: ‘sparsebn’
-    ```
-
-# tsna
-
-<details>
-
-* Version: 0.3.3
-* GitHub: NA
-* Source code: https://github.com/cran/tsna
-* Date/Publication: 2021-04-23 19:50:02 UTC
-* Number of recursive dependencies: 60
-
-Run `revdep_details(, "tsna")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  7.3Mb
-      sub-directories of 1Mb or more:
-        doc   7.0Mb
     ```
 
 # vivid
