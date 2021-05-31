@@ -1,6 +1,6 @@
 Package: network
-Version: 1.17.0-678
-Date: 2021-05-19
+Version: 1.17.0-681
+Date: 2021-05-31
 Title: Classes for Relational Data
 Authors@R: c(
     person("Carter T.", "Butts", role=c("aut","cre"), email="buttsc@uci.edu"),
@@ -10,7 +10,7 @@ Authors@R: c(
     person("Jeffrey", "Horner", role=c("ctb"), email="jeffrey.horner@gmail.com"),
     person("Li", "Wang", role=c("ctb"), email="lxwang@uw.edu"),
     person("Pavel N.", "Krivitsky", role=c("ctb"), email="pavel@statnet.org", comment=c(ORCID="0000-0002-9101-3362")),
-    person("Knapp", "Brendan", role=c("ctb"), email="brendan.g.knapp@gmail.com", comment=c(ORCID="0000-0003-3284-4972")),
+    person("Brendan", "Knapp", role=c("ctb"), email="brendan.g.knapp@gmail.com", comment=c(ORCID="0000-0003-3284-4972")),
     person("Michał", " Bojanowski", role=c("ctb"), email="mbojanowski@kozminski.edu.pl"),
     person("Chad", "Klumb", role=c("ctb"), email="cklumb@gmail.com"))
 Depends: R (>= 2.10), utils
