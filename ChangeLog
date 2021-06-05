@@ -8,7 +8,11 @@ v1.17
   - Various testthat improvements.
   - Bugs fixed in mixingmatrix.network().
   - Updated tests for compatibility with R 4.0
-  - Converted get.edge.attribute, get.edge.value, get.network.attribute, list.edge.attributes, list.network.attributes, set.vertex.attribute, set.edge.attribute, set.edge.value, set.network.attribute, delete.vertex.attribute, delete.edge.attribute, and delete.network.attribute to generics for greater extensibility.
+  - Converted is.bipartite, is.directed, get.edge.attribute, get.edge.value, get.network.attribute, list.edge.attributes, list.network.attributes, set.vertex.attribute, set.edge.attribute, set.edge.value, set.network.attribute, delete.vertex.attribute, delete.edge.attribute, delete.network.attribute, has.vertex.attribute, has.edge.attribute, and has.network.attribute to generics for greater extensibility.
+  - Using an out-of-bounds index in nw[i,j] and nw[i,j]<- now produces a sensible error message (i.e., same one as for a matrix).
+  - mixingmatrix() now produces output inheriting from "table" rather than a list; its printing, handling of missing attributes, bipartite networks, and other scenarios has been improved.
+  - as.mixingmatrix() has been added.
+  - network now uses statnet::statnetStartupMessage().
 v1.16
   - Converted get.vertex.attribute and list.vertex.attributes to generics for greater extensibility.
   - Updated tests to fix a color-related issue.
