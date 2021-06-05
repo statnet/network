@@ -260,7 +260,6 @@ as.matrix.network.edgelist<-function(x,attrname=NULL,as.sna.edgelist=FALSE,na.rm
 #
 #' @rdname as.matrix.network
 #' @param store.eid whether the edge ID should be stored in the third column (`.eid`).
-#' @importFrom statnet.common simplify_simple
 #' @export
 as_tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE,..., unit=c("edges", "vertices"), store.eid=FALSE){
   unit <- match.arg(unit)

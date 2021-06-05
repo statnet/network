@@ -568,3 +568,23 @@ which.matrix.type<-function(x)
     }
     out
 }
+
+
+# This is a temporary transplant from statnet.common, copied here to ease transition on CRAN.
+#' @importFrom statnet.common EVL
+simplify_simple <- function(x, toNA = c("null","empty","keep"), empty = c("keep", "unlist"), ...){
+  if(isFALSE(toNA)) toNA <- "keep"
+  toNA <- match.arg(toNA)
+  empty <- match.arg(empty)
+
+  if(is.atomic(x)) return(x)
+
+  x <- switch(toNA,
+              keep = x,
+              null = lapply(x, NVL, NA),
+              empty = lapply(x, EVL, NA))
+
+  if(length(x)==0) switch(empty, keep=x, unlist=unlist(x, recursive=FALSE, ...))
+  else if(all(lengths(x)==1L) && all(vapply(x, is.atomic, logical(1)))) unlist(x, recursive=FALSE, ...)
+  else x
+}
