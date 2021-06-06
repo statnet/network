@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 02/24/19
+# Last Modified 06/06/21
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -104,7 +104,7 @@
 #' \code{\link{network.edgelist}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -253,7 +253,7 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
 #' \code{\link{set.vertex.attribute}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -430,7 +430,7 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
 #'   \code{\link{as.matrix.network}}, \code{\link{network.extraction}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #'   Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  
-#'   \url{http://www.jstatsoft.org/v24/i02/}
+#'   \url{https://www.jstatsoft.org/v24/i02/}
 #' @author Carter T. Butts \email{buttsc@uci.edu}
 #' @examples
 #' #Create a network with three edges
@@ -537,7 +537,7 @@ delete.edge.attribute.network <- function(x, attrname, ...) {
 #'
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing 
 #'   Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  
-#'   \url{http://www.jstatsoft.org/v24/i02/}
+#'   \url{https://www.jstatsoft.org/v24/i02/}
 #' @author Carter T. Butts \email{buttsc@uci.edu}
 #' 
 #' @seealso \code{\link{get.edgeIDs}}, \code{\link{network.extraction}}, 
@@ -763,7 +763,7 @@ get.edge.value.list <- get.edge.value.network
 #' @seealso \code{\link{get.neighborhood}}, \code{\link{valid.eids}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -1049,7 +1049,7 @@ get.network.attribute.network <- function(x, attrname, unlist=FALSE, ...) {
 #' @seealso \code{\link{get.edges}}, \code{\link{is.adjacent}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' 
 #' Wasserman, S. and Faust, K.  1994.  \emph{Social Network Analysis: Methods
 #' and Applications.} Cambridge: Cambridge University Press.
@@ -1176,7 +1176,7 @@ get.vertex.attribute.network <- function(x, attrname, na.omit=FALSE, null.na=TRU
 #' \code{set.network.attribute}, \code{\link{add.edges}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -1247,7 +1247,7 @@ has.loops<-function(x){
 #' \code{\link{attribute.methods}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' 
 #' Wasserman, S. and Faust, K.  1994.  \emph{Social Network Analysis: Methods
 #' and Applications}.  Cambridge: Cambridge University Press.
@@ -1376,7 +1376,7 @@ is.multiplex<-function(x){
 #' \code{\link{get.network.attribute}}, \code{is.adjacent}, \code{\link{is.na}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -1497,7 +1497,7 @@ is.na.network<-function(x){
 #' \code{\link{network.indicators}}, \code{\link{plot.network}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -1604,7 +1604,7 @@ network.dyadcount<-function(x, ...) UseMethod("network.dyadcount")
 #' \code{\link{network.edgecount}}, \code{\link{is.directed}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -1709,7 +1709,7 @@ network.edgecount<-function(x, ...) UseMethod("network.edgecount")
 #' @seealso \code{\link{get.network.attribute}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -1760,7 +1760,7 @@ network.naedgecount.network<-function(x, ...){
 #' @seealso \code{\link{get.network.attribute}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -1831,7 +1831,7 @@ network.vertex.names<-function(x){
 #' @seealso \code{\link{network}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords manip graphs
 #' @examples
 #' 

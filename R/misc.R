@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 02/26/13
+# Last Modified 06/06/21
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -353,7 +353,7 @@ print.mixingmatrix <- function(x, ...) {
 #' @seealso \code{\link{network.edgecount}}, \code{\link{network.size}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' 
 #' Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods
 #' and Applications.} Cambridge: Cambridge University Press.
@@ -518,7 +518,7 @@ is.discrete<-function(x){
 #' @seealso \code{\link{as.matrix.network}}, \code{\link{as.network.matrix}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' @keywords graphs
 #' @examples
 #' 
