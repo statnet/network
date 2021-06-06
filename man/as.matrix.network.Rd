@@ -148,7 +148,7 @@ g[1:2,3:5]                      # Obtain a submatrix
 \references{
 Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-\url{http://www.jstatsoft.org/v24/i02/}
+\url{https://www.jstatsoft.org/v24/i02/}
 }
 \seealso{
 \code{\link{which.matrix.type}}, \code{\link{network}},
