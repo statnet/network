@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 02/26/13
+# Last Modified 06/05/21
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
