@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 03/4/13
+# Last Modified 06/06/21
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -100,7 +100,7 @@
 #' @seealso \code{\link{plot.network}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{http://www.jstatsoft.org/v24/i02/}
+#' \url{https://www.jstatsoft.org/v24/i02/}
 #' 
 #' Fruchterman, T.M.J. and Reingold, E.M.  (1991).  \dQuote{Graph Drawing by
 #' Force-directed Placement.} \emph{Software - Practice and Experience,}
