@@ -9,6 +9,9 @@
 \alias{!.network}
 \alias{|.network}
 \alias{&.network}
+\alias{xor}
+\alias{xor.default}
+\alias{xor.network}
 \alias{\%c\%.network}
 \title{Network Operators}
 \usage{
@@ -23,6 +26,12 @@
 \method{|}{network}(e1, e2)
 
 \method{&}{network}(e1, e2)
+
+xor(x, y)
+
+\method{xor}{default}(x, y)
+
+\method{xor}{network}(x, y)
 
 \method{\%c\%}{network}(e1, e2)
 }
@@ -92,6 +101,9 @@ an edge.}
 graph if either input contains an \eqn{(i,j)} edge.}
 \item{\code{&}}{An
 \eqn{(i,j)} edge is created in the return graph if both inputs contain an
+\eqn{(i,j)} edge.}
+\item{\code{xor}}{An
+\eqn{(i,j)} edge is created in the return graph if exactly one of the inputs contains an
 \eqn{(i,j)} edge.}
 }
 Semantics for missing-edge cases follow from the above,

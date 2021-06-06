@@ -530,6 +530,9 @@ out_of_bounds <- function(x, el){
 #'   \item{\code{&}}{An
 #' \eqn{(i,j)} edge is created in the return graph if both inputs contain an
 #' \eqn{(i,j)} edge.}
+#'   \item{\code{xor}}{An
+#' \eqn{(i,j)} edge is created in the return graph if exactly one of the inputs contains an
+#' \eqn{(i,j)} edge.}
 #' }
 #' Semantics for missing-edge cases follow from the above,
 #' under the interpretation that edges with \code{na==TRUE} are viewed as
@@ -983,6 +986,18 @@ out_of_bounds <- function(x, el){
   out
 }
 
+
+#' @rdname network-operators
+#' @export
+xor <- function(x, y) UseMethod("xor")
+
+#' @rdname network-operators
+#' @export
+xor.default <- base::xor
+
+#' @rdname network-operators
+#' @export
+xor.network <- function(x, y) (x - y) | (y - x) # The default implementation involves a negation that results in a dense network.
 
 # --------------------------- %c% -------------------------------
 # conditionally create this method, as it may allready have 

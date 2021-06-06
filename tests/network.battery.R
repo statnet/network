@@ -160,6 +160,7 @@ check[61]<-all(((g%*%g)>0)==as.sociomatrix(temp%c%temp2))
 check[62]<-all(((!temp)[,]==!g)[diag(10)<1])
 check[63]<-all((temp|temp2)[,]==g)
 check[64]<-all((temp&temp2)[,]==g)
+check[64]<-all((xor(temp,temp2))[,]==0)
 temp%v%"value"<-1:10
 check[65]<-all(temp%v%"value"==1:10)
 temp%n%"value"<-"pork!"
@@ -196,12 +197,15 @@ nw1[1,2]<-1
 nw2<-network.initialize(3,directed=FALSE)
 nw2[2,1]<-1
 
-# Which, the binary network operators don't take into account:
-check[77]<-network.edgecount(nw1-nw2)==0 # Should have 0, has 1.
-check[78]<-network.edgecount(nw1|nw2)==1 # Should have 1, has 2 (1->2 and 2->1).
-check[79]<-network.edgecount(nw1&nw2)==1 # Should have 1, has 0 (since it treats 1->2 and 2->1 differently).
-check[80]<-network.edgecount(!nw1)==2 # Should have choose(3,2)-1=2, has 3.
-check[81]<-network.edgecount(!nw2)==2 # Should have choose(3,2)-1=2, has 2.
+check[77]<-network.edgecount(nw1-nw2)==0
+check[78]<-network.edgecount(nw1|nw2)==1
+check[79]<-network.edgecount(nw1&nw2)==1
+check[80]<-network.edgecount(!nw1)==2
+check[81]<-network.edgecount(!nw2)==2
+check[82]<-network.edgecount(xor(nw1,nw2))==0
+nw1[1,3] <- 1
+nw2[2,3] <- 1
+check[82]<-network.edgecount(xor(nw1,nw2))==2
 
 #If everything worked, check is TRUE
 if(!all(check)){                                               #Should be TRUE
