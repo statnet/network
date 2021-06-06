@@ -13,6 +13,8 @@ v1.17
   - mixingmatrix() now produces output inheriting from "table" rather than a list; its printing, handling of missing attributes, bipartite networks, and other scenarios has been improved.
   - as.mixingmatrix() has been added.
   - network now uses statnet::statnetStartupMessage().
+  - Updated constructor code per Kurt Hornik's suggestion to future proof versus upcoming sapply() changes.
+  - network.edgelist() now automagically prunes loops and redundant edges for networks that should not have them; previously, the function trusted the user not to supply such things (and would go ahead and make edges if asked to do so).
 v1.16
   - Converted get.vertex.attribute and list.vertex.attributes to generics for greater extensibility.
   - Updated tests to fix a color-related issue.
