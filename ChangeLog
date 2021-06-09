@@ -1,4 +1,7 @@
 CHANGELOG:
+v1.17.1
+  - Coercion from an edgelist could fail with a single edge when redundant edges were being removed.
+  - Zero-row matrices are now assumed to be empty edgelists when not explicitly specified.  (Before, they just failed.)
 v1.17
   - Michal Bojanowski, Pavel N. Krivitsky, Chad Klumb, and Brendan Knapp have been added as contributors.
   - summary.character() and print.summary.character() are no longer exported as it interfered with base::summary.data.frame().

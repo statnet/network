@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 06/05/21
+# Last Modified 06/08/21
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -504,14 +504,18 @@ as.network.matrix<-function(x, matrix.type=NULL,
   if(!is.null(vattr))                        #If given names, use 'em
     unames<-vattr
   #Initialize the network object
-  n<-switch(matrix.type,	#Extract n based on matrix type
-    adjacency=dim(x)[1],
-    incidence=dim(x)[1],
-    bipartite=sum(dim(x)),
-    edgelist=max(x[,1:2]),
-  )
-  if(is.numeric(nattr))                      #If given n, use it
+  if(is.numeric(nattr)){                     #If given n, use it
     n<-nattr
+  }else{  
+    if((matrix.type=="edgelist")&&(NROW(x)==0))
+      stop("Cannot determine network size from zero-length edgelist; assign an n attribute to use data of this type.\n")
+    n<-switch(matrix.type,	#Extract n based on matrix type
+      adjacency=dim(x)[1],
+      incidence=dim(x)[1],
+      bipartite=sum(dim(x)),
+      edgelist=max(x[,1:2]),
+    )
+  }
   if(is.numeric(battr))                      #If given bipartite info, use it
     bipartite<-battr
   

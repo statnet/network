@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 06/06/21
+# Last Modified 06/08/21
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -306,19 +306,19 @@ network.edgelist<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
   gn<-substitute(g)
   l<-dim(x)[2]
   #Remove loops if has.loops==FALSE
-  if(!has.loops(g)){
+  if((NROW(x)>0)&&(!has.loops(g))){
     cn<-colnames(x)
     x<-x[x[,1]!=x[,2],,drop=FALSE]  #Remove loops
     colnames(x)<-cn
   }
   #Remove redundant edges if is.multiplex==FALSE
-  if(!is.multiplex(g)){
+  if((NROW(x)>0)&&(!is.multiplex(g))){
     cn<-colnames(x)
     if(is.directed(g)){
-      x<-x[!duplicated(x[,1:2]),,drop=FALSE]
+      x<-x[!duplicated(x[,1:2,drop=FALSE]),,drop=FALSE]
     }else{
-      x[,1:2]<-t(apply(x[,1:2],1,sort))
-      x<-x[!duplicated(x[,1:2]),,drop=FALSE]
+      x[,1:2]<-t(apply(x[,1:2,drop=FALSE],1,sort))
+      x<-x[!duplicated(x[,1:2,drop=FALSE]),,drop=FALSE]
     }
     colnames(x)<-cn
   }
