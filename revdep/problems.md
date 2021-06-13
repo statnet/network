@@ -6,7 +6,7 @@
 * GitHub: https://github.com/sndmrc/BasketballAnalyzeR
 * Source code: https://github.com/cran/BasketballAnalyzeR
 * Date/Publication: 2020-06-26 09:00:11 UTC
-* Number of recursive dependencies: 75
+* Number of recursive dependencies: 74
 
 Run `revdep_details(, "BasketballAnalyzeR")` for more info
 
@@ -29,7 +29,7 @@ Run `revdep_details(, "BasketballAnalyzeR")` for more info
 * GitHub: https://github.com/donaldRwilliams/BGGM
 * Source code: https://github.com/cran/BGGM
 * Date/Publication: 2020-12-03 08:20:06 UTC
-* Number of recursive dependencies: 166
+* Number of recursive dependencies: 165
 
 Run `revdep_details(, "BGGM")` for more info
 
@@ -54,7 +54,7 @@ Run `revdep_details(, "BGGM")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/bingat
 * Date/Publication: 2017-07-05 18:30:37 UTC
-* Number of recursive dependencies: 32
+* Number of recursive dependencies: 34
 
 Run `revdep_details(, "bingat")` for more info
 
@@ -75,13 +75,13 @@ Run `revdep_details(, "bingat")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/Blaunet
 * Date/Publication: 2020-05-22 08:10:11 UTC
-* Number of recursive dependencies: 84
+* Number of recursive dependencies: 85
 
 Run `revdep_details(, "Blaunet")` for more info
 
 </details>
 
-## Newly broken
+## In both
 
 *   checking examples ... ERROR
     ```
@@ -108,8 +108,6 @@ Run `revdep_details(, "Blaunet")` for more info
     Execution halted
     ```
 
-## In both
-
 *   checking package dependencies ... NOTE
     ```
     Packages suggested but not available for checking:
@@ -124,15 +122,37 @@ Run `revdep_details(, "Blaunet")` for more info
       All declared Imports should be used.
     ```
 
+# bootcluster
+
+<details>
+
+* Version: 0.2.5
+* GitHub: NA
+* Source code: https://github.com/cran/bootcluster
+* Date/Publication: 2021-06-10 08:20:04 UTC
+* Number of recursive dependencies: 69
+
+Run `revdep_details(, "bootcluster")` for more info
+
+</details>
+
+## In both
+
+*   checking dependencies in R code ... NOTE
+    ```
+    Namespace in Imports field not imported from: ‘sna’
+      All declared Imports should be used.
+    ```
+
 # broom
 
 <details>
 
-* Version: 0.7.6
+* Version: 0.7.7
 * GitHub: https://github.com/tidymodels/broom
 * Source code: https://github.com/cran/broom
-* Date/Publication: 2021-04-05 20:30:02 UTC
-* Number of recursive dependencies: 291
+* Date/Publication: 2021-06-13 04:40:17 UTC
+* Number of recursive dependencies: 295
 
 Run `revdep_details(, "broom")` for more info
 
@@ -155,11 +175,11 @@ Run `revdep_details(, "broom")` for more info
 
 <details>
 
-* Version: 1.14.1
+* Version: 1.16.0
 * GitHub: NA
 * Source code: https://github.com/cran/CEMiTool
-* Date/Publication: 2021-03-11
-* Number of recursive dependencies: 160
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 183
 
 Run `revdep_details(, "CEMiTool")` for more info
 
@@ -167,18 +187,11 @@ Run `revdep_details(, "CEMiTool")` for more info
 
 ## In both
 
-*   checking whether package ‘CEMiTool’ can be installed ... WARNING
-    ```
-    Found the following significant warnings:
-      Warning: replacing previous import ‘ggplot2::annotate’ by ‘ggpmisc::annotate’ when loading ‘CEMiTool’
-    See ‘/srv/scratch/z3528859/github/statnet/network/revdep/checks/CEMiTool/new/CEMiTool.Rcheck/00install.out’ for details.
-    ```
-
 *   checking installed package size ... NOTE
     ```
-      installed size is 12.4Mb
+      installed size is 14.5Mb
       sub-directories of 1Mb or more:
-        data      3.1Mb
+        data      4.8Mb
         doc       4.0Mb
         extdata   4.5Mb
     ```
@@ -212,11 +225,11 @@ Run `revdep_details(, "CEMiTool")` for more info
 
 <details>
 
-* Version: 1.2.4
+* Version: 1.4.0
 * GitHub: NA
 * Source code: https://github.com/cran/CeTF
-* Date/Publication: 2020-11-23
-* Number of recursive dependencies: 226
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 244
 
 Run `revdep_details(, "CeTF")` for more info
 
@@ -224,13 +237,37 @@ Run `revdep_details(, "CeTF")` for more info
 
 ## In both
 
+*   checking examples ... ERROR
+    ```
+    Running examples in ‘CeTF-Ex.R’ failed
+    The error most likely occurred in:
+    
+    > ### Name: netConditionsPlot
+    > ### Title: Network plot of gene-gene/gene-TFs interactions
+    > ### Aliases: netConditionsPlot
+    > 
+    > ### ** Examples
+    > 
+    > # loading a simulated counts data
+    ...
+    Trios for gene    20
+    Trios for gene    30
+    Trios for gene    40
+    > 
+    > # plotting networks conditions
+    > netConditionsPlot(out)
+    Error in set.vertex.attribute.network(out, attrname = "vertex.names",  : 
+      Inappropriate value given in set.vertex.attribute.
+    Calls: netConditionsPlot ... set.vertex.attribute -> set.vertex.attribute.network
+    Execution halted
+    ```
+
 *   checking installed package size ... NOTE
     ```
-      installed size is 10.4Mb
+      installed size is  6.4Mb
       sub-directories of 1Mb or more:
         data   1.7Mb
         doc    4.0Mb
-        libs   3.9Mb
     ```
 
 # chorrrds
@@ -241,7 +278,7 @@ Run `revdep_details(, "CeTF")` for more info
 * GitHub: https://github.com/r-music/chorrrds
 * Source code: https://github.com/cran/chorrrds
 * Date/Publication: 2020-06-30 17:30:02 UTC
-* Number of recursive dependencies: 71
+* Number of recursive dependencies: 73
 
 Run `revdep_details(, "chorrrds")` for more info
 
@@ -268,7 +305,7 @@ Run `revdep_details(, "chorrrds")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/CINNA
 * Date/Publication: 2021-01-28 15:00:02 UTC
-* Number of recursive dependencies: 136
+* Number of recursive dependencies: 135
 
 Run `revdep_details(, "CINNA")` for more info
 
@@ -286,10 +323,10 @@ Run `revdep_details(, "CINNA")` for more info
 
 <details>
 
-* Version: 1.6.0
+* Version: 1.8.0
 * GitHub: https://github.com/tdepke/CluMSID
 * Source code: https://github.com/cran/CluMSID
-* Date/Publication: 2020-10-27
+* Date/Publication: 2021-05-19
 * Number of recursive dependencies: 168
 
 Run `revdep_details(, "CluMSID")` for more info
@@ -313,13 +350,13 @@ Run `revdep_details(, "CluMSID")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/discourseGT
 * Date/Publication: 2021-04-02 19:00:02 UTC
-* Number of recursive dependencies: 104
+* Number of recursive dependencies: 103
 
 Run `revdep_details(, "discourseGT")` for more info
 
 </details>
 
-## Newly broken
+## In both
 
 *   checking examples ... ERROR
     ```
@@ -346,8 +383,6 @@ Run `revdep_details(, "discourseGT")` for more info
     Execution halted
     ```
 
-## In both
-
 *   checking dependencies in R code ... NOTE
     ```
     Namespaces in Imports field not imported from:
@@ -363,7 +398,7 @@ Run `revdep_details(, "discourseGT")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/EGAnet
 * Date/Publication: 2021-02-16 18:10:06 UTC
-* Number of recursive dependencies: 205
+* Number of recursive dependencies: 206
 
 Run `revdep_details(, "EGAnet")` for more info
 
@@ -373,56 +408,9 @@ Run `revdep_details(, "EGAnet")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  5.7Mb
+      installed size is  5.6Mb
       sub-directories of 1Mb or more:
         data   4.0Mb
-    ```
-
-# egor
-
-<details>
-
-* Version: 0.21.02
-* GitHub: https://github.com/tilltnet/egor
-* Source code: https://github.com/cran/egor
-* Date/Publication: 2021-02-12 14:20:02 UTC
-* Number of recursive dependencies: 82
-
-Run `revdep_details(, "egor")` for more info
-
-</details>
-
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  5.1Mb
-      sub-directories of 1Mb or more:
-        doc       1.0Mb
-        extdata   2.3Mb
-    ```
-
-# EloRating
-
-<details>
-
-* Version: 0.46.11
-* GitHub: https://github.com/gobbios/EloRating
-* Source code: https://github.com/cran/EloRating
-* Date/Publication: 2020-03-12 16:10:14 UTC
-* Number of recursive dependencies: 65
-
-Run `revdep_details(, "EloRating")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  5.3Mb
-      sub-directories of 1Mb or more:
-        libs   3.9Mb
     ```
 
 # ergm
@@ -443,12 +431,11 @@ Run `revdep_details(, "ergm")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.9Mb
+      installed size is 10.5Mb
       sub-directories of 1Mb or more:
-        R      1.0Mb
         doc    3.6Mb
         help   1.5Mb
-        libs   2.3Mb
+        libs   3.9Mb
     ```
 
 # ergMargins
@@ -479,6 +466,11 @@ Run `revdep_details(, "ergMargins")` for more info
     Package unavailable to check Rd xrefs: ‘margins’
     ```
 
+*   checking LazyData ... NOTE
+    ```
+      'LazyData' is specified without a 'data' directory
+    ```
+
 # ergmito
 
 <details>
@@ -497,7 +489,7 @@ Run `revdep_details(, "ergmito")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  9.8Mb
+      installed size is  9.7Mb
       sub-directories of 1Mb or more:
         R      1.1Mb
         libs   7.9Mb
@@ -507,11 +499,11 @@ Run `revdep_details(, "ergmito")` for more info
 
 <details>
 
-* Version: 1.4.0
+* Version: 1.6.0
 * GitHub: NA
 * Source code: https://github.com/cran/fcoex
-* Date/Publication: 2020-10-27
-* Number of recursive dependencies: 258
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 280
 
 Run `revdep_details(, "fcoex")` for more info
 
@@ -525,7 +517,7 @@ Run `revdep_details(, "fcoex")` for more info
     The error most likely occurred in:
     
     > ### Name: mod_ora
-    > ### Title: # Run module overrepresentation analysis
+    > ### Title: Over Representation Analysis (ORA)
     > ### Aliases: mod_ora mod_ora,fcoex-method
     > 
     > ### ** Examples
@@ -544,26 +536,11 @@ Run `revdep_details(, "fcoex")` for more info
     Execution halted
     ```
 
-*   checking tests ...
+*   checking whether package ‘fcoex’ can be installed ... WARNING
     ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      [1] "first_prime  round ( |s_prime| = 11 )"
-         0.02238133   0.01224877   Removed feature  111 
-      Round 10 
-      [1] "first_prime  round ( |s_prime| = 10 )"
-      ══ Failed tests ════════════════════════════════════════════════════════════════
-      ── Error (test-fcoex.R:12:1): (code run outside of `test_that()`) ──────────────
-      Error: invalid 'nchars' argument
-      Backtrace:
-          █
-       1. └─pathwayPCA::read_gmt(gmt) test-fcoex.R:12:0
-       2.   └─base::readChar(file, nchars = nChars, useBytes = TRUE)
-      
-      [ FAIL 1 | WARN 2 | SKIP 0 | PASS 0 ]
-      Error: Test failures
-      Execution halted
+    Found the following significant warnings:
+      Warning: replacing previous import ‘Matrix::head’ by ‘utils::head’ when loading ‘fcoex’
+    See ‘/srv/scratch/z3528859/github/statnet/network/revdep/checks/fcoex/new/fcoex.Rcheck/00install.out’ for details.
     ```
 
 *   checking Rd \usage sections ... WARNING
@@ -578,12 +555,17 @@ Run `revdep_details(, "fcoex")` for more info
     Extensions’ manual.
     ```
 
+*   checking package dependencies ... NOTE
+    ```
+    Package suggested but not available for checking: ‘schex’
+    ```
+
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.2Mb
+      installed size is  8.0Mb
       sub-directories of 1Mb or more:
         data   3.7Mb
-        doc    3.9Mb
+        doc    3.8Mb
     ```
 
 # fssemR
@@ -594,7 +576,7 @@ Run `revdep_details(, "fcoex")` for more info
 * GitHub: https://github.com/Ivis4ml/fssemR
 * Source code: https://github.com/cran/fssemR
 * Date/Publication: 2019-12-04 16:10:05 UTC
-* Number of recursive dependencies: 81
+* Number of recursive dependencies: 80
 
 Run `revdep_details(, "fssemR")` for more info
 
@@ -609,6 +591,11 @@ Run `revdep_details(, "fssemR")` for more info
         libs  15.9Mb
     ```
 
+*   checking LazyData ... NOTE
+    ```
+      'LazyData' is specified without a 'data' directory
+    ```
+
 # genBaRcode
 
 <details>
@@ -617,7 +604,7 @@ Run `revdep_details(, "fssemR")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/genBaRcode
 * Date/Publication: 2020-12-02 22:50:07 UTC
-* Number of recursive dependencies: 153
+* Number of recursive dependencies: 152
 
 Run `revdep_details(, "genBaRcode")` for more info
 
@@ -641,13 +628,13 @@ Run `revdep_details(, "genBaRcode")` for more info
 * GitHub: https://github.com/sctyner/geomnet
 * Source code: https://github.com/cran/geomnet
 * Date/Publication: 2020-11-26 11:00:06 UTC
-* Number of recursive dependencies: 87
+* Number of recursive dependencies: 86
 
 Run `revdep_details(, "geomnet")` for more info
 
 </details>
 
-## Newly broken
+## In both
 
 *   checking examples ... ERROR
     ```
@@ -674,14 +661,12 @@ Run `revdep_details(, "geomnet")` for more info
     Execution halted
     ```
 
-## In both
-
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.2Mb
+      installed size is  5.2Mb
       sub-directories of 1Mb or more:
-        data   3.6Mb
-        doc    3.4Mb
+        data   2.6Mb
+        doc    1.4Mb
     ```
 
 # GGally
@@ -692,13 +677,13 @@ Run `revdep_details(, "geomnet")` for more info
 * GitHub: https://github.com/ggobi/ggally
 * Source code: https://github.com/cran/GGally
 * Date/Publication: 2021-03-08 06:00:03 UTC
-* Number of recursive dependencies: 136
+* Number of recursive dependencies: 135
 
 Run `revdep_details(, "GGally")` for more info
 
 </details>
 
-## Newly broken
+## In both
 
 *   checking tests ...
     ```
@@ -730,7 +715,7 @@ Run `revdep_details(, "GGally")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/GGMnonreg
 * Date/Publication: 2021-04-08 11:30:06 UTC
-* Number of recursive dependencies: 112
+* Number of recursive dependencies: 111
 
 Run `revdep_details(, "GGMnonreg")` for more info
 
@@ -749,17 +734,36 @@ Run `revdep_details(, "GGMnonreg")` for more info
 
 <details>
 
-* Version: 0.5.8
+* Version: 0.5.9
 * GitHub: https://github.com/briatte/ggnetwork
 * Source code: https://github.com/cran/ggnetwork
-* Date/Publication: 2020-02-12 17:00:02 UTC
-* Number of recursive dependencies: 62
+* Date/Publication: 2021-06-04 17:50:02 UTC
+* Number of recursive dependencies: 65
 
 Run `revdep_details(, "ggnetwork")` for more info
 
 </details>
 
 ## In both
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Complete output:
+      > library(testthat)
+      > library(ggnetwork)
+      Loading required package: ggplot2
+      > 
+      > test_check("ggnetwork")
+      ══ Failed tests ════════════════════════════════════════════════════════════════
+      ── Failure (test-ggnetwork.R:57:3): ggnetwork works ────────────────────────────
+      `ggnetwork(n)` did not produce any warnings.
+      
+      [ FAIL 1 | WARN 0 | SKIP 0 | PASS 42 ]
+      Error: Test failures
+      Execution halted
+    ```
 
 *   checking dependencies in R code ... NOTE
     ```
@@ -772,11 +776,11 @@ Run `revdep_details(, "ggnetwork")` for more info
 
 <details>
 
-* Version: 1.2.0
+* Version: 1.4.0
 * GitHub: https://github.com/dongjunchung/GGPA
 * Source code: https://github.com/cran/GGPA
-* Date/Publication: 2020-10-27
-* Number of recursive dependencies: 69
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 68
 
 Run `revdep_details(, "GGPA")` for more info
 
@@ -786,9 +790,9 @@ Run `revdep_details(, "GGPA")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  6.9Mb
+      installed size is  8.8Mb
       sub-directories of 1Mb or more:
-        doc    1.6Mb
+        doc    3.6Mb
         libs   3.9Mb
     ```
 
@@ -821,7 +825,7 @@ Run `revdep_details(, "GGPA")` for more info
 * GitHub: https://github.com/thomasp85/ggraph
 * Source code: https://github.com/cran/ggraph
 * Date/Publication: 2021-02-23 12:20:30 UTC
-* Number of recursive dependencies: 93
+* Number of recursive dependencies: 95
 
 Run `revdep_details(, "ggraph")` for more info
 
@@ -841,61 +845,34 @@ Run `revdep_details(, "ggraph")` for more info
 
 <details>
 
-* Version: 1.2.0
+* Version: 1.2.1
 * GitHub: NA
 * Source code: https://github.com/cran/GOxploreR
-* Date/Publication: 2021-05-17 18:10:02 UTC
-* Number of recursive dependencies: 91
+* Date/Publication: 2021-06-07 14:50:02 UTC
+* Number of recursive dependencies: 99
 
 Run `revdep_details(, "GOxploreR")` for more info
 
 </details>
 
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘GOxploreR-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: visRsubDAGBP
-    > ### Title: Visualise the GO-DAG for a specific organism based on certain
-    > ###   GO-terms
-    > ### Aliases: visRsubDAGBP
-    > 
-    > ### ** Examples
-    > 
-    ...
-      3. │   └─node.data1 %>% mutate(label1 = p1) %>% arrange(id)
-      4. ├─dplyr::arrange(., id)
-      5. ├─dplyr::mutate(., label1 = p1)
-      6. ├─dplyr:::mutate.data.frame(., label1 = p1)
-      7. │ └─dplyr:::mutate_cols(.data, ..., caller_env = caller_env())
-      8. │   ├─base::withCallingHandlers(...)
-      9. │   └─mask$eval_all_mutate(quo)
-     10. └─dplyr:::abort_glue(character(0), list(x_size = 35L), "dplyr:::mutate_incompatible_size")
-     11.   └─rlang::exec(abort, class = class, !!!data)
-    Execution halted
-    ```
-
 ## In both
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 11.1Mb
+      installed size is  9.2Mb
       sub-directories of 1Mb or more:
-        R  10.5Mb
+        R   8.5Mb
     ```
 
 # GRENITS
 
 <details>
 
-* Version: 1.42.0
+* Version: 1.44.0
 * GitHub: NA
 * Source code: https://github.com/cran/GRENITS
-* Date/Publication: 2020-10-27
-* Number of recursive dependencies: 38
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 40
 
 Run `revdep_details(, "GRENITS")` for more info
 
@@ -967,15 +944,58 @@ Run `revdep_details(, "gwdegree")` for more info
       simulate.formula
     ```
 
+*   checking LazyData ... NOTE
+    ```
+      'LazyData' is specified without a 'data' directory
+    ```
+
+# ICON
+
+<details>
+
+* Version: 0.4.0
+* GitHub: https://github.com/rrrlw/ICON
+* Source code: https://github.com/cran/ICON
+* Date/Publication: 2020-10-23 23:00:02 UTC
+* Number of recursive dependencies: 74
+
+Run `revdep_details(, "ICON")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      ══ Skipped tests ═══════════════════════════════════════════════════════════════
+      • On CRAN (1)
+      
+      ══ Failed tests ════════════════════════════════════════════════════════════════
+      ── Failure (test-s3-network.R:21:3): as.network.ICON generic works ─────────────
+      network::get.edge.attribute(converted_network, "attrib") not equal to test_obj$attrib.
+      Lengths differ: 24 is not 25
+      ── Failure (test-s3-network.R:24:3): as.network.ICON generic works ─────────────
+      network::network.edgecount(converted_network) not equal to `NROW`.
+      1/1 mismatches
+      [1] 24 - 25 == -1
+      
+      [ FAIL 2 | WARN 0 | SKIP 1 | PASS 11 ]
+      Error: Test failures
+      Execution halted
+    ```
+
 # leiden
 
 <details>
 
-* Version: 0.3.7
+* Version: 0.3.8
 * GitHub: https://github.com/TomKellyGenetics/leiden
 * Source code: https://github.com/cran/leiden
-* Date/Publication: 2021-01-26 16:00:02 UTC
-* Number of recursive dependencies: 125
+* Date/Publication: 2021-05-24 04:30:03 UTC
+* Number of recursive dependencies: 124
 
 Run `revdep_details(, "leiden")` for more info
 
@@ -1019,6 +1039,30 @@ Run `revdep_details(, "lolog")` for more info
 
 </details>
 
+## Newly fixed
+
+*   checking examples ... ERROR
+    ```
+    Running examples in ‘lolog-Ex.R’ failed
+    The error most likely occurred in:
+    
+    > ### Name: as.network.Rcpp_DirectedNet
+    > ### Title: Convert a DirectedNet to a network object
+    > ### Aliases: as.network.Rcpp_DirectedNet
+    > 
+    > ### ** Examples
+    > 
+    > el <- matrix(c(1,2),ncol=2)
+    > 
+    > #make an UndirectedNet with one edge and 5 nodes
+    > net <- new(UndirectedNet, el, 5L)
+    > 
+    > nw <- as.network(net)
+    Error in apply(x[, 1:2], 1, sort) : dim(X) must have a positive length
+    Calls: as.network ... as.network.matrix -> network.edgelist -> t -> apply
+    Execution halted
+    ```
+
 ## In both
 
 *   checking installed package size ... NOTE
@@ -1036,7 +1080,7 @@ Run `revdep_details(, "lolog")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/MBCbook
 * Date/Publication: 2019-07-02 07:00:03 UTC
-* Number of recursive dependencies: 23
+* Number of recursive dependencies: 25
 
 Run `revdep_details(, "MBCbook")` for more info
 
@@ -1064,7 +1108,7 @@ Run `revdep_details(, "MBCbook")` for more info
 * GitHub: https://github.com/snlab-ch/migraph
 * Source code: https://github.com/cran/migraph
 * Date/Publication: 2021-05-13 23:20:10 UTC
-* Number of recursive dependencies: 81
+* Number of recursive dependencies: 83
 
 Run `revdep_details(, "migraph")` for more info
 
@@ -1085,7 +1129,7 @@ Run `revdep_details(, "migraph")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/mpa
 * Date/Publication: 2012-10-29 08:59:13
-* Number of recursive dependencies: 14
+* Number of recursive dependencies: 17
 
 Run `revdep_details(, "mpa")` for more info
 
@@ -1128,15 +1172,39 @@ Run `revdep_details(, "mpa")` for more info
       Note: found 6 marked UTF-8 strings
     ```
 
+# netdiffuseR
+
+<details>
+
+* Version: 1.22.3
+* GitHub: https://github.com/USCCANA/netdiffuseR
+* Source code: https://github.com/cran/netdiffuseR
+* Date/Publication: 2021-05-28 16:30:08 UTC
+* Number of recursive dependencies: 73
+
+Run `revdep_details(, "netdiffuseR")` for more info
+
+</details>
+
+## In both
+
+*   checking installed package size ... NOTE
+    ```
+      installed size is 13.0Mb
+      sub-directories of 1Mb or more:
+        doc    2.3Mb
+        libs   8.9Mb
+    ```
+
 # nethet
 
 <details>
 
-* Version: 1.22.0
+* Version: 1.24.0
 * GitHub: NA
 * Source code: https://github.com/cran/nethet
-* Date/Publication: 2020-10-27
-* Number of recursive dependencies: 95
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 97
 
 Run `revdep_details(, "nethet")` for more info
 
@@ -1178,7 +1246,7 @@ Run `revdep_details(, "NetMix")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.3Mb
+      installed size is  8.2Mb
       sub-directories of 1Mb or more:
         libs   7.9Mb
     ```
@@ -1191,7 +1259,7 @@ Run `revdep_details(, "NetMix")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/NetworkChange
 * Date/Publication: 2020-07-11 22:00:14 UTC
-* Number of recursive dependencies: 125
+* Number of recursive dependencies: 124
 
 Run `revdep_details(, "NetworkChange")` for more info
 
@@ -1201,7 +1269,7 @@ Run `revdep_details(, "NetworkChange")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  8.5Mb
+      installed size is  8.7Mb
       sub-directories of 1Mb or more:
         doc   8.0Mb
     ```
@@ -1220,13 +1288,13 @@ Run `revdep_details(, "NetworkChange")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/networkDynamic
 * Date/Publication: 2020-01-21 09:50:02 UTC
-* Number of recursive dependencies: 36
+* Number of recursive dependencies: 35
 
 Run `revdep_details(, "networkDynamic")` for more info
 
 </details>
 
-## Newly broken
+## In both
 
 *   checking S3 generic/method consistency ... WARNING
     ```
@@ -1273,7 +1341,7 @@ Run `revdep_details(, "networkDynamic")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/networksis
 * Date/Publication: 2015-04-16 08:44:42
-* Number of recursive dependencies: 14
+* Number of recursive dependencies: 17
 
 Run `revdep_details(, "networksis")` for more info
 
@@ -1299,7 +1367,7 @@ Run `revdep_details(, "networksis")` for more info
 * GitHub: https://github.com/thongphamthe/PAFit
 * Source code: https://github.com/cran/PAFit
 * Date/Publication: 2021-05-17 21:50:24 UTC
-* Number of recursive dependencies: 50
+* Number of recursive dependencies: 49
 
 Run `revdep_details(, "PAFit")` for more info
 
@@ -1314,36 +1382,6 @@ Run `revdep_details(, "PAFit")` for more info
     See ‘/srv/scratch/z3528859/github/statnet/network/revdep/checks/PAFit/new/PAFit.Rcheck/00install.out’ for details.
     ```
 
-*   checking installed package size ... NOTE
-    ```
-      installed size is  5.4Mb
-      sub-directories of 1Mb or more:
-        libs   3.9Mb
-    ```
-
-# PAFway
-
-<details>
-
-* Version: 0.1.3
-* GitHub: NA
-* Source code: https://github.com/cran/PAFway
-* Date/Publication: 2020-02-05 16:40:02 UTC
-* Number of recursive dependencies: 70
-
-Run `revdep_details(, "PAFway")` for more info
-
-</details>
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespaces in Imports field not imported from:
-      ‘network’ ‘scales’ ‘sna’
-      All declared Imports should be used.
-    ```
-
 # PDN
 
 <details>
@@ -1352,7 +1390,7 @@ Run `revdep_details(, "PAFway")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/PDN
 * Date/Publication: 2017-11-03 23:27:43 UTC
-* Number of recursive dependencies: 52
+* Number of recursive dependencies: 54
 
 Run `revdep_details(, "PDN")` for more info
 
@@ -1370,11 +1408,11 @@ Run `revdep_details(, "PDN")` for more info
 
 <details>
 
-* Version: 1.0.0
+* Version: 1.2.0
 * GitHub: NA
 * Source code: https://github.com/cran/PhosR
-* Date/Publication: 2020-10-27
-* Number of recursive dependencies: 144
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 203
 
 Run `revdep_details(, "PhosR")` for more info
 
@@ -1382,12 +1420,28 @@ Run `revdep_details(, "PhosR")` for more info
 
 ## In both
 
+*   checking for hidden files and directories ... NOTE
+    ```
+    Found the following hidden files and directories:
+      .travis.yml
+    These were most likely included in error. See section ‘Package
+    structure’ in the ‘Writing R Extensions’ manual.
+    ```
+
 *   checking installed package size ... NOTE
     ```
-      installed size is  7.9Mb
+      installed size is  8.7Mb
       sub-directories of 1Mb or more:
-        data   3.9Mb
-        doc    3.4Mb
+        data   3.3Mb
+        doc    4.0Mb
+    ```
+
+*   checking dependencies in R code ... NOTE
+    ```
+    Unexported objects imported by ':::' calls:
+      ‘BiocGenerics:::replaceSlots’ ‘S4Vectors:::disableValidity’
+      ‘SummarizedExperiment:::.SummarizedExperiment.charbound’
+      See the note in ?`:::` about the use of this operator.
     ```
 
 # pkggraph
@@ -1398,13 +1452,13 @@ Run `revdep_details(, "PhosR")` for more info
 * GitHub: https://github.com/talegari/pkggraph
 * Source code: https://github.com/cran/pkggraph
 * Date/Publication: 2018-11-15 09:50:03 UTC
-* Number of recursive dependencies: 65
+* Number of recursive dependencies: 64
 
 Run `revdep_details(, "pkggraph")` for more info
 
 </details>
 
-## Newly broken
+## In both
 
 *   checking installed package size ... NOTE
     ```
@@ -1417,11 +1471,11 @@ Run `revdep_details(, "pkggraph")` for more info
 
 <details>
 
-* Version: 1.36.0
+* Version: 1.38.0
 * GitHub: NA
 * Source code: https://github.com/cran/predictionet
-* Date/Publication: 2020-10-27
-* Number of recursive dependencies: 38
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 40
 
 Run `revdep_details(, "predictionet")` for more info
 
@@ -1489,11 +1543,11 @@ Run `revdep_details(, "predictionet")` for more info
 
 <details>
 
-* Version: 1.2.0
+* Version: 1.4.0
 * GitHub: NA
 * Source code: https://github.com/cran/PubScore
-* Date/Publication: 2020-11-09
-* Number of recursive dependencies: 127
+* Date/Publication: 2021-05-19
+* Number of recursive dependencies: 129
 
 Run `revdep_details(, "PubScore")` for more info
 
@@ -1527,6 +1581,27 @@ Run `revdep_details(, "PubScore")` for more info
       pub
     ```
 
+# quanteda.textplots
+
+<details>
+
+* Version: 0.94
+* GitHub: https://github.com/quanteda/quanteda.textplots
+* Source code: https://github.com/cran/quanteda.textplots
+* Date/Publication: 2021-04-06 07:30:05 UTC
+* Number of recursive dependencies: 94
+
+Run `revdep_details(, "quanteda.textplots")` for more info
+
+</details>
+
+## In both
+
+*   checking LazyData ... NOTE
+    ```
+      'LazyData' is specified without a 'data' directory
+    ```
+
 # RSiena
 
 <details>
@@ -1535,7 +1610,7 @@ Run `revdep_details(, "PubScore")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/RSiena
 * Date/Publication: 2021-05-10 16:22:15 UTC
-* Number of recursive dependencies: 19
+* Number of recursive dependencies: 21
 
 Run `revdep_details(, "RSiena")` for more info
 
@@ -1545,10 +1620,10 @@ Run `revdep_details(, "RSiena")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 35.1Mb
+      installed size is 20.1Mb
       sub-directories of 1Mb or more:
-        R      1.9Mb
-        libs  32.0Mb
+        R      2.0Mb
+        libs  17.2Mb
     ```
 
 # sand
@@ -1559,7 +1634,7 @@ Run `revdep_details(, "RSiena")` for more info
 * GitHub: https://github.com/kolaczyk/sand
 * Source code: https://github.com/cran/sand
 * Date/Publication: 2020-07-02 07:20:06 UTC
-* Number of recursive dependencies: 156
+* Number of recursive dependencies: 163
 
 Run `revdep_details(, "sand")` for more info
 
@@ -1580,7 +1655,7 @@ Run `revdep_details(, "sand")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/SBICgraph
 * Date/Publication: 2021-03-02 19:10:09 UTC
-* Number of recursive dependencies: 38
+* Number of recursive dependencies: 40
 
 Run `revdep_details(, "SBICgraph")` for more info
 
@@ -1594,6 +1669,11 @@ Run `revdep_details(, "SBICgraph")` for more info
       All declared Imports should be used.
     ```
 
+*   checking LazyData ... NOTE
+    ```
+      'LazyData' is specified without a 'data' directory
+    ```
+
 # sparsebnUtils
 
 <details>
@@ -1602,7 +1682,7 @@ Run `revdep_details(, "SBICgraph")` for more info
 * GitHub: https://github.com/itsrainingdata/sparsebnUtils
 * Source code: https://github.com/cran/sparsebnUtils
 * Date/Publication: 2021-01-27 06:30:02 UTC
-* Number of recursive dependencies: 51
+* Number of recursive dependencies: 75
 
 Run `revdep_details(, "sparsebnUtils")` for more info
 
@@ -1615,6 +1695,69 @@ Run `revdep_details(, "sparsebnUtils")` for more info
     Package unavailable to check Rd xrefs: ‘sparsebn’
     ```
 
+# statnetWeb
+
+<details>
+
+* Version: 0.5.6
+* GitHub: NA
+* Source code: https://github.com/cran/statnetWeb
+* Date/Publication: 2020-08-05 18:00:03 UTC
+* Number of recursive dependencies: 53
+
+Run `revdep_details(, "statnetWeb")` for more info
+
+</details>
+
+## In both
+
+*   checking LazyData ... NOTE
+    ```
+      'LazyData' is specified without a 'data' directory
+    ```
+
+# tergmLite
+
+<details>
+
+* Version: 2.2.1
+* GitHub: NA
+* Source code: https://github.com/cran/tergmLite
+* Date/Publication: 2020-07-22 16:50:03 UTC
+* Number of recursive dependencies: 67
+
+Run `revdep_details(, "tergmLite")` for more info
+
+</details>
+
+## In both
+
+*   checking LazyData ... NOTE
+    ```
+      'LazyData' is specified without a 'data' directory
+    ```
+
+# tidygraph
+
+<details>
+
+* Version: 1.2.0
+* GitHub: https://github.com/thomasp85/tidygraph
+* Source code: https://github.com/cran/tidygraph
+* Date/Publication: 2020-05-12 07:30:03 UTC
+* Number of recursive dependencies: 93
+
+Run `revdep_details(, "tidygraph")` for more info
+
+</details>
+
+## In both
+
+*   checking LazyData ... NOTE
+    ```
+      'LazyData' is specified without a 'data' directory
+    ```
+
 # vivid
 
 <details>
@@ -1623,7 +1766,7 @@ Run `revdep_details(, "sparsebnUtils")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/vivid
 * Date/Publication: 2021-04-09 09:10:02 UTC
-* Number of recursive dependencies: 206
+* Number of recursive dependencies: 205
 
 Run `revdep_details(, "vivid")` for more info
 
