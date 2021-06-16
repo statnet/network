@@ -25,5 +25,3 @@ A set of binaries is built after every commit to the repository. We strongly enc
 * [Windows binary (a `.zip` file in a `.zip` file)](https://nightly.link/statnet/network/workflows/R-CMD-check.yaml/master/Windows-rrelease-binaries.zip)
 
 You will need to extract the MacOS `.tgz` or the Windows `.zip` file from the outer `.zip` file before installing. These binaries are usually built under the latest version of R and their operating system and may not work under other versions.
-
-You may also want to install the corresponding latest binaries for packages on which `network` depends, in particular [`statnet.common`](https://github.com/statnet/statnet.common).
