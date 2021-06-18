@@ -683,7 +683,7 @@ test_that("hyper-edges work", {
   data("emon")
   MtSHloc <- emon$MtStHelens %v% "Location"
   MtSHimat <- cbind(MtSHloc %in% c("L", "B"), MtSHloc %in% c("NL", "B"))
-  MtSHbyloc <- network(MtSHimat, matrix = "incidence", hyper = TRUE,
+  MtSHbyloc <- network(MtSHimat, matrix.type = "incidence", hyper = TRUE,
                        directed = FALSE, loops = TRUE)
   expect_identical(
     as.network(MtSHbyloc_edge_df, directed = FALSE, vertices = MtSHbyloc_vertex_df,
