@@ -1267,8 +1267,8 @@ is.adjacent<-function(x,vi,vj,na.omit=FALSE){
   if(!is.network(x))
     stop("is.adjacent requires an argument of class network.\n")
   if(length(vi)!=length(vj)){
-    vi<-rep(vi,length=max(length(vi),length(vj)))
-    vj<-rep(vj,length=max(length(vi),length(vj)))
+    vi<-rep(vi,length.out=max(length(vi),length(vj)))
+    vj<-rep(vj,length.out=max(length(vi),length(vj)))
   }
   #Do the deed
  .Call(isAdjacent_R,x,vi,vj,na.omit)
@@ -1876,10 +1876,10 @@ permute.vertexIDs<-function(x,vids){
 #     if(!is.vector(value))
 #       stop("Inappropriate edge value given in set.edge.attribute.\n")
 #     else
-#       value<-as.list(rep(value,length=length(e)))
+#       value<-as.list(rep(value,length.out=length(e)))
 #   }else
 #     if(length(value)!=length(e))
-#       value<-rep(value,length=length(e))
+#       value<-rep(value,length.out=length(e))
 #   xn<-deparse(substitute(x))
 #   ev<-parent.frame()
 #   if(length(e)>0){
@@ -1915,11 +1915,11 @@ set.edge.attribute.network <- function(x, attrname, value, e=seq_along(x$mel), .
         if(!is.vector(value)){
           stop("Inappropriate edge value given in set.edge.attribute.\n")
         } else {
-          value<-as.list(rep(value,length=length(e)))
+          value<-as.list(rep(value,length.out=length(e)))
         }
       } else {
         if(length(value)!=length(e)) {
-          value<-rep(value,length=length(e))
+          value<-rep(value,length.out=length(e))
         }
       }
       #Do the deed, call the set single value version
@@ -1936,7 +1936,7 @@ set.edge.attribute.network <- function(x, attrname, value, e=seq_along(x$mel), .
           # replicate each element of value e times if needed
           value<-lapply(1:length(value),function(n){
             if (length(value[n])<length(e)){
-              return(as.list(rep(value[n],length=length(e))))
+              return(as.list(rep(value[n],length.out=length(e))))
             } else {
               return(as.list(value[n]))
             }
@@ -1946,7 +1946,7 @@ set.edge.attribute.network <- function(x, attrname, value, e=seq_along(x$mel), .
         # replicate each element of value e times if needed
         value<-lapply(1:length(value),function(n){
           if (length(value[[n]])<length(e)){
-            return(as.list(rep(value[[n]],length=length(e))))
+            return(as.list(rep(value[[n]],length.out=length(e))))
           } else {
             return(as.list(value[[n]]))
           }
@@ -1986,7 +1986,7 @@ set.edge.value.network <- function(x, attrname, value, e = seq_along(x$mel), ...
   n<-network.size(x)
   if(!is.matrix(value)){
     if(is.vector(value))
-      value<-matrix(rep(value,length=n*n),n,n)
+      value<-matrix(rep(value,length.out=n*n),n,n)
     else
       value<-matrix(value,n,n)
   } else if (min(dim(value)) < n) {
@@ -2018,9 +2018,9 @@ set.network.attribute.network <- function(x, attrname, value, ...) {
     value<-list(value)
   }else{
     if(is.list(value)){
-      value<-rep(value,length=length(attrname))
+      value<-rep(value,length.out=length(attrname))
     }else if(is.vector(value)){
-      value<-as.list(rep(value,length=length(attrname)))
+      value<-as.list(rep(value,length.out=length(attrname)))
     }else
       stop("Non-replicable value with multiple attribute names in set.network.attribute.\n")
   }
@@ -2048,10 +2048,10 @@ set.network.attribute.network <- function(x, attrname, value, ...) {
 #     if(!is.vector(value))
 #       stop("Inappropriate value given in set.vertex.attribute.\n")
 #     else
-#       value<-as.list(rep(value,length=length(v)))
+#       value<-as.list(rep(value,length.out=length(v)))
 #   }else
 #     if(length(value)!=length(v))
-#       value<-rep(value,length=length(v))
+#       value<-rep(value,length.out=length(v))
 #   #Do the deed
 #   xn<-deparse(substitute(x))
 #   ev<-parent.frame()
@@ -2120,11 +2120,11 @@ set.vertex.attribute.network <- function(x, attrname, value, v = seq_len(network
       if(!is.vector(value)){
         stop("Inappropriate value given in set.vertex.attribute.\n")
       } else {
-        value<-as.list(rep(value,length=length(v)))
+        value<-as.list(rep(value,length.out=length(v)))
       }
     } else {
       if(length(value)!=length(v)){
-        value<-rep(value,length=length(v))
+        value<-rep(value,length.out=length(v))
       }
     }
     # call older singular value version
@@ -2141,7 +2141,7 @@ set.vertex.attribute.network <- function(x, attrname, value, v = seq_len(network
         # replicate each element of value v times if needed
         value<-lapply(1:length(value),function(n){
                   if (length(value[n])<length(v)){
-                    return(as.list(rep(value[n],length=length(v))))
+                    return(as.list(rep(value[n],length.out=length(v))))
                   } else {
                     return(as.list(value[n]))
                   }
@@ -2151,7 +2151,7 @@ set.vertex.attribute.network <- function(x, attrname, value, v = seq_len(network
       # replicate each element of value v times if needed
       value<-lapply(1:length(value),function(n){
         if (length(value[[n]])<length(v)){
-          return(as.list(rep(value[[n]],length=length(v))))
+          return(as.list(rep(value[[n]],length.out=length(v))))
         } else {
           return(as.list(value[[n]]))
         }

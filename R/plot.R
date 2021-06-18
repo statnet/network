@@ -139,17 +139,17 @@ network.arrow<-function(x0,y0,x1,y1,length=0.1,angle=20,width=0.01,col=1,border=
 
   #"Stretch" the arguments
   n<-length(x0)
-  angle<-rep(angle,length=n)/360*2*pi
-  length<-rep(length,length=n)
-  width<-rep(width,length=n)
-  col<-rep(col,length=n)
-  border<-rep(border,length=n)
-  lty<-rep(lty,length=n)
-  arrowhead<-rep(arrowhead,length=n)
-  offset.head<-rep(offset.head,length=n)
-  offset.tail<-rep(offset.tail,length=n)
-  curve<-rep(curve,length=n)
-  edge.steps<-rep(edge.steps,length=n)
+  angle<-rep(angle,length.out=n)/360*2*pi
+  length<-rep(length,length.out=n)
+  width<-rep(width,length.out=n)
+  col<-rep(col,length.out=n)
+  border<-rep(border,length.out=n)
+  lty<-rep(lty,length.out=n)
+  arrowhead<-rep(arrowhead,length.out=n)
+  offset.head<-rep(offset.head,length.out=n)
+  offset.tail<-rep(offset.tail,length.out=n)
+  curve<-rep(curve,length.out=n)
+  edge.steps<-rep(edge.steps,length.out=n)
   #Obtain coordinates
   coord<-vector()
   for(i in 1:n)  
@@ -262,15 +262,15 @@ network.loop<-function(x0,y0,length=0.1,angle=10,width=0.01,col=1,border=1,lty=1
 
   #"Stretch" the arguments
   n<-length(x0)
-  angle<-rep(angle,length=n)/360*2*pi
-  length<-rep(length,length=n)
-  width<-rep(width,length=n)
-  col<-rep(col,length=n)
-  border<-rep(border,length=n)
-  lty<-rep(lty,length=n)
-  rad<-rep(radius,length=n)
-  arrowhead<-rep(arrowhead,length=n)
-  offset<-rep(offset,length=n)
+  angle<-rep(angle,length.out=n)/360*2*pi
+  length<-rep(length,length.out=n)
+  width<-rep(width,length.out=n)
+  col<-rep(col,length.out=n)
+  border<-rep(border,length.out=n)
+  lty<-rep(lty,length.out=n)
+  rad<-rep(radius,length.out=n)
+  arrowhead<-rep(arrowhead,length.out=n)
+  offset<-rep(offset,length.out=n)
   #Obtain coordinates
   coord<-vector()
   for(i in 1:n)  
@@ -349,13 +349,13 @@ network.vertex<-function(x,y,radius=1,sides=4,border=1,col=2,lty=NULL,rot=0,lwd=
   
   #Prep the vars
   n<-length(x)
-  radius<-rep(radius,length=n)
-  sides<-rep(sides,length=n)
-  border<-rep(border,length=n)
-  col<-rep(col,length=n)
-  lty<-rep(lty,length=n)
-  rot<-rep(rot,length=n)
-  lwd<-rep(lwd,length=n)
+  radius<-rep(radius,length.out=n)
+  sides<-rep(sides,length.out=n)
+  border<-rep(border,length.out=n)
+  col<-rep(col,length.out=n)
+  lty<-rep(lty,length.out=n)
+  rot<-rep(rot,length.out=n)
+  lwd<-rep(lwd,length.out=n)
   #Obtain the coordinates
   coord<-vector()
   for(i in 1:length(x)) {
@@ -833,7 +833,7 @@ layout.par=NULL,
    # this is done with the plotArgs.network so we can standarize it
    label <-plotArgs.network(x,'label',label)
    vertex.cex <- plotArgs.network(x,'vertex.cex',vertex.cex)
-   vertex.radius <-rep(baserad*vertex.cex,length=n)   #Create vertex radii
+   vertex.radius <-rep(baserad*vertex.cex,length.out=n)   #Create vertex radii
    vertex.sides <- plotArgs.network(x,'vertex.sides',vertex.sides)
    vertex.border <- plotArgs.network(x,'vertex.border',vertex.border)
    vertex.col <- plotArgs.network(x,'vertex.col',vertex.col)
@@ -882,7 +882,7 @@ layout.par=NULL,
            e.curv.as.mult<-TRUE
          else
            e.curv.as.mult<-FALSE
-         edge.curve<-rep(edge.curve,length=NROW(d))
+         edge.curve<-rep(edge.curve,length.out=NROW(d))
        }
      }else if(is.character(edge.curve)&&(length(edge.curve)==1)){
        temp<-edge.curve
@@ -891,7 +891,7 @@ layout.par=NULL,
          stop("Attribute '",temp,"' had illegal missing values for edge.curve or was not present in plot.network.default.")
        e.curv.as.mult<-FALSE
      }else{
-       edge.curve<-rep(0,length=NROW(d))
+       edge.curve<-rep(0,length.out=NROW(d))
        e.curv.as.mult<-FALSE
      }
      # only evaluate edge label stuff if we will draw label
@@ -1195,136 +1195,136 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
       label=if(is.character(label)&(length(label)==1)){
         temp<-label
         if(temp%in%list.vertex.attributes(x)){
-          label <- rep(get.vertex.attribute(x,temp),length=n)
+          label <- rep(get.vertex.attribute(x,temp),length.out=n)
           if(all(is.na(label))){
             stop("Attribute '",temp,"' had illegal missing values for label or was not present in plot.network.default.")
           }
         } else { # didn't match with a vertex attribute, assume we are supposed to replicate it
-          label <- rep(label,length=n)
+          label <- rep(label,length.out=n)
         }
       }else{
-        label <- rep(as.character(label),length=n)
+        label <- rep(as.character(label),length.out=n)
       }
       ,
       # ------ vertex sizes (vertex.cex) --------------------
       vertex.cex=if(is.character(vertex.cex)&(length(vertex.cex)==1)){
         temp<-vertex.cex
-        vertex.cex <- rep(get.vertex.attribute(x,vertex.cex),length=n)
+        vertex.cex <- rep(get.vertex.attribute(x,vertex.cex),length.out=n)
         if(all(is.na(vertex.cex)))
           stop("Attribute '",temp,"' had illegal missing values for vertex.cex or was not present in plot.network.default.")
       }else
-        vertex.cex <- rep(vertex.cex,length=n)
+        vertex.cex <- rep(vertex.cex,length.out=n)
       ,
       # ------ vertex sides (number of sides for polygon) ---------
       vertex.sides=if(is.character(vertex.sides)&&(length(vertex.sides==1))){
         temp<-vertex.sides
-        vertex.sides <- rep(get.vertex.attribute(x,vertex.sides),length=n)
+        vertex.sides <- rep(get.vertex.attribute(x,vertex.sides),length.out=n)
         if(all(is.na(vertex.sides)))
           stop("Attribute '",temp,"' had illegal missing values for vertex.sides or was not present in plot.network.default.")
       }else
-        vertex.sides <- rep(vertex.sides,length=n)
+        vertex.sides <- rep(vertex.sides,length.out=n)
       ,
       # --------- vertex border  --------------------
       vertex.border=if(is.character(vertex.border)&&(length(vertex.border)==1)){
         temp<-vertex.border
-        vertex.border <- rep(get.vertex.attribute(x,vertex.border),length=n)
+        vertex.border <- rep(get.vertex.attribute(x,vertex.border),length.out=n)
         if(all(is.na(vertex.border)))
-          vertex.border <- rep(temp,length=n) #Assume it was a color word
+          vertex.border <- rep(temp,length.out=n) #Assume it was a color word
         else{
           if(!all(is.color(vertex.border),na.rm=TRUE))
             vertex.border<-as.color(vertex.border)
         }
       }else
-        vertex.border <- rep(vertex.border,length=n)
+        vertex.border <- rep(vertex.border,length.out=n)
       ,
       # -------- vertex color ------------------------
       vertex.col=if(is.character(vertex.col)&&(length(vertex.col)==1)){
         temp<-vertex.col
-        vertex.col <- rep(get.vertex.attribute(x,vertex.col),length=n)
+        vertex.col <- rep(get.vertex.attribute(x,vertex.col),length.out=n)
         if(all(is.na(vertex.col)))
-          vertex.col <- rep(temp,length=n) #Assume it was a color word
+          vertex.col <- rep(temp,length.out=n) #Assume it was a color word
         else{
           if(!all(is.color(vertex.col),na.rm=TRUE))
             vertex.col<-as.color(vertex.col)
         }
       }else
-        vertex.col <- rep(vertex.col,length=n)
+        vertex.col <- rep(vertex.col,length.out=n)
       ,
       # ------- vertex line type (vertex.lty) --------------------
       vertex.lty=if(is.character(vertex.lty)&&(length(vertex.lty)==1)){
         temp<-vertex.lty
-        vertex.lty <- rep(get.vertex.attribute(x,vertex.lty),length=n)
+        vertex.lty <- rep(get.vertex.attribute(x,vertex.lty),length.out=n)
         if(all(is.na(vertex.lty)))
           stop("Attribute '",temp,"' had illegal missing values for vertex.col or was not present in plot.network.default.")
       }else
-        vertex.lty <- rep(vertex.lty,length=n)
+        vertex.lty <- rep(vertex.lty,length.out=n)
       ,
       # ------- vertex rotation --------------------------------------
       vertex.rot=if(is.character(vertex.rot)&&(length(vertex.rot)==1)){
         temp<-vertex.rot
-        vertex.rot <- rep(get.vertex.attribute(x,vertex.rot),length=n)
+        vertex.rot <- rep(get.vertex.attribute(x,vertex.rot),length.out=n)
         if(all(is.na(vertex.rot)))
           stop("Attribute '",temp,"' had illegal missing values for vertex.rot or was not present in plot.network.default.")
       }else
-        vertex.rot <- rep(vertex.rot,length=n)
+        vertex.rot <- rep(vertex.rot,length.out=n)
       ,
       # -------- vertex line width --------------------------
       vertex.lwd=if(is.character(vertex.lwd)&&(length(vertex.lwd)==1)){
         temp<-vertex.lwd
-        vertex.lwd <- rep(get.vertex.attribute(x,vertex.lwd),length=n)
+        vertex.lwd <- rep(get.vertex.attribute(x,vertex.lwd),length.out=n)
         if(all(is.na(vertex.lwd)))
           stop("Attribute '",temp,"' had illegal missing values for vertex.lwd or was not present in plot.network.default.")
       }else
-        vertex.lwd <- rep(vertex.lwd,length=n)
+        vertex.lwd <- rep(vertex.lwd,length.out=n)
       ,
       # -------- vertex self-loop size -----------------------
       loop.cex=if(is.character(loop.cex)&&(length(loop.cex)==1)){
         temp<-loop.cex
-        loop.cex <- rep(get.vertex.attribute(x,loop.cex),length=n)
+        loop.cex <- rep(get.vertex.attribute(x,loop.cex),length.out=n)
         if(all(is.na(loop.cex)))
           stop("Attribute ",temp," had illegal missing values for loop.cex or was not present in plot.network.default.")
       }else
-        loop.cex <- rep(loop.cex,length=n)
+        loop.cex <- rep(loop.cex,length.out=n)
       ,
       # ---------  vertex label color -----------------------------
       label.col=if(is.character(label.col)&&(length(label.col)==1)){
         temp<-label.col
-        label.col <- rep(get.vertex.attribute(x,label.col),length=n)
+        label.col <- rep(get.vertex.attribute(x,label.col),length.out=n)
         if(all(is.na(label.col)))
-          label.col <- rep(temp,length=n) #Assume it was a color word
+          label.col <- rep(temp,length.out=n) #Assume it was a color word
         else{
           if(!all(is.color(label.col),na.rm=TRUE))
             label.col<-as.color(label.col)
         }
       }else
-        label.col <- rep(label.col,length=n)
+        label.col <- rep(label.col,length.out=n)
       ,
       # -------- vertex label border ------------------------------
       label.border=if(is.character(label.border)&&(length(label.border)==1)){
         temp<-label.border
-        label.border <- rep(get.vertex.attribute(x,label.border),length=n)
+        label.border <- rep(get.vertex.attribute(x,label.border),length.out=n)
         if(all(is.na(label.border)))
-          label.border <- rep(temp,length=n) #Assume it was a color word
+          label.border <- rep(temp,length.out=n) #Assume it was a color word
         else{
           if(!all(is.color(label.border),na.rm=TRUE))
             label.border<-as.color(label.border)
         }
       }else{
-        label.border <- rep(label.border,length=n)
+        label.border <- rep(label.border,length.out=n)
       }
       ,
       # ------- vertex label border background color ----------------
       label.bg=if(is.character(label.bg)&&(length(label.bg)==1)){
         temp<-label.bg
-        label.bg <- rep(get.vertex.attribute(x,label.bg),length=n)
+        label.bg <- rep(get.vertex.attribute(x,label.bg),length.out=n)
         if(all(is.na(label.bg)))
-          label.bg <- rep(temp,length=n) #Assume it was a color word
+          label.bg <- rep(temp,length.out=n) #Assume it was a color word
         else{
           if(!all(is.color(label.bg),na.rm=TRUE))
             label.bg<-as.color(label.bg)
         }
       }else{
-        label.bg <- rep(label.bg,length=n)
+        label.bg <- rep(label.bg,length.out=n)
       }
       ,
       # ------ Edge color---------
@@ -1338,10 +1338,10 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
           if(!all(is.color(edge.col),na.rm=TRUE))
             edge.col<-as.color(edge.col)
         }else{
-          edge.col<-rep(temp,length=nE)  #Assume it was a color word
+          edge.col<-rep(temp,length.out=nE)  #Assume it was a color word
         }
       }else{
-        edge.col<-rep(edge.col,length=nE)
+        edge.col<-rep(edge.col,length.out=nE)
       }
       ,
       # ----------- Edge line type ------------------
@@ -1353,7 +1353,7 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
         if(all(is.na(edge.lty)))
           stop("Attribute '",temp,"' had illegal missing values for edge.lty or was not present in plot.network.default.")
       }else{
-        edge.lty<-rep(edge.lty,length=nE)
+        edge.lty<-rep(edge.lty,length.out=nE)
       }
       , 
       # ----------- Edge line width ------
@@ -1373,13 +1373,13 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
               edge.lwd<-edge.lwd*d[,3]
             } else {
               # d is missing, so just replicate
-              edge.lwd<-rep(edge.lwd,length=nE)
             } 
+              edge.lwd<-rep(edge.lwd,length.out=nE)
           }else{  # edge is zero or less, so set it to 1
-            edge.lwd<-rep(1,length=nE)
+            edge.lwd<-rep(1,length.out=nE)
           }
         } else { # just replacte for the number of edges
-          edge.lwd<-rep(edge.lwd,length=nE)
+          edge.lwd<-rep(edge.lwd,length.out=nE)
         }
       }
       ,
@@ -1395,7 +1395,7 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
           }else{
             e.curv.as.mult<-FALSE
           }
-          edge.curve<-rep(edge.curve,length=nE)
+          edge.curve<-rep(edge.curve,length.out=nE)
         }
       }else if(is.character(edge.curve)&&(length(edge.curve)==1)){
         temp<-edge.curve
@@ -1405,7 +1405,7 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
         }
         e.curv.as.mult<-FALSE
       }else{
-        edge.curve<-rep(0,length=nE)
+        edge.curve<-rep(0,length.out=nE)
         e.curv.as.mult<-FALSE
       }
       ,
@@ -1418,7 +1418,7 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
         if(!is.null(edge.label)){
           edge.label<-edge.label[edgetouse]
         }else
-          edge.label<-rep(temp,length=nE)  #Assume it was a value to replicate
+          edge.label<-rep(temp,length.out=nE)  #Assume it was a value to replicate
       }else if(is.logical(edge.label)&&(length(edge.label)==1)) {
         if (edge.label){
           # default to edge ids.
@@ -1429,7 +1429,7 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
         }
       }else{   
         # do nothing and hope for the best!
-        edge.label<-rep(edge.label,length=nE)
+        edge.label<-rep(edge.label,length.out=nE)
       }
       ,
       # ------ edge label color --------------------
@@ -1444,9 +1444,9 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
           if(!all(is.color(edge.label.col),na.rm=TRUE))
             edge.label.col<-as.color(edge.label.col)
         }else
-          edge.label.col<-rep(temp,length=nE)  #Assume it was a color word
+          edge.label.col<-rep(temp,length.out=nE)  #Assume it was a color word
       }else{
-        edge.label.col<-rep(edge.label.col,length=nE)
+        edge.label.col<-rep(edge.label.col,length.out=nE)
       }
       ,
       # ------- edge.label.cex  --------------------
@@ -1459,7 +1459,7 @@ plotArgs.network<-function(x,argName, argValue,d=NULL,edgetouse=NULL){
         if(all(is.na(edge.label.cex)))
           stop("Attribute '",temp,"' had illegal missing values for edge.label.cex or was not present in plot.network.default.")
       }else{
-        edge.label.cex<-rep(edge.label.cex,length=nE)
+        edge.label.cex<-rep(edge.label.cex,length.out=nE)
       }
       # case in which none of the argument names match up
       # stop('argument "',argName,'"" does not match with any of the plot.network arguments')
