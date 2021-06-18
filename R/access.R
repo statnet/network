@@ -187,15 +187,15 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
   if(!is.list(tail))
     tail<-as.list(tail)
   if(!is.list(head))
-    head<-as.list(rep(head,length=length(tail)))
+    head<-as.list(rep(head,length.out=length(tail)))
   if(is.null(names.eval))
     names.eval<-replicate(length(tail),NULL)
   else if(!is.list(names.eval))
-    names.eval<-as.list(rep(names.eval,length=length(tail)))
+    names.eval<-as.list(rep(names.eval,length.out=length(tail)))
   if(is.null(vals.eval))
     vals.eval<-replicate(length(tail),NULL)
   else if(!is.list(vals.eval))
-    vals.eval<-as.list(rep(vals.eval,length=length(names.eval)))
+    vals.eval<-as.list(rep(vals.eval,length.out=length(names.eval)))
   if(length(unique(c(length(tail),length(head),length(names.eval), length(vals.eval))))>1)
     stop("head, tail, names.eval and vals.eval lists passed to add.edges must be of the same length!\n")
   edge.check<-list(...)$edge.check
@@ -299,9 +299,9 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
   #Check the vertex attributes, to be sure that they are legal
   if(!is.null(vattr)){
     if(is.list(vattr))
-      vattr<-rep(vattr,length=nv)
+      vattr<-rep(vattr,length.out=nv)
     else
-      vattr<-as.list(rep(vattr,length=nv))
+      vattr<-as.list(rep(vattr,length.out=nv))
   }
   #Perform the addition
   xn<-substitute(x)
