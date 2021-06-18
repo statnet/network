@@ -711,9 +711,9 @@ layout.par=NULL,
      stop("plot.network called on a network of order zero - nothing to plot.")
    #Turn the annoying locator bell off, and remove recursion limit
    bellstate<-options()$locatorBell
-   expstate<-options()$expression
-   on.exit(options(locatorBell=bellstate,expression=expstate))
-   options(locatorBell=FALSE,expression=Inf)
+   expstate<-options()$expressions
+   on.exit(options(locatorBell=bellstate,expressions=expstate))
+   options(locatorBell=FALSE,expressions=500000)
    #Create a useful interval inclusion operator
    "%iin%"<-function(x,int) (x>=int[1])&(x<=int[2])
    #Extract the network to be displayed
