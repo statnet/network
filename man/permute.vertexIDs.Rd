@@ -31,7 +31,7 @@ used in various arcane and ineffable ways.
 }
 \examples{
 
-data(flo)                     #Load the Florentine Families data
+data(flo, package="statnet.data")       #Load the Florentine Families data
 nflo<-network(flo)                      #Create a network object
 n<-network.size(nflo)                #Get the number of vertices
 permute.vertexIDs(nflo,n:1)                #Reverse the vertices

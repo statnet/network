@@ -60,7 +60,7 @@ network, which is not altered by this function.
 \examples{
 
 #Load the Drabek et al. EMON data
-data(emon)
+data(emon, package="statnet.data")
 
 #For the Mt. St. Helens, EMON, several types of organizations are present:
 type<-emon$MtStHelens \%v\% "Sponsorship"

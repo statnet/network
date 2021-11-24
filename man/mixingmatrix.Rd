@@ -83,6 +83,6 @@ reason and will become defunct in future releases of the package.
 \examples{
 # Interaction ties between Lake Pomona SAR organizations by sponsorship type
 # of tie sender and receiver (data from Drabek et al. 1981)
-data(emon)
+data(emon, package="statnet.data")
 mixingmatrix(emon$LakePomona, "Sponsorship")
 }

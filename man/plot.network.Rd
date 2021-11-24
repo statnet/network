@@ -230,7 +230,7 @@ g<-network(m)
 plot(g)
 
 #Load Padgett's marriage data
-data(flo)
+data(flo, package="statnet.data")
 nflo<-network(flo)
 #Display the network, indicating degree and flagging the Medicis
 plot(nflo, vertex.cex=apply(flo,2,sum)+1, usearrows=FALSE,

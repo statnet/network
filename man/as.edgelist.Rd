@@ -110,7 +110,7 @@ network version 1.13
 }
 \examples{
 
-   data(emon)
+   data(emon, package="statnet.data")
    as.edgelist(emon[[1]])
    as.edgelist(emon[[1]],output="tibble")
    # contrast with unsorted columns of
