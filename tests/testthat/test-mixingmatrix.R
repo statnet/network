@@ -12,7 +12,7 @@ test_that("mixingmatrix() just works on a directed network", {
 })
 
 test_that("mixingmatrix() works on emon$Texas (directed)", {
-  data(emon, package="network")
+  data(emon, package="statnet.data")
   a <- get.vertex.attribute(emon$Texas, "Location")
   el <- as.matrix(emon$Texas, matrix.type="edgelist")
   emm <- table(From=a[el[,1]], To=a[el[,2]])

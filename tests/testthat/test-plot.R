@@ -19,7 +19,7 @@ plot(ynet,edge.label='weight',edge.label.col='blue',edge.label.cex='weight')
 plot(ynet,edge.label='weight',edge.label.col='blue',edge.label.cex='weight',usecurve=TRUE)
 plot(ynet,edge.label='weight',edge.label.col='blue',edge.label.cex='weight',usecurve=TRUE,edge.curve=0.5)
 
-data(emon)
+data(emon, package="statnet.data")
 par(mar=c(0,0,0,0))
 plot(emon[[5]],edge.label=TRUE,edge.label.cex=0.6,edge.col='gray',edge.lwd=(emon[[5]]%e%'Frequency')*2)
 

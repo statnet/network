@@ -31,7 +31,7 @@ expect_equal(network.dyadcount(test,na.omit = TRUE),2)
 
 # ----- checks for dyads eids -----
 
-data(emon)
+data(emon, package="statnet.data")
 el<-as.matrix.network.edgelist(emon[[1]])
 expect_equal(get.dyads.eids(emon[[1]],el[,1],el[,2]),as.list(1:83))
 expect_equal(get.dyads.eids(emon[[1]],el[5:10,1],el[5:10,2]),as.list(5:10))

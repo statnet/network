@@ -7,7 +7,7 @@ net<-add.edges(net,1:99999,2:100000)
 set.edge.attribute(net,'LETTERS',LETTERS)
 
 # --- tests for get.induced.subgraph additions --
-data(emon)
+data(emon, package="statnet.data")
 # extract the network of responders in MtStHelens network with interaction Frequency of 4
 subG4<-get.inducedSubgraph(emon$MtStHelens,eid=which(emon$MtStHelens%e%'Frequency'==4))
 if(network.size(subG4)!=24){

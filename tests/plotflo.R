@@ -6,7 +6,7 @@ library(network)
 # attach the sociomatrix for the Florentine marriage data
 # This is not yet a graph object. 
 #
-data(flo)
+data(flo, package="statnet.data")
 #
 # print out the sociomatrix for the Florentine marriage data
 #
@@ -43,7 +43,7 @@ plot(nflo,vertex.col=1+get.vertex.attribute(nflo,"medici"))
 
 # plot the emon St. Helens network, with edge widths proportional
 # to 'Frequency', and edges labeled by their id
-data(emon)
+data(emon, package="statnet.data")
 par(mar=c(0,0,0,0))
 plot(emon[[5]],edge.label=TRUE,edge.label.cex=0.6,
      edge.col='gray',edge.lwd=(emon[[5]]%e%'Frequency')*2)

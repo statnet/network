@@ -3,8 +3,7 @@ set.seed(1702)
 
 results = NULL
 
-data("flo")
-data("emon")
+data("flo", "emon", package="statnet.data")
 
 net <- network.initialize(5)
 net

@@ -680,7 +680,7 @@ test_that("hyper-edges work", {
     vertex.names = 1:27
   )
 
-  data("emon")
+  data("emon", package="statnet.data")
   MtSHloc <- emon$MtStHelens %v% "Location"
   MtSHimat <- cbind(MtSHloc %in% c("L", "B"), MtSHloc %in% c("NL", "B"))
   MtSHbyloc <- network(MtSHimat, matrix = "incidence", hyper = TRUE,
