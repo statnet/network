@@ -167,7 +167,7 @@ mixingmatrix <- function(object, ...) UseMethod("mixingmatrix")
 #' @examples
 #' # Interaction ties between Lake Pomona SAR organizations by sponsorship type
 #' # of tie sender and receiver (data from Drabek et al. 1981)
-#' data(emon)
+#' data(emon, package="statnet.data")
 #' mixingmatrix(emon$LakePomona, "Sponsorship")
 mixingmatrix.network <- function(object, attrname, useNA = "ifany", expand.bipartite=FALSE, ...) {
   nw <- object

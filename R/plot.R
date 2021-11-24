@@ -616,7 +616,7 @@ network.edgelabel<-function(px0,py0,px1,py1,label,directed,loops=FALSE,cex,curve
 #' plot(g)
 #' 
 #' #Load Padgett's marriage data
-#' data(flo)
+#' data(flo, package="statnet.data")
 #' nflo<-network(flo)
 #' #Display the network, indicating degree and flagging the Medicis
 #' plot(nflo, vertex.cex=apply(flo,2,sum)+1, usearrows=FALSE,

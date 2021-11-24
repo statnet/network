@@ -81,7 +81,7 @@ as.edgelist <- function(x, ...){
 #' @seealso See also \code{\link{as.matrix.network.edgelist}}
 #' @examples
 #' 
-#'    data(emon)
+#'    data(emon, package="statnet.data")
 #'    as.edgelist(emon[[1]])
 #'    as.edgelist(emon[[1]],output="tibble")
 #'    # contrast with unsorted columns of

@@ -906,7 +906,7 @@ get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")
 #' @examples
 #' 
 #' #Load the Drabek et al. EMON data
-#' data(emon)
+#' data(emon, package="statnet.data")
 #' 
 #' #For the Mt. St. Helens, EMON, several types of organizations are present:
 #' type<-emon$MtStHelens %v% "Sponsorship"
@@ -1835,7 +1835,7 @@ network.vertex.names<-function(x){
 #' @keywords manip graphs
 #' @examples
 #' 
-#' data(flo)                     #Load the Florentine Families data
+#' data(flo, package="statnet.data")       #Load the Florentine Families data
 #' nflo<-network(flo)                      #Create a network object
 #' n<-network.size(nflo)                #Get the number of vertices
 #' permute.vertexIDs(nflo,n:1)                #Reverse the vertices
