@@ -169,8 +169,7 @@ other related classes, e.g., those of
 In addition to these methods, \code{network} objects can be loaded into \proglang{R} using native tools such as \code{load} (for saved objects) or \code{data} (for packaged data sets).  With respect to the latter, \pkg{network} contains two sample data sets: \code{flo}, John Padgett's Florentine wedding data \citep[from][]{wass:faus1994}; and \code{emon}, a set of interorganizational networks from search and rescue operations collected by \citet{drabek.et.al:bk:1981}.  \code{flo} consists of a single adjacency matrix, and is useful for illustrating the process of converting data from adjacency matrix to \code{network} form.  \code{emon}, on the other hand, consists of a list of seven \code{network} objects with vertex and edge metadata.  \code{emon} is thus especially useful for illustrating the use of \code{network} objects for rich data storage (in addition to being an interesting data set in its own right).  Loading these data sets is as simple as invoking the \code{data} command, like so:
 
 <<>>=
-data("flo")
-data("emon")
+data("flo", "emon", package="statnet.data")
 @
 
 Further information on each of these data sets is given in the \pkg{network} manual.  We shall also use these data sets as illustrative examples at various points within this paper.
