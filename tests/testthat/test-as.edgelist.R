@@ -62,11 +62,11 @@ if(Sys.getenv("_R_CLASS_MATRIX_ARRAY_")==""  & getRversion() < "4.0.0"){
     )
 }
 
-nw <- network.initialize(10, directed = FALSE)
-nw[1,5] <- 1
-nw[1,10] <- 1
+nw <- network.initialize(10L, directed = FALSE)
+nw[1L,5L] <- 1L
+nw[1L,10L] <- 1L
 nw %e% "attr" <- c("a","b")
-expect_identical(as.edgelist(nw), structure(matrix(c(1L,1L,5L,10L), nrow = 2), 
+expect_identical(as.edgelist(nw), structure(matrix(c(1L,1L,5L,10L), nrow = 2L), 
                                             n = 10L, 
                                             vnames = seq_len(10L), 
                                             directed = FALSE, 
@@ -74,7 +74,7 @@ expect_identical(as.edgelist(nw), structure(matrix(c(1L,1L,5L,10L), nrow = 2),
                                             loops = FALSE, 
                                             class = c("matrix_edgelist", "edgelist", "matrix", "array")))
 
-expect_identical(as.edgelist(nw, attrname = "attr"), structure(matrix(c("1","1","5","10","a","b"), nrow = 2), 
+expect_identical(as.edgelist(nw, attrname = "attr"), structure(matrix(c("1","1","5","10","a","b"), nrow = 2L), 
                                                                n = 10L, 
                                                                vnames = seq_len(10L), 
                                                                directed = FALSE, 
@@ -82,9 +82,9 @@ expect_identical(as.edgelist(nw, attrname = "attr"), structure(matrix(c("1","1",
                                                                loops = FALSE, 
                                                                class = c("matrix_edgelist", "edgelist", "matrix", "array")))
 
-nw %n% "bipartite" <- 4
+nw %n% "bipartite" <- 4L
 
-expect_identical(as.edgelist(nw), structure(matrix(c(1L,1L,5L,10L), nrow = 2), 
+expect_identical(as.edgelist(nw), structure(matrix(c(1L,1L,5L,10L), nrow = 2L), 
                                             n = 10L, 
                                             vnames = seq_len(10L), 
                                             directed = FALSE, 
@@ -92,7 +92,7 @@ expect_identical(as.edgelist(nw), structure(matrix(c(1L,1L,5L,10L), nrow = 2),
                                             loops = FALSE, 
                                             class = c("matrix_edgelist", "edgelist", "matrix", "array")))
 
-expect_identical(as.edgelist(nw, attrname = "attr"), structure(matrix(c("1","1","5","10","a","b"), nrow = 2), 
+expect_identical(as.edgelist(nw, attrname = "attr"), structure(matrix(c("1","1","5","10","a","b"), nrow = 2L), 
                                                                n = 10L, 
                                                                vnames = seq_len(10L), 
                                                                directed = FALSE, 
