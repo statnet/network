@@ -22,7 +22,13 @@ get.edges(
   na.omit = TRUE
 )
 
-get.dyads.eids(x, tails, heads, neighborhood = c("out", "in", "combined"))
+get.dyads.eids(
+  x,
+  tails,
+  heads,
+  neighborhood = c("out", "in", "combined"),
+  na.omit = TRUE
+)
 }
 \arguments{
 \item{x}{an object of class \code{network}}
