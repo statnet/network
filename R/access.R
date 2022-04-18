@@ -827,7 +827,7 @@ get.edges<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.
 # as defined by a vector of tails and heads vertex ids
 #' @rdname get.edges
 #' @export get.dyads.eids
-get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")){
+get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined"),na.omit = TRUE){
   if(length(tails)!=length(heads)){
     stop('heads and tails vectors must be the same length for get.dyads.eids')
   }
@@ -839,7 +839,7 @@ get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")
     neighborhood = "combined"
   }
   lapply(seq_along(tails),function(e){
-    eid<-get.edgeIDs(x,v = tails[e],alter=heads[e],neighborhood=neighborhood)
+    eid<-get.edgeIDs(x,v = tails[e],alter=heads[e],neighborhood=neighborhood,na.omit=na.omit)
     if(length(eid)>1){
       eid<-NA
       warning('get.dyads.eids found multiple edge ids for dyad ',tails[e],',',heads[e],' NA will be returned')
