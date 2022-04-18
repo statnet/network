@@ -3,12 +3,18 @@
 \name{deletion.methods}
 \alias{deletion.methods}
 \alias{delete.edges}
+\alias{delete.edges.network}
 \alias{delete.vertices}
+\alias{delete.vertices.network}
 \title{Remove Elements from a Network Object}
 \usage{
-delete.edges(x, eid)
+delete.edges(x, eid, ...)
 
-delete.vertices(x, vid)
+\method{delete.edges}{network}(x, eid, ...)
+
+delete.vertices(x, vid, ...)
+
+\method{delete.vertices}{network}(x, vid, ...)
 }
 \arguments{
 \item{x}{an object of class \code{network}.}

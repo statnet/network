@@ -563,10 +563,13 @@ delete.edge.attribute.network <- function(x, attrname, ...) {
 #' 
 #' @keywords classes graphs
 #' @export
-delete.edges<-function(x,eid){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("delete.edges requires an argument of class network.")
+delete.edges <- function(x, eid, ...) {
+  UseMethod("delete.edges")
+}
+
+#' @rdname deletion.methods
+#' @export
+delete.edges.network <- function(x, eid, ...) {
   xn<-substitute(x)
   if(length(eid)>0){
     #Perform a sanity check
@@ -628,11 +631,14 @@ delete.vertex.attribute.network <- function(x, attrname, ...) {
 # Remove specified vertices (and associated edges) from the network.
 #
 #' @rdname deletion.methods
-#' @export delete.vertices
-delete.vertices<-function(x,vid){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("delete.vertices requires an argument of class network.")
+#' @export
+delete.vertices <- function(x, vid, ...) {
+  UseMethod("delete.vertices")
+}
+
+#' @rdname deletion.methods
+#' @export
+delete.vertices.network <- function(x, vid, ...) {
   #Remove any vids which are out of bounds
   vid<-vid[(vid>0)&(vid<=network.size(x))]
   #Do the deed, if still needed
