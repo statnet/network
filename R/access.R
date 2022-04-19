@@ -2089,12 +2089,14 @@ set.network.attribute.network <- function(x, attrname, value, ...) {
 #' # get the ids of the non-deleted edges
 #' valid.eids(net)
 #' 
-#' @export valid.eids
-valid.eids <-function(x){
-  # maybe should omit class test for speed?
-  if (!is.network(x)){
-    stop("cannot determine non-null edge ids because argument x is not a network object")
-  }
+#' @export
+valid.eids <- function(x, ...) {
+  UseMethod("valid.eids")
+}
+
+#' @rdname valid.eids
+#' @export
+valid.eids.network <- function(x, ...) {
   # get the ids of all the non-null elements on the edgelist of x
   return(which(!sapply(x$mel,is.null)))
 }
@@ -2167,14 +2169,3 @@ set.vertex.attribute.network <- function(x, attrname, value, v = seq_len(network
   }
   invisible(x)
 }
-
-# valid.eids  returns a list of non-null edge ids for a given network
-valid.eids <-function(x){
-  # maybe should omit class test for speed?
-  if (!is.network(x)){
-    stop("cannot determine non-null edge ids because argument x is not a network object")
-  }
-  # get the ids of all the non-null elements on the edgelist of x
-  return(which(!sapply(x$mel,is.null)))
-}
-

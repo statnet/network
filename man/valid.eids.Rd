@@ -2,9 +2,12 @@
 % Please edit documentation in R/access.R
 \name{valid.eids}
 \alias{valid.eids}
+\alias{valid.eids.network}
 \title{Get the ids of all the edges that are valid in a network}
 \usage{
-valid.eids(x)
+valid.eids(x, ...)
+
+\method{valid.eids}{network}(x, ...)
 }
 \arguments{
 \item{x}{a network object, possibly with some deleted edges.}
