@@ -38,7 +38,7 @@ expect_equal(get.dyads.eids(emon[[1]],el[5:10,1],el[5:10,2]),as.list(5:10))
 expect_error(get.dyads.eids(emon[[1]],1,2:3),regexp = 'heads and tails vectors must be the same length')
 expect_error(get.dyads.eids(network.initialize(0),1,2),regexp = 'invalid vertex id in heads or tails vector')
 
-mult<-network.initialize(5,multi=TRUE)
+mult<-network.initialize(5,multiple=TRUE)
 add.edges(mult,1,2)
 add.edges(mult,1,2)
 expect_warning(expect_true(is.na(get.dyads.eids(mult,1,2)[[1]])),regexp = 'multiple edge ids for dyad')

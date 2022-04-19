@@ -321,7 +321,7 @@ out_of_bounds <- function(x, el){
   if(is.matrix(value))
     val<-value[cbind(match(el[,1],sort(unique(el[,1]))), match(el[,2],sort(unique(el[,2]))))]
   else
-    val<-rep(as.vector(value),length=NROW(el))
+    val<-rep(as.vector(value),length.out=NROW(el))
   #Perform the changes
   if(is.null(names.eval)){  #If no names given, don't store values
     for (k in seq_along(val)) {

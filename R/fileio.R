@@ -841,7 +841,7 @@ postProcessProject<-function(
   colnames(vertex) <- c("vertex.numbers","vertex.names","cen1","cen2")[1:ncol(vertex)]
   networks <- vector("list",length=nnetworks)
   if(verbose) print(paste("processing networks:",paste(network.names,collapse=', ')))
-  for(i in seq(along=network.names)){
+  for(i in seq(along.with=network.names)){
     temp <- networksData[[i]]
     isDynamic<-FALSE
     if(!is.null(vertex)){  
@@ -1066,7 +1066,7 @@ read.paj.simplify <- function(x,file,verbose=FALSE)
       "as well as Pajek 'partiton' information.\n",sep=""))
      cat(paste("The collection names are:\n  ",
       paste(cnames,collapse="\n  "),"\n",sep=""))
-     for(i in seq(along=cnames)){
+     for(i in seq(along.with=cnames)){
       thisnet <- x$networks[[i]]
       classthisnet <- class(thisnet)
       if(inherits(thisnet,"network.series") & length(thisnet$networks)==1){
