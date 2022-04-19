@@ -111,10 +111,24 @@ as.edgelist.network <- function(x, attrname = NULL, as.sna.edgelist = FALSE, out
 #' @export as.edgelist.matrix
 #' @export
 as.edgelist.matrix <- function(x, n, directed=TRUE, bipartite=FALSE, loops=FALSE, vnames=seq_len(n),...){
-  if(!directed) x[,1:2] <- cbind(pmin(x[,1],x[,2]),pmax(x[,1],x[,2]))
-  if(!loops) x <- x[x[,1]!=x[,2],,drop=FALSE]
-  if(bipartite) x <- x[(x[,1]<=bipartite)!=(x[,2]<=bipartite),,drop=FALSE]
-  x <- unique(x[order(x[,1],x[,2]),,drop=FALSE])
+  tails <- as.integer(x[,1])
+  heads <- as.integer(x[,2])
+  if(!directed) {
+    tails <- pmin(t <- tails, heads)
+    heads <- pmax(t, heads)
+  }
+  keep <- rep(TRUE, length(tails))
+  if(!loops) {
+    keep <- keep & (tails != heads)
+  }
+  if(bipartite) {
+    keep <- keep & ((tails <= bipartite) != (heads <= bipartite))
+  }
+  x <- x[keep,,drop=FALSE]
+  tails <- tails[keep]
+  heads <- heads[keep]
+  x[,1:2] <- cbind(tails, heads)
+  x <- unique(x[order(tails, heads),,drop=FALSE])
   attr(x,"n") <- as.integer(n)
   attr(x,"vnames")<- vnames
   attr(x,"directed") <- as.logical(directed)

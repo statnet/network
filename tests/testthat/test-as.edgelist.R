@@ -61,3 +61,41 @@ if(Sys.getenv("_R_CLASS_MATRIX_ARRAY_")==""  & getRversion() < "4.0.0"){
     structure(c(1L, 3L, 2L, 4L), .Dim = c(2L, 2L), n = 5, vnames = 1:5, directed = TRUE, bipartite = FALSE, loops = FALSE, class = c("matrix_edgelist", "edgelist", "matrix", "array"))
     )
 }
+
+nw <- network.initialize(10L, directed = FALSE)
+nw[1L,5L] <- 1L
+nw[1L,10L] <- 1L
+nw %e% "attr" <- c("a","b")
+expect_identical(as.edgelist(nw), structure(matrix(c(1L,1L,5L,10L), nrow = 2L), 
+                                            n = 10L, 
+                                            vnames = seq_len(10L), 
+                                            directed = FALSE, 
+                                            bipartite = FALSE, 
+                                            loops = FALSE, 
+                                            class = c("matrix_edgelist", "edgelist", "matrix", "array")))
+
+expect_identical(as.edgelist(nw, attrname = "attr"), structure(matrix(c("1","1","5","10","a","b"), nrow = 2L), 
+                                                               n = 10L, 
+                                                               vnames = seq_len(10L), 
+                                                               directed = FALSE, 
+                                                               bipartite = FALSE, 
+                                                               loops = FALSE, 
+                                                               class = c("matrix_edgelist", "edgelist", "matrix", "array")))
+
+nw %n% "bipartite" <- 4L
+
+expect_identical(as.edgelist(nw), structure(matrix(c(1L,1L,5L,10L), nrow = 2L), 
+                                            n = 10L, 
+                                            vnames = seq_len(10L), 
+                                            directed = FALSE, 
+                                            bipartite = 4L, 
+                                            loops = FALSE, 
+                                            class = c("matrix_edgelist", "edgelist", "matrix", "array")))
+
+expect_identical(as.edgelist(nw, attrname = "attr"), structure(matrix(c("1","1","5","10","a","b"), nrow = 2L), 
+                                                               n = 10L, 
+                                                               vnames = seq_len(10L), 
+                                                               directed = FALSE, 
+                                                               bipartite = 4L, 
+                                                               loops = FALSE, 
+                                                               class = c("matrix_edgelist", "edgelist", "matrix", "array")))
