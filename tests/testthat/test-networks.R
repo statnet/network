@@ -59,3 +59,19 @@ expect_equal(get.dyads.eids(undir,1,2),list(1))
 
 expect_equal(get.dyads.eids(undir,2,1,neighborhood='in'),list(1))
 expect_equal(get.dyads.eids(undir,1,2,neighborhood='in'),list(integer(0)))
+
+nw <- network.initialize(10, directed = FALSE)
+el <- matrix(c(1,2,3,5,2,9,9,10,6,7),ncol=2,byrow=TRUE)
+nw[el]<-1
+expect_identical(get.dyads.eids(nw, el[,1], el[,2], na.omit = FALSE), as.list(seq_len(NROW(el))))
+expect_identical(get.dyads.eids(nw, el[,1], el[,2], na.omit = TRUE), as.list(seq_len(NROW(el))))
+nw[el[2,1],el[2,2]] <- NA
+nw[el[5,1],el[5,2]] <- NA
+expect_identical(get.dyads.eids(nw, el[,1], el[,2], na.omit = FALSE), as.list(seq_len(NROW(el))))
+expect_identical(get.dyads.eids(nw, el[,1], el[,2], na.omit = TRUE), list(1L, integer(0), 3L, 4L, integer(0)))
+delete.edges(nw, 2)
+expect_identical(get.dyads.eids(nw, el[,1], el[,2], na.omit = FALSE), list(1L, integer(0), 3L, 4L, 5L))
+expect_identical(get.dyads.eids(nw, el[,1], el[,2], na.omit = TRUE), list(1L, integer(0), 3L, 4L, integer(0)))
+delete.edges(nw, 3)
+expect_identical(get.dyads.eids(nw, el[,1], el[,2], na.omit = FALSE), list(1L, integer(0), integer(0), 4L, 5L))
+expect_identical(get.dyads.eids(nw, el[,1], el[,2], na.omit = TRUE), list(1L, integer(0), integer(0), 4L, integer(0)))

@@ -563,10 +563,13 @@ delete.edge.attribute.network <- function(x, attrname, ...) {
 #' 
 #' @keywords classes graphs
 #' @export
-delete.edges<-function(x,eid){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("delete.edges requires an argument of class network.")
+delete.edges <- function(x, eid, ...) {
+  UseMethod("delete.edges")
+}
+
+#' @rdname deletion.methods
+#' @export
+delete.edges.network <- function(x, eid, ...) {
   xn<-substitute(x)
   if(length(eid)>0){
     #Perform a sanity check
@@ -628,11 +631,14 @@ delete.vertex.attribute.network <- function(x, attrname, ...) {
 # Remove specified vertices (and associated edges) from the network.
 #
 #' @rdname deletion.methods
-#' @export delete.vertices
-delete.vertices<-function(x,vid){
-  #Check to be sure we were called with a network
-  if(!is.network(x))
-    stop("delete.vertices requires an argument of class network.")
+#' @export
+delete.vertices <- function(x, vid, ...) {
+  UseMethod("delete.vertices")
+}
+
+#' @rdname deletion.methods
+#' @export
+delete.vertices.network <- function(x, vid, ...) {
   #Remove any vids which are out of bounds
   vid<-vid[(vid>0)&(vid<=network.size(x))]
   #Do the deed, if still needed
@@ -827,7 +833,7 @@ get.edges<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.
 # as defined by a vector of tails and heads vertex ids
 #' @rdname get.edges
 #' @export get.dyads.eids
-get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")){
+get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined"),na.omit = TRUE){
   if(length(tails)!=length(heads)){
     stop('heads and tails vectors must be the same length for get.dyads.eids')
   }
@@ -839,7 +845,7 @@ get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")
     neighborhood = "combined"
   }
   lapply(seq_along(tails),function(e){
-    eid<-get.edgeIDs(x,v = tails[e],alter=heads[e],neighborhood=neighborhood)
+    eid<-get.edgeIDs(x,v = tails[e],alter=heads[e],neighborhood=neighborhood,na.omit=na.omit)
     if(length(eid)>1){
       eid<-NA
       warning('get.dyads.eids found multiple edge ids for dyad ',tails[e],',',heads[e],' NA will be returned')
