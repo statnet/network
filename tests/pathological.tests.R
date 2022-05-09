@@ -1,3 +1,5 @@
+if(FALSE){ #Set to TRUE to enable test
+
 library(network)
 if (require(statnet.common,quietly=TRUE)){
 
@@ -26,5 +28,7 @@ if (require(statnet.common,quietly=TRUE)){
     x[,] <- 1
     try(set.edge.value(x,'foo',matrix('bar',5,5)))
   },'Ticket #827','NETWORK_pathology_TESTS')
+
+}
 
 }

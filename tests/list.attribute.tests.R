@@ -1,3 +1,5 @@
+if(FALSE){ #Set to TRUE to enable test
+
 require(network)
 
 # --------- test list.vertex.attributes ---
@@ -59,3 +61,5 @@ net%n%'a_list'<-list(part1=list(c("A","B")),part2=list("c"))
 net%n%'a_desc_vec'<-numeric(rep(100,1))
 net%n%'a_net'<-network.initialize(5)
 print.network(net)
+
+}

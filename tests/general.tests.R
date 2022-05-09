@@ -1,3 +1,5 @@
+if(FALSE){ #Set to TRUE to enable test
+
 #The following battery of tests is intended to verify the functionality of
 #the network library
 
@@ -188,3 +190,4 @@ if(!identical(NULL,get.edge.attribute(net,'nullval',null.na=TRUE))){
   stop("get.edge.attribute not returning NULL values stored as edge attribute correctly")
 }
 
+}

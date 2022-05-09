@@ -1,3 +1,5 @@
+if(FALSE){ #Set to TRUE to enable test
+
 #
 # load the library
 #
@@ -47,3 +49,5 @@ data(emon)
 par(mar=c(0,0,0,0))
 plot(emon[[5]],edge.label=TRUE,edge.label.cex=0.6,
      edge.col='gray',edge.lwd=(emon[[5]]%e%'Frequency')*2)
+
+}

@@ -1,4 +1,6 @@
 CHANGELOG:
+v1.17.2
+  - Deactivated tests to appease CRAN.
 v1.17.1
   - Coercion from an edgelist could fail with a single edge when redundant edges were being removed.
   - Zero-row matrices are now assumed to be empty edgelists when not explicitly specified.  (Before, they just failed.)

@@ -1,3 +1,5 @@
+if(FALSE){ #Set to TRUE to enable test
+
 library(network)
 
 binet = network.initialize(10, bipartite = 6)
@@ -83,4 +85,6 @@ if(!all(valid.eids(net)==c(1,2,3,7,8,9,10,11,12))){
 #If everything worked, check is TRUE
 if(!all(check)){                                               #Should be TRUE
   stop(paste("network package test failed on test(s):",which(!check)))
+}
+
 }
