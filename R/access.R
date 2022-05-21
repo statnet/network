@@ -531,6 +531,7 @@ delete.edge.attribute.network <- function(x, attrname, ...) {
 #' @param x an object of class \code{network}.
 #' @param eid a vector of edge IDs.
 #' @param vid a vector of vertex IDs.
+#' @param ... additional arguments to methods.
 #'   
 #' @return Invisibly, a pointer to the updated network; these functions modify
 #'   their arguments in place.
@@ -2082,6 +2083,7 @@ set.network.attribute.network <- function(x, attrname, value, ...) {
 #' argument.
 #' 
 #' @param x a network object, possibly with some deleted edges.
+#' @param ... additional arguments to methods.
 #' @return a vector of integer ids corresponding to the non-null edges in x
 #' @note If it is known that x has no deleted edges, \code{seq_along(x$mel)} is
 #' a faster way to generate the sequence of possible edge ids.

@@ -21,6 +21,8 @@ delete.vertices(x, vid, ...)
 
 \item{eid}{a vector of edge IDs.}
 
+\item{...}{additional arguments to methods.}
+
 \item{vid}{a vector of vertex IDs.}
 }
 \value{

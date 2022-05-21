@@ -11,6 +11,8 @@ valid.eids(x, ...)
 }
 \arguments{
 \item{x}{a network object, possibly with some deleted edges.}
+
+\item{...}{additional arguments to methods.}
 }
 \value{
 a vector of integer ids corresponding to the non-null edges in x
