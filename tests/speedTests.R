@@ -14,7 +14,6 @@ liste<-system.time(list.edge.attributes(net))[3]
 addmoree<-system.time(add.edge(net,100000,1))[3]
 addmorev<-system.time(add.vertices(net,1))[3]
 
-
 # optionally compare to benchmarks saved in test folder to see if things have changed
 # benchmarks<-rbind(init,setv,getv,listv,adde,sete,gete,liste,addmoree,addmorev)
 # oldmarks<-read.table(file.choose(),header=TRUE,colClasses=c('character','numeric'))
