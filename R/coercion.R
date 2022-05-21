@@ -208,7 +208,7 @@ as.matrix.network.adjacency<-function(x,attrname=NULL,expand.bipartite=FALSE,...
   if(is.bipartite(x)&(!expand.bipartite)){
     nactors <- get.network.attribute(x, "bipartite")
     nevents <- network.size(x) - nactors
-    m <- m[0:nactors, nactors+(1:nevents)]
+    m <- m[1:nactors, nactors+(1:nevents), drop=FALSE]
   }
   #Return the result
   m
