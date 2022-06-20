@@ -4,7 +4,7 @@
 # access.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 03/04/19
+# Last Modified 05/19/22
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -38,7 +38,7 @@ SEXP deleteEdgeAttribute(SEXP x, int e, const char *attrname)
   
   edge=VECTOR_ELT(getListElement(x,"mel"),e-1);
   PROTECT(atl=deleteListElement(getListElement(edge,"atl"),attrname)); pc++;
-  edge=setListElement(edge,"atl",atl);
+  PROTECT(edge=setListElement(edge,"atl",atl)); pc++;
 
   UNPROTECT(pc);
   return x;
@@ -260,21 +260,26 @@ SEXP getNeighborhood(SEXP x, int v, const char *type, int naOmit)
 /*Return a vector containing the first-order vertex neighborhood of v in x, as specified by type.  If naOmit>0, missing edges are discarded; otherwise, they are employed as well.*/
 {
   int pc=0,i,dir;
-  SEXP el,eps,val=R_NilValue;
+  SEXP el,eps,val=R_NilValue,z;
+  PROTECT_INDEX idx;
   
   /*Check for directedness of x*/
   dir=isDirected(x);
   /*Accumulate endpoints from the edge list*/
-  PROTECT(eps=allocVector(INTSXP,0)); pc++;
+  PROTECT_WITH_INDEX(eps=allocVector(INTSXP,0), &idx); pc++;
   if(dir&&(strcmp(type,"in")==0)){                /*In => get tail list*/
     PROTECT(el = getEdges(x,v,0,"in",naOmit)); pc++;
     for(i=0;i<length(el);i++){
-      PROTECT(eps=vecAppend(eps,coerceVector(getListElement(VECTOR_ELT(el,i), "outl"),INTSXP))); pc++;
+      PROTECT(z=coerceVector(getListElement(VECTOR_ELT(el,i), "outl"),INTSXP));
+      REPROTECT(eps=vecAppend(eps,z),idx);
+      UNPROTECT(1);
     }
   }else if(dir&&(strcmp(type,"out")==0)){        /*Out => get head list*/
     PROTECT(el = getEdges(x,v,0,"out",naOmit)); pc++;
     for(i=0;i<length(el);i++){
-      PROTECT(eps=vecAppend(eps,coerceVector(getListElement(VECTOR_ELT(el,i), "inl"),INTSXP))); pc++;
+      PROTECT(z=coerceVector(getListElement(VECTOR_ELT(el,i), "inl"),INTSXP));
+      REPROTECT(eps=vecAppend(eps,z),idx);
+      UNPROTECT(1);
     }
   }else{                                         /*Combined => get both lists*/
     if(!dir){ /*Annoying kludge to deal with getEdges loop issue, part 1*/
@@ -288,24 +293,28 @@ SEXP getNeighborhood(SEXP x, int v, const char *type, int naOmit)
       getEdges).*/
       PROTECT(val=allocVector(LGLSXP,1)); pc++;
       LOGICAL(val)[0]=1;
-      x=setNetworkAttribute(x,"directed",val);  /*Temporarily make directed*/
+      setNetworkAttribute(x,"directed",val);  /*Temporarily make directed*/
     }
     PROTECT(el = getEdges(x,v,0,"in",naOmit)); pc++;
     for(i=0;i<length(el);i++){
-      PROTECT(eps=vecAppend(eps,coerceVector(getListElement(VECTOR_ELT(el,i), "outl"),INTSXP))); pc++;
+      PROTECT(z=coerceVector(getListElement(VECTOR_ELT(el,i), "outl"),INTSXP));
+      REPROTECT(eps=vecAppend(eps,z),idx);
+      UNPROTECT(1);
     }
     PROTECT(el = getEdges(x,v,0,"out",naOmit)); pc++;
     for(i=0;i<length(el);i++){
-      PROTECT(eps=vecAppend(eps,coerceVector(getListElement(VECTOR_ELT(el,i), "inl"),INTSXP))); pc++;
+      PROTECT(z=coerceVector(getListElement(VECTOR_ELT(el,i), "inl"),INTSXP));
+      REPROTECT(eps=vecAppend(eps,z),idx);
+      UNPROTECT(1);
     }
     if(!dir){ /*Annoying kludge to deal with getEdges loop issue, part 2*/
       LOGICAL(val)[0]=0;
-      x=setNetworkAttribute(x,"directed",val);  /*Restore to undirected*/
+      setNetworkAttribute(x,"directed",val);  /*Restore to undirected*/
     }
   }
 
   /*Consolidate the endpoint list*/
-  PROTECT(eps=vecUnique(eps)); pc++;
+  REPROTECT(eps=vecUnique(eps),idx);
 
   /*Unprotect and return*/
   UNPROTECT(pc);
@@ -513,7 +522,7 @@ SEXP setNetworkAttribute(SEXP x, const char *attrname, SEXP value)
   
   gal=getListElement(x,"gal");                       /*Get the gal pointer*/
   PROTECT(gal=setListElement(gal,attrname,value)); pc++;   /*Set attribute*/
-  x=setListElement(x,"gal",gal);                    /*Write new gal into x*/
+  setListElement(x,"gal",gal);                       /*Write new gal into x*/
 
   UNPROTECT(pc);
   return x;
@@ -688,12 +697,12 @@ SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP 
       INTEGER(mnptr)[0]=1;
       gal=getListElement(x,"gal");
       PROTECT(gal=setListElement(gal,"mnext",mnptr)); pc++;
-      x=setListElement(x,"gal",gal);
+      setListElement(x,"gal",gal);
     }else if(!isInteger(mnptr)){         /*If needed, coerce to integer format*/
       PROTECT(mnptr = coerceVector(mnptr, INTSXP)); pc++;
       gal=getListElement(x,"gal");
       PROTECT(gal=setListElement(gal,"mnext",mnptr)); pc++;
-      x=setListElement(x,"gal",gal);
+      setListElement(x,"gal",gal);
     }
     INTEGER(mnptr)[0]=(++mnext);
     /*Rprintf("\tCompleted increment.\n");*/
@@ -703,7 +712,7 @@ SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP 
   }
   
   /*Update mel*/
-  x=setListElement(x,"mel",newmel);
+  setListElement(x,"mel",newmel);
 
   /*Unprotect and return*/
   UNPROTECT(pc);
@@ -766,23 +775,25 @@ SEXP permuteVertexIDs(SEXP x, SEXP vids)
 {
   int i,j,k,pc=0,ccount=0,flag=0;
   char neigh[] = "combined";
-  SEXP eids,cvids,cpos,val,iel,oel,epl,mel,idlist,edge;
-  PROTECT_INDEX ipx;
+  SEXP eids,cvids,cpos,val,iel,oel,epl,mel,idlist,edge,z;
+  PROTECT_INDEX ipx,ipx2,ipx3;
   
   /*Set up the initial variables*/
   PROTECT(vids=coerceVector(vids,INTSXP)); pc++;
   PROTECT(cpos=allocVector(INTSXP,length(vids))); pc++;
   PROTECT(cvids=allocVector(INTSXP,length(vids))); pc++;
   PROTECT_WITH_INDEX(eids=allocVector(INTSXP,0),&ipx); pc++;
-
+  PROTECT_WITH_INDEX(x,&ipx2); pc++;  /*This shouldn't be needed, but rchk is conservative*/
+  
   /*Determine which vertices have moved, and accumulate affected edges*/
   for(i=0;i<networkSize(x);i++)
     if(INTEGER(vids)[i]!=i+1){
       INTEGER(cpos)[ccount]=i+1;                      /*New positions*/
       INTEGER(cvids)[ccount++]=INTEGER(vids)[i];      /*Old positions*/
-      PROTECT(idlist=coerceVector(getEdgeIDs(x,INTEGER(vids)[i],0, neigh,0),INTSXP));
+      PROTECT(z=getEdgeIDs(x,INTEGER(vids)[i],0, neigh,0));
+      PROTECT(idlist=coerceVector(z,INTSXP));
       REPROTECT(eids=vecAppend(eids,idlist),ipx);
-      UNPROTECT(1);
+      UNPROTECT(2);
     }
   PROTECT(cpos=contractList(cpos,ccount)); pc++;    /*Shrink vID lists*/
   PROTECT(cvids=contractList(cvids,ccount)); pc++;
@@ -791,7 +802,7 @@ SEXP permuteVertexIDs(SEXP x, SEXP vids)
   /*For each affected edge, revise vertex IDs as needed*/
   mel=getListElement(x,"mel");
   for(i=0;i<length(eids);i++){
-    edge=VECTOR_ELT(mel,INTEGER(eids)[i]-1);
+    PROTECT_WITH_INDEX(edge=VECTOR_ELT(mel,INTEGER(eids)[i]-1),&ipx3); /*Conservative protection*/
     /*Correct the head list (inl)*/
     epl=getListElement(edge,"inl");
     PROTECT(epl=coerceVector(epl,INTSXP));
@@ -803,7 +814,7 @@ SEXP permuteVertexIDs(SEXP x, SEXP vids)
           flag++;
         }
     }
-    edge=setListElement(edge,"inl",epl);
+    REPROTECT(edge=setListElement(edge,"inl",epl),ipx3);
     /*Correct the tail list (outl)*/
     epl=getListElement(edge,"outl");
     PROTECT(epl=coerceVector(epl,INTSXP));
@@ -815,17 +826,17 @@ SEXP permuteVertexIDs(SEXP x, SEXP vids)
           flag++;
         }
     }
-    edge=setListElement(edge,"outl",epl);
-    UNPROTECT(2);
+    REPROTECT(edge=setListElement(edge,"outl",epl),ipx3);
+    UNPROTECT(3);
   }
 
   /*Now, reorder the vertex properties*/
   PROTECT(val=permuteList(getListElement(x,"val"),vids)); pc++;
   PROTECT(iel=permuteList(getListElement(x,"iel"),vids)); pc++;
   PROTECT(oel=permuteList(getListElement(x,"oel"),vids)); pc++;
-  x=setListElement(x,"val",val);
-  x=setListElement(x,"iel",iel);
-  x=setListElement(x,"oel",oel);
+  REPROTECT(x=setListElement(x,"val",val),ipx2);
+  REPROTECT(x=setListElement(x,"iel",iel),ipx2);
+  REPROTECT(x=setListElement(x,"oel",oel),ipx2);
   /*Unprotect and return*/
   UNPROTECT(pc);
   return x;
@@ -839,9 +850,10 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
   int pc=0,i,j,mnext;
   SEXP el,atl,atlnam,navec,inl,outl,elnam,mel,newmel,oel,iel,ptr,elem,mnptr,gal;
   char buf[64];
+  PROTECT_INDEX idx;
   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++; 
+  PROTECT_WITH_INDEX(x = duplicate(x), &idx); pc++; 
 
   /*Make sure that we can read the head and tail lists*/
   PROTECT(inl = coerceVector(head, INTSXP)); pc++;
@@ -932,7 +944,7 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
   mel=getListElement(x,"mel");
   PROTECT(newmel = enlargeList(mel,1)); pc++;
   SET_VECTOR_ELT(newmel,mnext-1,el);
-  x=setListElement(x,"mel",newmel);
+  REPROTECT(x=setListElement(x,"mel",newmel),idx);
 
   /*Add the edge reference to the outgoing edge lists*/
   /*Rprintf("Adding el to the oels\n");*/
@@ -981,12 +993,12 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
     INTEGER(mnptr)[0]=1;
     gal=getListElement(x,"gal");
     PROTECT(gal=setListElement(gal,"mnext",mnptr)); pc++;
-    x=setListElement(x,"gal",gal);
+    REPROTECT(x=setListElement(x,"gal",gal),idx);
   }else if(!isInteger(mnptr)){         /*If needed, coerce to integer format*/
     PROTECT(mnptr = coerceVector(mnptr, INTSXP)); pc++;
     gal=getListElement(x,"gal");
     PROTECT(gal=setListElement(gal,"mnext",mnptr)); pc++;
-    x=setListElement(x,"gal",gal);
+    REPROTECT(x=setListElement(x,"gal",gal),idx);
   }
   INTEGER(mnptr)[0]=mnext+1;
   /*Rprintf("\tCompleted increment.\n");*/
@@ -1015,9 +1027,10 @@ SEXP addVertices_R(SEXP x, SEXP nv, SEXP vattr)
 {
   int pc=0,n,ninc,i;
   SEXP ns,oel,iel,val,el,atts,newna;
-  
+  PROTECT_INDEX idx;
+   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x), &idx); pc++;
   
   /*Update the network size attribute*/
   PROTECT(nv=coerceVector(nv,INTSXP)); pc++;
@@ -1026,7 +1039,7 @@ SEXP addVertices_R(SEXP x, SEXP nv, SEXP vattr)
   /*Rprintf("Entered addVertices; adding %d vertices, n=%d\n",ninc,n);*/
   PROTECT(ns=allocVector(INTSXP,1)); pc++;
   INTEGER(ns)[0]=n+ninc;
-  x=setNetworkAttribute(x,"n",ns);
+  REPROTECT(x=setNetworkAttribute(x,"n",ns),idx);
 
   /*Add entries to the outgoing/incoming edge lists*/
   PROTECT(iel=enlargeList(getListElement(x,"iel"),ninc)); pc++;
@@ -1037,8 +1050,8 @@ SEXP addVertices_R(SEXP x, SEXP nv, SEXP vattr)
     PROTECT(el=allocVector(INTSXP,0)); pc++;
     SET_VECTOR_ELT(oel,i,el);
   }
-  x=setListElement(x,"iel",iel);
-  x=setListElement(x,"oel",oel);
+  REPROTECT(x=setListElement(x,"iel",iel),idx);
+  REPROTECT(x=setListElement(x,"oel",oel),idx);
   /*Rprintf("\tiel now length %d, oel now length %d\n",length(iel),length(oel));*/
     
   /*Set up the vertex attributes*/
@@ -1061,7 +1074,7 @@ SEXP addVertices_R(SEXP x, SEXP nv, SEXP vattr)
     /*Install the attribute vector*/
     SET_VECTOR_ELT(val,i,atts);
   }
-  x=setListElement(x,"val",val);
+  REPROTECT(x=setListElement(x,"val",val),idx);
 
   /*
   for(i=0;i<networkSize(x);i++){
@@ -1091,9 +1104,10 @@ SEXP deleteEdgeAttribute_R(SEXP x, SEXP attrname)
 {
   int i,j,pc=0,n;
   SEXP anam,mel;
+  PROTECT_INDEX idx;
   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x), &idx); pc++;
   
   /*Remove the attributes....*/
   mel=getListElement(x,"mel");
@@ -1102,7 +1116,7 @@ SEXP deleteEdgeAttribute_R(SEXP x, SEXP attrname)
   for(i=0;i<length(anam);i++)
     for(j=0;j<n;j++)
       if(VECTOR_ELT(mel,j)!=R_NilValue){
-        x=deleteEdgeAttribute(x,j+1,CHAR(STRING_ELT(anam,i)));
+        REPROTECT(x=deleteEdgeAttribute(x,j+1,CHAR(STRING_ELT(anam,i))),idx);
       }
 
   /*Return the result*/
@@ -1136,8 +1150,8 @@ SEXP getEdgeAttribute_R(SEXP el,SEXP attrname,SEXP naomit,SEXP nullna,SEXP delet
       }
       continue;
     }
-    iList = getListElement(iList,"atl");
-    iNames = getAttrib(iList, R_NamesSymbol);
+    PROTECT(iList = getListElement(iList,"atl"));
+    PROTECT(iNames = getAttrib(iList, R_NamesSymbol));
     jLen = length(iList);
     naomVal = FALSE;
     attrVal = R_NilValue;
@@ -1157,6 +1171,7 @@ SEXP getEdgeAttribute_R(SEXP el,SEXP attrname,SEXP naomit,SEXP nullna,SEXP delet
           warning("attribute na is not a logical vector: %d.",TYPEOF(tmp));
       }
     }
+    UNPROTECT(2);
     if (naomVal) continue;
     if (nuna && !attrFound){
       /* allocate return list element of NA */
@@ -1188,11 +1203,12 @@ SEXP deleteEdges_R(SEXP x, SEXP eid)
 /*Removes the edges contained in vector eid from the specified network object.*/
 {
   int pc=0;
+  PROTECT_INDEX idx;
   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x), &idx); pc++;
 
-  x=deleteEdges(x,eid);
+  REPROTECT(x=deleteEdges(x,eid),idx);
 
   UNPROTECT(pc);
 
@@ -1205,14 +1221,15 @@ SEXP deleteNetworkAttribute_R(SEXP x, SEXP attrname)
 {
   int i,pc=0;
   SEXP anam;
+  PROTECT_INDEX idx; 
   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x),&idx); pc++;
   
   /*Remove the attributes....*/
   PROTECT(anam=coerceVector(attrname,STRSXP)); pc++;
   for(i=0;i<length(anam);i++){
-    x=deleteNetworkAttribute(x,CHAR(STRING_ELT(anam,i)));
+    REPROTECT(x=deleteNetworkAttribute(x,CHAR(STRING_ELT(anam,i))),idx);
   }
   
   /*Return the result*/
@@ -1226,16 +1243,17 @@ SEXP deleteVertexAttribute_R(SEXP x, SEXP attrname)
 {
   int i,j,pc=0,n;
   SEXP anam;
+  PROTECT_INDEX idx; 
   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x), &idx); pc++;
   
   /*Remove the attributes....*/
   n=networkSize(x);
   PROTECT(anam=coerceVector(attrname,STRSXP)); pc++;
   for(i=0;i<length(anam);i++)
     for(j=0;j<n;j++){
-      x=deleteVertexAttribute(x,j+1,CHAR(STRING_ELT(anam,i)));
+      REPROTECT(x=deleteVertexAttribute(x,j+1,CHAR(STRING_ELT(anam,i))),idx);
     }
     
   /*Return the result*/
@@ -1250,9 +1268,10 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
   int i,count,pc=0;
   char neigh[]="combined";
   SEXP eids,nord,newsize,val,iel,oel,vid_u;
+  PROTECT_INDEX ipx;
   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x),&ipx); pc++;
   
   /*Coerce vid to integer form, and remove any duplicates*/
   /*Rprintf("Size on entry: %d, length of vid:%d\n",networkSize(x),length(vid));*/
@@ -1266,7 +1285,7 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
     /*Rprintf("\tgetIDs claims %d edges to remove.\n",length(eids));
     if(length(eids)>0)
       Rprintf("\tFirst ID is %d\n",INTEGER(eids)[0]);*/
-    x=deleteEdges(x,eids);
+    REPROTECT(x=deleteEdges(x,eids),ipx);
     UNPROTECT(1);
   }
 
@@ -1279,24 +1298,23 @@ SEXP deleteVertices_R(SEXP x, SEXP vid)
       INTEGER(nord)[count++]=i+1;
   for(i=0;i<length(vid);i++)
     INTEGER(nord)[count+i]=INTEGER(vid)[i];
-  PROTECT(x=permuteVertexIDs(x,nord)); pc++;
+  REPROTECT(x=permuteVertexIDs(x,nord),ipx);
   /*Rprintf("\tPermutation complete\n");*/
   
   /*Update the network size*/
   /*Rprintf("\tUpdating network size\n");*/
   PROTECT(newsize=allocVector(INTSXP,1)); pc++;
   INTEGER(newsize)[0]=networkSize(x)-length(vid);
-  x=setNetworkAttribute(x,"n",newsize);
+  REPROTECT(x=setNetworkAttribute(x,"n",newsize),ipx);
  
   /*Finally, get rid of the old vertices*/
   /*Rprintf("\tContracting vertex lists\n");*/
-  PROTECT(x); pc++;  /*Superfluous PROTECT to shut up rchk*/
   PROTECT(val=contractList(getListElement(x,"val"),INTEGER(newsize)[0])); pc++;
   PROTECT(iel=contractList(getListElement(x,"iel"),INTEGER(newsize)[0])); pc++;
   PROTECT(oel=contractList(getListElement(x,"oel"),INTEGER(newsize)[0])); pc++;
-  x=setListElement(x,"val",val);
-  x=setListElement(x,"iel",iel);
-  x=setListElement(x,"oel",oel);
+  REPROTECT(x=setListElement(x,"val",val),ipx);
+  REPROTECT(x=setListElement(x,"iel",iel),ipx);
+  REPROTECT(x=setListElement(x,"oel",oel),ipx);
   /*Rprintf("Final size: %d, list lengths: %d %d %d\n",networkSize(x), length(val),length(iel),length(oel));*/
 
   /*Unprotect and return*/
@@ -1471,11 +1489,12 @@ SEXP permuteVertexIDs_R(SEXP x, SEXP vids)
 /*Permute the vertices of x according to vids, where vids is a permutation vector; note that permutation is performed in terms of the internal vertex IDs, which correspond to order of storage in val, iel, oel, etc.  This obviously involves a great deal of edge modification, and as such it can be quite time consuming for graphs with many edges!  (OTOH, do note that edges are only modified if they need to be.  Thus, typical complexity will scale with mean degree times the number of switched vertices.)*/
 {
   int pc=0;
-
+  PROTECT_INDEX idx;
+  
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x), &idx); pc++;
 
-  x=permuteVertexIDs(x,vids);
+  REPROTECT(x=permuteVertexIDs(x,vids),idx);
 
   UNPROTECT(pc);
   
@@ -1642,16 +1661,17 @@ SEXP setNetworkAttribute_R(SEXP x, SEXP attrname, SEXP value)
 /*Set the attribute whose name is given by attrname in x to be equal to value.*/
 {
   int i,pc=0;
+  PROTECT_INDEX idx; 
   
   /* force a copy of x to avoid lazy evaluation problems*/
-  PROTECT(x = duplicate(x)); pc++;
+  PROTECT_WITH_INDEX(x = duplicate(x), &idx); pc++;
   
   /*Coerce the attribute names*/
   PROTECT(attrname=coerceVector(attrname,STRSXP)); pc++;
 
   /*Perform the assignment*/
   for(i=0;i<length(attrname);i++)
-    x=setNetworkAttribute(x,CHAR(STRING_ELT(attrname,i)),VECTOR_ELT(value,i));
+    REPROTECT(x=setNetworkAttribute(x,CHAR(STRING_ELT(attrname,i)),VECTOR_ELT(value,i)), idx);
 
   UNPROTECT(pc);
   return x;
