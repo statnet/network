@@ -1,3 +1,6 @@
+#Set to TRUE to run tests
+if(FALSE){
+
 # additional tests of misc network functionality split off from general.tests.R to avoid speed warnings
 library(network)
 
@@ -89,4 +92,7 @@ if(nrow(result4) != 5 & ncol(result4) != 0){
 result5<-as.matrix.network.incidence(network.initialize(0))
 if(nrow(result5) != 0 & ncol(result5) != 0){
   stop('as.matrix.network.incidence did not return matrix with correct dimensions')
+}
+
+#End test
 }

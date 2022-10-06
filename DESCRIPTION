@@ -1,6 +1,6 @@
 Package: network
-Version: 1.17.2-748
-Date: 2022-05-20
+Version: 1.18.0
+Date: 2022-10-05
 Title: Classes for Relational Data
 Authors@R: c(
     person("Carter T.", "Butts", role=c("aut","cre"), email="buttsc@uci.edu"),
@@ -13,16 +13,6 @@ Authors@R: c(
     person("Brendan", "Knapp", role=c("ctb"), email="brendan.g.knapp@gmail.com", comment=c(ORCID="0000-0003-3284-4972")),
     person("Michał", "Bojanowski", role=c("ctb"), email = "michal2992@gmail.com", comment = c(ORCID = "0000-0001-7503-852X")),
     person("Chad", "Klumb", role=c("ctb"), email="cklumb@gmail.com"))
-Author: Carter T. Butts [aut, cre],
-    David Hunter [ctb],
-    Mark Handcock [ctb],
-    Skye Bender-deMoll [ctb],
-    Jeffrey Horner [ctb],
-    Li Wang [ctb],
-    Pavel N. Krivitsky [ctb] (<https://orcid.org/0000-0002-9101-3362>),
-    Brendan Knapp [ctb] (<https://orcid.org/0000-0003-3284-4972>),
-    Michał Bojanowski [ctb],
-    Chad Klumb [ctb]
 Maintainer: Carter T. Butts <buttsc@uci.edu>
 Depends: R (>= 2.10), utils
 Imports: tibble, magrittr, statnet.common (>= 4.5), stats
@@ -32,7 +22,7 @@ Suggests:
     covr
 Description: Tools to create and modify network objects.  The network class can represent a range of relational data types, and supports arbitrary vertex/edge/graph attributes.
 License: GPL (>=2)
-URL: http://statnet.org/
+URL: https://statnet.org/
 RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 Collate:

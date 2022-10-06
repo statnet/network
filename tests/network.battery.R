@@ -1,6 +1,9 @@
 #The following battery of tests is intended to verify the functionality of
 #the network library
 
+#Set to TRUE to run tests
+if(FALSE){
+
 library(network)
 #These functions are intended to mimic functionality from the sna package.
 #Said package is not required to use network, but was used in creating this
@@ -206,4 +209,7 @@ check[81]<-network.edgecount(!nw2)==2 # Should have choose(3,2)-1=2, has 2.
 #If everything worked, check is TRUE
 if(!all(check)){                                               #Should be TRUE
   stop(paste("network package test failed on test(s):",which(!check)))
+}
+
+#End test
 }

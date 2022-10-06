@@ -1,3 +1,6 @@
+#Set to TRUE to run tests
+if(FALSE){
+
 library(network)
 if (require(statnet.common,quietly=TRUE)){
 
@@ -27,4 +30,7 @@ if (require(statnet.common,quietly=TRUE)){
     try(set.edge.value(x,'foo',matrix('bar',5,5)))
   },'Ticket #827','NETWORK_pathology_TESTS')
 
+}
+
+#End tests
 }

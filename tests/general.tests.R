@@ -1,6 +1,9 @@
 #The following battery of tests is intended to verify the functionality of
 #the network library
 
+#Set to TRUE to run tests
+if(FALSE){
+
 library(network)
 
 # ----- check assigning multiple attribute values in a single call ------
@@ -188,3 +191,5 @@ if(!identical(NULL,get.edge.attribute(net,'nullval',null.na=TRUE))){
   stop("get.edge.attribute not returning NULL values stored as edge attribute correctly")
 }
 
+#End tests
+}

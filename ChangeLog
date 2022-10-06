@@ -1,4 +1,8 @@
 CHANGELOG:
+v1.18.0
+  - Many network methods are now S3 generics (to facilitate objects like networkLite).
+  - get.dyads.eids now has an na.omit argument.
+  - Minor bug fixes.
 v1.17.2
   - Deactivated tests to appease CRAN.
   - Modified various protection calls in a hopefully more conservative manner.  This should not produce user-visible changes, but will be cleaner on rchk.

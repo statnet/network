@@ -1,3 +1,5 @@
+#Set to TRUE to run tests
+if(FALSE){
 
 # some really basic speed checks to help us know if we make changes that massively degrade performance
 require(network)
@@ -62,4 +64,7 @@ if(addmoree>5){
 
 if(addmorev>5){
   stop("add.vertices for a network with large number of vertices took longer than expected")
+}
+
+#End tests
 }
