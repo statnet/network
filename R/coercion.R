@@ -268,7 +268,9 @@ as_tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE
   if(is.logical(attrnames) || is.numeric(attrnames))
     attrnames <- na.omit(setdiff(names(df), c(".tail", ".head", ".eid"))[attrnames])
 
+  # Keep only requested columns, but make sure all named columns are present.
   df <- df[intersect(c(".tail", ".head", ".eid", attrnames), names(df))]
+  for(a in setdiff(attrnames, names(df))) df[[a]] <- rep(list(), nrow(df))
 
   attr(df,"n")<-network.size(x)
   attr(df,"vnames")<-network.vertex.names(x)
