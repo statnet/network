@@ -4,7 +4,7 @@
 # access.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 05/19/22
+# Last Modified 01/24/23
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -618,7 +618,7 @@ SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP 
         i=length(atlnam);
         PROTECT(atlnam = enlargeList(atlnam,length(atl)-i)); pc++;
         for(j=i;j<length(atl);j++){
-          sprintf(buf,"%d",j);
+          snprintf(buf,sizeof(buf),"%d",j);
           SET_STRING_ELT(atlnam,j,mkChar(buf));
         }
       }
@@ -905,7 +905,7 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
       i=length(atlnam);
       PROTECT(atlnam = enlargeList(atlnam,length(atl)-i)); pc++;
       for(j=i;j<length(atl);j++){
-        sprintf(buf,"%d",j);
+        snprintf(buf,sizeof(buf),"%d",j);
         SET_STRING_ELT(atlnam,j,mkChar(buf));
       }
     }

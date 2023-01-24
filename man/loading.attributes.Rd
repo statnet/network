@@ -13,7 +13,7 @@ use of the specific network attribute methods such as
 \code{get.vertex.attribute} and \code{set.edge.attribute}.  This document
 gives examples of how to load in and attach attribute data, drawing heavily
 on material from the Sunbelt statnet workshops
-\url{https://github.com/statnet/Workshops/wiki}.
+\url{https://statnet.org/workshops/}.
 
 The examples section below give a quick overview of:
 \itemize{

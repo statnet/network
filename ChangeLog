@@ -1,4 +1,8 @@
 CHANGELOG:
+v1.18.1
+  - Non-visible changes for CRAN compliance.
+  - as.network.data.frame() now handles deleted edges correctly.
+  - as.data.frame.network() can now mimic as_tibble_network() behavior.
 v1.18.0
   - Many network methods are now S3 generics (to facilitate objects like networkLite).
   - get.dyads.eids now has an na.omit argument.
