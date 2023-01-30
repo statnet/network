@@ -43,8 +43,11 @@ network<-function(x, vertex.attr=NULL, vertex.attrnames=NULL,
                 multiple=FALSE, bipartite=FALSE, ...)
 {
   #Initialize the network object
-  g<-as.network(x,directed=directed,hyper=hyper,loops=loops,
-              multiple=multiple,bipartite=bipartite,...)
+  mc <- match.call()
+  mc$vertex.attr <- NULL
+  mc[[1]] <- as.name("as.network")
+  g <- eval.parent(mc)
+
   #Add vertex attributes, if needed
   if(!is.null(vertex.attr)){
     #Create vertex attribute names, if needed
