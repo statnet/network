@@ -1,4 +1,6 @@
 CHANGELOG:
+v1.18.2
+  - Non-visible changes for CRAN compliance.
 v1.18.1
   - Non-visible changes for CRAN compliance.
   - as.network.data.frame() now handles deleted edges correctly.

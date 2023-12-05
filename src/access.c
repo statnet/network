@@ -82,7 +82,7 @@ SEXP getEdgeAttribute(SEXP x, int e, const char *str)
   /*Retrieve the edge, and sound a warning if not present.*/
   el=VECTOR_ELT(getListElement(x,"mel"),e-1);
   if(el==R_NilValue){
-    warning("Attempt to get attribute %s for edge %e failed in getEdgeAttribute: no such edge.\n",str,e);
+    warning("Attempt to get attribute %s for edge %e failed in getEdgeAttribute: no such edge.\n",str,(double)e);
     return R_NilValue;
   }
   
