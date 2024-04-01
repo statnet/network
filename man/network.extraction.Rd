@@ -160,7 +160,7 @@ short forms are more succinct, but may produce less readable code.
 \references{
 Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-\url{https://www.jstatsoft.org/v24/i02/}
+\doi{10.18637/jss.v024.i02}
 }
 \seealso{
 \code{\link{is.adjacent}}, \code{\link{as.sociomatrix}},

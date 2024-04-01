@@ -100,7 +100,7 @@
 #' @seealso \code{\link{plot.network}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' 
 #' Fruchterman, T.M.J. and Reingold, E.M.  (1991).  \dQuote{Graph Drawing by
 #' Force-directed Placement.} \emph{Software - Practice and Experience,}

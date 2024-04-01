@@ -156,7 +156,7 @@ out_of_bounds <- function(x, el){
 #' \code{\link{network.operators}}, and \code{\link{get.inducedSubgraph}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' @keywords graphs manip
 #' @examples
 #' 
@@ -554,7 +554,7 @@ out_of_bounds <- function(x, el){
 #' @seealso \code{\link{network.extraction}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' 
 #' Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods
 #' and Applications.} Cambridge: University of Cambridge Press.
@@ -1292,7 +1292,7 @@ networkOperatorSetup<-function(x,y=NULL){
 #' @seealso \code{\link{network.operators}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' @keywords arith graphs
 #' @examples
 #' 
@@ -1357,7 +1357,7 @@ prod.network<-function(..., attrname=NULL, na.rm=FALSE){
 #' @seealso \code{\link{network.operators}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' @keywords arith graphs
 #' @examples
 #' 

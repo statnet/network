@@ -99,7 +99,7 @@
 #' \code{\link{network.extraction}},\code{\link{as.edgelist}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -375,7 +375,7 @@ as.network<-function(x,...)
 #' \code{\link{which.matrix.type}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' @keywords classes graphs
 #' @examples
 #' 
@@ -560,7 +560,7 @@ as.network.matrix<-function(x, matrix.type=NULL,
 #' @seealso \code{\link{as.matrix.network}}, \code{\link{network}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' @keywords graphs manip
 #' @examples
 #' 

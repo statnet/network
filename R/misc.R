@@ -354,7 +354,7 @@ print.mixingmatrix <- function(x, ...) {
 #' @seealso \code{\link{network.edgecount}}, \code{\link{network.size}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' 
 #' Wasserman, S. and Faust, K.  (1994).  \emph{Social Network Analysis: Methods
 #' and Applications.} Cambridge: Cambridge University Press.
@@ -519,7 +519,7 @@ is.discrete<-function(x){
 #' @seealso \code{\link{as.matrix.network}}, \code{\link{as.network.matrix}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' @keywords graphs
 #' @examples
 #' 

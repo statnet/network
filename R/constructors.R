@@ -119,7 +119,7 @@ network<-function(x, vertex.attr=NULL, vertex.attrnames=NULL,
 #' 
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing 
 #'   Relational Data in R.}  \emph{Journal of Statistical Software}, 24(2).  
-#'   \url{https://www.jstatsoft.org/v24/i02/}
+#'   \doi{10.18637/jss.v024.i02}
 #'
 #' @author Carter T. Butts \email{buttsc@uci.edu} and David Hunter 
 #'   \email{dhunter@stat.psu.edu}
@@ -432,7 +432,7 @@ network.incidence<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
 #' @seealso \code{\link{network}}, \code{\link{as.network.matrix}}
 #' @references Butts, C. T.  (2008).  \dQuote{network: a Package for Managing
 #' Relational Data in R.} \emph{Journal of Statistical Software}, 24(2).
-#' \url{https://www.jstatsoft.org/v24/i02/}
+#' \doi{10.18637/jss.v024.i02}
 #' @keywords classes graphs
 #' @examples
 #' 
