@@ -23,7 +23,7 @@ Suggests:
 Description: Tools to create and modify network objects.  The network class can represent a range of relational data types, and supports arbitrary vertex/edge/graph attributes.
 License: GPL (>=2)
 URL: https://statnet.org/
-RoxygenNote: 7.2.0
+RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE)
 Collate:
     'access.R'

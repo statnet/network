@@ -95,6 +95,13 @@ which.matrix.type       Heuristic Determination of Matrix Types for
                         Network Storage
 }
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://statnet.org/}
+}
+
+}
 \author{
 Carter T. Butts \href{mailto:buttsc@uci.edu}{buttsc@uci.edu}, with help from Mark S. Handcock
 \href{mailto:handcock@stat.ucla.edu}{handcock@stat.ucla.edu}, David Hunter \href{mailto:dhunter@stat.psu.edu}{dhunter@stat.psu.edu}, Martina

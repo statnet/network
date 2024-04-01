@@ -148,7 +148,7 @@ NULL
 #' \code{get.vertex.attribute} and \code{set.edge.attribute}.  This document
 #' gives examples of how to load in and attach attribute data, drawing heavily
 #' on material from the Sunbelt statnet workshops
-#' \url{https://github.com/statnet/Workshops/wiki}.
+#' \url{https://statnet.org/workshops/}.
 #' 
 #' The examples section below give a quick overview of: 
 #' \itemize{
@@ -441,8 +441,6 @@ NULL
 #' }
 #' 
 #' 
-#' @name network-package
-#' @docType package
 #' @author Carter T. Butts <buttsc@@uci.edu>, with help from Mark S. Handcock
 #' <handcock@@stat.ucla.edu>, David Hunter <dhunter@@stat.psu.edu>, Martina
 #' Morris <morrism@@u.washington.edu>, Skye Bender-deMoll
@@ -451,7 +449,7 @@ NULL
 #' 
 #' Maintainer: Carter T. Butts <buttsc@@uci.edu>
 #' @keywords package
-NULL
+"_PACKAGE"
 
 
 
