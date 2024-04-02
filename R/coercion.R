@@ -272,12 +272,10 @@ as_tibble.network<-function(x,attrnames=(match.arg(unit)=="vertices"),na.rm=TRUE
   df <- df[intersect(c(".tail", ".head", ".eid", attrnames), names(df))]
   for(a in setdiff(attrnames, names(df))) df[[a]] <- rep(list(), nrow(df))
 
-  attr(df,"n")<-network.size(x)
-  attr(df,"vnames")<-network.vertex.names(x)
-  if(is.bipartite(x))
-    attr(df,"bipartite")<-x%n%"bipartite"
-
-  as_tibble(df)
+  structure(as_tibble(df),
+            n = network.size(x),
+            vnames = network.vertex.names(x),
+            bipartite = x %n% "bipartite")
 }
 
 #' @rdname as.matrix.network
