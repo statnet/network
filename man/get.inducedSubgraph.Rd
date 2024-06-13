@@ -2,15 +2,20 @@
 % Please edit documentation in R/access.R, R/operators.R
 \name{get.inducedSubgraph}
 \alias{get.inducedSubgraph}
+\alias{get.inducedSubgraph.network}
 \alias{\%s\%}
 \title{Retrieve Induced Subgraphs and Cuts}
 \usage{
-get.inducedSubgraph(x, v, alters = NULL, eid = NULL)
+get.inducedSubgraph(x, ...)
+
+\method{get.inducedSubgraph}{network}(x, v, alters = NULL, eid = NULL, ...)
 
 x \%s\% v
 }
 \arguments{
 \item{x}{an object of class \code{network}.}
+
+\item{...}{additional arguments for methods.}
 
 \item{v}{a vector of vertex IDs, or, for \code{\%s\%}, optionally a list containing two disjoint vectors of vertex IDs (see below).}
 

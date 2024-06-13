@@ -906,6 +906,8 @@ get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")
 #' @param eid optionally, a numeric vector of valid edge ids in \code{x} that
 #' should be retained (cannot be used with \code{v} or \code{alter})
 #'
+#' @param ... additional arguments for methods.
+#'
 #' @return A \code{\link{network}} object containing the induced subgraph.
 #' @author Carter T. Butts \email{buttsc@@uci.edu}
 #' @seealso \code{\link{network}}, \code{\link{network.extraction}}
@@ -936,7 +938,13 @@ get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")
 #' 
 #' 
 #' @export get.inducedSubgraph
-get.inducedSubgraph<-function(x, v, alters=NULL, eid=NULL){
+get.inducedSubgraph <- function(x, ...) {
+  UseMethod("get.inducedSubgraph")
+}
+
+#' @rdname get.inducedSubgraph
+#' @export
+get.inducedSubgraph.network <- function(x, v, alters=NULL, eid=NULL, ...){
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("get.inducedSubgraph requires an argument of class network.")
