@@ -28,7 +28,6 @@ Roxygen: list(markdown = TRUE)
 Collate:
     'access.R'
     'as.edgelist.R'
-    'assignment.R'
     'coercion.R'
     'constructors.R'
     'dataframe.R'

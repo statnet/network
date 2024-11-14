@@ -149,9 +149,7 @@ add.edge <- function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=
 #' @export
 add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){ 
   xn<-substitute(x)
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   x<-.Call(addEdge_R,x,tail,head,names.eval,vals.eval,edge.check)
   invisible(x)
 }
@@ -161,7 +159,6 @@ add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.
 #' @rdname add.edges
 #' @export add.edges
 add.edges <- function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...) UseMethod("add.edges")
-
 
 # Add multiple edges to network x.  Tail must be a list, each element of
 # which is the tail set for a given edge (ditto for head).  If edge values
@@ -190,9 +187,7 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
   #Pass the inputs to the C side
   xn<-substitute(x)
   x<-.Call(addEdges_R,x,tail,head,names.eval,vals.eval,edge.check)
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   invisible(x)
 }
 
@@ -285,9 +280,7 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
   #Perform the addition
   xn<-substitute(x)
   if(nv>0){
-    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-      on.exit(eval.parent(call('<-',xn,x)))
-    }
+    on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
     if(last.mode||(!is.bipartite(x))){
       x<-.Call(addVertices_R,x,nv,vattr)
     }else{
@@ -472,9 +465,7 @@ delete.edge.attribute.network <- function(x, attrname, ...) {
   #Remove the edges
   xn<-substitute(x)
   x<-.Call(deleteEdgeAttribute_R,x,attrname)
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   invisible(x)
 }
  
@@ -553,9 +544,7 @@ delete.edges.network <- function(x, eid, ...) {
       stop("Illegal edge in delete.edges.\n")
     #Remove the edges
     x<-.Call(deleteEdges_R,x,eid)
-    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-      on.exit(eval.parent(call('<-',xn,x)))
-    }
+    on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   }
   invisible(x)
 }
@@ -572,9 +561,7 @@ delete.network.attribute.network <- function(x, attrname, ...){
   #Remove the edges
   xn<-substitute(x)
   x<-.Call(deleteNetworkAttribute_R,x,attrname)
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   invisible(x)
 }
 
@@ -592,9 +579,7 @@ delete.vertex.attribute.network <- function(x, attrname, ...) {
   if(network.size(x)>0){
     xn<-substitute(x)
     x<-.Call(deleteVertexAttribute_R,x,attrname)
-    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-      on.exit(eval.parent(call('<-',xn,x)))
-    }
+    on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   }
   invisible(x)
 }
@@ -619,9 +604,7 @@ delete.vertices.network <- function(x, vid, ...) {
       set.network.attribute(x,"bipartite",m1v-sum(vid<=m1v))
     }
     x<-.Call(deleteVertices_R,x,vid)
-    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-      on.exit(eval.parent(call('<-',xn,x)))
-    }
+    on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   }
   invisible(x)
 }
@@ -1833,9 +1816,7 @@ permute.vertexIDs.network <- function(x, vids, ...) {
   #Return the permuted graph
   xn<-substitute(x)
   x<-.Call(permuteVertexIDs_R,x,vids)
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   invisible(x)
 }
 
@@ -1929,9 +1910,7 @@ set.edge.attribute.network <- function(x, attrname, value, e=seq_along(x$mel), .
       #Do the deed, call the set multiple version
       x<-.Call(setEdgeAttributes_R,x,attrname,value,e)
     }
-    if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-      on.exit(eval.parent(call('<-',xn,x)))
-    }
+    on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   }
   invisible(x)
 }
@@ -1966,9 +1945,7 @@ set.edge.value.network <- function(x, attrname, value, e = seq_along(x$mel), ...
   #Do the deed
   xn<-substitute(x)
   x<-.Call(setEdgeValue_R,x,attrname,value,e)
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   invisible(x)
 }
 
@@ -1996,9 +1973,7 @@ set.network.attribute.network <- function(x, attrname, value, ...) {
   #Do the deed
   xn<-substitute(x)
   x<-.Call(setNetworkAttribute_R,x,attrname,value)
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   invisible(x)
 }
 
@@ -2130,8 +2105,6 @@ set.vertex.attribute.network <- function(x, attrname, value, v = seq_len(network
   } # end setting multiple values
   #Do the deed
   
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',xn,x)),error=identity))
   invisible(x)
 }

@@ -203,9 +203,7 @@ network.bipartite<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
     add.edges(g, as.list(1+e%%n), as.list(1+e%/%n),
               names.eval=en, vals.eval=ev, ...)
   #Patch up g on exit for in-place modification
-  if(.validLHS(gn,parent.frame())){
-    on.exit(eval.parent(call('<-',gn,g)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',gn,g)),error=identity))
   invisible(g)
 }
 
@@ -276,9 +274,7 @@ network.adjacency<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
     add.edges(g, as.list(1+e%%n), as.list(1+e%/%n),
               names.eval=en, vals.eval=ev, ...)
   #Patch up g on exit for in-place modification
-  if(.validLHS(gn,parent.frame())){
-    on.exit(eval.parent(call('<-',gn,g)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',gn,g)),error=identity))
   invisible(g)
 }
 
@@ -342,9 +338,7 @@ network.edgelist<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
     g<-add.edges(g,as.list(x[,1]),as.list(x[,2]),edge.check=edge.check)
   }
   #Patch up g on exit for in-place modification
-  if(.validLHS(gn,parent.frame())){
-    on.exit(eval.parent(call('<-',gn,g)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',gn,g)),error=identity))
   invisible(g)
 }
 
@@ -398,9 +392,7 @@ network.incidence<-function(x, g, ignore.eval=TRUE, names.eval=NULL, ...){
     g<-add.edge(g,tail,head,names.eval=en,vals.eval=ev,edge.check=edge.check)
   }
   #Patch up g on exit for in-place modification
-  if(.validLHS(gn,parent.frame())){
-    on.exit(eval.parent(call('<-',gn,g)))
-  }
+  on.exit(tryCatch(eval.parent(call('<-',gn,g)),error=identity))
   invisible(g)
 }
 
