@@ -143,14 +143,7 @@
 #' 
 #' 
 #' @export
-add.edge<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...){
-  xn<-substitute(x)
-  UseMethod("add.edge") 
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
-  invisible(x) 
-} 
+add.edge <- function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.check=FALSE, ...) UseMethod("add.edge")
 
 #' @export add.edge.network
 #' @export
@@ -167,14 +160,7 @@ add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.
 
 #' @rdname add.edges
 #' @export add.edges
-add.edges<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...){
-  xn<-substitute(x)
-  UseMethod("add.edges") 
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
-  invisible(x) 
-} 
+add.edges <- function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...) UseMethod("add.edges")
 
 
 # Add multiple edges to network x.  Tail must be a list, each element of
@@ -278,14 +264,7 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
 #' get.network.attribute(bip,'bipartite')
 #' 
 #' @export add.vertices
-add.vertices<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
-  xn<-substitute(x)
-  UseMethod("add.vertices") 
-  if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
-    on.exit(eval.parent(call('<-',xn,x)))
-  }
-  invisible(x) 
-}
+add.vertices <- function(x, nv, vattr=NULL, last.mode=TRUE, ...) UseMethod("add.vertices")
 
 # Add nv vertices to network x.  Vertex attributes (in addition to those which
 # are required) are to be provided in vattr; vattr must be a list containing
@@ -485,9 +464,7 @@ add.vertices.network<-function(x, nv, vattr=NULL, last.mode=TRUE, ...){
 #' 
 #' @keywords classes graphs
 #' @export delete.edge.attribute
-delete.edge.attribute <- function(x, attrname, ...) {
-  UseMethod("delete.edge.attribute")
-}
+delete.edge.attribute <- function(x, attrname, ...) UseMethod("delete.edge.attribute")
 
 #' @rdname attribute.methods
 #' @export
@@ -564,9 +541,7 @@ delete.edge.attribute.network <- function(x, attrname, ...) {
 #' 
 #' @keywords classes graphs
 #' @export
-delete.edges <- function(x, eid, ...) {
-  UseMethod("delete.edges")
-}
+delete.edges <- function(x, eid, ...) UseMethod("delete.edges")
 
 #' @rdname deletion.methods
 #' @export
@@ -589,9 +564,7 @@ delete.edges.network <- function(x, eid, ...) {
 #
 #' @rdname attribute.methods
 #' @export
-delete.network.attribute <- function(x, attrname, ...) {
-  UseMethod("delete.network.attribute")
-}
+delete.network.attribute <- function(x, attrname, ...) UseMethod("delete.network.attribute")
 
 #' @rdname attribute.methods
 #' @export
@@ -610,9 +583,7 @@ delete.network.attribute.network <- function(x, attrname, ...){
 #
 #' @rdname attribute.methods
 #' @export
-delete.vertex.attribute <- function(x, attrname, ...) {
-  UseMethod("delete.vertex.attribute")
-}
+delete.vertex.attribute <- function(x, attrname, ...) UseMethod("delete.vertex.attribute")
 
 #' @rdname attribute.methods
 #' @export
@@ -633,9 +604,7 @@ delete.vertex.attribute.network <- function(x, attrname, ...) {
 #
 #' @rdname deletion.methods
 #' @export
-delete.vertices <- function(x, vid, ...) {
-  UseMethod("delete.vertices")
-}
+delete.vertices <- function(x, vid, ...) UseMethod("delete.vertices")
 
 #' @rdname deletion.methods
 #' @export
@@ -708,9 +677,7 @@ get.edge.attribute.list <- get.edge.attribute.network
 #
 #' @rdname attribute.methods
 #' @export
-get.edge.value <- function(x, ...) {
-  UseMethod("get.edge.value")
-}
+get.edge.value <- function(x, ...) UseMethod("get.edge.value")
 
 #' @rdname attribute.methods
 #' @export
@@ -938,9 +905,7 @@ get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")
 #' 
 #' 
 #' @export get.inducedSubgraph
-get.inducedSubgraph <- function(x, ...) {
-  UseMethod("get.inducedSubgraph")
-}
+get.inducedSubgraph <- function(x, ...) UseMethod("get.inducedSubgraph")
 
 #' @rdname get.inducedSubgraph
 #' @export
@@ -1029,9 +994,7 @@ get.inducedSubgraph.network <- function(x, v, alters=NULL, eid=NULL, ...){
 #
 #' @rdname attribute.methods
 #' @export
-get.network.attribute <- function(x, ...) {
-  UseMethod("get.network.attribute")
-}
+get.network.attribute <- function(x, ...) UseMethod("get.network.attribute")
 
 #' @rdname attribute.methods
 #' @export
@@ -1107,9 +1070,7 @@ get.neighborhood<-function(x, v, type=c("out","in","combined"), na.omit=TRUE){
 # 
 #' @rdname attribute.methods
 #' @export
-get.vertex.attribute <- function(x, ...) {
-  UseMethod("get.vertex.attribute")
-}
+get.vertex.attribute <- function(x, ...) UseMethod("get.vertex.attribute")
 
 #' @rdname attribute.methods
 #' @export
@@ -1534,9 +1495,7 @@ is.network<-function(x){
 #
 #' @rdname attribute.methods
 #' @export
-list.edge.attributes <- function(x, ...) {
-  UseMethod("list.edge.attributes")
-}
+list.edge.attributes <- function(x, ...) UseMethod("list.edge.attributes")
 
 #' @rdname attribute.methods
 #' @export
@@ -1554,9 +1513,7 @@ list.edge.attributes.network <- function(x, ...) {
 #
 #' @rdname attribute.methods
 #' @export
-list.network.attributes <- function(x, ...) {
-  UseMethod("list.network.attributes")
-}
+list.network.attributes <- function(x, ...) UseMethod("list.network.attributes")
 
 #' @rdname attribute.methods
 #' @export
@@ -1570,9 +1527,7 @@ list.network.attributes.network <- function(x, ...) {
 #
 #' @rdname attribute.methods
 #' @export
-list.vertex.attributes <- function(x, ...) {
-  UseMethod("list.vertex.attributes")
-}
+list.vertex.attributes <- function(x, ...) UseMethod("list.vertex.attributes")
 
 #' @rdname attribute.methods
 #' @export
@@ -1910,9 +1865,7 @@ permute.vertexIDs<-function(x,vids){
 # }
 #' @rdname attribute.methods
 #' @export
-set.edge.attribute <- function(x, attrname, value, e, ...) {
-  UseMethod("set.edge.attribute")
-}
+set.edge.attribute <- function(x, attrname, value, e, ...) UseMethod("set.edge.attribute")
 
 #' @rdname attribute.methods
 #' @export
@@ -1983,9 +1936,7 @@ set.edge.attribute.network <- function(x, attrname, value, e=seq_along(x$mel), .
 #
 #' @rdname attribute.methods
 #' @export
-set.edge.value <- function(x, attrname, value, e, ...) {
-  UseMethod("set.edge.value")
-}
+set.edge.value <- function(x, attrname, value, e, ...) UseMethod("set.edge.value")
 
 #' @rdname attribute.methods
 #' @export
@@ -2021,9 +1972,7 @@ set.edge.value.network <- function(x, attrname, value, e = seq_along(x$mel), ...
 #
 #' @rdname attribute.methods
 #' @export
-set.network.attribute <- function(x, attrname, value, ...) {
-  UseMethod("set.network.attribute")
-}
+set.network.attribute <- function(x, attrname, value, ...) UseMethod("set.network.attribute")
 
 #' @rdname attribute.methods
 #' @export
@@ -2106,9 +2055,7 @@ set.network.attribute.network <- function(x, attrname, value, ...) {
 #' valid.eids(net)
 #' 
 #' @export
-valid.eids <- function(x, ...) {
-  UseMethod("valid.eids")
-}
+valid.eids <- function(x, ...) UseMethod("valid.eids")
 
 #' @rdname valid.eids
 #' @export
@@ -2119,9 +2066,7 @@ valid.eids.network <- function(x, ...) {
 
 #' @rdname attribute.methods
 #' @export
-set.vertex.attribute <- function(x, attrname, value, v = seq_len(network.size(x)), ...) {
-  UseMethod("set.vertex.attribute")
-}
+set.vertex.attribute <- function(x, attrname, value, v = seq_len(network.size(x)), ...) UseMethod("set.vertex.attribute")
 
 #' @rdname attribute.methods
 #' @export
