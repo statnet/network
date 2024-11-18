@@ -21,8 +21,6 @@ networkOperatorSetup(x, y = NULL)
 network.}
 
 \item{y}{a network or something coercible to one.}
-
-\item{\dots}{further arguments passed to or used by methods.}
 }
 \description{
 Internal network functions.

@@ -468,7 +468,6 @@ is.color<-function(x){
 #' @param x an object to be designated either discrete or continuous, or a
 #' network.
 #' @param y a network or something coercible to one.
-#' @param \dots further arguments passed to or used by methods.
 #' 
 #' @seealso network
 #' 
