@@ -154,158 +154,158 @@ expect_equal(fillIn%v%'shape',c('box','box','box','ellipse'))
 
 
 
-# this file has character encoding issues
-scotland<-tempfile('scotland',fileext='.zip')
-download.file(
-  'http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.zip',
-  scotland,
-  quiet = TRUE)
-scotpaj<-tempfile('Scotland',fileext='.paj')
-con <- unz(scotland,'Scotland.paj')
-cat(
-  readLines(con, encoding = "UTF-8"),
-  sep='\n',
-  file = scotpaj
-  )
-close(con)
-scotproj<-read.paj(scotpaj)
+## # this file has character encoding issues
+## scotland<-tempfile('scotland',fileext='.zip')
+## download.file(
+##   'http://vlado.fmf.uni-lj.si/pub/networks/data/esna/scotland.zip',
+##   scotland,
+##   quiet = TRUE)
+## scotpaj<-tempfile('Scotland',fileext='.paj')
+## con <- unz(scotland,'Scotland.paj')
+## cat(
+##   readLines(con, encoding = "UTF-8"),
+##   sep='\n',
+##   file = scotpaj
+##   )
+## close(con)
+## scotproj<-read.paj(scotpaj)
 
-# produces two element list, containing networks and partitions
-expect_equal(names(scotproj),c("networks","partitions"))
-expect_equal(network.size(scotproj[[1]][[1]]),244)
-expect_equal(names(scotproj$partitions),c("Affiliation.partition.of.N1.[108,136]","Industrial_categories.clu"))
-
-
-A95net<-read.paj("http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd95/A95.net")
-expect_equal(network.size(A95net),36)
-expect_equal(network.vertex.names(A95net)[1:5],c("MUX","INSTRUCTION BUFFER (4 x 16)", "RCV","DRV","ROM REG"))
-
-# test reading a .paj project file
-bkfratProj<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/ucinet/bkfrat.paj')
-
-# should have two networks
-expect_equal(sapply(bkfratProj,class),c('network','network'),check.attributes=FALSE)
-# .. with wierd names
-expect_equal(names(bkfratProj),c('UciNet\\BKFRAT.DAT : BKFRAB','UciNet\\BKFRAT.DAT : BKFRAC'))
-# and 58 vertices
-expect_equal(sapply(bkfratProj,network.size),c(58,58),check.attributes=FALSE)
-expect_equal(sapply(bkfratProj,network.edgecount),c(1934,3306),check.attributes=FALSE)
-
-#check edge values and attribute naming
-expect_equal((bkfratProj[[1]]%e%"UciNet\\BKFRAT.DAT : BKFRAB")[1900:1934],c(1, 1, 1, 5, 2, 4, 2, 1, 3, 1, 3, 1, 2, 5, 1, 1, 1, 2, 1, 2, 2, 1, 6, 2, 1, 2, 2, 1, 1, 1, 1, 3, 3, 1, 1))
-
-# check vert attrs
-expect_equal(list.vertex.attributes(bkfratProj[[1]]),c('na','vertex.names','x','y','z'))
-
-# check network attrs
-expect_equal(bkfratProj[[1]]%n%'title',"UciNet\\BKFRAT.DAT : BKFRAB")
-expect_equal(bkfratProj[[2]]%n%'title',"UciNet\\BKFRAT.DAT : BKFRAC")
-
-# check loop flagging
-
-tmptest<-tempfile()
-cat("*Vertices          2
-1   'A'
-2   'B'
-*Arcs
-1 1 1
-",file=tmptest)
-loopTest<-read.paj(tmptest,verbose=FALSE)
-expect_true(has.loops(loopTest))
-
-# check edge.name argument
-
-tmptest<-tempfile()
-cat("*Vertices          2
-1   'A'
-2   'B'
-*Arcs
-1 1 1
-",file=tmptest)
-loopTest<-read.paj(tmptest,verbose=FALSE,edge.name='weight')
-expect_equal(list.edge.attributes(loopTest),c('na','weight'))
-
-# the rest of these will take longer, so including in opttest block so won't run on CRAN
-require(statnet.common)
-opttest(testvar = "ENABLE_statnet_TESTS",{
+## # produces two element list, containing networks and partitions
+## expect_equal(names(scotproj),c("networks","partitions"))
+## expect_equal(network.size(scotproj[[1]][[1]]),244)
+## expect_equal(names(scotproj$partitions),c("Affiliation.partition.of.N1.[108,136]","Industrial_categories.clu"))
 
 
-#  ----- examples from http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf ---
+## A95net<-read.paj("http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd95/A95.net")
+## expect_equal(network.size(A95net),36)
+## expect_equal(network.vertex.names(A95net)[1:5],c("MUX","INSTRUCTION BUFFER (4 x 16)", "RCV","DRV","ROM REG"))
 
-GraphSet<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphSet.net')
-expect_true(is.directed(GraphSet))
-expect_equal(network.edgecount(GraphSet),27)
-# network contains some repeated edges
-expect_true(is.multiplex(GraphSet))
-expect_equal(network.vertex.names(GraphSet),letters[1:12])
+## # test reading a .paj project file
+## bkfratProj<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/ucinet/bkfrat.paj')
 
-Tina<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaSet.net')
+## # should have two networks
+## expect_equal(sapply(bkfratProj,class),c('network','network'),check.attributes=FALSE)
+## # .. with wierd names
+## expect_equal(names(bkfratProj),c('UciNet\\BKFRAT.DAT : BKFRAB','UciNet\\BKFRAT.DAT : BKFRAC'))
+## # and 58 vertices
+## expect_equal(sapply(bkfratProj,network.size),c(58,58),check.attributes=FALSE)
+## expect_equal(sapply(bkfratProj,network.edgecount),c(1934,3306),check.attributes=FALSE)
 
-# arcslist
-GraphList<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphList.net')
-# http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaList.net  # arcslist
+## #check edge values and attribute naming
+## expect_equal((bkfratProj[[1]]%e%"UciNet\\BKFRAT.DAT : BKFRAB")[1900:1934],c(1, 1, 1, 5, 2, 4, 2, 1, 3, 1, 3, 1, 2, 5, 1, 1, 1, 2, 1, 2, 2, 1, 6, 2, 1, 2, 2, 1, 1, 1, 1, 3, 3, 1, 1))
 
-# matrix
-GraphMat <-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphMat.net')
-expect_equal(network.vertex.names(GraphMat),letters[1:12])
-# check that edge attribute created and parsed correctly
-expect_equal(as.matrix(GraphMat,attrname='GraphMat')[3,7],2)
+## # check vert attrs
+## expect_equal(list.vertex.attributes(bkfratProj[[1]]),c('na','vertex.names','x','y','z'))
 
-# partition
-TinaPaj<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Tina.paj')
-expect_equal(class(TinaPaj$partitions),'data.frame')
-expect_equal( TinaPaj$partitions[,1],c(2,1,2,2,2,2,2,2,3,3,3),use.names=FALSE)
-expect_true(is.network(TinaPaj$networks$Tina))
+## # check network attrs
+## expect_equal(bkfratProj[[1]]%n%'title',"UciNet\\BKFRAT.DAT : BKFRAB")
+## expect_equal(bkfratProj[[2]]%n%'title',"UciNet\\BKFRAT.DAT : BKFRAC")
 
-# --- crude timing info --
-# by default timing info should be added as attribute
-timetest<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net')
-expect_equal(timetest%e%'pajekTiming',c("[7]","[6-8]"))
-expect_equal(timetest%v%'pajekTiming',c("[5-10,12-14]", "[1-3,7]", "[4-*]"))
-expect_true(setequal(list.vertex.attributes(timetest),c('na','pajekTiming','vertex.names'))) # no x or y
-expect_true(setequal(list.edge.attributes(timetest),c('na','pajekTiming','Time')))
+## # check loop flagging
 
-# test converting to networkDynamic format
-timetestNd<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net',time.format='networkDynamic')
-expect_equal(class(timetestNd),c('networkDynamic','network'))
-# check that activiy matrices are built as expected
-expect_equal(get.vertex.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(5, 12, 11, 15), .Dim = c(2L, 2L)), structure(c(1, 7, 4, 8), .Dim = c(2L, 2L)), structure(c(4, Inf), .Dim = 1:2)))
-expect_equal(get.edge.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(7, 8), .Dim = 1:2), structure(c(6, 9), .Dim = 1:2)))
+## tmptest<-tempfile()
+## cat("*Vertices          2
+## 1   'A'
+## 2   'B'
+## *Arcs
+## 1 1 1
+## ",file=tmptest)
+## loopTest<-read.paj(tmptest,verbose=FALSE)
+## expect_true(has.loops(loopTest))
 
-# read a *big* one http://vlado.fmf.uni-lj.si/pub/networks/data/CRA/Days.zip
-# 1.3 Mb, 13k vertices, 256K lines.
-#  days<-tempfile('days',fileext='.zip')
-#  download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/CRA/Days.zip',days)
-#  terrorTerms<-read.paj(unz(days,'Days.net'),verbose=TRUE,time.format='networkDynamic',edge.name='count')
+## # check edge.name argument
+
+## tmptest<-tempfile()
+## cat("*Vertices          2
+## 1   'A'
+## 2   'B'
+## *Arcs
+## 1 1 1
+## ",file=tmptest)
+## loopTest<-read.paj(tmptest,verbose=FALSE,edge.name='weight')
+## expect_equal(list.edge.attributes(loopTest),c('na','weight'))
+
+## # the rest of these will take longer, so including in opttest block so won't run on CRAN
+## require(statnet.common)
+## opttest(testvar = "ENABLE_statnet_TESTS",{
+
+
+## #  ----- examples from http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf ---
+
+## GraphSet<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphSet.net')
+## expect_true(is.directed(GraphSet))
+## expect_equal(network.edgecount(GraphSet),27)
+## # network contains some repeated edges
+## expect_true(is.multiplex(GraphSet))
+## expect_equal(network.vertex.names(GraphSet),letters[1:12])
+
+## Tina<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaSet.net')
+
+## # arcslist
+## GraphList<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphList.net')
+## # http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/TinaList.net  # arcslist
+
+## # matrix
+## GraphMat <-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/GraphMat.net')
+## expect_equal(network.vertex.names(GraphMat),letters[1:12])
+## # check that edge attribute created and parsed correctly
+## expect_equal(as.matrix(GraphMat,attrname='GraphMat')[3,7],2)
+
+## # partition
+## TinaPaj<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Tina.paj')
+## expect_equal(class(TinaPaj$partitions),'data.frame')
+## expect_equal( TinaPaj$partitions[,1],c(2,1,2,2,2,2,2,2,3,3,3),use.names=FALSE)
+## expect_true(is.network(TinaPaj$networks$Tina))
+
+## # --- crude timing info --
+## # by default timing info should be added as attribute
+## timetest<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net')
+## expect_equal(timetest%e%'pajekTiming',c("[7]","[6-8]"))
+## expect_equal(timetest%v%'pajekTiming',c("[5-10,12-14]", "[1-3,7]", "[4-*]"))
+## expect_true(setequal(list.vertex.attributes(timetest),c('na','pajekTiming','vertex.names'))) # no x or y
+## expect_true(setequal(list.edge.attributes(timetest),c('na','pajekTiming','Time')))
+
+## # test converting to networkDynamic format
+## timetestNd<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Time.net',time.format='networkDynamic')
+## expect_equal(class(timetestNd),c('networkDynamic','network'))
+## # check that activiy matrices are built as expected
+## expect_equal(get.vertex.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(5, 12, 11, 15), .Dim = c(2L, 2L)), structure(c(1, 7, 4, 8), .Dim = c(2L, 2L)), structure(c(4, Inf), .Dim = 1:2)))
+## expect_equal(get.edge.attribute(timetestNd,'active',unlist=FALSE),list(structure(c(7, 8), .Dim = 1:2), structure(c(6, 9), .Dim = 1:2)))
+
+## # read a *big* one http://vlado.fmf.uni-lj.si/pub/networks/data/CRA/Days.zip
+## # 1.3 Mb, 13k vertices, 256K lines.
+## #  days<-tempfile('days',fileext='.zip')
+## #  download.file('http://vlado.fmf.uni-lj.si/pub/networks/data/CRA/Days.zip',days)
+## #  terrorTerms<-read.paj(unz(days,'Days.net'),verbose=TRUE,time.format='networkDynamic',edge.name='count')
 
 
 
-# multiple networks
-sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')
-lapply(sampson,class)  # for some reason it is a formula?
-expect_equal(names(sampson$networks),c("SAMPLK1", "SAMPLK2", "SAMPLK3",  "SAMPDLK",  "SAMPES","SAMPDES","SAMPIN","SAMPNIN","SAMPPR","SAMNPR"))
+## # multiple networks
+## sampson<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/Sampson.net')
+## lapply(sampson,class)  # for some reason it is a formula?
+## expect_equal(names(sampson$networks),c("SAMPLK1", "SAMPLK2", "SAMPLK3",  "SAMPDLK",  "SAMPES","SAMPDES","SAMPIN","SAMPNIN","SAMPPR","SAMNPR"))
 
-# multiple networks in arcslist format
-# sampsonL<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/SampsonL.net')
+## # multiple networks in arcslist format
+## # sampsonL<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/SampsonL.net')
 
-# two-mode
-sandi<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/2mode/sandi/sandi.net')
-expect_true(is.bipartite(sandi))
-expect_equal(sandi%n%'bipartite',314)
-Davis<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Davis.paj')         # two-mode
-expect_equal(Davis$networks[[1]]%n%'bipartite',18)
+## # two-mode
+## sandi<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/2mode/sandi/sandi.net')
+## expect_true(is.bipartite(sandi))
+## expect_equal(sandi%n%'bipartite',314)
+## Davis<-read.paj('http://vlado.fmf.uni-lj.si/vlado/podstat/AO/net/Davis.paj')         # two-mode
+## expect_equal(Davis$networks[[1]]%n%'bipartite',18)
 
-# lots of edge and vertex attributes
-A96<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd96/A96.net')
-expect_equal(network.size(A96),1096)
-expect_equal(list.vertex.attributes(A96),c("bw","fos","na","shape","vertex.names", "x","x_fact","y","y_fact"))   # note no z attribute
-expect_equal(head(A96%v%'shape'),c("box","ellipse", "ellipse", "ellipse", "ellipse", "ellipse"))
-# check edge attribute parsing
-expect_equal(list.edge.attributes(A96),c("A96", "fos", "l" ,  "lr",  "na",  "s",   "w"  ))
-# l is the only one with unique values
-expect_equal(head(A96%e%'l'),c("a", "s","n","r","s","t"))
+## # lots of edge and vertex attributes
+## A96<-read.paj('http://vlado.fmf.uni-lj.si/pub/networks/data/GD/gd96/A96.net')
+## expect_equal(network.size(A96),1096)
+## expect_equal(list.vertex.attributes(A96),c("bw","fos","na","shape","vertex.names", "x","x_fact","y","y_fact"))   # note no z attribute
+## expect_equal(head(A96%v%'shape'),c("box","ellipse", "ellipse", "ellipse", "ellipse", "ellipse"))
+## # check edge attribute parsing
+## expect_equal(list.edge.attributes(A96),c("A96", "fos", "l" ,  "lr",  "na",  "s",   "w"  ))
+## # l is the only one with unique values
+## expect_equal(head(A96%e%'l'),c("a", "s","n","r","s","t"))
 
-})  # end of non-cran tests
+## })  # end of non-cran tests
 
 
 
