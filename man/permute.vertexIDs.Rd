@@ -2,15 +2,20 @@
 % Please edit documentation in R/access.R
 \name{permute.vertexIDs}
 \alias{permute.vertexIDs}
+\alias{permute.vertexIDs.network}
 \title{Permute (Relabel) the Vertices Within a Network}
 \usage{
-permute.vertexIDs(x, vids)
+permute.vertexIDs(x, vids, ...)
+
+\method{permute.vertexIDs}{network}(x, vids, ...)
 }
 \arguments{
 \item{x}{an object of class \code{\link{network}}.}
 
 \item{vids}{a vector of vertex IDs, in the order to which they are to be
 permuted.}
+
+\item{...}{additional arguments to methods.}
 }
 \value{
 Invisibly, a pointer to the permuted network.

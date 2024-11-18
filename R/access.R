@@ -1795,6 +1795,7 @@ network.vertex.names<-function(x){
 #' @param x an object of class \code{\link{network}}.
 #' @param vids a vector of vertex IDs, in the order to which they are to be
 #' permuted.
+#' @param ... additional arguments to methods.
 #' @return Invisibly, a pointer to the permuted network.
 #' \code{permute.vertexIDs} modifies its argument in place.
 #' @author Carter T. Butts \email{buttsc@@uci.edu}
@@ -1812,7 +1813,11 @@ network.vertex.names<-function(x){
 #' all(flo[n:1,n:1]==as.sociomatrix(nflo))          #Should be TRUE
 #' 
 #' @export permute.vertexIDs
-permute.vertexIDs<-function(x,vids){
+permute.vertexIDs <- function(x, vids, ...) UseMethod("permute.vertexIDs")
+
+#' @rdname permute.vertexIDs
+#' @export
+permute.vertexIDs.network <- function(x, vids, ...) {
   #First, check to see that this is a graph object
   if(!is.network(x))
     stop("permute.vertexIDs requires an argument of class network.\n")
