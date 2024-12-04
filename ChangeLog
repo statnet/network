@@ -1,4 +1,11 @@
 CHANGELOG:
+v1.19.0
+  - Non-visible and documentation changes for CRAN compliance.
+  - Internal argument handling changes; should generally be invisible, but
+    may in some complex cases avoid problems when calling network().
+  - Bolstered add.edge and add.edges against improper edge.check arguments.
+  - Made get.inducedSubgraph() and permute.vertexIDs() generic.
+  - Replaced now non-functional Pajek URLs with Internet Archive versions.
 v1.18.2
   - Non-visible changes for CRAN compliance.
 v1.18.1

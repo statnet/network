@@ -126,13 +126,13 @@
 #' @seealso \code{\link{network}}
 #' @references Batagelj, Vladimir and Mrvar, Andrej (2011) Pajek Reference
 #' Manual version 2.05
-#' \url{http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf} Section
+#' \url{http://web.archive.org/web/20240906013709/http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf} Section
 #' 5.3 pp 73-79
 #' 
 #' Batageli, Vladimir (2008) "Network Analysis Description of Networks"
-#' \url{http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf}
+#' \url{http://web.archive.org/web/20240511173536/http://vlado.fmf.uni-lj.si/pub/networks/doc/ECPR/08/ECPR01.pdf}
 #' 
-#' Pajek Datasets \url{http://vlado.fmf.uni-lj.si/pub/networks/data/esna/}
+#' Pajek Datasets \url{http://web.archive.org/web/20240411203537/http://vlado.fmf.uni-lj.si/pub/networks/data/esna}
 #' @keywords datasets
 #' @examples
 #' 

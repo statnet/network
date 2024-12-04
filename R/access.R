@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 06/06/21
+# Last Modified 12/04/24
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -152,6 +152,8 @@ add.edge.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, edge.
   if(.validLHS(xn,parent.frame())){  #If x not anonymous, set in calling env 
     on.exit(eval.parent(call('<-',xn,x)))
   }
+  if(is.null(edge.check)||(length(edge.check)<1)||is.na(edge.check[1]))
+    edge.check<-FALSE
   x<-.Call(addEdge_R,x,tail,head,names.eval,vals.eval,edge.check)
   invisible(x)
 }
@@ -185,7 +187,7 @@ add.edges.network<-function(x, tail, head, names.eval=NULL, vals.eval=NULL, ...)
   if(length(unique(c(length(tail),length(head),length(names.eval), length(vals.eval))))>1)
     stop("head, tail, names.eval and vals.eval lists passed to add.edges must be of the same length!\n")
   edge.check<-list(...)$edge.check
-  if(is.null(edge.check))
+  if(is.null(edge.check)||(length(edge.check)<1)||is.na(edge.check[1]))
     edge.check<-FALSE
   #Pass the inputs to the C side
   xn<-substitute(x)
