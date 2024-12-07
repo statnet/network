@@ -43,7 +43,7 @@
 #' The \code{as.matrix} methods attempt to coerce their input to a matrix in
 #' adjacency, incidence, or edgelist form.  Edge values (from a stored
 #' attribute) may be used if present. \code{\link[tibble:as_tibble]{as_tibble}}
-#' coerces into an edgelist in \code{\link{tibble}} (a type of
+#' coerces into an edgelist in \code{\link[tibble]{tibble}} (a type of
 #' \code{\link{data.frame}}) form; this can be especially useful if extrecting
 #' a character-type edge attribute.
 #' 
@@ -86,7 +86,7 @@
 #' edglist form?
 #' @param na.rm logical; should missing edges/vertices be included in the
 #' edgelist formats? Ignored if \code{as.sna.edgelist=TRUE}.
-#' @param unit whether a \code{\link{tibble}} of edge or vertex attributes
+#' @param unit whether a \code{\link[tibble]{tibble}} of edge or vertex attributes
 #' should be returned.
 #' @param ...  additional arguments.
 #' @return For \code{as.matrix} methods, an adjacency, incidence, or edgelist

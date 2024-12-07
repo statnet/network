@@ -49,7 +49,7 @@ values; may be a vector of names if \code{output="tibble"}}
 \item{as.sna.edgelist}{logical; should the edgelist be returned in edgelist
 form expected by the sna package? Ignored if \code{output="tibble"}}
 
-\item{output}{return type: a \code{\link{matrix}} or a \code{\link{tibble}};
+\item{output}{return type: a \code{\link{matrix}} or a \code{\link[tibble]{tibble}};
 see \code{\link{as.matrix.network}} for the difference.}
 
 \item{\dots}{additional arguments to other methods}

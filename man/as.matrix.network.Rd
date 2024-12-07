@@ -63,7 +63,7 @@ as indices for selecting them from \code{\link{list.edge.attributes}(x)} or
 \code{\link{list.vertex.attributes}(x)} (depending on \code{unit}); passing
 \code{TRUE} therefore returns all edge attributes as columns}
 
-\item{unit}{whether a \code{\link{tibble}} of edge or vertex attributes
+\item{unit}{whether a \code{\link[tibble]{tibble}} of edge or vertex attributes
 should be returned.}
 
 \item{store.eid}{whether the edge ID should be stored in the third column (\code{.eid}).}
@@ -78,7 +78,7 @@ the edge ID, and whose subsequent columns are the requested edge attributes.
 The \code{as.matrix} methods attempt to coerce their input to a matrix in
 adjacency, incidence, or edgelist form.  Edge values (from a stored
 attribute) may be used if present. \code{\link[tibble:as_tibble]{as_tibble}}
-coerces into an edgelist in \code{\link{tibble}} (a type of
+coerces into an edgelist in \code{\link[tibble]{tibble}} (a type of
 \code{\link{data.frame}}) form; this can be especially useful if extrecting
 a character-type edge attribute.
 }

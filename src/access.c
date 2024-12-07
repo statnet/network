@@ -4,7 +4,7 @@
 # access.c
 #
 # Written by Carter T. Butts <buttsc@uci.edu>
-# Last Modified 01/24/23
+# Last Modified 12/06/24
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -550,7 +550,7 @@ SEXP setVertexAttribute(SEXP x, const char *attrname, SEXP value, int v)
 SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP edgeCheck)
 /*Adds multiple edges to x.  Note that we assume tail, head, et al. to be lists of identical length.  By contrast, edgeCheck should be a single logical value.*/
 {
-  int pc=0,opc,i,j,mnext,z;
+  int pc=0,opc,i,j,mnext,z,echeck;
   SEXP el,atl,atlnam,navec,inl,outl,elnam,mel,newmel,oel,iel,ptr,elem,mnptr,gal;
   char buf[64];
   
@@ -565,6 +565,10 @@ SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP 
 
   /*If necessary, verify that new edge satisfies existing graph requirements*/
   PROTECT(edgeCheck = coerceVector(edgeCheck, LGLSXP)); pc++;
+  if(length(edgeCheck)<1)
+    echeck=0;
+  else
+    echeck=INTEGER(edgeCheck)[0];
 
   /*Rprintf("addEdges: adding %d edges\n",length(tail));*/
   for(z=0;z<length(tail);z++){  /*Add each edge in turn*/
@@ -578,10 +582,10 @@ SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP 
     /*addEdges_R will segfault on an illegal head/tail specification.*/
     if(vecAnyNA(inl)||vecAnyNA(outl)||(vecMin(inl)<1.0)||(vecMin(outl)<1.0)|| (vecMax(inl)>(double)networkSize(x)) ||(vecMax(outl)>(double)networkSize(x)))
       error("(edge check) Illegal vertex reference in addEdges_R.  Exiting.");
+    if(length(inl)*length(outl)==0)
+      error("(edge check) Empty head/tail list in addEdges_R.  Exiting.");
   
-    if(INTEGER(edgeCheck)[0]){
-      if(length(inl)*length(outl)==0)
-        error("(edge check) Empty head/tail list in addEdges_R.  Exiting.");
+    if(echeck){
       if(!isHyper(x))
         if(MAX(length(inl),length(outl))>1)
           error("(edge check) Attempted to add hyperedge where hyper==FALSE in addEdges_R.  Exiting.");
@@ -657,8 +661,13 @@ SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP 
       PROTECT(ptr=coerceVector(VECTOR_ELT(oel,INTEGER(outl)[i]-1),INTSXP)); pc++;
       if(length(ptr)>0){
         PROTECT(elem = allocVector(INTSXP,length(ptr)+1)); pc++;
-        for(j=0;(j<length(ptr))&& (INTEGER(coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"inl"),INTSXP))[0]<INTEGER(outl)[0]);j++)
+//        for(j=0;(j<length(ptr))&& (INTEGER(coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"inl"),INTSXP))[0]<INTEGER(outl)[0]);j++)
+        for(j=0;j<length(ptr);j++){
+	  SEXP lptr=coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"inl"), INTSXP);
+	  if((Rf_length(lptr)<1)||(INTEGER(lptr)[0]>=INTEGER(outl)[0]))
+	    break;
           INTEGER(elem)[j]=INTEGER(ptr)[j];
+	}
         INTEGER(elem)[j++]=mnext;
         for(;(j-1<length(ptr));j++)
           INTEGER(elem)[j]=INTEGER(ptr)[j-1];
@@ -677,8 +686,13 @@ SEXP addEdges(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP 
       PROTECT(ptr=coerceVector(VECTOR_ELT(iel,INTEGER(inl)[i]-1),INTSXP)); pc++;
       if(length(ptr)>0){
         PROTECT(elem = allocVector(INTSXP,length(ptr)+1)); pc++;
-        for(j=0;(j<length(ptr))&& (INTEGER(coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"outl"),INTSXP))[0]<INTEGER(inl)[0]);j++)
+//        for(j=0;(j<length(ptr))&& (INTEGER(coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"outl"),INTSXP))[0]<INTEGER(inl)[0]);j++)
+        for(j=0;j<length(ptr);j++){
+	  SEXP lptr=coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"outl"), INTSXP);
+	  if((Rf_length(lptr)<1)||(INTEGER(lptr)[0]>=INTEGER(inl)[0]))
+	    break;
           INTEGER(elem)[j]=INTEGER(ptr)[j];
+        }
         INTEGER(elem)[j++]=mnext;
         for(;(j-1<length(ptr));j++)
           INTEGER(elem)[j]=INTEGER(ptr)[j-1];
@@ -847,7 +861,7 @@ SEXP permuteVertexIDs(SEXP x, SEXP vids)
 
 SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP edgeCheck)
 {
-  int pc=0,i,j,mnext;
+  int pc=0,i,j,mnext,echeck;
   SEXP el,atl,atlnam,navec,inl,outl,elnam,mel,newmel,oel,iel,ptr,elem,mnptr,gal;
   char buf[64];
   PROTECT_INDEX idx;
@@ -863,12 +877,16 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
   /*addEdge_R will segfault on an illegal head/tail specification.*/
   if(vecAnyNA(inl)||vecAnyNA(outl)||(vecMin(inl)<1.0)||(vecMin(outl)<1.0)|| (vecMax(inl)>(double)networkSize(x)) ||(vecMax(outl)>(double)networkSize(x)))
     error("(edge check) Illegal vertex reference in addEdge_R.  Exiting.");
+  if(length(inl)*length(outl)==0)
+    error("(edge check) Empty head/tail list in addEdge_R.  Exiting.");
   
   /*If necessary, verify that new edge satisfies existing graph requirements*/
   PROTECT(edgeCheck = coerceVector(edgeCheck, LGLSXP)); pc++;
-  if(INTEGER(edgeCheck)[0]){
-    if(length(inl)*length(outl)==0)
-      error("(edge check) Empty head/tail list in addEdge_R.  Exiting.");
+  if(length(edgeCheck)==0)
+    echeck=0;
+  else
+    echeck=INTEGER(edgeCheck)[0];
+  if(echeck){
     if(!isHyper(x))
       if(MAX(length(inl),length(outl))>1)
         error("(edge check) Attempted to add hyperedge where hyper==FALSE in addEdge_R.  Exiting.");
@@ -953,8 +971,13 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
     PROTECT(ptr=coerceVector(VECTOR_ELT(oel,INTEGER(outl)[i]-1),INTSXP)); pc++;
     if(length(ptr)>0){
       PROTECT(elem = allocVector(INTSXP,length(ptr)+1)); pc++;
-      for(j=0;(j<length(ptr))&& (INTEGER(coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"inl"),INTSXP))[0]<INTEGER(outl)[0]);j++)
+//      for(j=0;(j<length(ptr))&& (INTEGER(coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"inl"),INTSXP))[0]<INTEGER(outl)[0]);j++)
+      for(j=0;j<length(ptr);j++){
+        SEXP lptr=coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"inl"), INTSXP);
+	if((Rf_length(lptr)<1)||(INTEGER(lptr)[0]>=INTEGER(outl)[0]))
+	  break;
         INTEGER(elem)[j]=INTEGER(ptr)[j];
+      }
       INTEGER(elem)[j++]=mnext;
       for(;(j-1<length(ptr));j++)
         INTEGER(elem)[j]=INTEGER(ptr)[j-1];
@@ -973,8 +996,13 @@ SEXP addEdge_R(SEXP x, SEXP tail, SEXP head, SEXP namesEval, SEXP valsEval, SEXP
     PROTECT(ptr=coerceVector(VECTOR_ELT(iel,INTEGER(inl)[i]-1),INTSXP)); pc++;
     if(length(ptr)>0){
       PROTECT(elem = allocVector(INTSXP,length(ptr)+1)); pc++;
-      for(j=0;(j<length(ptr))&& (INTEGER(coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"outl"),INTSXP))[0]<INTEGER(inl)[0]);j++)
+//      for(j=0;(j<length(ptr))&& (INTEGER(coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"outl"),INTSXP))[0]<INTEGER(inl)[0]);j++)
+      for(j=0;j<length(ptr);j++){
+	SEXP lptr=coerceVector(getListElement(VECTOR_ELT(newmel,INTEGER(ptr)[j]),"outl"), INTSXP);
+	if((Rf_length(lptr)<1)||(INTEGER(lptr)[0]>=INTEGER(inl)[0]))
+	  break;
         INTEGER(elem)[j]=INTEGER(ptr)[j];
+      }
       INTEGER(elem)[j++]=mnext;
       for(;(j-1<length(ptr));j++)
         INTEGER(elem)[j]=INTEGER(ptr)[j-1];
@@ -1391,10 +1419,10 @@ SEXP getNeighborhood_R(SEXP x, SEXP v, SEXP type, SEXP naOmit)
 
 
 SEXP isAdjacent_R(SEXP x, SEXP vi, SEXP vj, SEXP naOmit)
-/*Returns TRUE iff exists an edge in x connecting vi and vj.  Where na.omit==TRUE, edges flagged as missing are ignored.  Note that vi and vj can be vectors, in which case adjacency is tested for each pair.  (The vectors must be of the same length!)  If vi and/or vj refer to nonexistent vertices, NAs are returned.*/
+/*Returns TRUE iff exists an edge in x connecting vi and vj.  Where na.omit==TRUE, edges flagged as missing are ignored.  (The default is na.omit=FALSE.)  Note that vi and vj can be vectors, in which case adjacency is tested for each pair.  (The vectors must be of the same length!)  If vi and/or vj refer to nonexistent vertices, NAs are returned.*/
 {
   SEXP ans;
-  int i,n,pc=0;
+  int i,n,pc=0,omitna;
 
   /*Verify that this is a network object*/
   if(!isNetwork(x))
@@ -1404,6 +1432,10 @@ SEXP isAdjacent_R(SEXP x, SEXP vi, SEXP vj, SEXP naOmit)
   PROTECT(vi = coerceVector(vi, INTSXP)); pc++;
   PROTECT(vj = coerceVector(vj, INTSXP)); pc++;
   PROTECT(naOmit = coerceVector(naOmit, LGLSXP)); pc++;
+  if(length(naOmit)<1)
+    omitna=0;
+  else
+    omitna=INTEGER(naOmit)[0];
   PROTECT(ans = allocVector(LGLSXP,length(vi))); pc++;
   n=networkSize(x);
   /*Rprintf("Checking adjacency for pair (%d,%d), na.omit=%d\n",INTEGER(vi)[0], INTEGER(vj)[0],INTEGER(naOmit)[0]);*/
@@ -1413,7 +1445,7 @@ SEXP isAdjacent_R(SEXP x, SEXP vi, SEXP vj, SEXP naOmit)
     if((INTEGER(vi)[i]<1)||(INTEGER(vj)[i]<1)||(INTEGER(vi)[i]>n)|| (INTEGER(vj)[i]>n))
       INTEGER(ans)[i]=NA_INTEGER;          /*Return NA on a bad query*/
     else
-      INTEGER(ans)[i]=isAdjacent(x,INTEGER(vi)[i],INTEGER(vj)[i], INTEGER(naOmit)[0]);
+      INTEGER(ans)[i]=isAdjacent(x,INTEGER(vi)[i],INTEGER(vj)[i], omitna);
 
   /*Return the result*/
   UNPROTECT(pc);
@@ -1466,14 +1498,17 @@ SEXP isNANetwork_R(SEXP x, SEXP y)
 
 
 SEXP networkEdgecount_R(SEXP x, SEXP naOmit)
-/*Count the number of active edges in x.  If naOmit==TRUE, then missing edges are not counted; otherwise, all edges are included.*/
+/*Count the number of active edges in x.  If naOmit==TRUE (default), then missing edges are not counted; otherwise, all edges are included.*/
 {
   int pc=0,naomit;
   SEXP ans;
   
   /*Take care of preliminaries*/
   PROTECT(naOmit=coerceVector(naOmit,LGLSXP)); pc++;
-  naomit=INTEGER(naOmit)[0];
+  if(length(naOmit)<1)
+    naomit=1;
+  else
+    naomit=INTEGER(naOmit)[0];
   PROTECT(ans=allocVector(INTSXP,1)); pc++;
   
   /*Get the result*/
@@ -1540,7 +1575,7 @@ SEXP setEdgeAttribute_R(SEXP x, SEXP attrname, SEXP value, SEXP e)
 
 /* this version is essentially the same as above, but allows passing in lists of attrnames and lists of lists of values */
 SEXP setEdgeAttributes_R(SEXP x, SEXP attrnames, SEXP values, SEXP e)
-/*Sets the attribute in attrname to the values in (list) value, for each corresponding edge with respective ID in vector e.  If an edge referred to in e does not actually exist (i.e., its entry in mel is NULL), then that edge (and the associated value) is silently skipped.  Note that existing attribute entries are overwritten by this routine, where present...if the named attribute does not exist, a new entry is created for each edge in question.*/
+/*Sets the attribute in attrname to the values in (list) value, for each corresponding edgeb with respective ID in vector e.  If an edge referred to in e does not actually exist (i.e., its entry in mel is NULL), then that edge (and the associated value) is silently skipped.  Note that existing attribute entries are overwritten by this routine, where present...if the named attribute does not exist, a new entry is created for each edge in question.*/
 {
   int i,j,pc=0;
   SEXP mel,el,atl, value;
@@ -1737,7 +1772,7 @@ SEXP setVertexAttributes_R(SEXP x, SEXP attrnames, SEXP values, SEXP v)
 }
 
 SEXP nonEmptyEdges_R(SEXP el)
-/* retrun all edges which are non NULL */
+/* return all edges which are non NULL */
 {
   int i, elen, n=0;
   SEXP ans;

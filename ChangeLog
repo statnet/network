@@ -3,6 +3,14 @@ v1.19.0
   - Non-visible and documentation changes for CRAN compliance.
   - Internal argument handling changes; should generally be invisible, but
     may in some complex cases avoid problems when calling network().
+  - Added more internal checks to edge allocation and handling.  These should
+    not be visible for normal use, but should catch/avoid errors due to 
+    improper use (e.g., trying to make/use network objects with malformed
+    edges).  This is not expected to break any working code, but if you
+    have been doing things you shouldn't have been doing (e.g., edges
+    without both inl and outl elements), then you might find that you need
+    to fix things.  (This usually takes effort, so you are not likely to
+    have done it by accident.)
   - Bolstered add.edge and add.edges against improper edge.check arguments.
   - Made get.inducedSubgraph() and permute.vertexIDs() generic.
   - Replaced now non-functional Pajek URLs with Internet Archive versions.

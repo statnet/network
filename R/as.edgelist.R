@@ -39,7 +39,7 @@ as.edgelist <- function(x, ...){
 #' @aliases edgelist
 #' @param x a \code{network} object with additional class added indicating how
 #' it should be dispatched.
-#' @param output return type: a \code{\link{matrix}} or a \code{\link{tibble}};
+#' @param output return type: a \code{\link{matrix}} or a \code{\link[tibble]{tibble}};
 #' see \code{\link{as.matrix.network}} for the difference.
 #' @param attrname optionally, the name of an edge attribute to use for edge
 #' values; may be a vector of names if \code{output="tibble"}

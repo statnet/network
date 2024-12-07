@@ -656,11 +656,11 @@ get.edge.attribute.network <- function(x, attrname, unlist=TRUE, na.omit=FALSE, 
   if (!is.list(x))
     stop("x must be a network object or a list.")
 
-  if (!is.character(attrname))
+  if (!is.character(attrname) || (length(attrname)==0))
     stop("attrname must be a character vector.")
 
   if (!is.logical(unlist) || !is.logical(na.omit) || !is.logical(null.na) ||
-      !is.logical(deleted.edges.omit))
+      !is.logical(deleted.edges.omit) || (length(unlist)*length(na.omit)*length(null.na)*length(deleted.edges.omit)==0))
     stop("na.omit, null.na, deleted.edges.omit must be a logical vector.")
 
   edges <- .Call(getEdgeAttribute_R,x,attrname,na.omit,null.na,deleted.edges.omit)
@@ -1965,6 +1965,10 @@ set.edge.value.network <- function(x, attrname, value, e = seq_along(x$mel), ...
   } else if (min(dim(value)) < n) {
     stop("set.edge.value requires a matrix whose dimension is equal to or larger than the network size")
   }
+  #Ensure that the attribute name is legit
+  attrname<-as.character(attrname)
+  if(length(attrname)==0)
+    stop("Attribute name required in set.edge.value.network.")
   #Do the deed
   xn<-substitute(x)
   x<-.Call(setEdgeValue_R,x,attrname,value,e)
