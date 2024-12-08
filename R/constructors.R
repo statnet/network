@@ -6,7 +6,7 @@
 # David Hunter <dhunter@stat.psu.edu> and Mark S. Handcock
 # <handcock@u.washington.edu>.
 #
-# Last Modified 06/08/21
+# Last Modified 12/07/24
 # Licensed under the GNU General Public License version 2 (June, 1991)
 # or greater
 #
@@ -43,11 +43,9 @@ network<-function(x, vertex.attr=NULL, vertex.attrnames=NULL,
                 multiple=FALSE, bipartite=FALSE, ...)
 {
   #Initialize the network object
-  mc <- match.call()
-  mc$vertex.attr <- NULL
-  mc[[1]] <- as.name("as.network")
-  g <- eval.parent(mc)
-
+  g<-as.network(x,directed=directed,hyper=hyper,loops=loops,
+              multiple=multiple,bipartite=bipartite,...)
+	      
   #Add vertex attributes, if needed
   if(!is.null(vertex.attr)){
     #Create vertex attribute names, if needed
