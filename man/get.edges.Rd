@@ -3,6 +3,8 @@
 \name{get.edges}
 \alias{get.edges}
 \alias{get.edgeIDs}
+\alias{get.edgeIDs.network}
+\alias{get.edges.network}
 \alias{get.dyads.eids}
 \title{Retrieve Edges or Edge IDs Associated with a Given Vertex}
 \usage{
@@ -11,7 +13,17 @@ get.edgeIDs(
   v,
   alter = NULL,
   neighborhood = c("out", "in", "combined"),
-  na.omit = TRUE
+  na.omit = TRUE,
+  ...
+)
+
+\method{get.edgeIDs}{network}(
+  x,
+  v,
+  alter = NULL,
+  neighborhood = c("out", "in", "combined"),
+  na.omit = TRUE,
+  ...
 )
 
 get.edges(
@@ -19,7 +31,17 @@ get.edges(
   v,
   alter = NULL,
   neighborhood = c("out", "in", "combined"),
-  na.omit = TRUE
+  na.omit = TRUE,
+  ...
+)
+
+\method{get.edges}{network}(
+  x,
+  v,
+  alter = NULL,
+  neighborhood = c("out", "in", "combined"),
+  na.omit = TRUE,
+  ...
 )
 
 get.dyads.eids(
@@ -27,7 +49,17 @@ get.dyads.eids(
   tails,
   heads,
   neighborhood = c("out", "in", "combined"),
-  na.omit = TRUE
+  na.omit = TRUE,
+  ...
+)
+
+get.dyads.eids(
+  x,
+  tails,
+  heads,
+  neighborhood = c("out", "in", "combined"),
+  na.omit = TRUE,
+  ...
 )
 }
 \arguments{
@@ -42,6 +74,8 @@ out-edges, or both (relative to \code{v}). defaults to \code{'combined'} for
 undirected networks}
 
 \item{na.omit}{logical; should we omit missing edges?}
+
+\item{...}{additional arguments to methods}
 
 \item{tails}{a vector of vertex ID for the 'tails' (v) side of the dyad}
 

@@ -3,15 +3,20 @@
 \name{has.edges}
 \alias{has.edges}
 \alias{is.isolate}
+\alias{has.edges.network}
 \title{Determine if specified vertices of a network have any edges (are not
 isolates)}
 \usage{
-has.edges(net, v = seq_len(network.size(net)))
+has.edges(net, v = seq_len(network.size(net)), ...)
+
+\method{has.edges}{network}(net, v = seq_len(network.size(net)), ...)
 }
 \arguments{
 \item{net}{a \code{\link{network}} object to be queried}
 
 \item{v}{integer vector of vertex ids to check}
+
+\item{...}{additional arguments to methods}
 }
 \value{
 returns a logical vector with the same length as v, with TRUE if the

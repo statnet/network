@@ -731,6 +731,7 @@ get.edge.value.list <- get.edge.value.network
 #' @param na.omit logical; should we omit missing edges?
 #' @param tails a vector of vertex ID for the 'tails' (v) side of the dyad
 #' @param heads a vector of vertex ID for the 'heads' (alter) side of the dyad
+#' @param ... additional arguments to methods
 #' @return For \code{get.edges}, a list of edges.  For \code{get.edgeIDs}, a
 #' vector of edge ID numbers. For \code{get.dyads.eids}, a list of edge IDs
 #' corresponding to the dyads defined by the vertex ids in \code{tails} and
@@ -752,7 +753,11 @@ get.edge.value.list <- get.edge.value.network
 #' get.edgeIDs(g,1,neighborhood="in")
 #' 
 #' @export get.edgeIDs
-get.edgeIDs<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.omit=TRUE){
+get.edgeIDs <- function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.omit=TRUE, ...) UseMethod("get.edgeIDs")
+
+#' @rdname get.edges
+#' @export
+get.edgeIDs.network <- function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.omit=TRUE, ...){
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("get.edgeIDs requires an argument of class network.")
@@ -780,7 +785,11 @@ get.edgeIDs<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), n
 
 #' @rdname get.edges
 #' @export get.edges
-get.edges<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.omit=TRUE){
+get.edges <- function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.omit=TRUE, ...) UseMethod("get.edges")
+
+#' @rdname get.edges
+#' @export
+get.edges.network <- function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.omit=TRUE, ...){
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("get.edges requires an argument of class network.")
@@ -803,7 +812,11 @@ get.edges<-function(x, v, alter=NULL, neighborhood=c("out","in","combined"), na.
 # as defined by a vector of tails and heads vertex ids
 #' @rdname get.edges
 #' @export get.dyads.eids
-get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined"),na.omit = TRUE){
+get.dyads.eids <- function(x, tails, heads, neighborhood = c("out", "in", "combined"), na.omit = TRUE, ...) UseMethod("get.dyad.eids")
+
+#' @rdname get.edges
+#' @export
+get.dyads.eids <- function(x, tails, heads, neighborhood = c("out", "in", "combined"), na.omit = TRUE, ...){
   if(length(tails)!=length(heads)){
     stop('heads and tails vectors must be the same length for get.dyads.eids')
   }
@@ -907,7 +920,7 @@ get.dyads.eids<-function(x,tails,heads,neighborhood = c("out", "in", "combined")
 #' 
 #' 
 #' @export get.inducedSubgraph
-get.inducedSubgraph <- function(x, ...) UseMethod("get.inducedSubgraph")
+get.inducedSubgraph <- function(x, v, alters=NULL,...) UseMethod("get.inducedSubgraph")
 
 #' @rdname get.inducedSubgraph
 #' @export
@@ -1024,6 +1037,7 @@ get.network.attribute.network <- function(x, attrname, unlist=FALSE, ...) {
 #' @param type the neighborhood to be computed
 #' @param na.omit logical; should missing edges be ignored when obtaining
 #' vertex neighborhoods?
+#' @param ... additional arguments to methods
 #' @return A vector containing the vertex IDs for the chosen neighborhood.
 #' @author Carter T. Butts \email{buttsc@@uci.edu}
 #' @seealso \code{\link{get.edges}}, \code{\link{is.adjacent}}
@@ -1047,7 +1061,11 @@ get.network.attribute.network <- function(x, attrname, unlist=FALSE, ...) {
 #' get.neighborhood(g,1,"combined")
 #' 
 #' @export get.neighborhood
-get.neighborhood<-function(x, v, type=c("out","in","combined"), na.omit=TRUE){
+get.neighborhood<-function(x, v, type=c("out","in","combined"), na.omit=TRUE, ...) UseMethod("get.neighborhood")
+
+#' @rdname get.neighborhood
+#' @export
+get.neighborhood.network<-function(x, v, type=c("out","in","combined"), na.omit=TRUE, ...){
   #Check to be sure we were called with a network
   if(!is.network(x))
     stop("get.neighborhood requires an argument of class network.")
@@ -1217,6 +1235,7 @@ has.loops<-function(x){
 #' @param vj a second vertex ID
 #' @param na.omit logical; should missing edges be ignored when assessing
 #' adjacency?
+#' @param ... additional arguments to methods
 #' @return A logical, giving the status of the (i,j) edge
 #' @note Prior to version 1.4, \code{na.omit} was set to \code{TRUE} by
 #' default.
@@ -1241,7 +1260,11 @@ has.loops<-function(x){
 #' g[2,1]==1           #FALSE
 #' 
 #' @export is.adjacent
-is.adjacent<-function(x,vi,vj,na.omit=FALSE){
+is.adjacent <- function(x, vi, vj, na.omit=FALSE, ...) UseMethod("is.adjacent")
+
+#' @rdname is.adjacent
+#' @export
+is.adjacent.network <- function(x, vi, vj, na.omit=FALSE, ...){
   if(!is.network(x))
     stop("is.adjacent requires an argument of class network.\n")
   if(length(vi)!=length(vj)){

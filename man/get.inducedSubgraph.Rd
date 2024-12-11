@@ -6,7 +6,7 @@
 \alias{\%s\%}
 \title{Retrieve Induced Subgraphs and Cuts}
 \usage{
-get.inducedSubgraph(x, ...)
+get.inducedSubgraph(x, v, alters = NULL, ...)
 
 \method{get.inducedSubgraph}{network}(x, v, alters = NULL, eid = NULL, ...)
 
@@ -15,12 +15,12 @@ x \%s\% v
 \arguments{
 \item{x}{an object of class \code{network}.}
 
-\item{...}{additional arguments for methods.}
-
 \item{v}{a vector of vertex IDs, or, for \code{\%s\%}, optionally a list containing two disjoint vectors of vertex IDs (see below).}
 
 \item{alters}{optionally, a second vector of vertex IDs.  Must be disjoint
 with \code{v}.}
+
+\item{...}{additional arguments for methods.}
 
 \item{eid}{optionally, a numeric vector of valid edge ids in \code{x} that
 should be retained (cannot be used with \code{v} or \code{alter})}

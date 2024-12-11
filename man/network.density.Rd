@@ -2,9 +2,12 @@
 % Please edit documentation in R/misc.R
 \name{network.density}
 \alias{network.density}
+\alias{network.density.network}
 \title{Compute the Density of a Network}
 \usage{
-network.density(x, na.omit = TRUE, discount.bipartite = FALSE)
+network.density(x, na.omit = TRUE, discount.bipartite = FALSE, ...)
+
+\method{network.density}{network}(x, na.omit = TRUE, discount.bipartite = FALSE, ...)
 }
 \arguments{
 \item{x}{an object of class \code{network}}
@@ -14,6 +17,8 @@ density?}
 
 \item{discount.bipartite}{logical; if \code{x} is bipartite, should
 \dQuote{forbidden} edges be excluded from the count of potential edges?}
+
+\item{...}{additional arguments to methods}
 }
 \value{
 The network density.
