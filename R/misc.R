@@ -344,6 +344,7 @@ print.mixingmatrix <- function(x, ...) {
 #' density?
 #' @param discount.bipartite logical; if \code{x} is bipartite, should
 #' \dQuote{forbidden} edges be excluded from the count of potential edges?
+#' @param ... additional arguments to methods
 #' @return The network density.
 #' @section Warning : \code{network.density} relies on network attributes (see
 #' \link{network.indicators}) to determine the properties of the underlying
@@ -370,7 +371,11 @@ print.mixingmatrix <- function(x, ...) {
 #' 
 #' @rdname network.density
 #' @export network.density
-network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
+network.density <- function(x, na.omit=TRUE, discount.bipartite=FALSE, ...) UseMethod("network.density")
+
+#' @rdname network.density
+#' @export
+network.density.network <- function(x, na.omit=TRUE, discount.bipartite=FALSE, ...){
   if(!is.network(x))
     stop("network.density requires a network object.")
   if(network.size(x)==0){
@@ -413,6 +418,7 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
 #' @aliases is.isolate
 #' @param net a \code{\link{network}} object to be queried
 #' @param v integer vector of vertex ids to check
+#' @param ... additional arguments to methods
 #' @return returns a logical vector with the same length as v, with TRUE if the
 #' vertex is involved in any edges, FALSE if it is an isolate.
 #' @author skyebend
@@ -425,7 +431,11 @@ network.density<-function(x,na.omit=TRUE,discount.bipartite=FALSE){
 #' 
 #' @rdname has.edges
 #' @export has.edges
-has.edges<-function(net,v=seq_len(network.size(net))){
+has.edges <- function(net, v=seq_len(network.size(net)), ...) UseMethod("has.edges")
+
+#' @rdname has.edges
+#' @export
+has.edges.network <- function(net, v=seq_len(network.size(net)), ...){
   if(network.size(net)==0){
     return(logical(0))
   }

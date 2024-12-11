@@ -2,9 +2,12 @@
 % Please edit documentation in R/access.R
 \name{is.adjacent}
 \alias{is.adjacent}
+\alias{is.adjacent.network}
 \title{Determine Whether Two Vertices Are Adjacent}
 \usage{
-is.adjacent(x, vi, vj, na.omit = FALSE)
+is.adjacent(x, vi, vj, na.omit = FALSE, ...)
+
+\method{is.adjacent}{network}(x, vi, vj, na.omit = FALSE, ...)
 }
 \arguments{
 \item{x}{an object of class \code{network}}
@@ -15,6 +18,8 @@ is.adjacent(x, vi, vj, na.omit = FALSE)
 
 \item{na.omit}{logical; should missing edges be ignored when assessing
 adjacency?}
+
+\item{...}{additional arguments to methods}
 }
 \value{
 A logical, giving the status of the (i,j) edge
