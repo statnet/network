@@ -1,4 +1,8 @@
 CHANGELOG:
+v1.20.0
+  - Changed an internal test to make it comply with an upcoming R change.
+  - Converted various network related functions to generics, making it easier
+    to support e.g. networkLite objects.
 v1.19.0
   - Non-visible and documentation changes for CRAN compliance.
   - Internal argument handling changes; should generally be invisible, but
