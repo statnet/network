@@ -2,9 +2,12 @@
 % Please edit documentation in R/access.R
 \name{get.neighborhood}
 \alias{get.neighborhood}
+\alias{get.neighborhood.network}
 \title{Obtain the Neighborhood of a Given Vertex}
 \usage{
-get.neighborhood(x, v, type = c("out", "in", "combined"), na.omit = TRUE)
+get.neighborhood(x, v, type = c("out", "in", "combined"), na.omit = TRUE, ...)
+
+\method{get.neighborhood}{network}(x, v, type = c("out", "in", "combined"), na.omit = TRUE, ...)
 }
 \arguments{
 \item{x}{an object of class \code{network}}
@@ -15,6 +18,8 @@ get.neighborhood(x, v, type = c("out", "in", "combined"), na.omit = TRUE)
 
 \item{na.omit}{logical; should missing edges be ignored when obtaining
 vertex neighborhoods?}
+
+\item{...}{additional arguments to methods}
 }
 \value{
 A vector containing the vertex IDs for the chosen neighborhood.
