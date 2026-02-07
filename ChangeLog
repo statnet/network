@@ -1,6 +1,8 @@
 CHANGELOG:
 v1.20.0
   - Changed an internal test to make it comply with an upcoming R change.
+  - Updated various URLs in the vignette to comply with ever-evolving CRAN
+    rules.
   - Converted various network related functions to generics, making it easier
     to support e.g. networkLite objects.
 v1.19.0

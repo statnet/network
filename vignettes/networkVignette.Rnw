@@ -34,7 +34,7 @@ Effective memory structures for relational data within \proglang{R} must be capa
   University of California, Irvine\\
   Irvine, CA 92697-5100, United States of America\\
   E-mail: \email{buttsc@uci.edu}\\
-  URL: \url{http://www.faculty.uci.edu/profile.cfm?faculty_id=5057}
+  URL: \url{https://www.faculty.uci.edu/profile.cfm?faculty_id=5057}
 }
 
 \begin{document}
@@ -50,7 +50,7 @@ Effective memory structures for relational data within \proglang{R} must be capa
 \SweaveOpts{concordance=TRUE}
 
 PLEASE NOTE: This document has been modified from the original paper to form a package vignette. It has been compiled with the version of the network package it is bundled with, and has been partially updated to reflect some changes in the package. The original paper is:\\
-\pkg{network}: A Package for Managing Relational Data in \proglang{R}. \emph{Journal of Statistical Software} 24:2, 2008. \url{http://www.jstatsoft.org/v24/i02/paper}
+\pkg{network}: A Package for Managing Relational Data in \proglang{R}. \emph{Journal of Statistical Software} 24:2, 2008. \url{https://www.jstatsoft.org/htaccess.php?volume=24&type=i&issue=02&filename=paper}
 
 \section{Background and introduction}
 
@@ -585,9 +585,9 @@ plot(MtSHbyloc, displaylabels = TRUE, label =
 
 While the functionality described thus far has been aimed at users working within an interpreted \proglang{R} environment, many \pkg{network} package features can also be accessed through a \proglang{C}-language application programming interface (API).  Although this API still makes use of \proglang{R} data structures, it provides mechanisms for direct manipulation of those structures via compiled code.  While invisible to most end users, the API has a number of attractions for developers.  Chief among these is performance: in the author's experience, a reasonably well-designed \proglang{C} function can run as much as one to two orders of magnitude faster than an equivalent \proglang{R} implementation.  For many day-to-day applications, such gains are unlikely to be worth the considerable increase in implementation and maintenance costs associated with choosing \proglang{C} over \proglang{R}; however, they may prove vital when performing computationally demanding tasks such as Markov chain Monte Carlo simulation, large-graph computations, and small-N solutions for non-polynomial time problems (e.g., cycle counting).  Another useful feature of the \proglang{C} API is its ability to make the complex data storage capabilities of \code{network} objects accessible to developers whose projects involve existing backend code, or developing packages such as \pkg{networkDynamic} which extend \pkg{network}'s functionality at the \proglang{C} level.  Instead of performing data extraction on a \code{network} object and passing the result to the compiled routine, the \pkg{network} API allows for such routines to work with such objects directly.  Finally, a third useful asset of the \pkg{network} API is the capacity it provides for generating user-transparent functionality which transcends what is feasible with \proglang{R}'s pass-by-value semantics.  The use of compiled code to directly modify objects without copying has been fundamental to the functionality of the package since version 1.0, as can be gleaned from an examination of the package source code\footnote{The pass-by-value semantics are somewhat contrary to R's design philosophy and have been somewhat blocked in recent R versions. While the pass-by-value semantics functionality described is still operational, it must be implemented in less than optimal ways and my not offer the original speed gains.}.
 
-The mechanism by which the API is currently implemented is fairly simple.  A shared header file (which must be included in the user's application) defines a series of macros which point to the package's internal routines.  During program execution, a global registration function is used to map these macros to their internal symbols; following this, the macros may be called normally.  Other then ensuring that the \pkg{network} library is loaded prior to invoking the registration function, no other measures are necessary.  In particular, the calling routine does not have to be linked against the \pkg{network} library, although the aforementioned header/registration routines must be included at compile time.\footnote{Required files for the \pkg{network} API are available from \url{http://www.statnetproject.org/}.}
+The mechanism by which the API is currently implemented is fairly simple.  A shared header file (which must be included in the user's application) defines a series of macros which point to the package's internal routines.  During program execution, a global registration function is used to map these macros to their internal symbols; following this, the macros may be called normally.  Other then ensuring that the \pkg{network} library is loaded prior to invoking the registration function, no other measures are necessary.  In particular, the calling routine does not have to be linked against the \pkg{network} library, although the aforementioned header/registration routines must be included at compile time.\footnote{Required files for the \pkg{network} API are available from \url{https://www.statnetproject.org/}.}
 
-In addition, \pkg{network} versions 1.11.1 and higher implement \proglang{R}'s template for registering native \proglang{C} routines \footnote{See the `Registering-native-routines' section of \url{http://cran.r-project.org/doc/manuals/r-release/R-exts.html }} so that packages may compile against \pkg{network}'s code by declaring a \code{LinkingTo: network} in the DESCRIPTION file. The listing of exported functions are in the file \code{src/Rinit.c}.
+In addition, \pkg{network} versions 1.11.1 and higher implement \proglang{R}'s template for registering native \proglang{C} routines \footnote{See the `Registering-native-routines' section of \url{https://cran.r-project.org/doc/manuals/r-release/R-exts.html }} so that packages may compile against \pkg{network}'s code by declaring a \code{LinkingTo: network} in the DESCRIPTION file. The listing of exported functions are in the file \code{src/Rinit.c}.
 
 \subsection[Using the network API]{Using the \pkg{network} API}
 
@@ -745,27 +745,27 @@ Batagelj V, Brandes U (2005). ``Efficient Generation of Large Random Networks.''
 
 \bibitem[Batagelj(2007)]{pajek}
 Batagelj V, Mrvar A (2007). \emph{Pajek: Package for Large Network Analysis.} University of
-Ljubljana, Slovenia. URL \url{http://vlado.fmf.uni-lj.si/pub/networks/pajek/}.
+Ljubljana, Slovenia. URL \url{http://mrvar.fdv.uni-lj.si/pajek/}.
 
 \bibitem[Butts(2002)]{butts:tr:2002}
 Butts CT (2002). ``Memory Structures for Relational Data in R: Classes and Interfaces.''
 \emph{Unpublished manuscript}, University of California, Irvine.
 
 \bibitem[Butts(2007)]{sna}
-Butts CT (2007). \emph{sna: Tools for Social Network Analysis}. Statnet Project \url{http://statnetproject.org/}, Seattle, WA. R package version 1.5, URL \url{http://CRAN.R-project.org/package=sna}.
+Butts CT (2007). \emph{sna: Tools for Social Network Analysis}. Statnet Project \url{https://statnetproject.org/}, Seattle, WA. R package version 1.5, URL \url{https://CRAN.R-project.org/package=sna}.
 
 \bibitem[Butts \& Carley(2005)]{butts.carley:cmot:2005}
 Butts CT, Carley KM (2005). ``Some Simple Algorithms for Structural Comparison.' \emph{Computational and Mathematical Organization Theory}, 11(4), 291-305.
 
 \bibitem[Butts, et al.(2007)]{network}
 Butts CT, Handcock MS, Hunter DR (2007). \emph{network: Classes for Relational Data}. Statnet
-Project \url{http://statnetproject.org/}, Seattle, WA. R package version 1.3, URL \url{http://CRAN.R-project.org/package=network}.
+Project \url{https://statnetproject.org/}, Seattle, WA. R package version 1.3, URL \url{https://CRAN.R-project.org/package=network}.
 
 \bibitem[Butts, et all.(2014)]{networkDynamic}
-Butts CT, Leslie-Cook A, Krivitsky P and Bender-deMoll S (2014). \emph{networkDynamic: Dynamic Extensions for Network Objects.} R package version 0.6.3. http://statnet.org  URL \url{http://CRAN.R-project.org/package=networkDynamic}
+Butts CT, Leslie-Cook A, Krivitsky P and Bender-deMoll S (2014). \emph{networkDynamic: Dynamic Extensions for Network Objects.} R package version 0.6.3. https://statnet.org  URL \url{https://CRAN.R-project.org/package=networkDynamic}
 
 \bibitem[Carey, et al.(2007)]{carey.et.al:sw:2007}
-Carey VJ, Long L, Gentleman R (2007). \emph{RBGL: R Interface to Boost C++ Graph Library}. R package version 1.14.0, URL \url{http://www.bioconductor.org/}.
+Carey VJ, Long L, Gentleman R (2007). \emph{RBGL: R Interface to Boost C++ Graph Library}. R package version 1.14.0, URL \url{https://www.bioconductor.org/}.
 
 \bibitem[Chambers(1998)]{chambers:bk:1998}
 Chambers JM (1998). \emph{Programming with Data}. Springer-Verlag, New York. ISBN 0-387-
@@ -785,15 +785,14 @@ Drabek TE, Tamminga HL, Kilijanek TS, Adams CR (1981). \emph{Managing Multiorgan
 Fruchterman TMJ, Reingold EM (1991). ``Graph Drawing by Force-directed Placement.' \emph{Software -- Practice and Experience}, 21(11), 1129-1164.
 
 \bibitem[Gentleman, et al.(2007)]{gentleman.et.al:sw:2007}
-Gentleman R, Whalen E, Huber W, Falcon S (2007). \emph{graph: A Package to Handle Graph Data Structures}. R package version 1.14.2, URL \url{http://CRAN.R-project.org/package=graph.}
+Gentleman R, Whalen E, Huber W, Falcon S (2007). \emph{graph: A Package to Handle Graph Data Structures}. R package version 1.14.2, URL \url{https://www.bioconductor.org/packages/release/bioc/html/graph.html}.
 
 \bibitem[Gentry, et al.(2007)]{gentry.et.al:sw:2007}
-Gentry J, Long L, Gentleman R, Falcon S (2007). \emph{Rgraphviz: Plotting Capabilities for R Graph Objects}. R package version 1.16.0, URL \url{http://CRAN.R-project.org/package=Rgraphviz}.
+Gentry J, Long L, Gentleman R, Falcon S (2007). \emph{Rgraphviz: Plotting Capabilities for R Graph Objects}. R package version 1.16.0, URL \url{https://CRAN.R-project.org/package=Rgraphviz}.
 
 \bibitem[Handcock, et al.(2003)]{statnet}
 Handcock MS, Hunter DR, Butts CT, Goodreau SM, Morris M (2003). \emph{statnet: Software Tools for the Statistical Modeling of Network Data}.
-Statnet Project \url{http://statnetproject.org/}, Seattle, WA. R package version 2.0, URL \url{http://CRAN.
-R-project.org/package=statnet}.
+Statnet Project \url{https://statnetproject.org/}, Seattle, WA. R package version 2.0, URL \url{https://CRAN.R-project.org/package=statnet}.
 
 \bibitem[Kamada\& Kawai(1989)]{kamada.kawai:ipl:1989}
 Kamada T, Kawai S (1989). ``An Algorithm for Drawing General Undirected Graphs.'' \emph{Information Processing Letters}, 31(1), 7-15.
@@ -803,7 +802,7 @@ Killworth PD, Bernard HR (1976). ``Informant Accuracy in Social Network Data.'' 
 
 \bibitem[Koenker \& Ng(2007)]{koenker.ng:sw:2007}
 Koenker R, Ng P (2007). \emph{SparseM: Sparse Linear Algebra}. R package version 0.73, URL
-\url{http://CRAN.R-project.org/package=SparseM}.
+\url{https://CRAN.R-project.org/package=SparseM}.
 
 \bibitem[Krackhardt(1988)]{krackhardt:sn:1988}
 Krackhardt D (1988). ``Predicting with Networks: Nonparametric Multiple Regression Anal-
@@ -814,7 +813,7 @@ Mayhew BH, Levinger RL (1976). ``Size and Density of Interaction in Human Aggreg
 
 \bibitem[R Development Core Team(2007)]{R}
 R Development Core Team (2007). \emph{R: A Language and Environment for Statistical Computing}. R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0,
-Version 2.6.1, URL \url{http://www.R-project.org/}.
+Version 2.6.1, URL \url{https://www.R-project.org/}.
 
 \bibitem[Venables \& Ripley(2000)]{venables.ripley:bk:2000}
 Venables WN, Ripley BD (2000). \emph{S Programming}. Springer-Verlag, New York. ISBN 0-387-98966-8.
