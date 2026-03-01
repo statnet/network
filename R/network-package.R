@@ -5,7 +5,6 @@
 #' @importFrom graphics locator par plot polygon rect strheight strwidth text
 #' @importFrom stats rnorm na.omit
 #' @importFrom tibble tibble as.tibble as_tibble
-#' @importFrom magrittr %>% set_names
 NULL
 
 
