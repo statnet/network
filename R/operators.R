@@ -322,26 +322,55 @@ out_of_bounds <- function(x, el){
     val<-value[cbind(match(el[,1],sort(unique(el[,1]))), match(el[,2],sort(unique(el[,2]))))]
   else
     val<-rep(as.vector(value),length.out=NROW(el))
+
+  #Filter out redundant edges if undirected
+  if (!is.directed(x)) {
+    el <- cbind(pmin(el[,1], el[,2]), pmax(el[,1], el[,2]))
+    u <- !duplicated(el)
+    if (!all(u)) {
+      el <- el[u, , drop = FALSE]
+      val <- val[u]
+    }
+  }
+
+  #Filter out self-loops if disabled
+  if (!has.loops(x) && !all(nonloops <- el[,1] != el[,2])) {
+    el <- el[nonloops, , drop = FALSE]
+    val <- val[nonloops]
+  }
+
   #Perform the changes
   if(is.null(names.eval)){  #If no names given, don't store values
-    for (k in seq_along(val)) {
-      eid <- get.edgeIDs(x,el[k,1],el[k,2],neighborhood="out", na.omit=FALSE)
-      if (!is.na(val[k]) & val[k] == 0) {
-        # delete edge
-        if (length(eid) > 0) x<-delete.edges(x,eid)
-      } else {
-        if (length(eid) == 0 & (has.loops(x)|(el[k,1]!=el[k,2]))) {
-          # add edge if needed
-          x<-add.edges(x,as.list(el[k,1]),as.list(el[k,2]))
-          eid <- get.edgeIDs(x,el[k,1],el[k,2],neighborhood="out", na.omit=FALSE)
-        }
-        if (is.na(val[k])) {
-          set.edge.attribute(x,"na",TRUE,eid)   # set to NA
-        } else if (val[k] == 1) {
-          set.edge.attribute(x,"na",FALSE,eid)   # set to 1
-        }
-      }
+
+    el0 <- as.matrix(x, matrix.type = "edgelist", na.rm = FALSE)
+    if (!is.directed(x)) el0 <- cbind(pmin(el0[,1], el0[,2]), pmax(el0[,1], el0[,2]))
+
+    # Rowwise intersection of el and el0
+    inter <- duplicated(rbind(el0, el))[rep(c(FALSE, TRUE), c(nrow(el0), nrow(el)))]
+
+    if (any(inter)) {
+      todel <- which(inter & !is.na(val) & !val)
+      to1 <- which(inter & !is.na(val) & val)
+      toNA <- which(inter & is.na(val))
+
+      # unlist() is needed in case of multiplex edges.
+      el_eids <- function(rows) unlist(lapply(rows, function(k) get.edgeIDs(x, el[k,1], el[k,2], neighborhood = "out", na.omit=FALSE)))
+
+      if(length(todel)) delete.edges(x, eid = el_eids(todel))
+      if(length(toNA)) set.edge.attribute(x, "na", TRUE, el_eids(toNA))
+      if(length(to1)) set.edge.attribute(x, "na", FALSE, el_eids(to1))
     }
+
+    if (any(!inter)) {
+      toinsNA <- which(!inter & is.na(val))
+      toins1 <- which(!inter & !is.na(val) & val)
+
+      if (length(toinsNA)) add.edges(x, as.list(el[toinsNA,1]), as.list(el[toinsNA,2]),
+                                     names.eval = "na", vals.eval = TRUE)
+      if (length(toins1)) add.edges(x, as.list(el[toins1,1]), as.list(el[toins1,2]),
+                                    names.eval = "na", vals.eval = FALSE)
+    }
+
   }else{                   #An attribute name was given, so store values
     epresent<-vector()
     eid<-vector()
