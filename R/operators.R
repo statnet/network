@@ -326,6 +326,10 @@ out_of_bounds <- function(x, el){
   #Filter out redundant edges if undirected
   if (!is.directed(x)) {
     el <- cbind(pmin(el[,1], el[,2]), pmax(el[,1], el[,2]))
+    #Nonzero, nonFALSE values trump NA; NA trumps 0.
+    o <- order((!is.na(val) & (val == 0 | val == FALSE)) * 2L + is.na(val) * 1L, na.last = FALSE)
+    el <- el[o, , drop = FALSE]
+    val <- val[o]
     u <- !duplicated(el)
     if (!all(u)) {
       el <- el[u, , drop = FALSE]
